@@ -1,0 +1,48 @@
+{
+    "name": "System User Rights",
+    "namespace": "YaleREDCap\\SystemUserRights",
+    "description": "Placeholder",
+    "permissions": [
+        "redcap_user_rights",
+        "redcap_every_page_top",
+        "redcap_module_configuration_settings"
+    ],
+    "authors": [
+        {
+            "name": "Andrew Poppe",
+            "email": "andrew.poppe@yale.edu",
+            "institution": "Yale Center for Clinical Investigation"
+        }
+    ],
+    "project-settings": [],
+    "system-settings": [
+        {
+            "key": "test",
+            "name": "test",
+            "required": true,
+            "type": "user-list",
+            "repeatable": true
+        }
+    ],
+    "links": {
+        "project": [],
+        "control-center": [
+            {
+                "key": "system-settings",
+                "name": "System User Rights",
+                "icon": "fas fa-user-secret",
+                "url": "system-settings.php",
+                "show-header-and-footer": true
+            }
+        ]
+    },
+    "no-auth-pages": [],
+    "framework-version": 9,
+    "compatibility": {
+        "php-version-min": "7.4.00",
+        "php-version-max": "7.99.99",
+        "redcap-version-min": "12.4.0",
+        "redcap-version-max": ""
+    },
+    "crons": []
+}
