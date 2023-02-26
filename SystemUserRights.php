@@ -3,50 +3,57 @@
 namespace YaleREDCap\SystemUserRights;
 
 use ExternalModules\AbstractExternalModule;
-use Throwable;
 
 require_once "SUR_User.php";
 
 class SystemUserRights extends AbstractExternalModule
 {
-    function redcap_module_configuration_settings($project_id, $settings)
-    {
-        if (empty($project_id)) {
-            return $settings;
-        }
-        try {
-            // Get existing user access
-            $all_users = $this->getProject($project_id)->getUsers();
-            foreach ($all_users as $user) {
-                $username = $user->getUsername();
-                $name = $this->getName($username);
-                $user_key = $username . "_access";
-                $existing_access = $this->getProjectSetting($user_key, $project_id);
-                $settings[] = [
-                    "key" => $user_key,
-                    "name" => "<strong>" . ucwords($name) . "</strong> (" . $username . ")",
-                    "type" => "checkbox",
-                    "branchingLogic" => [
-                        "field" => "restrict-access",
-                        "value" => "1"
-                    ]
-                ];
-            }
-
-            return $settings;
-        } catch (\Exception $e) {
-            $this->log("Error creating configuration", ["error" => $e->getMessage()]);
-        }
-    }
 
     function redcap_user_rights($project_id)
     {
-        echo "<p>REDCAP USER RIGHTS</p>";
-    }
+?>
+        <script>
+            $(function() {
+                let origSaveUserFormAjax = saveUserFormAjax;
+                let origAssignUserRole = assignUserRole;
+                window.saveUserFormAjax = function() {
+                    const permissions = $('form#user_rights_form').serializeObject();
+                    console.log(permissions);
+                    $.post('<?= $this->getUrl("edit_user.php?pid=$project_id") ?>', permissions, function(response) {
+                        console.log(response);
+                        const result = JSON.parse(response);
+                        if (result["error"]) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: "You can't do that.",
+                                text: "You don't have that power."
+                            });
+                            return;
+                        }
+                        origSaveUserFormAjax();
+                    });
+                }
 
-    function redcap_every_page_top($project_id)
-    {
-        echo "<p>REDCAP EVERY PAGE TOP</p>";
+                window.assignUserRole = function(username, role_id) {
+                    $.post('<?= $this->getUrl("assign_user.php?pid=$project_id") ?>', {
+                        "username": username,
+                        "role_id": role_id
+                    }, function(response) {
+                        const result = JSON.parse(response);
+                        if (result["error"]) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: "You can't do that.",
+                                text: "You don't have that power."
+                            });
+                            return;
+                        }
+                        origAssignUserRole(username, role_id);
+                    });
+                }
+            });
+        </script>
+<?php
     }
 
     function getUserInfo(string $username): ?array
@@ -108,5 +115,12 @@ class SystemUserRights extends AbstractExternalModule
         } catch (\Throwable $e) {
             $this->log("Error getting all user info", ["error" => $e->getMessage()]);
         }
+    }
+
+    function getAcceptableRights(string $username, $project_id)
+    {
+        $project = $this->getProject($project_id);
+        $rights =  $project->addMissingUserRightsKeys([]);
+        return array_keys($rights);
     }
 }

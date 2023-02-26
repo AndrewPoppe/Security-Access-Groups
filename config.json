@@ -5,6 +5,7 @@
     "permissions": [
         "redcap_user_rights",
         "redcap_every_page_top",
+        "redcap_every_page_before_render",
         "redcap_module_configuration_settings"
     ],
     "authors": [
