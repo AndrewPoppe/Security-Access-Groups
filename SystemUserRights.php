@@ -14,15 +14,13 @@ class SystemUserRights extends AbstractExternalModule
 ?>
         <script>
             $(function() {
-                let origSaveUserFormAjax = saveUserFormAjax;
-                let origAssignUserRole = assignUserRole;
                 window.saveUserFormAjax = function() {
+                    showProgress(1);
                     const permissions = $('form#user_rights_form').serializeObject();
                     console.log(permissions);
-                    $.post('<?= $this->getUrl("edit_user.php?pid=$project_id") ?>', permissions, function(response) {
-                        console.log(response);
-                        const result = JSON.parse(response);
-                        if (result["error"]) {
+                    $.post('<?= $this->getUrl("edit_user.php?pid=$project_id") ?>', permissions, function(data) {
+                        showProgress(0, 0);
+                        if (!data) {
                             Swal.fire({
                                 icon: 'error',
                                 title: "You can't do that.",
@@ -30,11 +28,19 @@ class SystemUserRights extends AbstractExternalModule
                             });
                             return;
                         }
-                        origSaveUserFormAjax();
+                        if ($('#editUserPopup').hasClass('ui-dialog-content')) $('#editUserPopup').dialog('destroy');
+                        $('#user_rights_roles_table_parent').html(data);
+                        simpleDialogAlt($('#user_rights_roles_table_parent div.userSaveMsg'), 1.7);
+                        enablePageJS();
+                        if ($('#copy_role_success').length) {
+                            setTimeout(function() {
+                                openAddUserPopup('', $('#copy_role_success').val());
+                            }, 1500);
+                        }
                     });
                 }
 
-                window.assignUserRole = function(username, role_id) {
+                window.assignUserRole2 = function(username, role_id) {
                     $.post('<?= $this->getUrl("assign_user.php?pid=$project_id") ?>', {
                         "username": username,
                         "role_id": role_id
@@ -122,5 +128,16 @@ class SystemUserRights extends AbstractExternalModule
         $project = $this->getProject($project_id);
         $rights =  $project->addMissingUserRightsKeys([]);
         return array_keys($rights);
+    }
+
+    function getUsersInRole($project_id, $role_id)
+    {
+        $sql = "select * from redcap_user_rights where project_id = ? and role_id = ?";
+        $result = $this->query($sql, [$project_id, $role_id]);
+        $users = [];
+        while ($row = $result->fetch_assoc()) {
+            $users[] = $row["username"];
+        }
+        return $users;
     }
 }
