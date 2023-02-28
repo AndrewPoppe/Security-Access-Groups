@@ -6,11 +6,6 @@ if ($_SERVER["REQUEST_METHOD"] !== "POST") {
     exit;
 }
 
-// $runOriginalScript = function () use ($module) {
-//     require $module->getSafePath('UserRights/edit_user.php', APP_PATH_DOCROOT);
-//     exit;
-// };
-// $runOriginalScript();
 
 $data = filter_input_array(INPUT_POST, FILTER_SANITIZE_ENCODED);
 
@@ -59,5 +54,5 @@ if ($submit_action === "edit_role") {
     } else {
         echo json_encode(["error" => true, "bad_rights" => $bad_rights, "role" => $data["role_name"]]);
     }
-    exit; // PROBABLY WANT TO SEND BACK SOMETHING HERE
+    exit;
 }

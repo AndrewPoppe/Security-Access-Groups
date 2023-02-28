@@ -9,11 +9,81 @@ require_once "SUR_User.php";
 class SystemUserRights extends AbstractExternalModule
 {
 
+    function redcap_every_page_before_render()
+    {
+
+        // Only run on the pages we're interested in
+        if (
+            $_SERVER["REQUEST_METHOD"] !== "POST" ||
+            !in_array(PAGE, [
+                "UserRights/edit_user.php",
+                "UserRights/assign_user.php",
+                "UserRights/import_export_users.php",
+                "UserRights/import_export_roles.php",
+                "api/index.php"
+            ])
+        ) {
+            return;
+        }
+
+        // API Stuff
+        if (PAGE === "api/index.php") {
+            $rights = $this->getUserRightsFromToken($_POST["token"]);
+
+            // Allow the API if the module is not enabled in the project.
+            if (empty($rights) || !$this->isModuleEnabled($this->getModuleDirectoryPrefix(), $rights["project_id"])) {
+                return;
+            }
+
+            // Take action if the user-related API methods are being called
+            if (in_array($_POST["content"], ["user", "userRole", "userRoleMapping"]) && isset($_POST["data"])) {
+                echo "This API Method is Not Allowed.";
+                $this->exitAfterHook();
+                return;
+            }
+        }
+
+
+        // Edit User or Role
+        if (
+            PAGE === "UserRights/edit_user.php" &&
+            isset($_POST['submit-action']) &&
+            in_array($_POST['submit-action'], ["edit_role", "edit_user", "add_user"])
+        ) {
+            $this->log('attempt to edit user or role directly', ["page" => PAGE, "data" => json_encode($_POST)]);
+            $this->exitAfterHook();
+            return;
+        }
+
+        // Assign User to Role
+        if (PAGE === "UserRights/assign_user.php") {
+            $this->log('attempt to assign user role directly', ["page" => PAGE, "data" => json_encode($_POST)]);
+            $this->exitAfterHook();
+            return;
+        }
+
+        // Upload Users via CSV
+        if (PAGE === "UserRights/import_export_users.php") {
+            $this->log('attempt to upload users directly', ["page" => PAGE, "data" => json_encode($_POST)]);
+            $this->exitAfterHook();
+            return;
+        }
+
+        // Upload Roles or Mappings via CSV
+        if (PAGE === "UserRights/import_export_roles.php") {
+            $this->log('attempt to upload roles or role mappings directly', ["page" => PAGE, "data" => json_encode($_POST)]);
+            $this->exitAfterHook();
+            return;
+        }
+    }
+
     function redcap_user_rights($project_id)
     {
 ?>
         <script>
             $(function() {
+                window.oldSaveUserFormAjax = saveUserFormAjax;
+                window.oldAssignUserRole = assignUserRole;
                 window.saveUserFormAjax = function() {
                     showProgress(1);
                     const permissions = $('form#user_rights_form').serializeObject();
@@ -85,7 +155,7 @@ class SystemUserRights extends AbstractExternalModule
                                     let text = "";
                                     let users = Object.keys(result.bad_rights);
 
-                                    title = `You cannot assign user "${users[0]}" to user role "${result.role}"`;
+                                    title = `You cannot assign user "${username}" to user role "${result.role}"`;
                                     text = `The following permissions allowed in user role "${result.role}" cannot be granted to that user: ${result.bad_rights[users[0]].join(', ')}`;
 
                                     Swal.fire({
@@ -114,6 +184,13 @@ class SystemUserRights extends AbstractExternalModule
                         }
                     });
                 }
+
+                $('#importUserForm').attr('action', "<?= $this->getUrl("import_export_users.php") ?>");
+                $('#importUsersForm2').attr('action', "<?= $this->getUrl("import_export_users.php") ?>");
+                $('#importRoleForm').attr('action', "<?= $this->getUrl("import_export_roles.php") ?>");
+                $('#importRolesForm2').attr('action', "<?= $this->getUrl("import_export_roles.php") ?>");
+                $('#importUserRoleForm').attr('action', "<?= $this->getUrl("import_export_roles.php?action=uploadMapping") ?>");
+                $('#importUserRoleForm2').attr('action', "<?= $this->getUrl("import_export_roles.php?action=uploadMapping") ?>");
             });
         </script>
 <?php
@@ -229,5 +306,24 @@ class SystemUserRights extends AbstractExternalModule
             return !$off && !$unset && !$excluded && !$null;
         }, ARRAY_FILTER_USE_BOTH);
         return $role_rights;
+    }
+
+    function getModuleDirectoryPrefix()
+    {
+        return strrev(preg_replace("/^.*v_/", "", strrev($this->getModuleDirectoryName()), 1));
+    }
+
+    function getUserRightsFromToken($token)
+    {
+        $sql = "SELECT * FROM redcap_user_rights WHERE api_token = ?";
+        $rights = [];
+        try {
+            $result = $this->query($sql, [$token]);
+            $rights = $result->fetch_assoc();
+        } catch (\Throwable $e) {
+            $this->log('Error getting user rights from API token', ["error" => $e->getMessage()]);
+        } finally {
+            return $rights;
+        }
     }
 }
