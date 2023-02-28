@@ -19,33 +19,23 @@ $submit_action = $data["submit-action"]; // add_user, edit_user, delete_user, ad
 $user = $data["user"];
 $pid = $module->getProjectId();
 
+$scriptPath = $module->getSafePath('UserRights/edit_user.php', APP_PATH_DOCROOT);
+
 if (in_array($submit_action, ["delete_user", "add_role", "delete_role", "copy_role"])) {
-    echo json_encode([]);
+    require $scriptPath;
     exit;
 }
 
 if (in_array($submit_action, ["add_user", "edit_user"])) {
-    $acceptable_rights = $module->getAcceptableRights($username, $pid);
-    if (($key = array_search("design", $acceptable_rights)) !== false) {
-        unset($acceptable_rights[$key]);
-    }
-    $bad_rights = [];
-    foreach ($data as $right => $value) {
-        if (str_starts_with($right, "form-") or str_starts_with($right, "export-form-")) {
-            continue;
-        }
-        if (in_array($right, ["user", "submit-action", "role_name", "redcap_csrf_token", "expiration", "group_role"])) {
-            continue;
-        }
-        if (!in_array($right, $acceptable_rights)) {
-            $bad_rights[] = $right;
-        }
-    }
+    $acceptable_rights = $module->getAcceptableRights($username);
+    $bad_rights = $module->checkProposedRights($acceptable_rights, $data);
 
     $errors = !empty($bad_rights);
 
     if ($errors === false) {
-        require $module->getSafePath('UserRights/edit_user.php', APP_PATH_DOCROOT);
+        require $scriptPath;
+    } else {
+        echo json_encode(["error" => true, "bad_rights" => ["$user" => $bad_rights]]);
     }
     exit;
 }
@@ -58,17 +48,16 @@ if ($submit_action === "edit_role") {
     $usersInRole = $module->getUsersInRole($pid, $data["user"]);
     $bad_rights = [];
     foreach ($usersInRole as $username) {
-        $acceptable_rights = $module->getAcceptableRights($username, $pid);
-        // CHECK PROPOSED ROLE RIGHTS AGAINST THESE
-        // if (no good) {
-        // $bad_rights[] = [
-        //     "username" => $username,
-        //     "rights" => array of bad rights
-        // ];
-        //}
+        $acceptable_rights = $module->getAcceptableRights($username);
+        $these_bad_rights = $module->checkProposedRights($acceptable_rights, $data);
+        if (!empty($these_bad_rights)) {
+            $bad_rights[$username] = $these_bad_rights;
+        }
     }
     if (empty($bad_rights)) {
-        require $module->getSafePath('UserRights/edit_user.php', APP_PATH_DOCROOT);
+        require $scriptPath;
+    } else {
+        echo json_encode(["error" => true, "bad_rights" => $bad_rights, "role" => $data["role_name"]]);
     }
     exit; // PROBABLY WANT TO SEND BACK SOMETHING HERE
 }
