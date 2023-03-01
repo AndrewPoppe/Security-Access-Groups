@@ -25,6 +25,8 @@ if (in_array($submit_action, ["add_user", "edit_user"])) {
     $acceptable_rights = $module->getAcceptableRights($username);
     $bad_rights = $module->checkProposedRights($acceptable_rights, $data);
 
+    $module->log('rights', ["acceptable" => json_encode($acceptable_rights), "requested" => json_encode($data)]);
+
     $errors = !empty($bad_rights);
 
     if ($errors === false) {

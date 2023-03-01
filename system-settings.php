@@ -27,3 +27,6 @@ require_once "SUR_User.php";
         </tr>
     </thead>
 </table>
+
+<?php
+var_dump(in_array("a", array_keys(["a" => 1, "ab" => 2])));

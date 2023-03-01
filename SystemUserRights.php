@@ -79,11 +79,51 @@ class SystemUserRights extends AbstractExternalModule
 
     function redcap_user_rights($project_id)
     {
+
 ?>
         <script>
             $(function() {
-                window.oldSaveUserFormAjax = saveUserFormAjax;
-                window.oldAssignUserRole = assignUserRole;
+
+                <?php if (isset($_SESSION['SUR_imported'])) { ?>
+                    window.import_type = '<?= $_SESSION['SUR_imported'] ?>';
+                    window.import_errors = JSON.parse('<?= $_SESSION['SUR_bad_rights'] ?>');
+                <?php
+                    unset($_SESSION['SUR_imported']);
+                    unset($_SESSION['SUR_bad_rights']);
+                } ?>
+
+                function fixLinks() {
+                    $('#importUserForm').attr('action', "<?= $this->getUrl("import_export_users.php") ?>");
+                    $('#importUsersForm2').attr('action', "<?= $this->getUrl("import_export_users.php") ?>");
+                    $('#importRoleForm').attr('action', "<?= $this->getUrl("import_export_roles.php") ?>");
+                    $('#importRolesForm2').attr('action', "<?= $this->getUrl("import_export_roles.php") ?>");
+                    $('#importUserRoleForm').attr('action', "<?= $this->getUrl("import_export_roles.php?action=uploadMapping") ?>");
+                    $('#importUserRoleForm2').attr('action', "<?= $this->getUrl("import_export_roles.php?action=uploadMapping") ?>");
+                }
+
+                function checkImportErrors() {
+                    if (window.import_type) {
+                        let title = "You can't do that.";
+                        let text = "";
+                        if (window.import_type == "users") {
+                            title = "You cannot import those users.";
+                            text = `The following users included in the provided import file cannot have the following permissions granted to them:<br>
+                                <table style="margin-top: 20px; width: 100%;"><thead style="border-bottom: 2px solid #666;"><tr><th>User</th><th>Permissions</th></tr></thead><tbody>`;
+                            let users = Object.keys(window.import_errors);
+                            users.forEach((user) => {
+                                text += `<tr style="border-top: 1px solid #666;"><td>${user}</td><td>${window.import_errors[user].join('<br>')}</td></tr>`;
+                            });
+                            text += `</tbody></table>`;
+                        } else if (window.import_type == "roles") {
+
+                        }
+                        Swal.fire({
+                            icon: 'error',
+                            title: title,
+                            html: text
+                        });
+                    }
+                }
                 window.saveUserFormAjax = function() {
                     showProgress(1);
                     const permissions = $('form#user_rights_form').serializeObject();
@@ -127,6 +167,7 @@ class SystemUserRights extends AbstractExternalModule
                                 }, 1500);
                             }
                         }
+                        fixLinks();
                     });
                 }
 
@@ -175,6 +216,7 @@ class SystemUserRights extends AbstractExternalModule
                                         }
                                     }, 3200);
                                 }
+                                fixLinks();
                             });
                         } else {
                             showProgress(0, 0);
@@ -182,18 +224,15 @@ class SystemUserRights extends AbstractExternalModule
                                 simpleDialog(lang.rights_317, lang.global_03 + lang.colon + ' ' + lang.rights_316);
                             }, 500);
                         }
+                        fixLinks();
                     });
                 }
-
-                $('#importUserForm').attr('action', "<?= $this->getUrl("import_export_users.php") ?>");
-                $('#importUsersForm2').attr('action', "<?= $this->getUrl("import_export_users.php") ?>");
-                $('#importRoleForm').attr('action', "<?= $this->getUrl("import_export_roles.php") ?>");
-                $('#importRolesForm2').attr('action', "<?= $this->getUrl("import_export_roles.php") ?>");
-                $('#importUserRoleForm').attr('action', "<?= $this->getUrl("import_export_roles.php?action=uploadMapping") ?>");
-                $('#importUserRoleForm2').attr('action', "<?= $this->getUrl("import_export_roles.php?action=uploadMapping") ?>");
+                fixLinks();
+                checkImportErrors();
             });
         </script>
 <?php
+        //var_dump(\UserRights::getRoles($this->getProjectId()));
     }
 
     function getUserInfo(string $username): ?array
@@ -259,34 +298,51 @@ class SystemUserRights extends AbstractExternalModule
 
     function getAllRights()
     {
-        $project = $this->getProject();
-        return array_keys($project->addMissingUserRightsKeys([]));
+        return \UserRights::getApiUserPrivilegesAttr(false, $this->getProjectId());
     }
 
     function getAcceptableRights(string $username)
     {
-        $project = $this->getProject();
-        $rights =  $project->addMissingUserRightsKeys([]);
-        unset($rights["design"]);
-        unset($rights["user_rights"]);
-        return array_keys($rights);
+        $rights =  $this->getAllRights();
+        if (($key = array_search("design", $rights)) !== false) {
+            unset($rights[$key]);
+        }
+        if (($key = array_search("user_rights", $rights)) !== false) {
+            unset($rights[$key]);
+        }
+        return $rights;
+        //        return array_keys($rights);
+
     }
 
-    function checkProposedRights(array $acceptable_rights, array $proposed_rights)
+    function checkProposedRights(array $acceptable_rights, array $requested_rights)
     {
+        //$this->log('checking rights', ["acceptable" => json_encode($acceptable_rights), "acceptable_keys" => json_encode(array_keys($acceptable_rights)), "requested" => json_encode($requested_rights)]);
         $bad_rights = [];
-        foreach ($proposed_rights as $right => $value) {
+        foreach ($requested_rights as $right => $value) {
             if (str_starts_with($right, "form-") or str_starts_with($right, "export-form-")) {
                 continue;
             }
-            if (in_array($right, ["user", "submit-action", "role_name", "role_name_edit", "redcap_csrf_token", "expiration", "group_role"])) {
+            if (in_array($right, ["user", "submit-action", "role_name", "role_name_edit", "redcap_csrf_token", "expiration", "group_role", "data_access_group_id", "unique_role_name", "role_label"])) {
                 continue;
             }
-            if (!in_array($right, $acceptable_rights)) {
-                $bad_rights[] = $right;
+            if ($value === "0") {
+                continue;
             }
+            if (in_array($right, $acceptable_rights, true) || in_array($right, array_keys($acceptable_rights), true)) {
+                continue;
+            }
+            $bad_rights[] = $right;
         }
         return $bad_rights;
+    }
+
+    function getRoleIdFromUniqueRoleName($uniqueRoleName)
+    {
+        $sql = "SELECT role_id FROM redcap_user_roles WHERE unique_role_name = ?";
+        $result = $this->query($sql, [$uniqueRoleName]);
+        $row = $result->fetch_assoc();
+        return $row["role_id"];
     }
 
     function getUsersInRole($project_id, $role_id)
@@ -308,8 +364,9 @@ class SystemUserRights extends AbstractExternalModule
             $off = $value === "0";
             $null = is_null($value);
             $unset = isset($value) && is_null($value);
-            $excluded = in_array($key, ["role_name", "unique_role_name", "project_id", "data_entry", "data_export_instruments"]);
-            return !$off && !$unset && !$excluded && !$null;
+            $excluded = in_array($key, ["role_name", "unique_role_name", "project_id", "data_entry", "data_export_instruments"], true);
+            $also_excluded = !in_array($key, $this->getAllRights(), true);
+            return !$off && !$unset && !$excluded && !$also_excluded && !$null;
         }, ARRAY_FILTER_USE_BOTH);
         return $role_rights;
     }
