@@ -56,3 +56,10 @@ if ($submit_action === "edit_role") {
     }
     exit;
 }
+
+
+/**
+ * "submit-action", "expiration", "group_role", "user", "redcap_csrf_token", "role_name_edit"
+ * 
+ * 
+ */

@@ -12,31 +12,24 @@ require_once $module->getSafePath('Config/init_functions.php', APP_PATH_DOCROOT)
 if (isset($_POST['csv_content']) && $_POST['csv_content'] != '') {
     $csv_content = filter_input(INPUT_POST, 'csv_content');
     $data = csvToArray(removeBOMfromUTF8($csv_content));
-    echo json_encode($data);
-    exit;
-}
-
-
-
-
-
-$count = 0;
-$errors = array();
-$csv_content = $preview = "";
-$commit = false;
-if (isset($_FILES['file']) && isset($_FILES['file']['tmp_name'])) {
-    $csv_content = file_get_contents($_FILES['file']['tmp_name']);
-} elseif (isset($_POST['csv_content']) && $_POST['csv_content'] != '') {
-    if (!isset($_POST['notify_email']) || $_POST['notify_email'] == '') {
-        $_POST['notify_email'] = 0;
+    foreach ($data as $key => $this_user) {
+        if (isset($this_user['forms']) && $this_user['forms'] != '') {
+            foreach (explode(",", $this_user['forms']) as $this_pair) {
+                list($this_form, $this_right) = explode(":", $this_pair, 2);
+                $data[$key]['form-' . $this_form] = $this_right;
+            }
+            unset($data[$key]['forms']);
+        }
+        if (isset($this_user['forms_export']) && $this_user['forms_export'] != '') {
+            foreach (explode(",", $this_user['forms_export']) as $this_pair) {
+                list($this_form, $this_right) = explode(":", $this_pair, 2);
+                $data[$key]['export-form-' . $this_form] = $this_right;
+            }
+            unset($data[$key]['forms_export']);
+        }
     }
-    $csv_content = $_POST['csv_content'];
-    $commit = true;
-}
-
-if ($csv_content != "") {
-    $data = csvToArray(removeBOMfromUTF8($csv_content));
-    //echo json_encode($data);
-    require $scriptPath;
+    var_dump($data);
+    var_dump(\UserRights::getPrivileges($module->getProjectId(), "carol"));
+    var_dump($module->getAllRights());
     exit;
 }

@@ -257,6 +257,12 @@ class SystemUserRights extends AbstractExternalModule
         }
     }
 
+    function getAllRights()
+    {
+        $project = $this->getProject();
+        return array_keys($project->addMissingUserRightsKeys([]));
+    }
+
     function getAcceptableRights(string $username)
     {
         $project = $this->getProject();
