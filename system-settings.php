@@ -55,7 +55,8 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
             </tr>
         </thead>
         <tbody>
-            <?php foreach ($users as $user) { ?>
+            <?php foreach ($users as $user) {
+                $thisUserRole = $module->getUserSystemRole($user["username"]); ?>
                 <tr data-user="<?= $user["username"] ?>">
                     <td><?= $user["username"] ?></td>
                     <td><?= $user["user_firstname"] . " " . $user["user_lastname"] ?></td>
@@ -66,9 +67,8 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                     <td><?= $user["allow_create_db"] ?></td>
                     <td><?= $user["user_expiration"] ?></td>
                     <td><?= $user["user_lastlogin"] ?></td>-->
-                    <td><select class="roleSelect">
+                    <td data-role="<?= $thisUserRole ?>"><select class="roleSelect">
                             <?php
-                            $thisUserRole = $module->getUserSystemRole($user["username"]);
                             foreach ($roles as $role_id => $role) {
                                 echo "<option value='" . $role_id . "' " . ($role_id == $thisUserRole ? "selected" : "") . ">" . $role . "</option>";
                             }
@@ -89,21 +89,30 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
         $('.roleSelect').select2();
         $('.roleSelect').change(function() {
             const select = $(this);
+            console.log(select);
             const tr = $(this).closest('tr');
             const user = tr.data('user');
 
             const url = '<?= $module->getUrl("setUserRole.php") ?>';
-            console.log(url);
-            $.post(url, {
-                "username": user,
-                "role": select.val()
-            }, function(response) {
-                console.log(response);
-                $(tr).find('td').effect('highlight', {
-                    color: "#66ff99"
-                }, 3000);
-            })
             console.log(user, select.val());
+            let color = "#66ff99";
+            $.post(url, {
+                    "username": user,
+                    "role": select.val()
+                })
+                .done(function(response) {
+                    console.log(response);
+                })
+                .fail(function() {
+                    color = "#ff3300";
+                    select.val(select.closest('td').data('role')).select2();
+                })
+                .always(function() {
+                    $(tr).find('td').effect('highlight', {
+                        color: color
+                    }, 3000);
+                });
+
         })
     </script>
 <?php
