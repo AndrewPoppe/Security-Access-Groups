@@ -58,10 +58,22 @@
     font-style: italic;
 }
 
-div#control_center_window {
+div#control_center_window,
+div#control_center_window p,
+div#control_center_window div,
+div#control_center_window a,
+div#control_center_window table {
     font-family: "Atkinson Hyperlegible" !important;
 }
 
 div#control_center_window pre {
     font-family: "JetBrainsMono" !important;
+}
+
+table#SUR-System-Table {
+    width: 100%;
+}
+
+select.roleSelect {
+    width: 100%;
 }

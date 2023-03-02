@@ -109,13 +109,26 @@ class SystemUserRights extends AbstractExternalModule
                             title = "You cannot import those users.";
                             text = `The following users included in the provided import file cannot have the following permissions granted to them:<br>
                                 <table style="margin-top: 20px; width: 100%;"><thead style="border-bottom: 2px solid #666;"><tr><th>User</th><th>Permissions</th></tr></thead><tbody>`;
-                            let users = Object.keys(window.import_errors);
+                            const users = Object.keys(window.import_errors);
                             users.forEach((user) => {
                                 text += `<tr style="border-top: 1px solid #666;"><td>${user}</td><td>${window.import_errors[user].join('<br>')}</td></tr>`;
                             });
                             text += `</tbody></table>`;
                         } else if (window.import_type == "roles") {
-
+                            title = "You cannot import those roles.";
+                            text = `The following roles have users assigned to them, and the following permissions cannot be granted for those users:<br>
+                            <table style="margin-top: 20px; width: 100%;"><thead style="border-bottom: 2px solid #666;"><tr><th>Role</th><th>User</th><th>Permissions</th></tr></thead><tbody>`;
+                            const roles = Object.keys(window.import_errors);
+                            roles.forEach((role) => {
+                                const users = Object.keys(window.import_errors[role]);
+                                text += `<tr style="border-top: 1px solid #666;"><td ROWSPAN="${users.length}">${role}</td>`;
+                                users.forEach((user, index) => {
+                                    const theseRights = window.import_errors[role][user];
+                                    text += (index > 1) ? "<tr style='border-top: 1px solid red;'>" : "";
+                                    text += `<td>${user}</td><td>${theseRights.join('<br>')}</td></tr>`;
+                                });
+                            })
+                            text += `</tbody></table>`;
                         }
                         Swal.fire({
                             icon: 'error',
@@ -388,5 +401,23 @@ class SystemUserRights extends AbstractExternalModule
         } finally {
             return $rights;
         }
+    }
+
+    function getUserSystemRole($username)
+    {
+        $setting = $username . "-role";
+        //$this->removeSystemSetting($setting);
+        $role = $this->getSystemSetting($setting);
+        if (!isset($role)) {
+            $role = "NA";
+            $this->setSystemSetting($setting, $role);
+        }
+        return $role;
+    }
+
+    function getAllSystemRoles()
+    {
+        $roles = json_decode($this->getSystemSetting("roles"), true) ?? ["R1" => "Role 1", "R2" => "Role 2"];
+        return array_merge(["NA" => "No Access"], $roles);
     }
 }
