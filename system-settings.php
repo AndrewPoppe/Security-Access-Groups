@@ -39,7 +39,7 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
     $roles = $module->getAllSystemRoles();
 
 ?>
-    <table id='SUR-System-Table' class="hover compact">
+    <table id='SUR-System-Table' class="compact hover ">
         <thead>
             <tr>
                 <th>Username</th>
@@ -102,6 +102,7 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                 })
                 .done(function(response) {
                     console.log(response);
+                    console.log(JSON.parse(response));
                 })
                 .fail(function() {
                     color = "#ff3300";
@@ -119,5 +120,8 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
 
 
 } else if ($tab == "roles") {
-    var_dump(\UserRights::getApiUserPrivilegesAttr(false, 21));
+    foreach ($module->getAllRights() as $key => $right) {
+        echo "<p>" . $module->getDisplayTextForRight($right, $key) . "</p>";
+    }
+    $module->renderRoleEditTable([]);
 }

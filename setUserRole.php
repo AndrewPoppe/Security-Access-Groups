@@ -20,5 +20,10 @@ $role = filter_input(INPUT_POST, "role", FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 
 http_response_code(200);
 $setting = $username . "-role";
-echo $module->setSystemSetting($setting, $role);
+$module->setSystemSetting($setting, $role);
+
+echo json_encode([
+    "all" => $module->getAllRights()
+]);
+
 exit;

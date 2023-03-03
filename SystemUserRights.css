@@ -72,6 +72,7 @@ div#control_center_window pre {
 
 table#SUR-System-Table {
     width: 100%;
+    border-collapse: collapse;
 }
 
 select.roleSelect {
