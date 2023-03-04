@@ -78,3 +78,7 @@ table#SUR-System-Table {
 select.roleSelect {
     width: 100%;
 }
+
+#SUR_Role_Setting {
+    font-family: "Atkinson Hyperlegible" !important;
+}

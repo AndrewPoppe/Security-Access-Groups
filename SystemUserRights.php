@@ -917,9 +917,54 @@ class SystemUserRights extends AbstractExternalModule
                             </div>
                         </div>
                     </td>
+                    <td valign='top' style='width:700px;padding-left:15px;'>
+                        <div class='card' style='border-color:#00000060;'>
+                            <div class='card-header font-weight-bold fs14' style='background-color:#00000017;'>
+                                <?= $lang['data_export_tool_291'] ?>
+                            </div>
+                            <div class='card-body p-0' style='background-color:#00000007;'>
+                                <table id='form_rights' style='width:100%;font-size:12px;color:#A00000;'>
+                                    <tr>
+                                        <td colspan='3' style='padding:12px 12px 15px;line-height:1.1;color:#777;font-size:11px;'>
+                                            <?= $lang['rights_429'] ?>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td valign='top' style='border-right:1px solid #FFA3A3;'>&nbsp;</td>
+                                        <td valign='top' class='fs13 pb-2 text-center font-weight-bold' style='border-right:1px solid #FFA3A3;color:#000;'><?= $lang['rights_373'] ?></td>
+                                        <td valign='top' class='fs13 pb-2 text-center font-weight-bold' style='color:#B00000;'><?= $lang['rights_428'] ?></td>
+                                    </tr>
+                                    <tr>
+                                        <td valign='top' style='border-right:1px solid #FFA3A3;'>&nbsp;</td>
+                                        <td valign='top' style='border-right:1px solid #FFA3A3;text-align:left;width:235px;color:#000;font-size:11px;'>
+                                            <div style='float:left;padding:2px 8px;white-space:normal;width:62px;line-height: 12px;cursor:pointer;cursor:hand;' data-toggle='popover' data-trigger='hover' data-placement='left' data-content="<?= $lang['rights_430'] ?>"><?= $lang['rights_47'] ?><br><?= $lang['rights_395'] ?></div>
+                                            <div style='float:left;padding:2px 8px;white-space:normal;width:44px;line-height: 12px;cursor:pointer;cursor:hand;' data-toggle='popover' data-trigger='hover' data-placement='left' data-content="<?= $lang['rights_430'] ?>"><?= $lang['rights_61'] ?></div>
+                                            <div style='float:left;padding:2px 8px;white-space:normal;width:50px;line-height: 12px;cursor:pointer;cursor:hand;' data-toggle='popover' data-trigger='hover' data-placement='left' data-content="<?= $lang['rights_430'] ?>"><?= $lang['rights_138'] ?></div>
+                                            <div style='float:left;padding:2px 8px;white-space:normal;width:70px;line-height: 12px;cursor:pointer;cursor:hand;' data-toggle='popover' data-trigger='hover' data-placement='left' data-content="<?= $lang['rights_430'] ?>"><?= $lang['rights_137'] ?></div>
+                                        </td>
+                                        <td valign='top' style='text-align:left;width:250px;color:#B00000;font-size:11px;'>
+                                            <div style='float:left;padding:2px 8px;white-space:normal;width:58px;line-height: 12px;cursor:pointer;cursor:hand;' data-toggle='popover' data-trigger='hover' data-placement='left' data-content="<?= $lang['rights_430'] ?>"><?= $lang['rights_47'] ?></div>
+                                            <div style='float:left;padding:2px 8px;white-space:normal;width:72px;line-height: 12px;cursor:pointer;cursor:hand;' data-toggle='popover' data-trigger='hover' data-placement='left' data-content="<?= $lang['rights_430'] ?>"><?= $lang['rights_48'] ?>*</div>
+                                            <div style='float:left;padding:2px 8px;white-space:normal;width:65px;line-height: 12px;cursor:pointer;cursor:hand;' data-toggle='popover' data-trigger='hover' data-placement='left' data-content="<?= $lang['rights_430'] ?>"><?= $lang['data_export_tool_290'] ?></div>
+                                            <div style='float:left;padding:2px 8px;white-space:normal;width:45px;line-height: 12px;cursor:pointer;cursor:hand;' data-toggle='popover' data-trigger='hover' data-placement='left' data-content="<?= $lang['rights_430'] ?>"><?= $lang['rights_49'] ?></div>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </td>
                 </tr>
             </table>
         </form>
+        <script>
+            $('#SUR_Role_Setting').dialog({
+                bgiframe: true,
+                modal: true,
+                width: 1250,
+                height: window.innerHeight - 100,
+                title: "TESTING"
+            });
+        </script>
 <?php
 
 
