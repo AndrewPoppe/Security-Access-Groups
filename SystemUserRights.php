@@ -470,7 +470,7 @@ class SystemUserRights extends AbstractExternalModule
         return $rights[$right] ?? $rights[$key] ?? "<<< " . $right . " >>>";
     }
 
-    function renderRoleEditTable($rights)
+    function renderRoleEditTable(array $rights, bool $newRole, $role_name = "", $role_id = "")
     {
         global $lang;
         $allRights = $this->getAllRights();
@@ -957,12 +957,67 @@ class SystemUserRights extends AbstractExternalModule
             </table>
         </form>
         <script>
+            let title = "TESTING";
+            let newRole = <?= $newRole ? "true" : "false" ?>;
+            let buttons = newRole ? [{
+                text: "<?= $lang["global_53"] ?>",
+                click: function() {
+                    $(this).dialog('destroy');
+                }
+            }, {
+                text: "<?= $lang["rights_158"] ?>",
+                click: function() {
+                    console.log('save it');
+                }
+            }] : [{
+                text: "<?= $lang["global_53"] ?>",
+                click: function() {
+                    $(this).dialog('destroy');
+                }
+            }, {
+                text: "<?= $lang["report_builder_28"] ?>",
+                click: function() {
+                    console.log('save it');
+                }
+            }];
             $('#SUR_Role_Setting').dialog({
                 bgiframe: true,
                 modal: true,
                 width: 1250,
-                height: window.innerHeight - 100,
-                title: "TESTING"
+                title: title,
+                open: function() {
+                    $('.ui-dialog-buttonpane').find('button:last').css({
+                        'font-weight': 'bold',
+                        'color': '#222'
+                    }).focus();
+                    if ($('.ui-dialog-buttonpane button').length > 2) {
+                        if ($('.ui-dialog-buttonpane button').length == 3) {
+                            // Stylize the delete button
+                            $('.ui-dialog-buttonpane').find('button:eq(0)').css({
+                                'color': '#C00000',
+                                'font-size': '11px',
+                                'margin': '9px 0 0 40px'
+                            });
+                        } else {
+                            // Stylize the delete button AND copy button
+                            $('.ui-dialog-buttonpane').find('button:eq(0)').css({
+                                'color': '#C00000',
+                                'font-size': '11px',
+                                'margin': '9px 0 0 5px'
+                            });
+                            $('.ui-dialog-buttonpane').find('button:eq(1)').css({
+                                'color': '#000066',
+                                'font-size': '11px',
+                                'margin': '9px 0 0 40px'
+                            });
+                        }
+                    }
+                    fitDialog(this);
+                },
+                buttons: buttons,
+                close: function() {
+                    console.log($(this).serializeObject());
+                }
             });
         </script>
 <?php
