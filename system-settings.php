@@ -123,5 +123,5 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
     foreach ($module->getAllRights() as $key => $right) {
         echo "<p>" . $module->getDisplayTextForRight($right, $key) . "</p>";
     }
-    $module->renderRoleEditTable([], true);
+    $module->renderRoleEditTable([], true, "Test Role");
 }

@@ -477,7 +477,6 @@ class SystemUserRights extends AbstractExternalModule
         var_dump($allRights);
     ?>
         <form id="SUR_Role_Setting">
-            <!-- Begin Table -->
             <table style='width:100%;'>
                 <tr>
                     <td valign='top' style='width:475px;'>
@@ -487,6 +486,15 @@ class SystemUserRights extends AbstractExternalModule
                             </div>
                             <div class='card-body p-3' style='background-color:#00000007;'>
                                 <table id='user-rights-left-col'>
+
+                                    <!-- EDIT ROLE NAME -->
+                                    <tr>
+                                        <td valign='top' colspan='2' style='padding-bottom:5px;'>
+                                            <img src='<?= APP_PATH_IMAGES . "vcard.png" ?>'>
+                                            &nbsp;&nbsp;<?= $lang['rights_199'] ?>
+                                            <input type='text' value="<?= \REDCap::escapeHtml($role_name) ?>" class='x-form-text x-form-field' style='margin:0 0 5px 8px;width:150px;' name='role_name_edit'>
+                                        </td>
+                                    </tr>
 
                                     <!-- HIGHEST LEVEL PRIVILEGES -->
                                     <tr>
@@ -835,30 +843,30 @@ class SystemUserRights extends AbstractExternalModule
                                     </tr>
                                     <?php if (isset($allRights["record_create"])) { ?>
                                         <tr>
-                                            <td valign='top'>
+                                            <td>
                                                 <i class="fas fa-plus-square"></i>&nbsp;&nbsp;<?= $lang['rights_99'] ?>
                                             </td>
-                                            <td valign='top' style='padding-top:2px;'>
+                                            <td>
                                                 <input type='checkbox' name='record_create' <?= $rights["record_create"] == 1 ? "checked" : "" ?>>
                                             </td>
                                         </tr>
                                     <?php } ?>
                                     <?php if (isset($allRights["record_rename"])) { ?>
                                         <tr>
-                                            <td valign='top'>
+                                            <td>
                                                 <i class="fas fa-exchange-alt"></i>&nbsp;<?= $lang['rights_100'] ?>
                                             </td>
-                                            <td valign='top' style='padding-top:2px;'>
+                                            <td>
                                                 <input type='checkbox' name='record_rename' <?= $rights["record_rename"] == 1 ? "checked" : "" ?>>
                                             </td>
                                         </tr>
                                     <?php } ?>
                                     <?php if (isset($allRights["record_delete"])) { ?>
                                         <tr>
-                                            <td valign='top' style='padding:2px 0 4px;'>
+                                            <td>
                                                 <i class="fas fa-minus-square"></i>&nbsp;&nbsp;<?= $lang['rights_101'] ?>
                                             </td>
-                                            <td valign='top' style='padding:2px 0 4px;'>
+                                            <td>
                                                 <input type='checkbox' name='record_delete' <?= $rights["record_delete"] == 1 ? "checked" : "" ?>>
                                             </td>
                                         </tr>
@@ -1017,6 +1025,14 @@ class SystemUserRights extends AbstractExternalModule
                 buttons: buttons,
                 close: function() {
                     console.log($(this).serializeObject());
+                }
+            });
+            $('input[name="role_name_edit"]').blur(function() {
+                $(this).val($(this).val().trim());
+                if ($(this).val() == '') {
+                    simpleDialog('<?= $lang['rights_358'] ?>', '<?= $lang['alerts_24'] ?>', null, null, function() {
+                        $('input[name=role_name_edit]').focus();
+                    }, 'Close');
                 }
             });
         </script>
