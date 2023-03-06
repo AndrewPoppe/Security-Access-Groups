@@ -75,6 +75,14 @@ table#SUR-System-Table {
     border-collapse: collapse;
 }
 
+table#SUR-System-Table tr.odd {
+    background-color: white !important;
+}
+
+table#roleTable tr.odd {
+    background-color: white !important;
+}
+
 select.roleSelect {
     width: 100%;
 }

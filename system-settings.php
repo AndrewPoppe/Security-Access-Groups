@@ -39,7 +39,7 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
     $roles = $module->getAllSystemRoles();
 
 ?>
-    <table id='SUR-System-Table' class="compact hover ">
+    <table id='SUR-System-Table' class="compact hover">
         <thead>
             <tr>
                 <th>Username</th>
@@ -69,8 +69,8 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                     <td><?= $user["user_lastlogin"] ?></td>-->
                     <td data-role="<?= $thisUserRole ?>"><select class="roleSelect">
                             <?php
-                            foreach ($roles as $role_id => $role) {
-                                echo "<option value='" . $role_id . "' " . ($role_id == $thisUserRole ? "selected" : "") . ">" . $role . "</option>";
+                            foreach ($roles as $role) {
+                                echo "<option value='" . $role["role_id"] . "' " . ($role["role_id"] == $thisUserRole ? "selected" : "") . ">" . $role["role_name"] . "</option>";
                             }
                             ?>
                         </select>
@@ -84,7 +84,9 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
             lengthMenu: [
                 [10, 25, 50, 100, -1],
                 [10, 25, 50, 100, "All"]
-            ]
+            ],
+            paging: false,
+            info: false
         });
         $('.roleSelect').select2();
         $('.roleSelect').change(function() {
@@ -120,8 +122,176 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
 
 
 } else if ($tab == "roles") {
-    foreach ($module->getAllRights() as $key => $right) {
-        echo "<p>" . $module->getDisplayTextForRight($right, $key) . "</p>";
-    }
-    $module->renderRoleEditTable([], false, "Test Role");
+    // foreach ($module->getAllRights() as $key => $right) {
+    //     echo "<p>" . $module->getDisplayTextForRight($right, $key) . "</p>";
+    // }
+    // $module->renderRoleEditTable([], false, "Test Role");
+    $roles = $module->getAllSystemRoles();
+
+?>
+    <table id="roleTable" style="width: 100%">
+        <thead>
+            <tr>
+                <th>Role</th>
+                <th>blah</th>
+                <th>blah</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php foreach ($roles as $role) { ?>
+                <tr data-roleId="<?= \REDCap::escapeHtml($role["role_id"]) ?>">
+                    <td><a click=""><?= \REDCap::escapeHtml($role["name"]) ?></a></td>
+                </tr>
+            <?php } ?>
+        </tbody>
+    </table>
+    <button id="addRoleButton" onclick="addNewRole();">Add New Role</button>
+    <div id="edit_role_popup"></div>
+
+    <script>
+        function openRoleEditor(url, buttons) {
+            $.get(url)
+                .done(function(response) {
+                    console.log(response);
+                    $("#edit_role_popup").html(response);
+                    const title = $('#dialog_title').html();
+                    $('#edit_role_popup').dialog({
+                        bgiframe: true,
+                        modal: true,
+                        width: 1250,
+                        title: title,
+                        open: function() {
+                            $('.ui-dialog-buttonpane').find('button:last').css({
+                                'font-weight': 'bold',
+                                'color': '#222'
+                            }).focus();
+                            if ($('.ui-dialog-buttonpane button').length > 2) {
+                                if ($('.ui-dialog-buttonpane button').length == 3) {
+                                    // Stylize the delete button
+                                    $('.ui-dialog-buttonpane').find('button:eq(0)').css({
+                                        'color': '#C00000',
+                                        'font-size': '11px',
+                                        'margin': '9px 0 0 40px'
+                                    });
+                                } else {
+                                    // Stylize the delete button AND copy button
+                                    $('.ui-dialog-buttonpane').find('button:eq(0)').css({
+                                        'color': '#C00000',
+                                        'font-size': '11px',
+                                        'margin': '9px 0 0 5px'
+                                    });
+                                    $('.ui-dialog-buttonpane').find('button:eq(1)').css({
+                                        'color': '#000066',
+                                        'font-size': '11px',
+                                        'margin': '9px 0 0 40px'
+                                    });
+                                }
+                            }
+                            fitDialog(this);
+                        },
+                        buttons: buttons,
+                        close: function() {
+                            console.log('Close');
+                        }
+                    });
+                    $('input[name="role_name_edit"]').blur(function() {
+                        $(this).val($(this).val().trim());
+                        if ($(this).val() == '') {
+                            simpleDialog('<?= $lang['rights_358'] ?>', '<?= $lang['alerts_24'] ?>', null, null, function() {
+                                $('input[name=role_name_edit]').focus();
+                            }, 'Close');
+                        }
+                    });
+                })
+                .fail(function() {
+                    color = "#ff3300";
+                    console.log("ERROR")
+                })
+                .always(function() {
+                    console.log("COMPLETE");
+                });
+        }
+
+        function editRole() {
+            const roleId = "R1";
+            const url = "<?= $module->getUrl("editSystemRole.php?newRole=false") ?>";
+            console.log(url);
+            const buttons = [{
+                // Delete Role
+                text: "<?= $lang["rights_190"] ?>",
+                click: function() {
+                    console.log('DELETE ROLE');
+                }
+            }, {
+                // Copy Role
+                text: "<?= $lang["rights_211"] ?>",
+                click: function() {
+                    console.log("COPY ROLE");
+                }
+            }, {
+                // Cancel
+                text: "<?= $lang["global_53"] ?>",
+                click: function() {
+                    $('#edit_role_popup').html('');
+                    $(this).dialog('destroy');
+                }
+            }, {
+                // Save Changes
+                text: "<?= $lang["report_builder_28"] ?>",
+                click: function() {
+                    $('input[name="role_name_edit"]').blur();
+                    if ($('input[name="role_name_edit"]').val() != '') {
+                        const data = $("#SUR_Role_Setting").serializeObject();
+                        $.post(url, data, function(response) {
+                            console.log(response);
+                        });
+                    }
+                }
+            }];
+            openRoleEditor(url, buttons);
+        }
+
+        function addNewRole() {
+            const url = "<?= $module->getUrl("editSystemRole.php?newRole=true") ?>";
+            const buttons = [{
+                // Cancel
+                text: "<?= $lang["global_53"] ?>",
+                click: function() {
+                    $('#edit_role_popup').html('');
+                    $(this).dialog('destroy');
+                }
+            }, {
+                // Save Changes
+                text: "<?= $lang["report_builder_28"] ?>",
+                click: function() {
+                    $('input[name="role_name_edit"]').blur();
+                    if ($('input[name="role_name_edit"]').val() != '') {
+                        const data = $("#SUR_Role_Setting").serializeObject();
+                        $.post(url, data)
+                            .done(function(response) {
+                                console.log(response);
+                            })
+                            .fail(function(error) {
+                                console.error(error.responseText);
+                            })
+                            .always(function() {
+                                console.log('always');
+                            })
+                    }
+                }
+            }];
+            openRoleEditor(url, buttons);
+        }
+
+        $(document).ready(function() {
+            $('#roleTable').DataTable({
+                searching: false,
+                info: false,
+                paging: false
+            });
+
+
+        });
+    </script>
+<?php
 }
