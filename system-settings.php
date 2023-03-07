@@ -127,20 +127,27 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
     // }
     // $module->renderRoleEditTable([], false, "Test Role");
     $roles = $module->getAllSystemRoles();
+    $displayTextForUserRights = $module->getDisplayTextForRights();
 
 ?>
-    <table id="roleTable" style="width: 100%">
+    <table id="roleTable" class="hover cell-border" style="width: 100%">
         <thead>
-            <tr>
+            <tr style="vertical-align: bottom; text-align: center;">
                 <th>Role</th>
-                <th>blah</th>
-                <th>blah</th>
+                <?php foreach ($displayTextForUserRights as $text) {
+                    echo "<th>" . \REDCap::escapeHtml($text) . "</th>";
+                } ?>
             </tr>
         </thead>
         <tbody>
-            <?php foreach ($roles as $role) { ?>
+            <?php foreach ($roles as $role) {
+                $theseRights = json_decode($role["permissions"], true);
+            ?>
                 <tr data-roleId="<?= \REDCap::escapeHtml($role["role_id"]) ?>">
-                    <td><a click=""><?= \REDCap::escapeHtml($role["name"]) ?></a></td>
+                    <td><a class="SUR_roleLink" onclick="editRole('<?= $role['role_id'] ?>', '<?= $role['role_name'] ?>');"><?= \REDCap::escapeHtml($role["role_name"]) ?></a></td>
+                    <?php foreach ($displayTextForUserRights as $key => $text) {
+                        echo "<td>" . $theseRights[$key] . "</td>";
+                    } ?>
                 </tr>
             <?php } ?>
         </tbody>
@@ -149,8 +156,11 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
     <div id="edit_role_popup"></div>
 
     <script>
-        function openRoleEditor(url, buttons) {
-            $.get(url)
+        function openRoleEditor(url, buttons, role_id = "", role_name = "") {
+            $.get(url, {
+                    role_id: role_id,
+                    role_name: role_name
+                })
                 .done(function(response) {
                     console.log(response);
                     $("#edit_role_popup").html(response);
@@ -212,15 +222,45 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                 });
         }
 
-        function editRole() {
-            const roleId = "R1";
+        function editRole(role_id, role_name) {
             const url = "<?= $module->getUrl("editSystemRole.php?newRole=false") ?>";
-            console.log(url);
             const buttons = [{
                 // Delete Role
                 text: "<?= $lang["rights_190"] ?>",
                 click: function() {
-                    console.log('DELETE ROLE');
+                    Swal.fire({
+                        title: 'Are you sure you want to delete this role?',
+                        text: "You won't be able to revert this!",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Yes, delete it!'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            Swal.showLoading();
+                            $.post("<?= $module->getUrl("deleteSystemRole.php") ?>", {
+                                    role_id: role_id
+                                })
+                                .done(function(response) {
+                                    Swal.fire(
+                                            'The role was deleted',
+                                            '',
+                                            'success'
+                                        )
+                                        .then(function() {
+                                            window.location.reload();
+                                            $('#edit_role_popup').html('');
+                                            $('#edit_role_popup').dialog('destroy');
+                                        });
+                                })
+                                .fail(function(error) {
+                                    console.error(error.responseText);
+                                    Swal.fire('Error', error.responseText, 'error');
+                                })
+                                .always(function() {});
+                        }
+                    });
                 }
             }, {
                 // Copy Role
@@ -242,13 +282,23 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                     $('input[name="role_name_edit"]').blur();
                     if ($('input[name="role_name_edit"]').val() != '') {
                         const data = $("#SUR_Role_Setting").serializeObject();
-                        $.post(url, data, function(response) {
-                            console.log(response);
-                        });
+                        data.role_id = role_id;
+                        $.post(url, data)
+                            .done(function(response) {
+                                Swal.fire({
+                                    icon: "success",
+                                    title: `Role "${role_name}" Successfully Saved`
+                                }).then(function() {
+                                    window.location.reload();
+                                })
+                            })
+                            .fail(function(error) {
+                                console.error(error.responseText);
+                            });
                     }
                 }
             }];
-            openRoleEditor(url, buttons);
+            openRoleEditor(url, buttons, role_id, role_name);
         }
 
         function addNewRole() {
@@ -269,7 +319,12 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                         const data = $("#SUR_Role_Setting").serializeObject();
                         $.post(url, data)
                             .done(function(response) {
-                                console.log(response);
+                                Swal.fire({
+                                    icon: "success",
+                                    title: `Role Successfully Created`
+                                }).then(function() {
+                                    window.location.reload();
+                                })
                             })
                             .fail(function(error) {
                                 console.error(error.responseText);
@@ -287,11 +342,16 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
             $('#roleTable').DataTable({
                 searching: false,
                 info: false,
-                paging: false
+                paging: false,
+                rowReorder: true,
+                ordering: false,
+                fixedHeader: true,
+                fixedColumns: true
             });
 
 
         });
+        window.scroll(0, 0);
     </script>
 <?php
 }

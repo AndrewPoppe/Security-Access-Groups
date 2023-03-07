@@ -90,3 +90,13 @@ select.roleSelect {
 #SUR_Role_Setting {
     font-family: "Atkinson Hyperlegible" !important;
 }
+
+a.SUR_roleLink {
+    font-weight: bold;
+    color: #C00000;
+}
+
+a.SUR_roleLink:hover {
+    text-decoration: underline;
+    cursor: pointer;
+}

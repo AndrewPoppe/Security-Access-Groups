@@ -428,6 +428,18 @@ class SystemUserRights extends AbstractExternalModule
         return $role;
     }
 
+    function convertPermissions(string $permissions)
+    {
+        $rights = json_decode($permissions, true);
+        foreach ($rights as $key => $value) {
+            if ($value == "on") {
+                $rights[$key] = 1;
+            }
+        }
+        $this->log('converted rights', ['rights' => json_encode($rights)]);
+        return json_encode($rights);
+    }
+
     /**
      * @param string $role_id
      * @param string $role_name
@@ -437,44 +449,66 @@ class SystemUserRights extends AbstractExternalModule
      */
     function saveSystemRole(string $role_id, string $role_name, string $permissions)
     {
-        return $this->log("role", [
+        $permissions_converted = $this->convertPermissions($permissions);
+
+        $this->log("role", [
             "role_id" => $role_id,
             "role_name" => $role_name,
-            "permissions" => $permissions
+            "permissions" => $permissions_converted
         ]);
+    }
+
+    function deleteSystemRole($role_id)
+    {
+        return $this->removeLogs("message = 'role' AND role_id = ? AND project_id is null", [$role_id]);
     }
 
     function getAllSystemRoles()
     {
-        $sql = "SELECT role_id, role_name, permissions WHERE message = 'role'";
+        $sql = "SELECT MAX(log_id) AS 'log_id' WHERE message = 'role' GROUP BY role_id";
         $result = $this->queryLogs($sql, []);
         $roles = [];
         while ($row = $result->fetch_assoc()) {
-            $roles[] = $row;
+            $logId = $row["log_id"];
+            $sql2 = "SELECT role_id, role_name, permissions WHERE log_id = ?";
+            $result2 = $this->queryLogs($sql2, [$logId]);
+            $roles[] = $result2->fetch_assoc();
         }
         return $roles;
+    }
+
+    function getSystemRoleRightsById($role_id)
+    {
+        $sql = "SELECT role_id, role_name, permissions WHERE message = 'role' AND role_id = ? ORDER BY log_id DESC LIMIT 1";
+        $result = $this->queryLogs($sql, [$role_id]);
+        return $result->fetch_assoc();
+    }
+
+    function systemRoleExists($role_id)
+    {
+        foreach ($this->getAllSystemRoles() as $role) {
+            if ($role_id == $role["role_id"]) {
+                return true;
+            }
+        }
+        return false;
     }
 
     function generateNewRoleId()
     {
         $new_role_id = uniqid("role_", true);
-        $role_id_exists = false;
-        foreach ($this->getAllSystemRoles() as $role) {
-            if ($new_role_id == $role["role_id"]) {
-                $role_id_exists = true;
-            }
-        }
-        if ($role_id_exists) {
+
+        if ($this->systemRoleExists($new_role_id)) {
             return $this->generateNewRoleId();
         } else {
             return $new_role_id;
         }
     }
 
-    function getDisplayTextForRight(string $right, string $key = "")
+    function getDisplayTextForRights()
     {
         global $lang;
-        $rights = [
+        return [
             'design' => $lang['rights_135'],
             'user_rights' => $lang['app_05'],
             'data_access_groups' => $lang['global_22'],
@@ -504,6 +538,11 @@ class SystemUserRights extends AbstractExternalModule
             'record_rename' => $lang['rights_100'],
             'record_delete' => $lang['rights_101']
         ];
+    }
+
+    function getDisplayTextForRight(string $right, string $key = "")
+    {
+        $rights = $this->getDisplayTextForRights();
         return $rights[$right] ?? $rights[$key] ?? "<<< " . $right . " >>>";
     }
 
@@ -901,7 +940,7 @@ class SystemUserRights extends AbstractExternalModule
                                                 <i class="fas fa-tablet-alt"></i>&nbsp;&nbsp;<?= $lang['global_118'] ?>
                                             </td>
                                             <td valign='top' style='padding-top:2px;'>
-                                                <input type='checkbox' name='mobile_app' style='float:left;'>
+                                                <input type='checkbox' name='mobile_app' style='float:left;' <?= $rights["mobile_app"] == '1' ? "checked" : "" ?>>
                                                 <div style='width: 100px;padding: 1px 0 0 8px;float:left;line-height:12px;font-size:11px;color:#999;'>
                                                     <?= $lang['rights_307'] ?>
                                                 </div>
