@@ -225,79 +225,115 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
         function editRole(role_id, role_name) {
             const url = "<?= $module->getUrl("editSystemRole.php?newRole=false") ?>";
             const buttons = [{
-                // Delete Role
-                text: "<?= $lang["rights_190"] ?>",
-                click: function() {
-                    Swal.fire({
-                        title: 'Are you sure you want to delete this role?',
-                        text: "You won't be able to revert this!",
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonColor: '#3085d6',
-                        cancelButtonColor: '#d33',
-                        confirmButtonText: 'Yes, delete it!'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            Swal.showLoading();
-                            $.post("<?= $module->getUrl("deleteSystemRole.php") ?>", {
-                                    role_id: role_id
-                                })
-                                .done(function(response) {
-                                    Swal.fire(
-                                            'The role was deleted',
-                                            '',
-                                            'success'
-                                        )
-                                        .then(function() {
-                                            window.location.reload();
-                                            $('#edit_role_popup').html('');
-                                            $('#edit_role_popup').dialog('destroy');
+                    // Delete Role
+                    text: "<?= $lang["rights_190"] ?>",
+                    click: function() {
+                        Swal.fire({
+                            title: 'Are you sure you want to delete this role?',
+                            text: "You won't be able to revert this!",
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonColor: '#3085d6',
+                            cancelButtonColor: '#d33',
+                            confirmButtonText: 'Yes, delete it!'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                Swal.showLoading();
+                                $.post("<?= $module->getUrl("deleteSystemRole.php") ?>", {
+                                        role_id: role_id
+                                    })
+                                    .done(function(response) {
+                                        Swal.fire(
+                                                'The role was deleted',
+                                                '',
+                                                'success'
+                                            )
+                                            .then(function() {
+                                                window.location.reload();
+                                                $('#edit_role_popup').html('');
+                                                $('#edit_role_popup').dialog('destroy');
+                                            });
+                                    })
+                                    .fail(function(error) {
+                                        console.error(error.responseText);
+                                        Swal.fire('Error', error.responseText, 'error');
+                                    })
+                                    .always(function() {});
+                            }
+                        });
+                    }
+                }, {
+                    // Copy Role
+                    text: "<?= $lang["rights_211"] ?>",
+                    click: function() {
+                        console.log("COPY ROLE");
+                        const data = $("#SUR_Role_Setting").serializeObject();
+                        $('#edit_role_popup').html('');
+                        $(this).dialog('destroy');
+                        Swal.fire({
+                                title: 'What would you like the new role to be called?',
+                                input: 'text',
+                                inputValue: `${data["role_name_edit"]} Copy`,
+                                showCancelButton: true,
+                                confirmButtonText: 'Copy Role'
+                            })
+                            .then(function(result) {
+                                if (result.isConfirmed) {
+                                    const role_name = result.value;
+                                    data.role_name_edit = role_name;
+                                    $.post('<?= $module->getUrl("editSystemRole.php?newRole=true") ?>', data)
+                                        .done(function(result) {
+                                            Swal.fire(
+                                                    'The role was copied',
+                                                    '',
+                                                    'success'
+                                                )
+                                                .then(function() {
+                                                    window.location.reload();
+                                                });
+                                        })
+                                        .fail(function(result) {
+                                            console.error(result.responseText);
+                                        })
+                                        .always(function() {
+
                                         });
+                                }
+                            })
+                    }
+                },
+                {
+                    // Cancel
+                    text: "<?= $lang["global_53"] ?>",
+                    click: function() {
+                        $('#edit_role_popup').html('');
+                        $(this).dialog('destroy');
+                    }
+                },
+                {
+                    // Save Changes
+                    text: "<?= $lang["report_builder_28"] ?>",
+                    click: function() {
+                        $('input[name="role_name_edit"]').blur();
+                        if ($('input[name="role_name_edit"]').val() != '') {
+                            const data = $("#SUR_Role_Setting").serializeObject();
+                            data.role_id = role_id;
+                            $.post(url, data)
+                                .done(function(response) {
+                                    Swal.fire({
+                                        icon: "success",
+                                        title: `Role "${role_name}" Successfully Saved`
+                                    }).then(function() {
+                                        window.location.reload();
+                                    })
                                 })
                                 .fail(function(error) {
                                     console.error(error.responseText);
-                                    Swal.fire('Error', error.responseText, 'error');
-                                })
-                                .always(function() {});
+                                });
                         }
-                    });
-                }
-            }, {
-                // Copy Role
-                text: "<?= $lang["rights_211"] ?>",
-                click: function() {
-                    console.log("COPY ROLE");
-                }
-            }, {
-                // Cancel
-                text: "<?= $lang["global_53"] ?>",
-                click: function() {
-                    $('#edit_role_popup').html('');
-                    $(this).dialog('destroy');
-                }
-            }, {
-                // Save Changes
-                text: "<?= $lang["report_builder_28"] ?>",
-                click: function() {
-                    $('input[name="role_name_edit"]').blur();
-                    if ($('input[name="role_name_edit"]').val() != '') {
-                        const data = $("#SUR_Role_Setting").serializeObject();
-                        data.role_id = role_id;
-                        $.post(url, data)
-                            .done(function(response) {
-                                Swal.fire({
-                                    icon: "success",
-                                    title: `Role "${role_name}" Successfully Saved`
-                                }).then(function() {
-                                    window.location.reload();
-                                })
-                            })
-                            .fail(function(error) {
-                                console.error(error.responseText);
-                            });
                     }
                 }
-            }];
+            ];
             openRoleEditor(url, buttons, role_id, role_name);
         }
 

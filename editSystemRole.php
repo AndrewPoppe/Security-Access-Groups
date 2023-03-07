@@ -12,7 +12,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $data = filter_input_array(INPUT_POST, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
     $role_id = $data["role_id"] ?? $module->generateNewRoleId();
     $role_name = $data["role_name_edit"];
-    echo $module->saveSystemRole($role_id, $role_name, json_encode($data));
+    $module->saveSystemRole($role_id, $role_name, json_encode($data));
+    echo $role_id;
     exit;
 }
 
