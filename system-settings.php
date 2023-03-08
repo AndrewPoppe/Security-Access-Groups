@@ -163,7 +163,7 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                     <?php
                     $shieldcheck = '<i class="fa-solid fa-shield-check fa-xl" style="color: green;"></i>';
                     $check = '<i class="fa-solid fa-check fa-xl" style="color: green;"></i>';
-                    $x = '<i class="fa-solid fa-xmark" style="color: #D00000;"></i>';
+                    $x = '<i class="fa-regular fa-xmark" style="color: #D00000;"></i>';
                     foreach ($displayTextForUserRights as $key => $text) {
                         if ($key === "randomization") {
                             $random_setup = $theseRights["random_setup"] ? "Setup" : "";
