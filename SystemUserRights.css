@@ -87,16 +87,39 @@ select.roleSelect {
     width: 100%;
 }
 
-#SUR_Role_Setting {
+form#SUR_Role_Setting {
     font-family: "Atkinson Hyperlegible" !important;
+}
+
+form#SUR_Role_Setting div.form-row {
+    margin: 5px -5px;
+}
+
+form#SUR_Role_Setting hr {
+    margin: 0.5rem 0;
+}
+
+form#SUR_Role_Setting .section-header {
+    color: #A00000;
+    font-size: 11px;
+}
+
+form#SUR_Role_Setting .extra-text {
+    margin-left: 1.5rem;
+    font-size: 11px;
+    color: #777;
 }
 
 a.SUR_roleLink {
     font-weight: bold;
-    color: #C00000;
+    color: #0000D0;
 }
 
 a.SUR_roleLink:hover {
     text-decoration: underline;
     cursor: pointer;
+}
+
+div.modal-xl {
+    max-width: 1250px;
 }
