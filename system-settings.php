@@ -128,6 +128,7 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
     // $module->renderRoleEditTable([], false, "Test Role");
     $roles = $module->getAllSystemRoles();
     $displayTextForUserRights = $module->getDisplayTextForRights();
+    var_dump($displayTextForUserRights);
 
 ?>
     <table id="roleTable" class="hover cell-border" style="width: 100%">
@@ -142,11 +143,27 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
         <tbody>
             <?php foreach ($roles as $role) {
                 $theseRights = json_decode($role["permissions"], true);
+                var_dump($theseRights);
             ?>
                 <tr data-roleId="<?= \REDCap::escapeHtml($role["role_id"]) ?>">
                     <td><a class="SUR_roleLink" onclick="editRole('<?= $role['role_id'] ?>', '<?= $role['role_name'] ?>');"><?= \REDCap::escapeHtml($role["role_name"]) ?></a></td>
                     <?php foreach ($displayTextForUserRights as $key => $text) {
-                        echo "<td>" . $theseRights[$key] . "</td>";
+                        if ($key === "randomization") {
+                            $random_setup = $theseRights["random_setup"] ? "Setup" : "";
+                            $random_dashboard = $theseRights["random_dashboard"] ? "Dashboard" : "";
+                            $random_perform = $theseRights["random_perform"] ? "Randomize" : "";
+                            $value = implode("<br>", array_filter([$random_setup, $random_dashboard, $random_perform]));
+                        } else if ($key === "api") {
+                            $api_export = $theseRights["api_export"] ? "Export" : "";
+                            $api_import = $theseRights["api_import"] ? "Import" : "";
+                            $value = implode("<br>", array_filter([$api_export, $api_import]));
+                        } else {
+                            $value = $theseRights[$key];
+                        }
+                        if (is_null($value)) {
+                            $value = 'OK';
+                        }
+                        echo "<td>" . $value . "</td>";
                     } ?>
                 </tr>
             <?php } ?>
