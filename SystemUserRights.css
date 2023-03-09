@@ -157,3 +157,7 @@ table#roleTable.table-striped tbody tr:nth-of-type(2n+1):hover {
 table#roleTable.table-striped tbody tr:nth-of-type(2n):hover {
     background-color: #d9ebf5;
 }
+
+.form-check-label {
+    margin-top: .3rem !important;
+}

@@ -230,12 +230,11 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
             const deleteRoleButtonCallback = function() {
                 Swal.fire({
                     title: 'Are you sure you want to delete this role?',
-                    text: "You won't be able to revert this!",
                     icon: 'warning',
                     showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Yes, delete it!'
+                    confirmButtonColor: '#dc3545',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Delete Role'
                 }).then((result) => {
                     if (result.isConfirmed) {
                         Swal.showLoading();
@@ -267,6 +266,8 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                         input: 'text',
                         inputValue: `${data["role_name_edit"]} Copy`,
                         showCancelButton: true,
+                        confirmButtonColor: '#17a2b8',
+                        cancelButtonColor: '#6c757d',
                         confirmButtonText: 'Copy Role'
                     })
                     .then(function(result) {

@@ -611,7 +611,7 @@ class SystemUserRights extends AbstractExternalModule
         </div> -->
                     <form id="SUR_Role_Setting">
                         <div class="form-row">
-                            <div class="col-5" style='width:475px;'>
+                            <div class="col" style='width:475px;'>
                                 <div class='card' style='border-color:#00000060;'>
                                     <div class='card-header font-weight-bold fs14' style='background-color:#00000017;'>
                                         <?= $lang['rights_431'] ?>
@@ -1060,27 +1060,49 @@ class SystemUserRights extends AbstractExternalModule
                                         <?= $lang['data_export_tool_291'] ?>
                                     </div>
                                     <div class='card-body p-0' style='background-color:#00000007;'>
-                                        <div class="form-row">
+                                        <div class="form-row" style="margin: 10px 20px 10px 0;">
                                             <div class="col extra-text" colspan='3'>
                                                 <?= $lang['rights_429'] ?>
                                             </div>
                                         </div>
-                                        <div class="form-row">
-                                            <div class="col" class='fs13 pb-2 text-center font-weight-bold' style='border-right:1px solid #FFA3A3;color:#000;'><?= $lang['rights_373'] ?></div>
-                                            <div class="col" class='fs13 pb-2 text-center font-weight-bold' style='color:#B00000;'><?= $lang['rights_428'] ?></div>
-                                        </div>
-                                        <div class="form-row">
+                                        <div class="form-row" style="margin: 20px;">
                                             <div class="col">
-                                                <div><?= $lang['rights_47'] ?><br><?= $lang['rights_395'] ?></div>
-                                                <div><?= $lang['rights_61'] ?></div>
-                                                <div><?= $lang['rights_138'] ?></div>
-                                                <div><?= $lang['rights_137'] ?></div>
+                                                <div class='fs13 pb-2 font-weight-bold'><?= $lang['rights_373'] ?></div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="dataViewing" id="dataViewingNoAccess" value="0" <?= $rights["dataViewing"] == '' ? "checked" : "" ?>>
+                                                    <label class="form-check-label" for="dataViewingNoAccess"><?= $lang['rights_47'] ?><br><?= $lang['rights_395'] ?></label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="dataViewing" id="dataViewingReadOnly" value="1" <?= $rights["dataViewing"] == '1' ? "checked" : "" ?>>
+                                                    <label class="form-check-label" for="dataViewingReadOnly"><?= $lang['rights_61'] ?></label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="dataViewing" id="dataViewingViewAndEdit" value="2" <?= $rights["dataViewing"] == '2' ? "checked" : "" ?>>
+                                                    <label class="form-check-label" for="dataViewingViewAndEdit"><?= $lang['rights_138'] ?></label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="dataViewing" id="dataViewingViewAndEditSurveys" value="3" <?= $rights["dataViewing"] == '3' ? "checked" : "" ?>>
+                                                    <label class="form-check-label" for="dataViewingViewAndEditSurveys"><?= $lang['rights_137'] ?></label>
+                                                </div>
                                             </div>
                                             <div class="col" style='color:#B00000;'>
-                                                <div><?= $lang['rights_47'] ?></div>
-                                                <div><?= $lang['rights_48'] ?>*</div>
-                                                <div><?= $lang['data_export_tool_290'] ?></div>
-                                                <div><?= $lang['rights_49'] ?></div>
+                                                <div class='fs13 pb-2 font-weight-bold'><?= $lang['rights_428'] ?></div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="dataExport" id="dataExportNoAccess" value="0" <?= $rights["dataExport"] == '' ? "checked" : "" ?>>
+                                                    <label class="form-check-label" for="dataExportNoAccess"><?= $lang['rights_47'] ?></label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="dataExport" id="dataExportDeidentified" value="1" <?= $rights["dataExport"] == '1' ? "checked" : "" ?>>
+                                                    <label class="form-check-label" for="dataExportDeidentified"><?= $lang['rights_48'] ?></label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="dataExport" id="dataExportIdentifiers" value="2" <?= $rights["dataExport"] == '2' ? "checked" : "" ?>>
+                                                    <label class="form-check-label" for="dataExportIdentifiers"><?= $lang['data_export_tool_290'] ?></label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="dataExport" id="dataExportFullDataset" value="3" <?= $rights["dataExport"] == '3' ? "checked" : "" ?>>
+                                                    <label class="form-check-label" for="dataExportFullDataset"><?= $lang['rights_49'] ?></label>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
