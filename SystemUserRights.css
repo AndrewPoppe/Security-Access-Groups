@@ -79,6 +79,23 @@ table#SUR-System-Table tr.odd {
     background-color: white !important;
 }
 
+table.roleTable tr.odd,
+table.roleTable tr.odd>td.dtfc-fixed-left {
+    background-color: white !important;
+}
+
+table.roleTable tr.even,
+table.roleTable tr.even .dtfc-fixed-left {
+    background-color: #efefef !important;
+}
+
+table.roleTable tr.odd td.highlight,
+table.roleTable tr.odd>td.dtfc-fixed-left.highlight,
+table.roleTable tr.even td.highlight,
+table.roleTable tr.even>td.dtfc-fixed-left.highlight {
+    background-color: #d9ebf5 !important;
+}
+
 select.roleSelect {
     width: 100%;
 }
@@ -124,40 +141,19 @@ div#pagecontainer {
     max-width: 1600px;
 }
 
-table#roleTable {
-    border-collapse: separate;
-    border-spacing: 0;
-}
-
-table#roleTable td {
-    vertical-align: middle !important;
-    text-align: center !important;
-}
-
-table#roleTable th:first-child,
-table#roleTable td:first-child {
-    position: sticky;
-    left: 0px;
-    background-color: inherit;
-}
-
-table#roleTable.table-striped tbody tr:nth-of-type(2n+1) {
-    background-color: #efefef;
-}
-
-table#roleTable.table-striped tbody tr:nth-of-type(2n),
-table#roleTable thead tr {
-    background-color: white;
-}
-
-table#roleTable.table-striped tbody tr:nth-of-type(2n+1):hover {
-    background-color: #d9ebf5;
-}
-
-table#roleTable.table-striped tbody tr:nth-of-type(2n):hover {
-    background-color: #d9ebf5;
-}
-
 .form-check-label {
     margin-top: .3rem !important;
+}
+
+div#roleTableWrapper {
+    border: 1px solid rgba(0, 0, 0, 0.30);
+}
+
+table.roleTable thead th {
+    border-right: solid 1px rgba(0, 0, 0, 0.15);
+}
+
+
+table.roleTable thead .dtfc-fixed-left {
+    border-left: 1px solid rgba(0, 0, 0, 0.15);
 }

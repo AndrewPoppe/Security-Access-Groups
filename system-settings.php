@@ -7,8 +7,8 @@ require_once "SUR_User.php";
 $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "userlist";
 
 ?>
-<link href="https://cdn.datatables.net/v/dt/dt-1.13.3/fc-4.2.1/fh-3.3.1/datatables.min.css" rel="stylesheet" />
-<script src="https://cdn.datatables.net/v/dt/dt-1.13.3/fc-4.2.1/fh-3.3.1/datatables.min.js"></script>
+<link href="https://cdn.datatables.net/v/dt/dt-1.13.3/b-2.3.5/b-html5-2.3.5/fc-4.2.1/datatables.min.css" rel="stylesheet" />
+<script src="https://cdn.datatables.net/v/dt/dt-1.13.3/b-2.3.5/b-html5-2.3.5/fc-4.2.1/datatables.min.js"></script>
 <script src="https://kit.fontawesome.com/8dcbb2bf31.js" crossorigin="anonymous"></script>
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
@@ -149,13 +149,14 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
     <!-- Role Table -->
     <!-- <div id="roleTableWrapper" style="display: none; width: calc(min(100vw,1600px) - 270px);"> -->
     <div id="roleTableWrapper" style="display: none; width: 100%;">
-        <!-- <table id="roleTable" class="hover cell-border dt-body-center" style="width: 100%;"> -->
-        <table id="roleTable" class="table table-striped table-hover table-bordered table-responsive align-middle" style="width: 100%;">
+        <table id="roleTable" class="roleTable cell-border" style="width: 100%">
+            <!-- <table id="roleTable" class="table table-striped table-hover table-bordered table-responsive align-middle" style="width: 100%;"> -->
             <thead>
                 <tr style="vertical-align: bottom; text-align: center;">
                     <th>Role</th>
-                    <?php foreach ($displayTextForUserRights as $text) {
-                        echo "<th>" . \REDCap::escapeHtml($text) . "</th>";
+                    <th>Role ID</th>
+                    <?php foreach ($displayTextForUserRights as  $text) {
+                        echo "<th class='dt-head-center'>" . \REDCap::escapeHtml($text) . "</th>";
                     } ?>
                 </tr>
             </thead>
@@ -165,6 +166,7 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                 ?>
                     <tr data-roleId="<?= \REDCap::escapeHtml($role["role_id"]) ?>">
                         <td><a class="SUR_roleLink" onclick="editRole('<?= $role['role_id'] ?>', '<?= $role['role_name'] ?>');"><?= \REDCap::escapeHtml($role["role_name"]) ?></a></td>
+                        <td><?= \REDCap::escapeHtml($role["role_id"]) ?></td>
                         <?php
                         $shieldcheck = '<i class="fa-solid fa-shield-check fa-xl" style="color: green;"></i>';
                         $check = '<i class="fa-solid fa-check fa-xl" style="color: green;"></i>';
@@ -209,6 +211,36 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                                         $value = $x;
                                         break;
                                 }
+                            } else if ($key === 'data_entry') {
+                                switch ($theseRights['dataViewing']) {
+                                    case '3':
+                                        $value = "View & Edit Forms and Survey Responses";
+                                        break;
+                                    case '2':
+                                        $value = "View & Edit Forms";
+                                        break;
+                                    case '1':
+                                        $value = "Read Only";
+                                        break;
+                                    default:
+                                        $value = $x;
+                                        break;
+                                }
+                            } else if ($key === 'data_export_tool') {
+                                switch ($theseRights['dataExport']) {
+                                    case '3':
+                                        $value = "Full Data Set";
+                                        break;
+                                    case '2':
+                                        $value = "Remove Identifiers";
+                                        break;
+                                    case '1':
+                                        $value = "De-Identified";
+                                        break;
+                                    default:
+                                        $value = $x;
+                                        break;
+                                }
                             } else {
                                 $value = $theseRights[$key] == "1" ? $check : $x;
                             }
@@ -216,15 +248,16 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                                 $value = 'OK';
                             }
                             if ($value == "") $value = $x;
-                            echo "<td class='dt-body-center'>" . $value . "</td>";
+                            echo "<td data-value='" . \REDCap::escapeHtml($theseRights[$key]) . "' class='dt-body-center'>" . $value . "</td>";
                         } ?>
                     </tr>
                 <?php } ?>
             </tbody>
         </table>
     </div>
-    <button class="btn btn-success btn-sm" id="addRoleButton" onclick="addNewRole();">Add New Role</button>
-
+    <div style="margin-top:1rem;" id="buttonsContainer">
+        <button class="btn btn-success btn-sm" id="addRoleButton" onclick="addNewRole();">Add New Role</button>
+    </div>
     <script>
         function openRoleEditor(url, role_id = "", role_name = "") {
             const deleteRoleButtonCallback = function() {
@@ -373,21 +406,93 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
         }
 
         $(document).ready(function() {
-            // $('#roleTable').DataTable({
-            //     searching: false,
-            //     info: false,
-            //     paging: false,
-            //     rowReorder: true,
-            //     ordering: false,
-            //     fixedHeader: false,
-            //     fixedColumns: true,
-            //     scrollX: true,
-            //     initComplete: function() {
-            //         $('#roleTableWrapper').show();
-            //     }
-            // });
+            const buttonCommon = {
+                exportOptions: {
+                    format: {
+                        body: function(html, row, col, node) {
+                            if (col === 0) {
+                                return $(html).text();
+                            } else if (col === 1) {
+                                return html;
+                            } else {
+                                const value = $(node).data('value');
+                                return value == '' ? 0 : value;
+                            }
+                        }
+                    }
+                }
+            };
+            const table = $('#roleTable').DataTable({
+                buttons: [
+                    $.extend(true, {}, buttonCommon, {
+                        extend: 'csvHtml5',
+                        className: 'btn btn-sm btn-secondary',
+                        text: 'Export Table'
+                    })
+                ],
+                searching: false,
+                info: false,
+                paging: false,
+                rowReorder: true,
+                ordering: false,
+                fixedHeader: false,
+                fixedColumns: true,
+                scrollX: true,
+                initComplete: function() {
+                    $('#roleTableWrapper').show();
+                },
+                dom: "tB",
+                columnDefs: [{
+                    targets: 1,
+                    visible: false
+                }, {
+                    targets: 0,
+                    data: function(row, type, val, meta) {
+                        if (type === 'set') {
+                            row.role_display = val;
+                            row.role_name = $(val).text();
+                        } else if (type === 'display') {
+                            return row.role_display;
+                        }
+                        return row.role_name;
+                    }
+                }]
+            });
 
-            $('#roleTableWrapper').show();
+            table
+                .buttons()
+                .container()
+                .appendTo('#buttonsContainer');
+            $(table.buttons().nodes()[0]).removeClass('dt-button').attr('style', 'margin-right: 5px;');
+
+            table.on('draw', function() {
+                $('.dataTable tbody tr').each((i, row) => {
+                    row.onmouseenter = hover;
+                    row.onmouseleave = dehover;
+                });
+            });
+            table.rows().every(function() {
+                const rowNode = this.node();
+                const rowIndex = this.index();
+                $(rowNode).attr('data-dt-row', rowIndex);
+            });
+            $('.dataTable tbody tr').each((i, row) => {
+                row.onmouseenter = hover;
+                row.onmouseleave = dehover;
+            });
+
+            function hover() {
+                const thisNode = $(this);
+                const rowIdx = thisNode.attr('data-dt-row');
+                $("tr[data-dt-row='" + rowIdx + "'] td").addClass("highlight"); // shade only the hovered row
+            }
+
+            function dehover() {
+                const thisNode = $(this);
+                const rowIdx = thisNode.attr('data-dt-row');
+                $("tr[data-dt-row='" + rowIdx + "'] td").removeClass("highlight"); // shade only the hovered row
+            }
+
         });
         window.scroll(0, 0);
     </script>
