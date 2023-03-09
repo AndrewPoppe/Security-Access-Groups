@@ -79,10 +79,6 @@ table#SUR-System-Table tr.odd {
     background-color: white !important;
 }
 
-table#roleTable tr.odd {
-    background-color: white !important;
-}
-
 select.roleSelect {
     width: 100%;
 }
@@ -122,4 +118,42 @@ a.SUR_roleLink:hover {
 
 div.modal-xl {
     max-width: 1250px;
+}
+
+div#pagecontainer {
+    max-width: 1600px;
+}
+
+table#roleTable {
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+table#roleTable td {
+    vertical-align: middle !important;
+    text-align: center !important;
+}
+
+table#roleTable th:first-child,
+table#roleTable td:first-child {
+    position: sticky;
+    left: 0px;
+    background-color: inherit;
+}
+
+table#roleTable.table-striped tbody tr:nth-of-type(2n+1) {
+    background-color: #efefef;
+}
+
+table#roleTable.table-striped tbody tr:nth-of-type(2n),
+table#roleTable thead tr {
+    background-color: white;
+}
+
+table#roleTable.table-striped tbody tr:nth-of-type(2n+1):hover {
+    background-color: #d9ebf5;
+}
+
+table#roleTable.table-striped tbody tr:nth-of-type(2n):hover {
+    background-color: #d9ebf5;
 }

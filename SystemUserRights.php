@@ -611,7 +611,7 @@ class SystemUserRights extends AbstractExternalModule
         </div> -->
                     <form id="SUR_Role_Setting">
                         <div class="form-row">
-                            <div class="col" style='width:475px;'>
+                            <div class="col-5" style='width:475px;'>
                                 <div class='card' style='border-color:#00000060;'>
                                     <div class='card-header font-weight-bold fs14' style='background-color:#00000017;'>
                                         <?= $lang['rights_431'] ?>
@@ -1054,36 +1054,33 @@ class SystemUserRights extends AbstractExternalModule
                                     </div>
                                 </div>
                             </div>
-                            <div class="col" style='width:700px;padding-left:15px;'>
+                            <div class="col" style="padding-left:10px;">
                                 <div class='card' style='border-color:#00000060;'>
                                     <div class='card-header font-weight-bold fs14' style='background-color:#00000017;'>
                                         <?= $lang['data_export_tool_291'] ?>
                                     </div>
                                     <div class='card-body p-0' style='background-color:#00000007;'>
-
                                         <div class="form-row">
-                                            <div class="col" colspan='3'>
+                                            <div class="col extra-text" colspan='3'>
                                                 <?= $lang['rights_429'] ?>
                                             </div>
                                         </div>
                                         <div class="form-row">
-                                            <div class="col" style='border-right:1px solid #FFA3A3;'>&nbsp;</div>
                                             <div class="col" class='fs13 pb-2 text-center font-weight-bold' style='border-right:1px solid #FFA3A3;color:#000;'><?= $lang['rights_373'] ?></div>
                                             <div class="col" class='fs13 pb-2 text-center font-weight-bold' style='color:#B00000;'><?= $lang['rights_428'] ?></div>
                                         </div>
                                         <div class="form-row">
-                                            <div class="col" style='border-right:1px solid #FFA3A3;'>&nbsp;</div>
-                                            <div class="col" style='border-right:1px solid #FFA3A3;text-align:left;width:235px;color:#000;font-size:11px;'>
-                                                <div style='float:left;padding:2px 8px;white-space:normal;width:62px;line-height: 12px;cursor:pointer;cursor:hand;' data-toggle='popover' data-trigger='hover' data-placement='left' data-content="<?= $lang['rights_430'] ?>"><?= $lang['rights_47'] ?><br><?= $lang['rights_395'] ?></div>
-                                                <div style='float:left;padding:2px 8px;white-space:normal;width:44px;line-height: 12px;cursor:pointer;cursor:hand;' data-toggle='popover' data-trigger='hover' data-placement='left' data-content="<?= $lang['rights_430'] ?>"><?= $lang['rights_61'] ?></div>
-                                                <div style='float:left;padding:2px 8px;white-space:normal;width:50px;line-height: 12px;cursor:pointer;cursor:hand;' data-toggle='popover' data-trigger='hover' data-placement='left' data-content="<?= $lang['rights_430'] ?>"><?= $lang['rights_138'] ?></div>
-                                                <div style='float:left;padding:2px 8px;white-space:normal;width:70px;line-height: 12px;cursor:pointer;cursor:hand;' data-toggle='popover' data-trigger='hover' data-placement='left' data-content="<?= $lang['rights_430'] ?>"><?= $lang['rights_137'] ?></div>
+                                            <div class="col">
+                                                <div><?= $lang['rights_47'] ?><br><?= $lang['rights_395'] ?></div>
+                                                <div><?= $lang['rights_61'] ?></div>
+                                                <div><?= $lang['rights_138'] ?></div>
+                                                <div><?= $lang['rights_137'] ?></div>
                                             </div>
-                                            <div class="col" style='text-align:left;width:250px;color:#B00000;font-size:11px;'>
-                                                <div style='float:left;padding:2px 8px;white-space:normal;width:58px;line-height: 12px;cursor:pointer;cursor:hand;' data-toggle='popover' data-trigger='hover' data-placement='left' data-content="<?= $lang['rights_430'] ?>"><?= $lang['rights_47'] ?></div>
-                                                <div style='float:left;padding:2px 8px;white-space:normal;width:72px;line-height: 12px;cursor:pointer;cursor:hand;' data-toggle='popover' data-trigger='hover' data-placement='left' data-content="<?= $lang['rights_430'] ?>"><?= $lang['rights_48'] ?>*</div>
-                                                <div style='float:left;padding:2px 8px;white-space:normal;width:65px;line-height: 12px;cursor:pointer;cursor:hand;' data-toggle='popover' data-trigger='hover' data-placement='left' data-content="<?= $lang['rights_430'] ?>"><?= $lang['data_export_tool_290'] ?></div>
-                                                <div style='float:left;padding:2px 8px;white-space:normal;width:45px;line-height: 12px;cursor:pointer;cursor:hand;' data-toggle='popover' data-trigger='hover' data-placement='left' data-content="<?= $lang['rights_430'] ?>"><?= $lang['rights_49'] ?></div>
+                                            <div class="col" style='color:#B00000;'>
+                                                <div><?= $lang['rights_47'] ?></div>
+                                                <div><?= $lang['rights_48'] ?>*</div>
+                                                <div><?= $lang['data_export_tool_290'] ?></div>
+                                                <div><?= $lang['rights_49'] ?></div>
                                             </div>
                                         </div>
                                     </div>

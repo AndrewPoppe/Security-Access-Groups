@@ -7,6 +7,8 @@ require_once "SUR_User.php";
 $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "userlist";
 
 ?>
+<link href="https://cdn.datatables.net/v/dt/dt-1.13.3/fc-4.2.1/fh-3.3.1/datatables.min.css" rel="stylesheet" />
+<script src="https://cdn.datatables.net/v/dt/dt-1.13.3/fc-4.2.1/fh-3.3.1/datatables.min.js"></script>
 <script src="https://kit.fontawesome.com/8dcbb2bf31.js" crossorigin="anonymous"></script>
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
@@ -145,79 +147,83 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
     <div class="modal" id="edit_role_popup" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true"></div>
 
     <!-- Role Table -->
-    <table id="roleTable" class="hover cell-border dt-body-center" style="display: none; width: 100%;">
-        <thead>
-            <tr style="vertical-align: bottom; text-align: center;">
-                <th>Role</th>
-                <?php foreach ($displayTextForUserRights as $text) {
-                    echo "<th>" . \REDCap::escapeHtml($text) . "</th>";
-                } ?>
-            </tr>
-        </thead>
-        <tbody>
-            <?php foreach ($roles as $role) {
-                $theseRights = json_decode($role["permissions"], true);
-            ?>
-                <tr data-roleId="<?= \REDCap::escapeHtml($role["role_id"]) ?>">
-                    <td><a class="SUR_roleLink" onclick="editRole('<?= $role['role_id'] ?>', '<?= $role['role_name'] ?>');"><?= \REDCap::escapeHtml($role["role_name"]) ?></a></td>
-                    <?php
-                    $shieldcheck = '<i class="fa-solid fa-shield-check fa-xl" style="color: green;"></i>';
-                    $check = '<i class="fa-solid fa-check fa-xl" style="color: green;"></i>';
-                    $x = '<i class="fa-regular fa-xmark" style="color: #D00000;"></i>';
-                    foreach ($displayTextForUserRights as $key => $text) {
-                        if ($key === "randomization") {
-                            $random_setup = $theseRights["random_setup"] ? "Setup" : "";
-                            $random_dashboard = $theseRights["random_dashboard"] ? "Dashboard" : "";
-                            $random_perform = $theseRights["random_perform"] ? "Randomize" : "";
-                            $value = implode("<br>", array_filter([$random_setup, $random_dashboard, $random_perform]));
-                        } else if ($key === "api") {
-                            $api_export = $theseRights["api_export"] ? "Export" : "";
-                            $api_import = $theseRights["api_import"] ? "Import" : "";
-                            $value = implode("<br>", array_filter([$api_export, $api_import]));
-                        } else if ($key === "double_data") {
-                            switch ($theseRights[$key]) {
-                                case '1':
-                                    $value = "Person #1";
-                                    break;
-                                case '2':
-                                    $value = "Person #2";
-                                    break;
-                                default:
-                                    $value = "Reviewer";
-                                    break;
-                            }
-                        } else if ($key === "data_quality_resolution") {
-                            $view = $theseRights["data_quality_resolution_view"] ? "View" : "";
-                            $respond = $theseRights["data_quality_resolution_respond"] ? "Respond" : "";
-                            $open = $theseRights["data_quality_resolution_open"] ? "Open" : "";
-                            $close = $theseRights["data_quality_resolution_close"] ? "Close" : "";
-                            $value = implode("<br>", array_filter([$view, $respond, $open, $close]));
-                        } else if ($key === "lock_record") {
-                            switch ($theseRights[$key]) {
-                                case '2':
-                                    $value = $shieldcheck;
-                                    break;
-                                case '1':
-                                    $value = $check;
-                                    break;
-                                default:
-                                    $value = $x;
-                                    break;
-                            }
-                        } else {
-                            $value = $theseRights[$key] == "1" ? $check : $x;
-                        }
-                        if (is_null($value)) {
-                            $value = 'OK';
-                        }
-                        if ($value == "") $value = $x;
-                        echo "<td class='dt-body-center'>" . $value . "</td>";
+    <!-- <div id="roleTableWrapper" style="display: none; width: calc(min(100vw,1600px) - 270px);"> -->
+    <div id="roleTableWrapper" style="display: none; width: 100%;">
+        <!-- <table id="roleTable" class="hover cell-border dt-body-center" style="width: 100%;"> -->
+        <table id="roleTable" class="table table-striped table-hover table-bordered table-responsive align-middle" style="width: 100%;">
+            <thead>
+                <tr style="vertical-align: bottom; text-align: center;">
+                    <th>Role</th>
+                    <?php foreach ($displayTextForUserRights as $text) {
+                        echo "<th>" . \REDCap::escapeHtml($text) . "</th>";
                     } ?>
                 </tr>
-            <?php } ?>
-        </tbody>
-    </table>
-    <button class="btn btn-success btn-sm" style="margin-top: 1rem;" id="addRoleButton" onclick="addNewRole();">Add New Role</button>
+            </thead>
+            <tbody>
+                <?php foreach ($roles as $role) {
+                    $theseRights = json_decode($role["permissions"], true);
+                ?>
+                    <tr data-roleId="<?= \REDCap::escapeHtml($role["role_id"]) ?>">
+                        <td><a class="SUR_roleLink" onclick="editRole('<?= $role['role_id'] ?>', '<?= $role['role_name'] ?>');"><?= \REDCap::escapeHtml($role["role_name"]) ?></a></td>
+                        <?php
+                        $shieldcheck = '<i class="fa-solid fa-shield-check fa-xl" style="color: green;"></i>';
+                        $check = '<i class="fa-solid fa-check fa-xl" style="color: green;"></i>';
+                        $x = '<i class="fa-regular fa-xmark" style="color: #D00000;"></i>';
+                        foreach ($displayTextForUserRights as $key => $text) {
+                            if ($key === "randomization") {
+                                $random_setup = $theseRights["random_setup"] ? "Setup" : "";
+                                $random_dashboard = $theseRights["random_dashboard"] ? "Dashboard" : "";
+                                $random_perform = $theseRights["random_perform"] ? "Randomize" : "";
+                                $value = implode("<br>", array_filter([$random_setup, $random_dashboard, $random_perform]));
+                            } else if ($key === "api") {
+                                $api_export = $theseRights["api_export"] ? "Export" : "";
+                                $api_import = $theseRights["api_import"] ? "Import" : "";
+                                $value = implode("<br>", array_filter([$api_export, $api_import]));
+                            } else if ($key === "double_data") {
+                                switch ($theseRights[$key]) {
+                                    case '1':
+                                        $value = "Person #1";
+                                        break;
+                                    case '2':
+                                        $value = "Person #2";
+                                        break;
+                                    default:
+                                        $value = "Reviewer";
+                                        break;
+                                }
+                            } else if ($key === "data_quality_resolution") {
+                                $view = $theseRights["data_quality_resolution_view"] ? "View" : "";
+                                $respond = $theseRights["data_quality_resolution_respond"] ? "Respond" : "";
+                                $open = $theseRights["data_quality_resolution_open"] ? "Open" : "";
+                                $close = $theseRights["data_quality_resolution_close"] ? "Close" : "";
+                                $value = implode("<br>", array_filter([$view, $respond, $open, $close]));
+                            } else if ($key === "lock_record") {
+                                switch ($theseRights[$key]) {
+                                    case '2':
+                                        $value = $shieldcheck;
+                                        break;
+                                    case '1':
+                                        $value = $check;
+                                        break;
+                                    default:
+                                        $value = $x;
+                                        break;
+                                }
+                            } else {
+                                $value = $theseRights[$key] == "1" ? $check : $x;
+                            }
+                            if (is_null($value)) {
+                                $value = 'OK';
+                            }
+                            if ($value == "") $value = $x;
+                            echo "<td class='dt-body-center'>" . $value . "</td>";
+                        } ?>
+                    </tr>
+                <?php } ?>
+            </tbody>
+        </table>
+    </div>
+    <button class="btn btn-success btn-sm" id="addRoleButton" onclick="addNewRole();">Add New Role</button>
 
     <script>
         function openRoleEditor(url, role_id = "", role_name = "") {
@@ -366,19 +372,21 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
         }
 
         $(document).ready(function() {
-            $('#roleTable').DataTable({
-                searching: false,
-                info: false,
-                paging: false,
-                rowReorder: true,
-                ordering: false,
-                fixedHeader: true,
-                initComplete: function() {
-                    $('#roleTable').show();
-                }
-            });
+            // $('#roleTable').DataTable({
+            //     searching: false,
+            //     info: false,
+            //     paging: false,
+            //     rowReorder: true,
+            //     ordering: false,
+            //     fixedHeader: false,
+            //     fixedColumns: true,
+            //     scrollX: true,
+            //     initComplete: function() {
+            //         $('#roleTableWrapper').show();
+            //     }
+            // });
 
-
+            $('#roleTableWrapper').show();
         });
         window.scroll(0, 0);
     </script>
