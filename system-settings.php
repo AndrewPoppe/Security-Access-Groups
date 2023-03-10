@@ -255,7 +255,7 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
             </tbody>
         </table>
     </div>
-    <div style="margin-top:1rem;" id="buttonsContainer">
+    <div style="margin-top:0.5rem;" id="buttonsContainer">
         <button class="btn btn-success btn-sm" id="addRoleButton" onclick="addNewRole();">Add New Role</button>
     </div>
     <script>

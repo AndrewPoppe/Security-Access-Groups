@@ -6,7 +6,6 @@ if ($_SERVER["REQUEST_METHOD"] !== "POST") {
     exit;
 }
 
-
 $data = filter_input_array(INPUT_POST, FILTER_SANITIZE_ENCODED);
 
 $submit_action = $data["submit-action"]; // add_user, edit_user, delete_user, add_role, edit_role, delete_role, copy_role

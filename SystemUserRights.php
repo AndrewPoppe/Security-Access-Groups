@@ -329,16 +329,16 @@ class SystemUserRights extends AbstractExternalModule
 
     function getAcceptableRights(string $username)
     {
-        $rights =  $this->getAllRights();
-        if (($key = array_search("design", $rights)) !== false) {
-            unset($rights[$key]);
-        }
-        if (($key = array_search("user_rights", $rights)) !== false) {
-            unset($rights[$key]);
-        }
-        return $rights;
-        //        return array_keys($rights);
-
+        // $rights =  $this->getAllRights();
+        // if (($key = array_search("design", $rights)) !== false) {
+        //     unset($rights[$key]);
+        // }
+        // if (($key = array_search("user_rights", $rights)) !== false) {
+        //     unset($rights[$key]);
+        // }
+        $systemRoleId = $this->getUserSystemRole($username);
+        $systemRole = $this->getSystemRoleRightsById($systemRoleId);
+        return json_decode($systemRole["permissions"], true);
     }
 
     function checkProposedRights(array $acceptable_rights, array $requested_rights)
