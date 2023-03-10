@@ -153,7 +153,7 @@ class SystemUserRights extends AbstractExternalModule
                             let users = Object.keys(result.bad_rights);
                             if (!result.role) {
                                 title = `You cannot grant those user rights to user "${users[0]}"`;
-                                text = `The following permissions cannot be granted to that user: ${result.bad_rights[users[0]].join(', ')}`;
+                                text = `The following permissions cannot be granted to that user:<ul><li>${result.bad_rights[users[0]].join('</li><li>')}</li></ul></div>`;
                             } else {
                                 title = `You cannot grant those rights to the role<br>"${result.role}"`;
                                 text = `The following users are assigned to that role, and the following permissions cannot be granted to them:<br>
@@ -338,7 +338,9 @@ class SystemUserRights extends AbstractExternalModule
         // }
         $systemRoleId = $this->getUserSystemRole($username);
         $systemRole = $this->getSystemRoleRightsById($systemRoleId);
-        return json_decode($systemRole["permissions"], true);
+        $roleRights = json_decode($systemRole["permissions"], true);
+
+        return $roleRights;
     }
 
     function checkProposedRights(array $acceptable_rights, array $requested_rights)
@@ -346,21 +348,64 @@ class SystemUserRights extends AbstractExternalModule
         //$this->log('checking rights', ["acceptable" => json_encode($acceptable_rights), "acceptable_keys" => json_encode(array_keys($acceptable_rights)), "requested" => json_encode($requested_rights)]);
         $bad_rights = [];
         foreach ($requested_rights as $right => $value) {
-            if (str_starts_with($right, "form-") or str_starts_with($right, "export-form-")) {
+            $dataViewing = intval($acceptable_rights["dataViewing"]);
+            if (str_starts_with($right, "form-editresp-") && $value == "on" && $dataViewing < 3) {
+                $bad_rights[] = "Data Viewing - Edit Survey Responses";
+                return $bad_rights;
+            } else if (str_starts_with($right, "form-")) {
+                // 0: no access, 2: read only, 1: view and edit
+                switch ($value) {
+                    case '1':
+                        if ($dataViewing < 2) {
+                            $bad_rights[] = "Data Viewing - View & Edit";
+                        }
+                        break;
+                    case '2':
+                        if ($dataViewing < 1) {
+                            $bad_rights[] = "Data Viewing - Read Only";
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            } else if (str_starts_with($right, "export-form-")) {
+                $dataExport = intval($acceptable_rights["dataExport"]);
+                // 0: no access, 2: deidentified, 3: remove identifiers, 1: full data set
+                switch ($value) {
+                    case '1':
+                        if ($dataExport < 3) {
+                            $bad_rights[] = "Data Export - Full Data Set";
+                        }
+                        break;
+                    case '3':
+                        if ($dataExport < 2) {
+                            $bad_rights[] = "Data Export - Remove Identifiers";
+                        }
+                        break;
+                    case '2':
+                        if ($dataExport < 1) {
+                            $bad_rights[] = "Data Export - De-Identified";
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            } else if (in_array($right, ["user", "submit-action", "role_name", "role_name_edit", "redcap_csrf_token", "expiration", "group_role", "data_access_group_id", "unique_role_name", "role_label"])) {
                 continue;
-            }
-            if (in_array($right, ["user", "submit-action", "role_name", "role_name_edit", "redcap_csrf_token", "expiration", "group_role", "data_access_group_id", "unique_role_name", "role_label"])) {
+            } else if ($value === "0") {
                 continue;
+            } else if ($acceptable_rights[$right] == 0) {
+                $bad_rights[] = $right . ' - no good';
             }
-            if ($value === "0") {
-                continue;
-            }
+
+
+
             if (in_array($right, $acceptable_rights, true) || in_array($right, array_keys($acceptable_rights), true)) {
                 continue;
             }
-            $bad_rights[] = $right;
+            //$bad_rights[] = $right;
         }
-        return $bad_rights;
+        return array_unique($bad_rights);
     }
 
     function getRoleIdFromUniqueRoleName($uniqueRoleName)
@@ -465,12 +510,12 @@ class SystemUserRights extends AbstractExternalModule
 
     function getAllSystemRoles()
     {
-        $sql = "SELECT MAX(log_id) AS 'log_id' WHERE message = 'role' GROUP BY role_id";
+        $sql = "SELECT MAX(log_id) AS 'log_id' WHERE message = 'role' AND (project_id IS NULL OR project_id IS NOT NULL) GROUP BY role_id";
         $result = $this->queryLogs($sql, []);
         $roles = [];
         while ($row = $result->fetch_assoc()) {
             $logId = $row["log_id"];
-            $sql2 = "SELECT role_id, role_name, permissions WHERE log_id = ?";
+            $sql2 = "SELECT role_id, role_name, permissions WHERE (project_id IS NULL OR project_id IS NOT NULL) AND log_id = ?";
             $result2 = $this->queryLogs($sql2, [$logId]);
             $roles[] = $result2->fetch_assoc();
         }
@@ -479,7 +524,7 @@ class SystemUserRights extends AbstractExternalModule
 
     function getSystemRoleRightsById($role_id)
     {
-        $sql = "SELECT role_id, role_name, permissions WHERE message = 'role' AND role_id = ? ORDER BY log_id DESC LIMIT 1";
+        $sql = "SELECT role_id, role_name, permissions WHERE message = 'role' AND role_id = ? AND (project_id IS NULL OR project_id IS NOT NULL) ORDER BY log_id DESC LIMIT 1";
         $result = $this->queryLogs($sql, [$role_id]);
         return $result->fetch_assoc();
     }
@@ -1069,7 +1114,7 @@ class SystemUserRights extends AbstractExternalModule
                                             <div class="col">
                                                 <div class='fs13 pb-2 font-weight-bold'><?= $lang['rights_373'] ?></div>
                                                 <div class="form-check">
-                                                    <input class="form-check-input" type="radio" name="dataViewing" id="dataViewingNoAccess" value="0" <?= $rights["dataViewing"] == '' ? "checked" : "" ?>>
+                                                    <input class="form-check-input" type="radio" name="dataViewing" id="dataViewingNoAccess" value="0" <?= $rights["dataViewing"] == 0 ? "checked" : "" ?>>
                                                     <label class="form-check-label" for="dataViewingNoAccess"><?= $lang['rights_47'] ?><br><?= $lang['rights_395'] ?></label>
                                                 </div>
                                                 <div class="form-check">
@@ -1088,7 +1133,7 @@ class SystemUserRights extends AbstractExternalModule
                                             <div class="col" style='color:#B00000;'>
                                                 <div class='fs13 pb-2 font-weight-bold'><?= $lang['rights_428'] ?></div>
                                                 <div class="form-check">
-                                                    <input class="form-check-input" type="radio" name="dataExport" id="dataExportNoAccess" value="0" <?= $rights["dataExport"] == '' ? "checked" : "" ?>>
+                                                    <input class="form-check-input" type="radio" name="dataExport" id="dataExportNoAccess" value="0" <?= $rights["dataExport"] == 0 ? "checked" : "" ?>>
                                                     <label class="form-check-label" for="dataExportNoAccess"><?= $lang['rights_47'] ?></label>
                                                 </div>
                                                 <div class="form-check">

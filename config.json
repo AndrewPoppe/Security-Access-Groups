@@ -31,7 +31,7 @@
             {
                 "key": "system-settings",
                 "name": "System User Rights",
-                "icon": "fas fa-user-secret",
+                "icon": "fa-solid fas fa-user-secret",
                 "url": "system-settings.php",
                 "show-header-and-footer": true
             }

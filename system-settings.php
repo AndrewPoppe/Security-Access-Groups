@@ -9,12 +9,12 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
 ?>
 <link href="https://cdn.datatables.net/v/dt/dt-1.13.3/b-2.3.5/b-html5-2.3.5/fc-4.2.1/datatables.min.css" rel="stylesheet" />
 <script src="https://cdn.datatables.net/v/dt/dt-1.13.3/b-2.3.5/b-html5-2.3.5/fc-4.2.1/datatables.min.js"></script>
-<script src="https://kit.fontawesome.com/8dcbb2bf31.js" crossorigin="anonymous"></script>
+<script src="https://kit.fontawesome.com/015226af80.js" crossorigin="anonymous"></script>
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <link rel='stylesheet' type='text/css' href='<?= $module->getUrl('SystemUserRights.css') ?>' />
 <h4 style='color:#900; margin-top: 0 0 10px;'>
-    <i class='fas fa-user-secret'></i>&nbsp;<span>System User Rights</span>
+    <i class='fa-solid fa-user-secret'></i>&nbsp;<span>System User Rights</span>
 </h4>
 <p style='margin:20px 0;max-width:1000px;'>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc velit metus, venenatis in congue sed, ultrices sed nulla. Donec auctor bibendum mauris eget posuere. Ut rhoncus, nulla at auctor volutpat, urna odio ornare nulla, a ultrices neque massa sed est. Vestibulum dignissim feugiat turpis vel egestas. Integer eu purus vel dui egestas varius et ac erat. Donec blandit quam a enim faucibus ultrices. Aenean consectetur efficitur leo, et euismod arcu ultrices non. Ut et tincidunt tortor. Quisque eu interdum erat, vitae convallis ligula. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi interdum sapien nec quam blandit, vel faucibus turpis convallis. </p>
 
@@ -22,13 +22,13 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
     <ul>
         <li class="<?= $tab === "userlist" ? "active" : "" ?>">
             <a href="<?= $module->getUrl('system-settings.php?tab=userlist') ?>" style="font-size:13px;color:#393733;padding:7px 9px;">
-                <i class="fas fa-users"></i>
+                <i class="fa-solid fa-users"></i>
                 Users
             </a>
         </li>
         <li class="<?= $tab === "roles" ? "active" : "" ?>">
             <a href="<?= $module->getUrl('system-settings.php?tab=roles') ?>" style="font-size:13px;color:#393733;padding:7px 9px;">
-                <i class="fas fa-user-tag"></i>
+                <i class="fa-solid fa-user-tag"></i>
                 Roles
             </a>
         </li>
@@ -142,6 +142,8 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
     $roles = $module->getAllSystemRoles();
     $displayTextForUserRights = $module->getDisplayTextForRights();
 
+    var_dump($module->getAcceptableRights('carol'));
+
 ?>
     <!-- Modal -->
     <div class="modal" id="edit_role_popup" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true"></div>
@@ -212,7 +214,8 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                                         break;
                                 }
                             } else if ($key === 'data_entry') {
-                                switch ($theseRights['dataViewing']) {
+                                $theseRights[$key] = $theseRights['dataViewing'];
+                                switch ($theseRights[$key]) {
                                     case '3':
                                         $value = "View & Edit Forms and Survey Responses";
                                         break;
@@ -227,7 +230,8 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                                         break;
                                 }
                             } else if ($key === 'data_export_tool') {
-                                switch ($theseRights['dataExport']) {
+                                $theseRights[$key] = $theseRights['dataExport'];
+                                switch ($theseRights[$key]) {
                                     case '3':
                                         $value = "Full Data Set";
                                         break;
@@ -255,8 +259,10 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
             </tbody>
         </table>
     </div>
-    <div style="margin-top:0.5rem;" id="buttonsContainer">
-        <button class="btn btn-success btn-sm" id="addRoleButton" onclick="addNewRole();">Add New Role</button>
+    <div style="margin-top:0.5rem; display:flex; flex-direction: row;" id="buttonsContainer">
+        <button class="btn btn-success btn-sm" id="addRoleButton" onclick="addNewRole();" data-toggle="tooltip" title="Add a New System User Role">
+            <i class="fak fa-light-tag-circle-plus fa-xl fa-fw" style="line-height: 1;"></i>
+        </button>
     </div>
     <script>
         function openRoleEditor(url, role_id = "", role_name = "") {
@@ -427,7 +433,12 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                     $.extend(true, {}, buttonCommon, {
                         extend: 'csvHtml5',
                         className: 'btn btn-sm btn-secondary',
-                        text: 'Export Table'
+                        text: '<i class="fa-light fa-file-csv fa-xl fa-fw" style="line-height: 1;"></i>',
+                        attr: {
+                            'data-toggle': "tooltip",
+                            'data-placement': "bottom",
+                            'title': "Export Table as CSV"
+                        }
                     })
                 ],
                 searching: false,
@@ -440,6 +451,21 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                 scrollX: true,
                 initComplete: function() {
                     $('#roleTableWrapper').show();
+                    $(this).DataTable().buttons()
+                        .container()
+                        .appendTo('#buttonsContainer');
+                    $($(this).DataTable().buttons().nodes()[0]).removeClass('dt-button').attr('style', 'margin-left: 5px;');
+                    // THIS IS USING JQUERY UI'S TOOLTIPS BECAUSE GARBAGE
+                    $('[data-toggle="tooltip"]').tooltip({
+                        show: false,
+                        hide: false,
+                        tooltipClass: "bottom",
+                        position: {
+                            my: "center top",
+                            at: "center bottom+10",
+                            collision: 'none'
+                        }
+                    });
                 },
                 dom: "tB",
                 columnDefs: [{
@@ -459,11 +485,7 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                 }]
             });
 
-            table
-                .buttons()
-                .container()
-                .appendTo('#buttonsContainer');
-            $(table.buttons().nodes()[0]).removeClass('dt-button').attr('style', 'margin-right: 5px;');
+
 
             table.on('draw', function() {
                 $('.dataTable tbody tr').each((i, row) => {
@@ -492,6 +514,8 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                 const rowIdx = thisNode.attr('data-dt-row');
                 $("tr[data-dt-row='" + rowIdx + "'] td").removeClass("highlight"); // shade only the hovered row
             }
+
+
 
         });
         window.scroll(0, 0);

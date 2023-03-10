@@ -171,3 +171,59 @@ table.roleTable tbody td.dtfc-fixed-left {
 table.roleTable tbody td:last-child:not(.dtfc-fixed-left) {
     border-right: none;
 }
+
+
+.ui-tooltip {
+    background: #333;
+    color: white;
+    border: none;
+    padding: 0;
+    opacity: 1;
+    border: none;
+    box-shadow: none;
+}
+
+.ui-tooltip-content {
+    position: relative;
+    padding: 0.5em;
+}
+
+.ui-tooltip-content::after {
+    content: '';
+    position: absolute;
+    border-style: solid;
+    display: block;
+    width: 0;
+}
+
+.right .ui-tooltip-content::after {
+    top: calc(50% - 10px);
+    left: -10px;
+    border-color: transparent #333;
+    border-width: 10px 10px 10px 0;
+}
+
+.left .ui-tooltip-content::after {
+    top: calc(50% - 10px);
+    right: -10px;
+    border-color: transparent #333;
+    border-width: 10px 0 10px 10px;
+}
+
+.top .ui-tooltip-content::after {
+    bottom: -10px;
+    left: calc(50% - 10px);
+    border-color: #333 transparent;
+    border-width: 10px 10px 0;
+}
+
+.bottom .ui-tooltip-content::after {
+    top: -10px;
+    left: calc(50% - 10px);
+    border-color: #333 transparent;
+    border-width: 0 10px 10px;
+}
+
+div.dt-buttons {
+    float: none;
+}
