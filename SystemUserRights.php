@@ -329,17 +329,9 @@ class SystemUserRights extends AbstractExternalModule
 
     function getAcceptableRights(string $username)
     {
-        // $rights =  $this->getAllRights();
-        // if (($key = array_search("design", $rights)) !== false) {
-        //     unset($rights[$key]);
-        // }
-        // if (($key = array_search("user_rights", $rights)) !== false) {
-        //     unset($rights[$key]);
-        // }
         $systemRoleId = $this->getUserSystemRole($username);
         $systemRole = $this->getSystemRoleRightsById($systemRoleId);
         $roleRights = json_decode($systemRole["permissions"], true);
-
         return $roleRights;
     }
 
@@ -351,7 +343,6 @@ class SystemUserRights extends AbstractExternalModule
             $dataViewing = intval($acceptable_rights["dataViewing"]);
             if (str_starts_with($right, "form-editresp-") && $value == "on" && $dataViewing < 3) {
                 $bad_rights[] = "Data Viewing - Edit Survey Responses";
-                return $bad_rights;
             } else if (str_starts_with($right, "form-")) {
                 // 0: no access, 2: read only, 1: view and edit
                 switch ($value) {
@@ -395,17 +386,11 @@ class SystemUserRights extends AbstractExternalModule
             } else if ($value === "0") {
                 continue;
             } else if ($acceptable_rights[$right] == 0) {
-                $bad_rights[] = $right . ' - no good';
+                $bad_rights[] = $this->getDisplayTextForRight($right);
             }
-
-
-
-            if (in_array($right, $acceptable_rights, true) || in_array($right, array_keys($acceptable_rights), true)) {
-                continue;
-            }
-            //$bad_rights[] = $right;
         }
-        return array_unique($bad_rights);
+        //return $bad_rights;
+        return array_values(array_unique($bad_rights, SORT_REGULAR));
     }
 
     function getRoleIdFromUniqueRoleName($uniqueRoleName)
@@ -559,36 +544,47 @@ class SystemUserRights extends AbstractExternalModule
             'data_access_groups' => $lang['global_22'],
             'data_entry' => $lang['rights_373'],
             'data_export_tool' => $lang['rights_428'],
-            'reports' => $lang['rights_96'],
-            'graphical' => $lang['report_builder_78'],
             'participants' => $lang['app_24'],
             'calendar' => $lang['app_08'] . " " . $lang['rights_357'],
+            'reports' => $lang['rights_96'],
+            'graphical' => $lang['report_builder_78'],
+            'double_data' => $lang['rights_50'],
             'data_import_tool' => $lang['app_01'],
             'data_comparison_tool' => $lang['app_02'],
             'data_logging' => $lang['app_07'],
             'file_repository' => $lang['app_04'],
-            'double_data' => $lang['rights_50'],
-            'lock_record_customize' => $lang['app_11'],
-            'lock_record' => $lang['rights_97'],
             'randomization' => $lang['app_21'],
+            'random_setup' => $lang['app_21'] . " - " . $lang['rights_142'],
+            'random_dashboard' => $lang['app_21'] . " - " . $lang['rights_143'],
+            'random_perform' => $lang['app_21'] . " - " . $lang['rights_144'],
             'data_quality_design' => $lang['dataqueries_38'],
             'data_quality_execute' => $lang['dataqueries_39'],
             'data_quality_resolution' => $lang['dataqueries_137'],
+            'data_quality_resolution_view' => 'View Queries',
+            'data_quality_resolution_open' => 'Open Queries',
+            'data_quality_resolution_respond' => 'Respond to Queries',
+            'data_quality_resolution_close' => 'Close Queries',
             'api' => $lang['setup_77'],
-            'mobile_app' => $lang['global_118'],
+            'api_export' =>  $lang['rights_139'],
+            'api_import' => $lang['rights_314'],
             'realtime_webservice_mapping' =>  "CDP/DDP" . " " . $lang['ws_19'],
             'realtime_webservice_adjudicate' => "CDP/DDP" . " " . $lang['ws_20'],
             'dts' => $lang['rights_132'],
+            'mobile_app' => $lang['global_118'],
+            'mobile_app_download_data' => $lang['rights_306'],
             'record_create' => $lang['rights_99'],
             'record_rename' => $lang['rights_100'],
-            'record_delete' => $lang['rights_101']
+            'record_delete' => $lang['rights_101'],
+            'lock_record_customize' => $lang['app_11'],
+            'lock_record' => $lang['rights_97'],
+            'lock_record_multiform' => $lang['rights_370']
         ];
     }
 
     function getDisplayTextForRight(string $right, string $key = "")
     {
         $rights = $this->getDisplayTextForRights();
-        return $rights[$right] ?? $rights[$key] ?? "<<< " . $right . " >>>";
+        return $rights[$right] ?? $rights[$key] ?? $right;
     }
 
     function getDefaultRights()
