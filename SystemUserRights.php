@@ -133,7 +133,8 @@ class SystemUserRights extends AbstractExternalModule
                         Swal.fire({
                             icon: 'error',
                             title: title,
-                            html: text
+                            html: text,
+                            width: '750px'
                         });
                     }
                 }
@@ -166,7 +167,8 @@ class SystemUserRights extends AbstractExternalModule
                             Swal.fire({
                                 icon: 'error',
                                 title: title,
-                                html: text
+                                html: text,
+                                width: '750px'
                             });
                             return;
                         } catch (error) {
@@ -215,7 +217,8 @@ class SystemUserRights extends AbstractExternalModule
                                     Swal.fire({
                                         icon: 'error',
                                         title: title,
-                                        html: text
+                                        html: text,
+                                        width: '750px'
                                     });
                                     return;
                                 } catch (error) {
@@ -340,10 +343,25 @@ class SystemUserRights extends AbstractExternalModule
         //$this->log('checking rights', ["acceptable" => json_encode($acceptable_rights), "acceptable_keys" => json_encode(array_keys($acceptable_rights)), "requested" => json_encode($requested_rights)]);
         $bad_rights = [];
         foreach ($requested_rights as $right => $value) {
+
+            $right = $this->convertRightName($right);
+
+            $safeRights = ["user", "submit-action", "role_name", "role_name_edit", "redcap_csrf_token", "expiration", "group_role", "data_access_group_id", "unique_role_name", "role_label"];
+            if ($value == "0" || in_array($right, $safeRights, true)) {
+                continue;
+            }
+
             $dataViewing = intval($acceptable_rights["dataViewing"]);
-            if (str_starts_with($right, "form-editresp-") && $value == "on" && $dataViewing < 3) {
+            $isSurveyResponseEditingRight = str_starts_with($right, "form-editresp-");
+            $isDataViewingRight = str_starts_with($right, "form-");
+            $isDataExportRight = str_starts_with($right, "export-form-");
+            $isDoubleDataRight = $right == "double_data";
+            $isRecordLockRight = $right == "lock_record";
+            $isDataQualityResolutionRight = $right == "data_quality_resolution";
+
+            if ($isSurveyResponseEditingRight && $value == "on" && $dataViewing < 3) {
                 $bad_rights[] = "Data Viewing - Edit Survey Responses";
-            } else if (str_starts_with($right, "form-")) {
+            } else if ($isDataViewingRight) {
                 // 0: no access, 2: read only, 1: view and edit
                 switch ($value) {
                     case '1':
@@ -359,7 +377,7 @@ class SystemUserRights extends AbstractExternalModule
                     default:
                         break;
                 }
-            } else if (str_starts_with($right, "export-form-")) {
+            } else if ($isDataExportRight) {
                 $dataExport = intval($acceptable_rights["dataExport"]);
                 // 0: no access, 2: deidentified, 3: remove identifiers, 1: full data set
                 switch ($value) {
@@ -381,10 +399,59 @@ class SystemUserRights extends AbstractExternalModule
                     default:
                         break;
                 }
-            } else if (in_array($right, ["user", "submit-action", "role_name", "role_name_edit", "redcap_csrf_token", "expiration", "group_role", "data_access_group_id", "unique_role_name", "role_label"])) {
-                continue;
-            } else if ($value === "0") {
-                continue;
+            } else if ($isDoubleDataRight && intval($acceptable_rights[$right]) == 0) {
+                $bad_rights[] = "Double Data Entry Person";
+            } else if ($isRecordLockRight && intval($value) > intval($acceptable_rights[$right])) {
+                $bad_rights[] = "Record Locking" . ($value == 2 ? " with E-signature" : "");
+            } else if ($isDataQualityResolutionRight) {
+                // 0: no access
+                // 1: view only
+                // 4: open queries only
+                // 2: respond only to opened queries
+                // 5: open and respond to queries
+                // 3: open, close, and respond to queries
+                $dqr_view = $acceptable_rights["data_quality_resolution_view"] == 1;
+                $dqr_open = $acceptable_rights["data_quality_resolution_open"] == 1;
+                $dqr_respond = $acceptable_rights["data_quality_resolution_respond"] == 1;
+                $dqr_close = $acceptable_rights["data_quality_resolution_close"] == 1;
+                switch ($value) {
+                    case '1':
+                        if (!$dqr_view) {
+                            $bad_rights[] = $this->getDisplayTextForRight("data_quality_resolution_view");
+                        }
+                        break;
+                    case '4':
+                        if (!$dqr_open) {
+                            $bad_rights[] = $this->getDisplayTextForRight("data_quality_resolution_open");
+                        }
+                        break;
+                    case '2':
+                        if (!$dqr_respond) {
+                            $bad_rights[] = $this->getDisplayTextForRight("data_quality_resolution_respond");
+                        }
+                        break;
+                    case '5':
+                        if (!$dqr_open) {
+                            $bad_rights[] = $this->getDisplayTextForRight("data_quality_resolution_open");
+                        }
+                        if (!$dqr_respond) {
+                            $bad_rights[] = $this->getDisplayTextForRight("data_quality_resolution_respond");
+                        }
+                        break;
+                    case '3':
+                        if (!$dqr_open) {
+                            $bad_rights[] = $this->getDisplayTextForRight("data_quality_resolution_open");
+                        }
+                        if (!$dqr_respond) {
+                            $bad_rights[] = $this->getDisplayTextForRight("data_quality_resolution_respond");
+                        }
+                        if (!$dqr_close) {
+                            $bad_rights[] = $this->getDisplayTextForRight("data_quality_resolution_close");
+                        }
+                        break;
+                    default:
+                        break;
+                }
             } else if ($acceptable_rights[$right] == 0) {
                 $bad_rights[] = $this->getDisplayTextForRight($right);
             }
@@ -535,56 +602,76 @@ class SystemUserRights extends AbstractExternalModule
         }
     }
 
-    function getDisplayTextForRights()
+    function getDisplayTextForRights(bool $allRights = false)
     {
         global $lang;
-        return [
+        $rights = [
             'design' => $lang['rights_135'],
             'user_rights' => $lang['app_05'],
             'data_access_groups' => $lang['global_22'],
             'data_entry' => $lang['rights_373'],
             'data_export_tool' => $lang['rights_428'],
-            'participants' => $lang['app_24'],
-            'calendar' => $lang['app_08'] . " " . $lang['rights_357'],
             'reports' => $lang['rights_96'],
             'graphical' => $lang['report_builder_78'],
-            'double_data' => $lang['rights_50'],
+            'participants' => $lang['app_24'],
+            'calendar' => $lang['app_08'] . " " . $lang['rights_357'],
             'data_import_tool' => $lang['app_01'],
             'data_comparison_tool' => $lang['app_02'],
             'data_logging' => $lang['app_07'],
             'file_repository' => $lang['app_04'],
+            'double_data' => $lang['rights_50'],
+            'lock_record_customize' => $lang['app_11'],
+            'lock_record' => $lang['rights_97'],
             'randomization' => $lang['app_21'],
-            'random_setup' => $lang['app_21'] . " - " . $lang['rights_142'],
-            'random_dashboard' => $lang['app_21'] . " - " . $lang['rights_143'],
-            'random_perform' => $lang['app_21'] . " - " . $lang['rights_144'],
             'data_quality_design' => $lang['dataqueries_38'],
             'data_quality_execute' => $lang['dataqueries_39'],
             'data_quality_resolution' => $lang['dataqueries_137'],
-            'data_quality_resolution_view' => 'View Queries',
-            'data_quality_resolution_open' => 'Open Queries',
-            'data_quality_resolution_respond' => 'Respond to Queries',
-            'data_quality_resolution_close' => 'Close Queries',
             'api' => $lang['setup_77'],
-            'api_export' =>  $lang['rights_139'],
-            'api_import' => $lang['rights_314'],
+            'mobile_app' => $lang['global_118'],
             'realtime_webservice_mapping' =>  "CDP/DDP" . " " . $lang['ws_19'],
             'realtime_webservice_adjudicate' => "CDP/DDP" . " " . $lang['ws_20'],
             'dts' => $lang['rights_132'],
-            'mobile_app' => $lang['global_118'],
-            'mobile_app_download_data' => $lang['rights_306'],
             'record_create' => $lang['rights_99'],
             'record_rename' => $lang['rights_100'],
-            'record_delete' => $lang['rights_101'],
-            'lock_record_customize' => $lang['app_11'],
-            'lock_record' => $lang['rights_97'],
-            'lock_record_multiform' => $lang['rights_370']
+            'record_delete' => $lang['rights_101']
+
         ];
+        if ($allRights === true) {
+            $rights['random_setup'] = $lang['app_21'] . " - " . $lang['rights_142'];
+            $rights['random_dashboard'] = $lang['app_21'] . " - " . $lang['rights_143'];
+            $rights['random_perform'] = $lang['app_21'] . " - " . $lang['rights_144'];
+            $rights['data_quality_resolution_view'] = 'Data Quality Resolution - View Queries';
+            $rights['data_quality_resolution_open'] = 'Data Quality Resolution - Open Queries';
+            $rights['data_quality_resolution_respond'] = 'Data Quality Resolution - Respond to Queries';
+            $rights['data_quality_resolution_close'] = 'Data Quality Resolution - Close Queries';
+            $rights['api_export'] =  $lang['rights_139'];
+            $rights['api_import'] = $lang['rights_314'];
+            $rights['mobile_app_download_data'] = $lang['rights_306'];
+            $rights['lock_record_multiform'] = $lang['rights_370'];
+        }
+        return $rights;
     }
 
     function getDisplayTextForRight(string $right, string $key = "")
     {
-        $rights = $this->getDisplayTextForRights();
+        $rights = $this->getDisplayTextForRights(true);
         return $rights[$right] ?? $rights[$key] ?? $right;
+    }
+
+    function convertRightName($rightName)
+    {
+
+        $conversions = [
+            "stats_and_charts" => "graphical",
+            "manage_survey_participants" => "participants",
+            "logging" => "data_logging",
+            "data_quality_create" => "data_quality_design",
+            "lock_records_all_forms" => "lock_record_multiform",
+            "lock_records" => "lock_record",
+            "lock_records_customization" => "lock_record_customize"
+        ];
+
+        return $conversions[$rightName] ?? $rightName;
     }
 
     function getDefaultRights()

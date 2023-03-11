@@ -12,6 +12,7 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
 <script src="https://kit.fontawesome.com/015226af80.js" crossorigin="anonymous"></script>
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <link rel='stylesheet' type='text/css' href='<?= $module->getUrl('SystemUserRights.css') ?>' />
 <h4 style='color:#900; margin-top: 0 0 10px;'>
     <i class='fa-solid fa-user-secret'></i>&nbsp;<span>System User Rights</span>
@@ -142,8 +143,6 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
     $roles = $module->getAllSystemRoles();
     $displayTextForUserRights = $module->getDisplayTextForRights();
 
-    var_dump($module->getAcceptableRights('carol'));
-
 ?>
     <!-- Modal -->
     <div class="modal" id="edit_role_popup" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true"></div>
@@ -265,6 +264,18 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
         </button>
     </div>
     <script>
+        const Toast = Swal.mixin({
+            toast: true,
+            position: 'middle',
+            iconColor: 'white',
+            customClass: {
+                popup: 'colored-toast'
+            },
+            showConfirmButton: false,
+            timer: 1500,
+            timerProgressBar: true
+        });
+
         function openRoleEditor(url, role_id = "", role_name = "") {
             const deleteRoleButtonCallback = function() {
                 Swal.fire({
@@ -281,11 +292,10 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                                 role_id: role_id
                             })
                             .done(function(response) {
-                                Swal.fire(
-                                        'The role was deleted',
-                                        '',
-                                        'success'
-                                    )
+                                Toast.fire({
+                                        title: 'The role was deleted',
+                                        icon: 'success'
+                                    })
                                     .then(function() {
                                         window.location.reload();
                                     });
@@ -315,11 +325,10 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                             data.role_name_edit = role_name;
                             $.post('<?= $module->getUrl("editSystemRole.php?newRole=true") ?>', data)
                                 .done(function(result) {
-                                    Swal.fire(
-                                            'The role was copied',
-                                            '',
-                                            'success'
-                                        )
+                                    Toast.fire({
+                                            icon: 'success',
+                                            title: 'The role was copied'
+                                        })
                                         .then(function() {
                                             window.location.reload();
                                         });
@@ -338,7 +347,7 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                     data.role_id = role_id;
                     $.post(url, data)
                         .done(function(response) {
-                            Swal.fire({
+                            Toast.fire({
                                 icon: "success",
                                 title: `Role "${role_name}" Successfully Saved`
                             }).then(function() {
@@ -356,7 +365,7 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                     const data = $("#SUR_Role_Setting").serializeObject();
                     $.post(url, data)
                         .done(function(response) {
-                            Swal.fire({
+                            Toast.fire({
                                 icon: "success",
                                 title: `Role Successfully Created`
                             }).then(function() {
