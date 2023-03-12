@@ -354,7 +354,7 @@ class SystemUserRights extends AbstractExternalModule
 
             $right = $this->convertRightName($right);
 
-            $safeRights = ["user", "submit-action", "role_name", "role_name_edit", "redcap_csrf_token", "expiration", "group_role", "data_access_group_id", "unique_role_name", "role_label"];
+            $safeRights = ["user", "submit-action", "role_name", "role_name_edit", "redcap_csrf_token", "expiration", "group_role", "data_access_group_id", "unique_role_name", "role_label", "notify_email"];
             if ($value == "0" || in_array($right, $safeRights, true)) {
                 continue;
             }
