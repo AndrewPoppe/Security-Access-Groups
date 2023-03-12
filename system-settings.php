@@ -100,7 +100,9 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                     }
                     return row.role;
                 }
-            }]
+            }],
+            buttons: ['csvHtml5'],
+            dom: 'ftB'
         });
         $('.roleSelect').select2({
             minimumResultsForSearch: 20

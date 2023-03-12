@@ -3,8 +3,10 @@
 namespace YaleREDCap\SystemUserRights;
 
 use ExternalModules\AbstractExternalModule;
+use YaleREDCap\SystemUserRights\APIHandler;
 
 require_once "SUR_User.php";
+require_once "APIHandler.php";
 
 class SystemUserRights extends AbstractExternalModule
 {
@@ -21,26 +23,33 @@ class SystemUserRights extends AbstractExternalModule
                 "UserRights/import_export_users.php",
                 "UserRights/import_export_roles.php",
                 "api/index.php"
-            ])
+            ], true)
         ) {
             return;
         }
 
-        // API Stuff
+        // API
         if (PAGE === "api/index.php") {
-            $rights = $this->getUserRightsFromToken($_POST["token"]);
-
-            // Allow the API if the module is not enabled in the project.
-            if (empty($rights) || !$this->isModuleEnabled($this->getModuleDirectoryPrefix(), $rights["project_id"])) {
+            $this->log('on it');
+            $API = new APIHandler($this, $_POST);
+            if (!$API->shouldProcess()) {
+                $this->log('let it be');
                 return;
             }
+            $this->log('handle it');
+            return;
+            $data = filter_input(INPUT_POST, "data");
+            $bad_rights = $this->checkApiUserRoleMapping($data);
 
-            // Take action if the user-related API methods are being called
-            if (in_array($_POST["content"], ["user", "userRole", "userRoleMapping"]) && isset($_POST["data"])) {
-                echo "This API Method is Not Allowed.";
+
+
+            if (!empty($bad_rights)) {
+                http_response_code(401);
+                echo json_encode($bad_rights);
                 $this->exitAfterHook();
-                return;
             }
+
+            return;
         }
 
 
@@ -497,20 +506,6 @@ class SystemUserRights extends AbstractExternalModule
     function getModuleDirectoryPrefix()
     {
         return strrev(preg_replace("/^.*v_/", "", strrev($this->getModuleDirectoryName()), 1));
-    }
-
-    function getUserRightsFromToken($token)
-    {
-        $sql = "SELECT * FROM redcap_user_rights WHERE api_token = ?";
-        $rights = [];
-        try {
-            $result = $this->query($sql, [$token]);
-            $rights = $result->fetch_assoc();
-        } catch (\Throwable $e) {
-            $this->log('Error getting user rights from API token', ["error" => $e->getMessage()]);
-        } finally {
-            return $rights;
-        }
     }
 
     function getUserSystemRole($username)
