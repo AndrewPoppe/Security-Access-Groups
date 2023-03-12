@@ -30,20 +30,19 @@ class SystemUserRights extends AbstractExternalModule
 
         // API
         if (PAGE === "api/index.php") {
-            $this->log('on it');
             $API = new APIHandler($this, $_POST);
             if (!$API->shouldProcess()) {
-                $this->log('let it be');
+                $this->log("API ALLOWED");
                 return;
             }
-            $this->log('handle it');
-            return;
-            $data = filter_input(INPUT_POST, "data");
-            $bad_rights = $this->checkApiUserRoleMapping($data);
 
+            $this->log("API PROCESSING");
+            $API->handleRequest();
 
-
-            if (!empty($bad_rights)) {
+            if (!$API->shouldAllowImport()) {
+                $this->log("API RESTRICTED");
+                $bad_rights = $API->getBadRights();
+                $this->log('bad', ['rights' => json_encode($bad_rights)]);
                 http_response_code(401);
                 echo json_encode($bad_rights);
                 $this->exitAfterHook();
@@ -488,9 +487,10 @@ class SystemUserRights extends AbstractExternalModule
         return $users;
     }
 
-    function getRoleRights($role_id)
+    function getRoleRights($role_id, $pid = null)
     {
-        $roles = \UserRights::getRoles($this->getProjectId());
+        $project_id = $pid ?? $this->getProjectId();
+        $roles = \UserRights::getRoles($project_id);
         $this_role = $roles[$role_id];
         $role_rights = array_filter($this_role, function ($value, $key) {
             $off = $value === "0";
