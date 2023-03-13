@@ -56,6 +56,7 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                 <th>Account Expiration</th>
                 <th>Last Login</th> -->
                 <th>Role</th>
+                <th>Role Id</th>
             </tr>
         </thead>
         <tbody>
@@ -79,16 +80,39 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                             ?>
                         </select>
                     </td>
+                    <td class="hidden_role_id"><?= \REDCap::escapeHtml($thisUserRole) ?></td>
                 </tr>
             <?php } ?>
         </tbody>
     </table>
     <script>
+        const buttonCommon = {
+            exportOptions: {
+                format: {
+                    body: function(html, row, col, node) {
+                        if (col === 4) {
+                            return $('#SUR-System-Table select').eq(row).val();
+                        } else if (col === 3) {
+                            return $('#SUR-System-Table select').eq(row).find('option:selected').text();
+                        } else if (col === 2) {
+                            // const value = $(node).data('value');
+                            // return value == '' ? 0 : value;
+                            return $(html).text();
+                        } else {
+                            return html;
+                        }
+                    }
+                }
+            }
+        };
         let dt;
         dt = $('#SUR-System-Table').DataTable({
             paging: false,
             info: false,
             columnDefs: [{
+                targets: [4],
+                visible: false
+            }, {
                 targets: [3],
                 data: function(row, type, val, meta) {
                     if (type === 'set') {
@@ -101,8 +125,20 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                     return row.role;
                 }
             }],
-            buttons: ['csvHtml5'],
-            dom: 'ftB'
+            buttons: [$.extend(true, {}, buttonCommon, {
+                extend: 'csvHtml5',
+                className: 'btn btn-sm btn-secondary',
+                text: '<i class="fa-light fa-file-csv fa-xl fa-fw" style="line-height: 1;"></i>',
+                attr: {
+                    'data-toggle': "tooltip",
+                    'data-placement': "bottom",
+                    'title': "Export Table as CSV"
+                }
+            })],
+            dom: 'ftB',
+            initComplete: function() {
+                $($(this).DataTable().buttons().nodes()[0]).removeClass('dt-button').attr('style', 'margin-top: 0.5rem;');
+            }
         });
         $('.roleSelect').select2({
             minimumResultsForSearch: 20
