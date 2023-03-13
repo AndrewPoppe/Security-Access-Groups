@@ -32,22 +32,19 @@ class SystemUserRights extends AbstractExternalModule
         if (PAGE === "api/index.php") {
             $API = new APIHandler($this, $_POST);
             if (!$API->shouldProcess()) {
-                $this->log("API ALLOWED");
                 return;
             }
 
-            $this->log("API PROCESSING");
             $API->handleRequest();
-
             if (!$API->shouldAllowImport()) {
-                $this->log("API RESTRICTED");
                 $bad_rights = $API->getBadRights();
-                $this->log('bad', ['rights' => json_encode($bad_rights)]);
                 http_response_code(401);
                 echo json_encode($bad_rights);
                 $this->exitAfterHook();
+                return;
+            } else {
+                //$this->log('API PROCESSED AND ALLOWED');
             }
-
             return;
         }
 
