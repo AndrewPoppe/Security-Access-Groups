@@ -126,7 +126,7 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                 }
             }],
             buttons: [$.extend(true, {}, buttonCommon, {
-                extend: 'csvHtml5',
+                extend: 'csv',
                 className: 'btn btn-sm btn-secondary',
                 text: '<i class="fa-light fa-file-csv fa-xl fa-fw" style="line-height: 1;"></i>',
                 attr: {
@@ -296,10 +296,24 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
             </tbody>
         </table>
     </div>
-    <div style="margin-top:0.5rem; display:flex; flex-direction: row;" id="buttonsContainer">
-        <button class="btn btn-success btn-sm" id="addRoleButton" onclick="addNewRole();" data-toggle="tooltip" title="Add a New System User Role">
-            <i class="fak fa-light-tag-circle-plus fa-xl fa-fw" style="line-height: 1;"></i>
-        </button>
+    <div class="btn-toolbar mt-2" role="toolbar" id="buttonsContainer">
+        <div class="btn-group btn-group-sm mr-1" role="group">
+            <button class="btn btn-success btn-sm" id="addRoleButton" onclick="addNewRole();" data-toggle="tooltip" title="Add a New System User Role">
+                <i class="fak fa-light-tag-circle-plus fa-xl fa-fw" style="line-height: 1;"></i>
+            </button>
+        </div>
+        <div class="btn-group btn-group-sm" role="group">
+            <div class="btn-group btn-group-sm" role="group">
+                <button type="button" class="btn btn-secondary btm-sm"><i class="fa-light fa-file-csv fa-xl fa-fw" style="line-height: 1;"></i></button>
+                <button type="button" class="btn btn-secondary btm-sm dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-expanded="false">
+                    <span class="sr-only">Toggle Dropdown</span>
+                </button>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item" onclick="exportCsv();">Export Roles as CSV</a>
+                    <a class="dropdown-item" onclick="importCsv();">Import Roles</a>
+                </div>
+            </div>
+        </div>
     </div>
     <script>
         const Toast = Swal.mixin({
@@ -446,8 +460,6 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                 });
         }
 
-
-
         function editRole(role_id, role_name) {
             const url = "<?= $module->getUrl("editSystemRole.php?newRole=false") ?>";
             openRoleEditor(url, role_id, role_name);
@@ -458,36 +470,76 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
             openRoleEditor(url);
         }
 
-        $(document).ready(function() {
-            const buttonCommon = {
-                exportOptions: {
-                    format: {
-                        body: function(html, row, col, node) {
-                            if (col === 0) {
-                                return $(html).text();
-                            } else if (col === 1) {
-                                return html;
-                            } else {
-                                const value = $(node).data('value');
-                                return value == '' ? 0 : value;
-                            }
+        function formatNow() {
+            const d = new Date();
+            return d.getFullYear() + '-' + (d.getMonth() + 1).toString().padStart(2, 0) + '-' + (d.getDate()).toString().padStart(2, 0)
+        }
+
+        function exportCsv() {
+            const newLine = navigator.userAgent.match(/Windows/) ? '\r\n' : '\n';
+            const escapeChar = '"';
+            const boundary = '"';
+            const separator = ',';
+            const extension = '.csv';
+            const reBoundary = new RegExp(boundary, 'g');
+            const filename = 'SystemRoles_' + formatNow() + extension;
+            let charset = document.characterSet || document.charset;
+            if (charset) {
+                charset = ';charset=' + charset;
+            }
+            const join = function(a) {
+                let s = '';
+                for (let i = 0, ien = a.length; i < ien; i++) {
+                    if (i > 0) {
+                        s += separator;
+                    }
+                    s += boundary ?
+                        boundary + ('' + a[i]).replace(reBoundary, escapeChar + boundary) + boundary :
+                        a[i];
+                }
+                return s;
+            };
+
+            const data = $('#roleTable').DataTable().buttons.exportData({
+                format: {
+                    body: function(html, row, col, node) {
+                        if (col === 0) {
+                            return $(html).text();
+                        } else if (col === 1) {
+                            return html;
+                        } else {
+                            const value = $(node).data('value');
+                            return value == '' ? 0 : value;
                         }
                     }
                 }
+            });
+
+            const header = join(data.header) + newLine;
+            const footer = data.footer ? newLine + join(data.footer) : '';
+            const body = [];
+            for (let i = 0, ien = data.body.length; i < ien; i++) {
+                body.push(join(data.body[i]));
+            }
+
+            const result = {
+                str: header + body.join(newLine) + footer,
+                rows: body.length
             };
+
+            $.fn.dataTable.fileSave(new Blob([result.str], {
+                    type: 'text/csv' + charset
+                }),
+                filename,
+                true);
+        }
+
+        function importCsv() {
+            console.log('import');
+        }
+
+        $(document).ready(function() {
             const table = $('#roleTable').DataTable({
-                buttons: [
-                    $.extend(true, {}, buttonCommon, {
-                        extend: 'csvHtml5',
-                        className: 'btn btn-sm btn-secondary',
-                        text: '<i class="fa-light fa-file-csv fa-xl fa-fw" style="line-height: 1;"></i>',
-                        attr: {
-                            'data-toggle': "tooltip",
-                            'data-placement': "bottom",
-                            'title': "Export Table as CSV"
-                        }
-                    })
-                ],
                 searching: false,
                 info: false,
                 paging: false,
@@ -498,10 +550,6 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                 scrollX: true,
                 initComplete: function() {
                     $('#roleTableWrapper').show();
-                    $(this).DataTable().buttons()
-                        .container()
-                        .appendTo('#buttonsContainer');
-                    $($(this).DataTable().buttons().nodes()[0]).removeClass('dt-button').attr('style', 'margin-left: 5px;');
                     // THIS IS USING JQUERY UI'S TOOLTIPS BECAUSE GARBAGE
                     $('[data-toggle="tooltip"]').tooltip({
                         show: false,
@@ -514,7 +562,6 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                         }
                     });
                 },
-                dom: "tB",
                 columnDefs: [{
                     targets: 1,
                     visible: false
@@ -531,8 +578,6 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                     }
                 }]
             });
-
-
 
             table.on('draw', function() {
                 $('.dataTable tbody tr').each((i, row) => {
@@ -561,8 +606,6 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                 const rowIdx = thisNode.attr('data-dt-row');
                 $("tr[data-dt-row='" + rowIdx + "'] td").removeClass("highlight"); // shade only the hovered row
             }
-
-
 
         });
         window.scroll(0, 0);
