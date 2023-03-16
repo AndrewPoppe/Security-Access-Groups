@@ -711,7 +711,7 @@ class SystemUserRights extends AbstractExternalModule
         global $lang;
         $allRights = $this->getAllRights();
         //var_dump($allRights);
-        $context_message = $newRole ? $lang["rights_159"] : $lang["rights_157"] . ' "<strong>' . \REDCap::escapeHtml($role_name) . '</strong>"';
+        $context_message = ($newRole ? $lang["rights_159"] : $lang["rights_157"]) . ' "<strong>' . \REDCap::escapeHtml($role_name) . '</strong>"';
     ?>
         <div class="modal-xl modal-dialog modal-dialog-scrollable">
             <div class="modal-content">
@@ -739,7 +739,7 @@ class SystemUserRights extends AbstractExternalModule
                                     <div class='card-body p-3' style='background-color:#00000007;'>
 
                                         <!-- EDIT ROLE NAME -->
-                                        <div class="form-row">
+                                        <div class="form-row <?= $newRole === true ? "hidden" : "" ?>">
                                             <div class="col" colspan='2'>
                                                 <i class="fa-solid fa-fw fa-id-card"></i>&nbsp;&nbsp;<?= $lang['rights_199'] ?>
                                                 <input type='text' value="<?= \REDCap::escapeHtml($role_name) ?>" class='x-form-text x-form-field' name='role_name_edit'>

@@ -187,11 +187,12 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
 
 
     <!-- Controls Container -->
-    <div class="container ml-0 mt-2 mb-3" style="background-color: #eee; max-width: 550px; border: 1px solid #ccc;">
+    <div class="container ml-0 mt-2 mb-3 pl-0" style="background-color: #eee; max-width: 550px; border: 1px solid #ccc;">
         <div class="row justify-content-end my-1">
             <div class="btn-group btn-group-sm mr-2" role="group">
                 <button type="button" class="btn btn-secondary btm-sm dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                    <i class="fa-light fa-file-csv fa-xl fa-fw" style="line-height: 1;"></i>
+                    <i class="fa-light fa-file-csv fa-xl fa-fw mr-1" style="line-height: 1;"></i>
+                    <span>Import or Export Roles</span>
                     <span class="sr-only">Toggle Dropdown</span>
                 </button>
                 <div class="dropdown-menu">
@@ -200,16 +201,17 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                 </div>
             </div>
         </div>
-        <div class="row ml-1">
+        <div class="row ml-2">
             <span><strong>Create new system user roles:</strong></span>
         </div>
         <div class="row ml-2 mb-2 mt-1 justify-content-start">
             <div class="col-6 px-0">
                 <input id="newRoleName" class="form-control form-control-sm" type="text" placeholder="Enter new system role name">
             </div>
-            <div class="col-1 ml-1 px-0 justify-content-start">
+            <div class="col ml-2 px-0 justify-content-start">
                 <button class="btn btn-success btn-sm" id="addRoleButton" onclick="addNewRole();" data-toggle="tooltip" title="Add a New System User Role">
-                    <i class="fak fa-light-tag-circle-plus fa-xl fa-fw" style="line-height: 1;"></i>
+                    <i class="fak fa-light-tag-circle-plus fa-xl fa-fw mr-1" style="line-height: 1;"></i>
+                    <span>Create Role</span>
                 </button>
             </div>
         </div>
@@ -479,7 +481,7 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
 
         function addNewRole() {
             const url = "<?= $module->getUrl("editSystemRole.php?newRole=true") ?>";
-            const newRoleName = $('#newRoleName').text();
+            const newRoleName = $('#newRoleName').val();
             openRoleEditor(url, "", newRoleName);
         }
 
