@@ -26,7 +26,7 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
 
     if ($newRole === true) {
         $defaultRights = $module->getDefaultRights();
-        $form_contents = $module->getRoleEditForm($defaultRights, $newRole);
+        $form_contents = $module->getRoleEditForm($defaultRights, $newRole, $role_name);
         echo $form_contents;
     } else {
         $this_role = $module->getSystemRoleRightsById($role_id);

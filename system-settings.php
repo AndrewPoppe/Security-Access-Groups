@@ -185,8 +185,39 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
     <!-- Modal -->
     <div class="modal" id="edit_role_popup" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true"></div>
 
+
+    <!-- Controls Container -->
+    <div class="container ml-0 mt-2 mb-3" style="background-color: #eee; max-width: 550px; border: 1px solid #ccc;">
+        <div class="row justify-content-end my-1">
+            <div class="btn-group btn-group-sm mr-2" role="group">
+                <button type="button" class="btn btn-secondary btm-sm dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                    <i class="fa-light fa-file-csv fa-xl fa-fw" style="line-height: 1;"></i>
+                    <span class="sr-only">Toggle Dropdown</span>
+                </button>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item" onclick="exportCsv();">Export Roles as CSV</a>
+                    <a class="dropdown-item" onclick="importCsv();">Import Roles</a>
+                </div>
+            </div>
+        </div>
+        <div class="row ml-1">
+            <span><strong>Create new system user roles:</strong></span>
+        </div>
+        <div class="row ml-2 mb-2 mt-1 justify-content-start">
+            <div class="col-6 px-0">
+                <input id="newRoleName" class="form-control form-control-sm" type="text" placeholder="Enter new system role name">
+            </div>
+            <div class="col-1 ml-1 px-0 justify-content-start">
+                <button class="btn btn-success btn-sm" id="addRoleButton" onclick="addNewRole();" data-toggle="tooltip" title="Add a New System User Role">
+                    <i class="fak fa-light-tag-circle-plus fa-xl fa-fw" style="line-height: 1;"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+
     <!-- Role Table -->
-    <!-- <div id="roleTableWrapper" style="display: none; width: calc(min(100vw,1600px) - 270px);"> -->
+    <div class="clear"></div>
     <div id="roleTableWrapper" style="display: none; width: 100%;">
         <table id="roleTable" class="roleTable cell-border" style="width: 100%">
             <!-- <table id="roleTable" class="table table-striped table-hover table-bordered table-responsive align-middle" style="width: 100%;"> -->
@@ -295,25 +326,6 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                 <?php } ?>
             </tbody>
         </table>
-    </div>
-    <div class="btn-toolbar mt-2" role="toolbar" id="buttonsContainer">
-        <div class="btn-group btn-group-sm mr-1" role="group">
-            <button class="btn btn-success btn-sm" id="addRoleButton" onclick="addNewRole();" data-toggle="tooltip" title="Add a New System User Role">
-                <i class="fak fa-light-tag-circle-plus fa-xl fa-fw" style="line-height: 1;"></i>
-            </button>
-        </div>
-        <div class="btn-group btn-group-sm" role="group">
-            <div class="btn-group btn-group-sm" role="group">
-                <button type="button" class="btn btn-secondary btm-sm"><i class="fa-light fa-file-csv fa-xl fa-fw" style="line-height: 1;"></i></button>
-                <button type="button" class="btn btn-secondary btm-sm dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-expanded="false">
-                    <span class="sr-only">Toggle Dropdown</span>
-                </button>
-                <div class="dropdown-menu">
-                    <a class="dropdown-item" onclick="exportCsv();">Export Roles as CSV</a>
-                    <a class="dropdown-item" onclick="importCsv();">Import Roles</a>
-                </div>
-            </div>
-        </div>
     </div>
     <script>
         const Toast = Swal.mixin({
@@ -467,7 +479,8 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
 
         function addNewRole() {
             const url = "<?= $module->getUrl("editSystemRole.php?newRole=true") ?>";
-            openRoleEditor(url);
+            const newRoleName = $('#newRoleName').text();
+            openRoleEditor(url, "", newRoleName);
         }
 
         function formatNow() {
