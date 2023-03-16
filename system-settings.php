@@ -190,8 +190,8 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
     <div class="container ml-0 mt-2 mb-3 pl-0" style="background-color: #eee; max-width: 550px; border: 1px solid #ccc;">
         <div class="row justify-content-end my-1">
             <div class="btn-group btn-group-sm mr-2" role="group">
-                <button type="button" class="btn btn-secondary btm-sm dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                    <i class="fa-light fa-file-csv fa-xl fa-fw mr-1" style="line-height: 1;"></i>
+                <button type="button" class="btn btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                    <i class="fa-light fa-file-csv mr-1"></i>
                     <span>Import or Export Roles</span>
                     <span class="sr-only">Toggle Dropdown</span>
                 </button>
@@ -199,6 +199,9 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                     <a class="dropdown-item" onclick="exportCsv();">Export Roles as CSV</a>
                     <a class="dropdown-item" onclick="importCsv();">Import Roles</a>
                 </div>
+            </div>
+            <div class="hidden">
+                <input type="file" accept="text/csv" class="form-control-file" id="importRolesFile">
             </div>
         </div>
         <div class="row ml-2">
@@ -210,7 +213,7 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
             </div>
             <div class="col ml-2 px-0 justify-content-start">
                 <button class="btn btn-success btn-sm" id="addRoleButton" onclick="addNewRole();" data-toggle="tooltip" title="Add a New System User Role">
-                    <i class="fak fa-light-tag-circle-plus fa-xl fa-fw mr-1" style="line-height: 1;"></i>
+                    <i class="fak fa-light-tag-circle-plus fa-fw mr-1"></i>
                     <span>Create Role</span>
                 </button>
             </div>
@@ -219,16 +222,17 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
 
 
     <!-- Role Table -->
-    <div class="clear"></div>
+    <div class=" clear">
+    </div>
     <div id="roleTableWrapper" style="display: none; width: 100%;">
         <table id="roleTable" class="roleTable cell-border" style="width: 100%">
             <!-- <table id="roleTable" class="table table-striped table-hover table-bordered table-responsive align-middle" style="width: 100%;"> -->
             <thead>
                 <tr style="vertical-align: bottom; text-align: center;">
-                    <th>Role</th>
-                    <th>Role ID</th>
-                    <?php foreach ($displayTextForUserRights as  $text) {
-                        echo "<th class='dt-head-center'>" . \REDCap::escapeHtml($text) . "</th>";
+                    <th data-key="role_name">Role</th>
+                    <th data-key="role_id">Role ID</th>
+                    <?php foreach ($displayTextForUserRights as  $key => $text) {
+                        echo "<th data-key='" . \REDCap::escapeHtml($key) . "' class='dt-head-center'>" . \REDCap::escapeHtml($text) . "</th>";
                     } ?>
                 </tr>
             </thead>
@@ -480,9 +484,20 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
         }
 
         function addNewRole() {
+            $('#addRoleButton').blur();
             const url = "<?= $module->getUrl("editSystemRole.php?newRole=true") ?>";
             const newRoleName = $('#newRoleName').val();
-            openRoleEditor(url, "", newRoleName);
+            if (newRoleName == "") {
+                Swal.fire({
+                    title: "You must specify a role name",
+                    icon: "error",
+                    didClose: () => {
+                        $("#newRoleName").focus()
+                    }
+                });
+            } else {
+                openRoleEditor(url, "", newRoleName);
+            }
         }
 
         function formatNow() {
@@ -517,6 +532,9 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
 
             const data = $('#roleTable').DataTable().buttons.exportData({
                 format: {
+                    header: function(html, col, node) {
+                        return ($(node).data('key'));
+                    },
                     body: function(html, row, col, node) {
                         if (col === 0) {
                             return $(html).text();
@@ -550,10 +568,40 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
         }
 
         function importCsv() {
+            $('#importRolesFile').click();
             console.log('import');
         }
 
+        function handleFiles() {
+            if (this.files.length !== 1) {
+                return;
+            }
+            const file = this.files[0];
+
+            if (!file.type === "text/csv") {
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                $.post("<?= $module->getUrl("importCsvRoles.php") ?>", {
+                        data: e.target.result
+                    })
+                    .done((response) => {
+                        console.log(JSON.parse(response));
+                    })
+                    .fail((error) => {
+                        console.error(error);
+                    })
+            };
+            reader.readAsText(file);
+        }
+
+
         $(document).ready(function() {
+            const importFileElement = document.getElementById("importRolesFile");
+            importFileElement.addEventListener("change", handleFiles, false);
+
             const table = $('#roleTable').DataTable({
                 searching: false,
                 info: false,
