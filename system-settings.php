@@ -14,6 +14,9 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+<!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script> -->
+
 <link rel='stylesheet' type='text/css' href='<?= $module->getUrl('SystemUserRights.css') ?>' />
 <h4 style='color:#900; margin-top: 0 0 10px;'>
     <i class='fa-solid fa-user-secret'></i>&nbsp;<span>System User Rights</span>
@@ -242,7 +245,7 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                     $theseRights = json_decode($role["permissions"], true);
                 ?>
                     <tr data-roleId="<?= \REDCap::escapeHtml($role["role_id"]) ?>">
-                        <td><a class="SUR_roleLink" onclick="editRole('<?= $role['role_id'] ?>', '<?= $role['role_name'] ?>');"><?= \REDCap::escapeHtml($role["role_name"]) ?></a></td>
+                        <td><a class="SUR_roleLink text-primary" onclick="editRole($(this).closest('tr').data('roleid'));"><?= \REDCap::escapeHtml($role["role_name"]) ?></a></td>
                         <td><?= \REDCap::escapeHtml($role["role_id"]) ?></td>
                         <?php
                         $shieldcheck = '<i class="fa-solid fa-shield-check fa-xl" style="color: green;"></i>';
@@ -353,9 +356,12 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                     title: 'Are you sure you want to delete this role?',
                     icon: 'warning',
                     showCancelButton: true,
-                    confirmButtonColor: '#dc3545',
-                    cancelButtonColor: '#6c757d',
-                    confirmButtonText: 'Delete Role'
+                    confirmButtonText: 'Delete Role',
+                    customClass: {
+                        confirmButton: 'btn btn-danger m-1',
+                        cancelButton: 'btn btn-secondary m-1'
+                    },
+                    buttonsStyling: false
                 }).then((result) => {
                     if (result.isConfirmed) {
                         Swal.showLoading();
@@ -386,15 +392,19 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                         input: 'text',
                         inputValue: `${data["role_name_edit"]} Copy`,
                         showCancelButton: true,
-                        confirmButtonColor: '#17a2b8',
-                        cancelButtonColor: '#6c757d',
-                        confirmButtonText: 'Copy Role'
+                        confirmButtonText: 'Copy Role',
+                        customClass: {
+                            confirmButton: 'btn btn-info m-1',
+                            cancelButton: 'btn btn-secondary m-1'
+                        },
+                        buttonsStyling: false
                     })
                     .then(function(result) {
                         if (result.isConfirmed) {
                             const role_name = result.value;
                             data.role_name_edit = role_name;
-                            $.post('<?= $module->getUrl("editSystemRole.php?newRole=true") ?>', data)
+                            data.newRole = 1;
+                            $.post('<?= $module->getUrl("editSystemRole.php") ?>', data)
                                 .done(function(result) {
                                     Toast.fire({
                                             icon: 'success',
@@ -413,14 +423,15 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
             };
             const saveRoleChangesButtonCallback = function() {
                 $('input[name="role_name_edit"]').blur();
-                if ($('input[name="role_name_edit"]').val() != '') {
+                const role_name_edit = $('input[name="role_name_edit"]').val();
+                if (role_name_edit != '') {
                     const data = $("#SUR_Role_Setting").serializeObject();
                     data.role_id = role_id;
                     $.post(url, data)
                         .done(function(response) {
                             Toast.fire({
                                 icon: "success",
-                                title: `Role "${role_name}" Successfully Saved`
+                                title: `Role "${role_name_edit}" Successfully Saved`
                             }).then(function() {
                                 window.location.reload();
                             })
@@ -432,7 +443,8 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
             };
             const saveNewRoleButtonCallback = function() {
                 $('input[name="role_name_edit"]').blur();
-                if ($('input[name="role_name_edit"]').val() != '') {
+                const role_name_edit = $('input[name="role_name_edit"]').val();
+                if (role_name_edit != '') {
                     const data = $("#SUR_Role_Setting").serializeObject();
                     $.post(url, data)
                         .done(function(response) {
@@ -593,6 +605,9 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                     })
                     .fail((error) => {
                         console.error(error);
+                    })
+                    .always(() => {
+                        Swal.fire("Sorry", "That feature is not yet implemented.");
                     })
             };
             reader.readAsText(file);

@@ -14,6 +14,8 @@ class SystemUserRights extends AbstractExternalModule
     function redcap_every_page_before_render()
     {
 
+        $username = $this->getUser()->getUsername();
+
         // Only run on the pages we're interested in
         if (
             $_SERVER["REQUEST_METHOD"] !== "POST" ||
@@ -55,28 +57,28 @@ class SystemUserRights extends AbstractExternalModule
             isset($_POST['submit-action']) &&
             in_array($_POST['submit-action'], ["edit_role", "edit_user", "add_user"])
         ) {
-            $this->log('attempt to edit user or role directly', ["page" => PAGE, "data" => json_encode($_POST)]);
+            $this->log('attempt to edit user or role directly', ["page" => PAGE, "data" => json_encode($_POST), "user" => $username]);
             $this->exitAfterHook();
             return;
         }
 
         // Assign User to Role
         if (PAGE === "UserRights/assign_user.php") {
-            $this->log('attempt to assign user role directly', ["page" => PAGE, "data" => json_encode($_POST)]);
+            $this->log('attempt to assign user role directly', ["page" => PAGE, "data" => json_encode($_POST), "user" => $username]);
             $this->exitAfterHook();
             return;
         }
 
         // Upload Users via CSV
         if (PAGE === "UserRights/import_export_users.php") {
-            $this->log('attempt to upload users directly', ["page" => PAGE, "data" => json_encode($_POST)]);
+            $this->log('attempt to upload users directly', ["page" => PAGE, "data" => json_encode($_POST), "user" => $username]);
             $this->exitAfterHook();
             return;
         }
 
         // Upload Roles or Mappings via CSV
         if (PAGE === "UserRights/import_export_roles.php") {
-            $this->log('attempt to upload roles or role mappings directly', ["page" => PAGE, "data" => json_encode($_POST)]);
+            $this->log('attempt to upload roles or role mappings directly', ["page" => PAGE, "data" => json_encode($_POST), "user" => $username]);
             $this->exitAfterHook();
             return;
         }
@@ -281,7 +283,7 @@ class SystemUserRights extends AbstractExternalModule
             $result = $this->query($sql, [$username]);
             return $result->fetch_assoc();
         } catch (\Throwable $e) {
-            $this->log("Error getting user info", ["username" => $username, "error" => $e->getMessage()]);
+            $this->log("Error getting user info", ["username" => $username, "error" => $e->getMessage(), "user" => $this->getUser()->getUsername()]);
         }
     }
 
@@ -313,7 +315,7 @@ class SystemUserRights extends AbstractExternalModule
             }
             return $userinfo;
         } catch (\Throwable $e) {
-            $this->log("Error getting all user info", ["error" => $e->getMessage()]);
+            $this->log("Error getting all user info", ["error" => $e->getMessage(), "user" => $this->getUser()->getUsername()]);
         }
     }
 
@@ -525,8 +527,16 @@ class SystemUserRights extends AbstractExternalModule
                 $rights[$key] = 1;
             }
         }
-        $this->log('converted rights', ['rights' => json_encode($rights)]);
         return json_encode($rights);
+    }
+
+    function throttleSaveSystemRole(string $role_id, string $role_name, string $permissions)
+    {
+        if (!$this->throttle("message = 'role'", [], 2, 1)) {
+            $this->saveSystemRole($role_id, $role_name, $permissions);
+        } else {
+            $this->log('saveSystemRole Throttled', ["role_id" => $role_id, "role_name" => $role_name, "user" => $this->getUser()->getUsername()]);
+        }
     }
 
     /**
@@ -538,18 +548,80 @@ class SystemUserRights extends AbstractExternalModule
      */
     function saveSystemRole(string $role_id, string $role_name, string $permissions)
     {
-        $permissions_converted = $this->convertPermissions($permissions);
+        try {
+            $permissions_converted = $this->convertPermissions($permissions);
+            $this->log("role", [
+                "role_id" => $role_id,
+                "role_name" => $role_name,
+                "permissions" => $permissions_converted,
+                "user" => $this->getUser()->getUsername()
+            ]);
+        } catch (\Throwable $e) {
+            $this->log('Error saving system role', [
+                "error" => $e->getMessage(),
+                "role_id" => $role_id,
+                "role_name" => $role_name,
+                "permissions" => $permissions_converted,
+                "user" => $this->getUser()->getUsername()
+            ]);
+        }
+    }
 
-        $this->log("role", [
-            "role_id" => $role_id,
-            "role_name" => $role_name,
-            "permissions" => $permissions_converted
-        ]);
+    function throttleUpdateSystemRole(string $role_id, string $role_name, string $permissions)
+    {
+        if (!$this->throttle("message = 'updated system role'", [], 2, 1)) {
+            $this->updateSystemRole($role_id, $role_name, $permissions);
+        } else {
+            $this->log('updateSystemRole Throttled', ["role_id" => $role_id, "role_name" => $role_name, "user" => $this->getUser()->getUsername()]);
+        }
+    }
+
+    function updateSystemRole(string $role_id, string $role_name, string $permissions)
+    {
+        try {
+            $permissions_converted = $this->convertPermissions($permissions);
+            $sql1 = "SELECT log_id WHERE message = 'role' AND role_id = ? AND project_id IS NULL";
+            $result1 = $this->queryLogs($sql1, [$role_id]);
+            $log_id = $result1->fetch_assoc()["log_id"];
+            if (empty($log_id)) {
+                throw new \Exception('No role found with the specified id');
+            }
+            $params = ["role_name" => $role_name, "permissions" => $permissions];
+            foreach ($params as $name => $value) {
+                $sql = "UPDATE redcap_external_modules_log_parameters SET value = ? WHERE log_id = ? AND name = ?";
+                $this->query($sql, [$value, $log_id, $name]);
+            }
+            $this->log('updated system role', ['role_id' => $role_id, 'role_name' => $role_name, 'permissions' => $permissions_converted, "user" => $this->getUser()->getUsername()]);
+        } catch (\Throwable $e) {
+            $this->log('Error updating system role', [
+                'error' => $e->getMessage(),
+                'role_id' => $role_id,
+                'role_name' => $role_name,
+                'permissions_orig' => $permissions,
+                'permissions_converted' => $permissions_converted,
+                "user" => $this->getUser()->getUsername()
+            ]);
+        }
+    }
+
+    function throttleDeleteSystemRole($role_id)
+    {
+        if (!$this->throttle("message = 'deleted system role'", [], 2, 1)) {
+            $this->deleteSystemRole($role_id);
+        } else {
+            $this->log('deleteSystemRole Throttled', ["role_id" => $role_id, "user" => $this->getUser()->getUsername()]);
+        }
     }
 
     function deleteSystemRole($role_id)
     {
-        return $this->removeLogs("message = 'role' AND role_id = ? AND project_id is null", [$role_id]);
+        try {
+            $result = $this->removeLogs("message = 'role' AND role_id = ? AND project_id is null", [$role_id]);
+            $this->log('deleted system role', ["user" => $this->getUser()->getUsername(), "role_id" => $role_id]);
+            return $result;
+        } catch (\Throwable $e) {
+            $this->log('Error deleting system role', ["error" => $e->getMessage(), "user" => $this->getUser()->getUsername(), "role_id" => $role_id]);
+        }
     }
 
     function getAllSystemRoles()
@@ -726,10 +798,10 @@ class SystemUserRights extends AbstractExternalModule
                     <div style="text-align:center; margin: 15px 0;" class="fs14 alert <?= $newRole ? "alert-success" : "alert-primary" ?>">
                         <i class="fa-solid fa-fw fa-user-tag"></i> <?= $context_message ?>
                     </div>
-                    <!-- <div class="hidden">
-            <div id="dialog_title"><i class="fa-solid fa-fw fa-user-tag"></i> <?= $context_message ?> </div>
-        </div> -->
                     <form id="SUR_Role_Setting">
+                        <div class="hidden">
+                            <input name="newRole" value="<?= $newRole == true ?>">
+                        </div>
                         <div class="form-row">
                             <div class="col" style='width:475px;'>
                                 <div class='card' style='border-color:#00000060;'>

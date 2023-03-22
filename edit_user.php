@@ -23,9 +23,6 @@ if (in_array($submit_action, ["delete_user", "add_role", "delete_role", "copy_ro
 if (in_array($submit_action, ["add_user", "edit_user"])) {
     $acceptable_rights = $module->getAcceptableRights($user);
     $bad_rights = $module->checkProposedRights($acceptable_rights, $data);
-
-    $module->log('rights', ["acceptable" => json_encode($acceptable_rights), "requested" => json_encode($data)]);
-
     $errors = !empty($bad_rights);
 
     if ($errors === false) {

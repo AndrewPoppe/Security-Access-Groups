@@ -15,7 +15,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         echo "The provided role ID was bad.";
         exit;
     }
-    $module->log('deleting role', ['role_id' => $role_id]);
-    echo $module->deleteSystemRole($role_id);
+    echo $module->throttleDeleteSystemRole($role_id);
     exit;
 }

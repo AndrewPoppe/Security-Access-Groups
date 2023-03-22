@@ -12,7 +12,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $data = filter_input_array(INPUT_POST, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
     $role_id = $data["role_id"] ?? $module->generateNewRoleId();
     $role_name = $data["role_name_edit"];
-    $module->saveSystemRole($role_id, $role_name, json_encode($data));
+    $newRole = $data["newRole"];
+    if ($newRole == 1) {
+        $module->throttleSaveSystemRole($role_id, $role_name, json_encode($data));
+    } else {
+        $module->throttleUpdateSystemRole($role_id, $role_name, json_encode($data));
+    }
     echo $role_id;
     exit;
 }
@@ -23,7 +28,6 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
     $role_id = filter_input(INPUT_GET, "role_id", FILTER_SANITIZE_FULL_SPECIAL_CHARS);
     $role_name = filter_input(INPUT_GET, "role_name", FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 
-
     if ($newRole === true) {
         $defaultRights = $module->getDefaultRights();
         $form_contents = $module->getRoleEditForm($defaultRights, $newRole, $role_name);
@@ -31,7 +35,7 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
     } else {
         $this_role = $module->getSystemRoleRightsById($role_id);
         $rights = json_decode($this_role["permissions"], true);
-        $form_contents = $module->getRoleEditForm($rights, false, $role_name, $role_id);
+        $form_contents = $module->getRoleEditForm($rights, false, $this_role["role_name"], $role_id);
         echo $form_contents;
     }
 
