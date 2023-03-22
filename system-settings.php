@@ -13,6 +13,7 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <link rel='stylesheet' type='text/css' href='<?= $module->getUrl('SystemUserRights.css') ?>' />
 <h4 style='color:#900; margin-top: 0 0 10px;'>
     <i class='fa-solid fa-user-secret'></i>&nbsp;<span>System User Rights</span>
@@ -189,9 +190,9 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
     <!-- Controls Container -->
     <div class="container ml-0 mt-2 mb-3 pl-0" style="background-color: #eee; max-width: 550px; border: 1px solid #ccc;">
         <div class="row justify-content-end my-1">
-            <div class="btn-group btn-group-sm mr-2" role="group">
-                <button type="button" class="btn btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                    <i class="fa-light fa-file-csv mr-1"></i>
+            <div class="btn-group btn-group-xs mr-2" role="group">
+                <button type="button" class="btn btn-primary btn-xs dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                    <i class="fa-solid fa-file-excel mr-1"></i>
                     <span>Import or Export Roles</span>
                     <span class="sr-only">Toggle Dropdown</span>
                 </button>
@@ -212,8 +213,8 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                 <input id="newRoleName" class="form-control form-control-sm" type="text" placeholder="Enter new system role name">
             </div>
             <div class="col ml-2 px-0 justify-content-start">
-                <button class="btn btn-success btn-sm" id="addRoleButton" onclick="addNewRole();" data-toggle="tooltip" title="Add a New System User Role">
-                    <i class="fak fa-light-tag-circle-plus fa-fw mr-1"></i>
+                <button class="btn btn-success btn-sm" id="addRoleButton" onclick="addNewRole();" title="Add a New System User Role">
+                    <i class="fak fa-solid-tag-circle-plus fa-fw mr-1"></i>
                     <span>Create Role</span>
                 </button>
             </div>
