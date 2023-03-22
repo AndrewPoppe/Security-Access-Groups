@@ -146,10 +146,6 @@ div#pagecontainer {
     max-width: 1600px;
 }
 
-.form-check-label {
-    margin-top: .3rem !important;
-}
-
 div#roleTableWrapper {
     border-top: 1px solid rgba(0, 0, 0, 0.30);
     border-right: 1px solid rgba(0, 0, 0, 0.30);
