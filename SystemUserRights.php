@@ -789,7 +789,7 @@ class SystemUserRights extends AbstractExternalModule
             <div class="modal-content">
                 <div class="modal-header" style="background-color: #e9e9e9; padding-top: 0.5rem; padding-bottom: 0.5rem;">
                     <span class="modal-title" id="staticBackdropLabel" style="font-size: 1rem;"><i class="fa-solid fa-fw fa-user-tag"></i> <?= $context_message ?></span>
-                    <button type="button" class="close btn-close" data-bs-dismiss="modal" data-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="close btn-close" data-bs-dismiss="modal" data-dismiss="modal" aria-label="Close">&times</button>
                 </div>
                 <div class="modal-body">
                     <div style="text-align:center; margin: 15px 0;" class="fs14 alert <?= $newRole ? "alert-success" : "alert-primary" ?>">
@@ -1342,7 +1342,7 @@ class SystemUserRights extends AbstractExternalModule
                 </div>
                 <div class="modal-footer">
                     <button id="SUR_Save" type="button" class="btn btn-<?= $newRole ? "success" : "primary" ?>"><?= $newRole ? "Save New Role" : "Save Changes" ?></button>
-                    <button id="SUR_Cancel" type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button id="SUR_Cancel" type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-dismiss="modal">Cancel</button>
                     <?php if (!$newRole) { ?>
                         <button id="SUR_Copy" type="button" class="btn btn-info btn-sm">Copy role</button>
                         <button id="SUR_Delete" type="button" class="btn btn-danger btn-sm">Delete role</button>
