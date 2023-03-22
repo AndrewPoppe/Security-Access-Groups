@@ -875,7 +875,7 @@ class SystemUserRights extends AbstractExternalModule
 
                                             <div class="SUR-form-row row">
                                                 <div class="col">
-                                                    <img src='<?= APP_PATH_IMAGES . "mycap_logo_black.png" ?>'>&nbsp;<?= $lang['rights_437'] ?>
+                                                    <img style='height:1rem;' src='<?= APP_PATH_IMAGES . "mycap_logo_black.png" ?>'>&nbsp;<?= $lang['rights_437'] ?>
                                                 </div>
                                                 <div class="col">
                                                     <input type='checkbox' name='mycap_participants' <?= $rights["mycap_participants"] == 1 ? "checked" : "" ?>>
