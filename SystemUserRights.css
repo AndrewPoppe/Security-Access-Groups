@@ -109,7 +109,7 @@ form#SUR_Role_Setting {
     font-family: "Atkinson Hyperlegible" !important;
 }
 
-form#SUR_Role_Setting div.form-row {
+form#SUR_Role_Setting div.SUR-form-row {
     margin: 5px -5px;
 }
 
