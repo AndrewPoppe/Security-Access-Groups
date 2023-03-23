@@ -264,3 +264,12 @@ a.dropdown-item {
     font-size: inherit !important;
     cursor: pointer !important;
 }
+
+.fa-classic,
+.fa-regular,
+.fa-solid,
+.far,
+.fas,
+.fa {
+    font-family: "Font Awesome 6 Pro" !important;
+}
