@@ -47,20 +47,60 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
     $roles = $module->getAllSystemRoles();
 
 ?>
-    <table id='SUR-System-Table' class="compact hover">
+
+    <!-- Modal -->
+    <div class="modal fade" id="infoContainer" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body">
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc velit metus, venenatis in congue sed, ultrices sed nulla. Donec auctor bibendum mauris eget posuere. Ut rhoncus, nulla at auctor volutpat, urna odio ornare nulla, a ultrices neque massa sed est. Vestibulum dignissim feugiat turpis vel egestas. Integer eu purus vel dui egestas varius et ac erat. Donec blandit quam a enim faucibus ultrices. Aenean consectetur efficitur leo, et euismod arcu ultrices non. Ut et tincidunt tortor. Quisque eu interdum erat, vitae convallis ligula. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi interdum sapien nec quam blandit, vel faucibus turpis convallis.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Import/Export Users -->
+    <div class="hidden">
+        <div class="toolbar_orig">
+            <div class="d-flex dropdown">
+                <button type="button" class="btn btn-primary btn-xs dropdown-toggle mr-2" data-toggle="dropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fa-solid fa-file-excel mr-1"></i>
+                    <span>Import or Export Users</span>
+                    <span class="sr-only">Toggle Dropdown</span>
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" onclick="exportCsv();"><i class="fa-solid fa-arrow-down fa-fw mr-1"></i>Export Users</a></li>
+                    <li><a class="dropdown-item" onclick="importCsv();"><i class="fa-solid fa-arrow-up fa-fw mr-1"></i>Import Users</a></li>
+                    <li><a class="dropdown-item" onclick="downloadTemplate();"><i class="fa-solid fa-download fa-fw mr-1"></i>Download Import Template</a></li>
+                </ul>
+                <i class="fa-solid fa-circle-info fa-lg align-self-center text-info" style="cursor:pointer;" data-toggle="modal" data-target="#infoContainer" aria-expanded="false" aria-controls="collapseExample"></i>
+            </div>
+
+        </div>
+        <input type="file" accept="text/csv" class="form-control-file" id="importUsersFile">
+        <table id="templateTable">
+            <thead>
+                <tr>
+                    <th>username</th>
+                    <th>role_id</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($roles as $index => $role) {
+                    echo "<tr><td>example_user_" . (intval($index) + 1) . "</td><td>" . \REDCap::escapeHtml($role["role_id"]) . "</td></tr>";
+                } ?>
+            </tbody>
+        </table>
+    </div>
+    <!-- Users Table -->
+    <table id='SUR-System-Table' class="compact hover row-border border">
         <thead>
             <tr>
-                <th>Username</th>
-                <th>Name</th>
-                <th>Email</th>
-                <!--<th>Suspended?</th>
-                <th>Administrator?</th>
-                <th>User's Sponsor</th>
-                <th>Can create projects?</th>
-                <th>Account Expiration</th>
-                <th>Last Login</th> -->
-                <th>Role</th>
-                <th>Role Id</th>
+                <th data-id="username" class="py-3">Username</th>
+                <th data-id="name" class="py-3">Name</th>
+                <th data-id="email" class="py-3">Email</th>
+                <th data-id="role" class="py-3">Role</th>
+                <th data-id="role_id" class="py-3">Role Id</th>
             </tr>
         </thead>
         <tbody>
@@ -70,12 +110,6 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                     <td><?= $user["username"] ?></td>
                     <td><?= $user["user_firstname"] . " " . $user["user_lastname"] ?></td>
                     <td><a href="mailto:<?= $user["user_email"] ?>"><?= $user["user_email"] ?></a></td>
-                    <!--<td><?= $user["user_suspended_time"] ?></td>
-                    <td><?= $user["super_user"] ?></td>
-                    <td><?= $user["user_sponsor"] ?></td>
-                    <td><?= $user["allow_create_db"] ?></td>
-                    <td><?= $user["user_expiration"] ?></td>
-                    <td><?= $user["user_lastlogin"] ?></td>-->
                     <td data-role="<?= $thisUserRole ?>"><select class="roleSelect">
                             <?php
                             foreach ($roles as $role) {
@@ -89,10 +123,44 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
             <?php } ?>
         </tbody>
     </table>
+
     <script>
-        const buttonCommon = {
-            exportOptions: {
+        function formatNow() {
+            const d = new Date();
+            return d.getFullYear() + '-' + (d.getMonth() + 1).toString().padStart(2, 0) + '-' + (d.getDate()).toString().padStart(2, 0)
+        }
+
+        function exportCsv() {
+            alert('This will only export selected users if a filter has been applied');
+            const newLine = navigator.userAgent.match(/Windows/) ? '\r\n' : '\n';
+            const escapeChar = '"';
+            const boundary = '"';
+            const separator = ',';
+            const extension = '.csv';
+            const reBoundary = new RegExp(boundary, 'g');
+            const filename = 'SystemRoles_Users_' + formatNow() + extension;
+            let charset = document.characterSet || document.charset;
+            if (charset) {
+                charset = ';charset=' + charset;
+            }
+            const join = function(a) {
+                let s = '';
+                for (let i = 0, ien = a.length; i < ien; i++) {
+                    if (i > 0) {
+                        s += separator;
+                    }
+                    s += boundary ?
+                        boundary + ('' + a[i]).replace(reBoundary, escapeChar + boundary) + boundary :
+                        a[i];
+                }
+                return s;
+            };
+
+            const data = $('#SUR-System-Table').DataTable().buttons.exportData({
                 format: {
+                    header: function(html, col, node) {
+                        return $(node).data('id');
+                    },
                     body: function(html, row, col, node) {
                         if (col === 4) {
                             return $('#SUR-System-Table select').eq(row).val();
@@ -107,8 +175,69 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                         }
                     }
                 }
+            });
+
+            const header = join(data.header) + newLine;
+            const footer = data.footer ? newLine + join(data.footer) : '';
+            const body = [];
+            for (let i = 0, ien = data.body.length; i < ien; i++) {
+                body.push(join(data.body[i]));
             }
-        };
+
+            const result = {
+                str: header + body.join(newLine) + footer,
+                rows: body.length
+            };
+
+            $.fn.dataTable.fileSave(new Blob([result.str], {
+                    type: 'text/csv' + charset
+                }),
+                filename,
+                true);
+        }
+
+        function downloadTemplate() {
+            const newLine = navigator.userAgent.match(/Windows/) ? '\r\n' : '\n';
+            const escapeChar = '"';
+            const boundary = '"';
+            const separator = ',';
+            const extension = '.csv';
+            const reBoundary = new RegExp(boundary, 'g');
+            const filename = 'SystemRoles_Users_ImportTemplate' + extension;
+            let charset = document.characterSet || document.charset;
+            if (charset) {
+                charset = ';charset=' + charset;
+            }
+            const join = function(a) {
+                let s = '';
+                for (let i = 0, ien = a.length; i < ien; i++) {
+                    if (i > 0) {
+                        s += separator;
+                    }
+                    s += boundary ?
+                        boundary + ('' + a[i]).replace(reBoundary, escapeChar + boundary) + boundary :
+                        a[i];
+                }
+                return s;
+            };
+            const data = $('#templateTable').DataTable().buttons.exportData();
+            const header = join(data.header) + newLine;
+            const footer = data.footer ? newLine + join(data.footer) : '';
+            const body = [];
+            for (let i = 0, ien = data.body.length; i < ien; i++) {
+                body.push(join(data.body[i]));
+            }
+            const result = {
+                str: header + body.join(newLine) + footer,
+                rows: body.length
+            };
+            $.fn.dataTable.fileSave(new Blob([result.str], {
+                    type: 'text/csv' + charset
+                }),
+                filename,
+                true);
+        }
+
         let dt;
         dt = $('#SUR-System-Table').DataTable({
             paging: false,
@@ -129,19 +258,10 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                     return row.role;
                 }
             }],
-            buttons: [$.extend(true, {}, buttonCommon, {
-                extend: 'csv',
-                className: 'btn btn-sm btn-secondary',
-                text: '<i class="fa-light fa-file-csv fa-xl fa-fw" style="line-height: 1;"></i>',
-                attr: {
-                    'data-toggle': "tooltip",
-                    'data-placement': "bottom",
-                    'title': "Export Table as CSV"
-                }
-            })],
-            dom: 'ftB',
+            dom: '<"toolbar2 d-flex flex-row justify-content-between mb-2"f>t',
             initComplete: function() {
-                $($(this).DataTable().buttons().nodes()[0]).removeClass('dt-button').attr('style', 'margin-top: 0.5rem;');
+                $('.toolbar2').prepend($('.toolbar_orig').html())
+                $(this).DataTable().columns.adjust().draw();
             }
         });
         $('.roleSelect').select2({
@@ -200,7 +320,8 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                     <span class="sr-only">Toggle Dropdown</span>
                 </button>
                 <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" onclick="exportCsv();">Export Roles as CSV</a></li>
+                    <li><a class="dropdown-item" onclick="exportRawCsv();">Export Roles (raw)</a></li>
+                    <li><a class="dropdown-item" onclick="exportCsv();">Export Roles (labels)</a></li>
                     <li><a class="dropdown-item" onclick="importCsv();">Import Roles</a></li>
                 </ul>
             </div>
@@ -499,7 +620,7 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
         function addNewRole() {
             $('#addRoleButton').blur();
             const url = "<?= $module->getUrl("editSystemRole.php?newRole=true") ?>";
-            const newRoleName = $('#newRoleName').val();
+            const newRoleName = $('#newRoleName').val().trim();
             if (newRoleName == "") {
                 Swal.fire({
                     title: "You must specify a role name",
@@ -518,14 +639,14 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
             return d.getFullYear() + '-' + (d.getMonth() + 1).toString().padStart(2, 0) + '-' + (d.getDate()).toString().padStart(2, 0)
         }
 
-        function exportCsv() {
+        function exportRawCsv() {
             const newLine = navigator.userAgent.match(/Windows/) ? '\r\n' : '\n';
             const escapeChar = '"';
             const boundary = '"';
             const separator = ',';
             const extension = '.csv';
             const reBoundary = new RegExp(boundary, 'g');
-            const filename = 'SystemRoles_' + formatNow() + extension;
+            const filename = 'SystemRoles_Raw_' + formatNow() + extension;
             let charset = document.characterSet || document.charset;
             if (charset) {
                 charset = ';charset=' + charset;
@@ -556,6 +677,72 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                         } else {
                             const value = $(node).data('value');
                             return value == '' ? 0 : value;
+                        }
+                    }
+                }
+            });
+
+            const header = join(data.header) + newLine;
+            const footer = data.footer ? newLine + join(data.footer) : '';
+            const body = [];
+            for (let i = 0, ien = data.body.length; i < ien; i++) {
+                body.push(join(data.body[i]));
+            }
+
+            const result = {
+                str: header + body.join(newLine) + footer,
+                rows: body.length
+            };
+
+            $.fn.dataTable.fileSave(new Blob([result.str], {
+                    type: 'text/csv' + charset
+                }),
+                filename,
+                true);
+        }
+
+        function exportCsv() {
+            const newLine = navigator.userAgent.match(/Windows/) ? '\r\n' : '\n';
+            const escapeChar = '"';
+            const boundary = '"';
+            const separator = ',';
+            const extension = '.csv';
+            const reBoundary = new RegExp(boundary, 'g');
+            const filename = 'SystemRoles_Labels_' + formatNow() + extension;
+            let charset = document.characterSet || document.charset;
+            if (charset) {
+                charset = ';charset=' + charset;
+            }
+            const join = function(a) {
+                let s = '';
+                for (let i = 0, ien = a.length; i < ien; i++) {
+                    if (i > 0) {
+                        s += separator;
+                    }
+                    s += boundary ?
+                        boundary + ('' + a[i]).replace(reBoundary, escapeChar + boundary) + boundary :
+                        a[i];
+                }
+                return s;
+            };
+
+            const data = $('#roleTable').DataTable().buttons.exportData({
+                format: {
+                    body: function(html, row, col, node) {
+                        console.log(html, row, col, node);
+                        if (col === 0) {
+                            return $(html).text();
+                        } else if (col === 1) {
+                            return html;
+                        } else {
+                            let result = $(node).text();
+                            if (result == '') {
+                                const value = $(node).data('value');
+                                result = value == '' ? 0 : value;
+                            } else {
+                                result = html.replace(/<br>/g, '\n').replace(/&amp;/g, '&');
+                            }
+                            return result;
                         }
                     }
                 }

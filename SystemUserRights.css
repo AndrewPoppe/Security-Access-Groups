@@ -285,3 +285,15 @@ a.dropdown-item {
     border-radius: .375rem;
     opacity: .5;
 }
+
+div#SUR-System-Table_filter label {
+    margin-bottom: 0;
+}
+
+table#SUR-System-Table {
+    border: 1px solid rgba(0, 0, 0, 0.3) !important;
+}
+
+table#SUR-System-Table thead {
+    background-color: #ececec;
+}

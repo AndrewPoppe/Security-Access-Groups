@@ -782,7 +782,6 @@ class SystemUserRights extends AbstractExternalModule
     {
         global $lang;
         $allRights = $this->getAllRights();
-        //var_dump($allRights);
         $context_message = ($newRole ? $lang["rights_159"] : $lang["rights_157"]) . ' "<strong>' . \REDCap::escapeHtml($role_name) . '</strong>"';
     ?>
         <div class="modal-xl modal-dialog modal-dialog-scrollable">
