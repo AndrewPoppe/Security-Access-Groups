@@ -210,7 +210,7 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
         </div>
         <div class="row justify-content-end my-1">
             <div class="dropdown">
-                <button type="button" class="btn btn-primary btn-xs dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                <button type="button" class="btn btn-primary btn-xs dropdown-toggle mr-2" data-toggle="dropdown" data-bs-toggle="dropdown" aria-expanded="false">
                     <i class="fa-solid fa-file-excel mr-1"></i>
                     <span>Import or Export Roles</span>
                     <span class="sr-only">Toggle Dropdown</span>
