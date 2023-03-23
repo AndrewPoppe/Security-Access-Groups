@@ -208,6 +208,22 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                 <input type="file" accept="text/csv" class="form-control-file" id="importRolesFile">
             </div>
         </div>
+        <div class="row justify-content-end my-1">
+            <div class="dropdown">
+                <button type="button" class="btn btn-primary btn-xs dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fa-solid fa-file-excel mr-1"></i>
+                    <span>Import or Export Roles</span>
+                    <span class="sr-only">Toggle Dropdown</span>
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" onclick="exportCsv();">Export Roles as CSV</a></li>
+                    <li><a class="dropdown-item" onclick="importCsv();">Import Roles</a></li>
+                </ul>
+            </div>
+            <div class="hidden">
+                <input type="file" accept="text/csv" class="form-control-file" id="importRolesFile">
+            </div>
+        </div>
         <div class="row ml-2">
             <span><strong>Create new system user roles:</strong></span>
         </div>
