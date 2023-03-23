@@ -191,24 +191,8 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
 
 
     <!-- Controls Container -->
-    <div class="container ml-0 mt-2 mb-3 pl-0" style="background-color: #eee; max-width: 550px; border: 1px solid #ccc;">
-        <div class="row justify-content-end my-1">
-            <div class="btn-group btn-group-xs mr-2" role="group">
-                <button type="button" class="btn btn-primary btn-xs dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                    <i class="fa-solid fa-file-excel mr-1"></i>
-                    <span>Import or Export Roles</span>
-                    <span class="sr-only">Toggle Dropdown</span>
-                </button>
-                <div class="dropdown-menu">
-                    <a class="dropdown-item" onclick="exportCsv();">Export Roles as CSV</a>
-                    <a class="dropdown-item" onclick="importCsv();">Import Roles</a>
-                </div>
-            </div>
-            <div class="hidden">
-                <input type="file" accept="text/csv" class="form-control-file" id="importRolesFile">
-            </div>
-        </div>
-        <div class="row justify-content-end my-1">
+    <div class="container ml-0 mt-2 mb-3 px-0" style="background-color: #eee; max-width: 550px; border: 1px solid #ccc;">
+        <div class="d-flex flex-row justify-content-end my-1">
             <div class="dropdown">
                 <button type="button" class="btn btn-primary btn-xs dropdown-toggle mr-2" data-toggle="dropdown" data-bs-toggle="dropdown" aria-expanded="false">
                     <i class="fa-solid fa-file-excel mr-1"></i>
