@@ -629,17 +629,7 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                 scrollX: true,
                 initComplete: function() {
                     $('#roleTableWrapper').show();
-                    // THIS IS USING JQUERY UI'S TOOLTIPS BECAUSE GARBAGE
-                    $('[data-toggle="tooltip"]').tooltip({
-                        show: false,
-                        hide: false,
-                        tooltipClass: "bottom",
-                        position: {
-                            my: "center top",
-                            at: "center bottom+10",
-                            collision: 'none'
-                        }
-                    });
+                    $(this).DataTable().columns.adjust().draw();
                 },
                 columnDefs: [{
                     targets: 1,
