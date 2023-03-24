@@ -2,6 +2,10 @@
 
 namespace YaleREDCap\SystemUserRights;
 
+require_once "CsvUserImport.php";
+
+use YaleREDCap\SystemUserRights\CsvUserImport;
+
 if (!$module->getUser()->isSuperUser()) {
     http_response_code(401);
     exit;
@@ -13,8 +17,14 @@ if (!$_SERVER["REQUEST_METHOD"] === "POST") {
 
 $CsvString = filter_input(INPUT_POST, "data");
 
-$lineEnding = str_contains($CsvString, "\r\n") ? "\r\n" : "\n";
-$Data = str_getcsv($CsvString, $lineEnding);
-foreach ($Data as &$Row) $Row = str_getcsv($Row, ",");
+$userImport = new CsvUserImport($module, $CsvString);
+$userImport->parseCsvString();
 
-echo json_encode($Data);
+if (!$userImport->contentsValid()) {
+    http_response_code(400);
+    exit;
+}
+
+$assignments = $userImport->getAssignments();
+
+echo json_encode($userImport->csvContents);

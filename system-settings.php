@@ -63,12 +63,12 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
             <div class="d-flex dropdown">
                 <button type="button" class="btn btn-primary btn-xs dropdown-toggle mr-2" data-toggle="dropdown" data-bs-toggle="dropdown" aria-expanded="false">
                     <i class="fa-solid fa-file-excel mr-1"></i>
-                    <span>Import or Export Users</span>
+                    <span>Import or Export User Assignments</span>
                     <span class="sr-only">Toggle Dropdown</span>
                 </button>
                 <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" onclick="exportCsv();"><i class="fa-regular fa-file-arrow-down fa-fw mr-1 text-success"></i>Export Users</a></li>
-                    <li><a class="dropdown-item" onclick="importCsv();"><i class="fa-solid fa-file-arrow-up fa-fw mr-1 text-danger"></i>Import Users</a></li>
+                    <li><a class="dropdown-item" onclick="exportCsv();"><i class="fa-regular fa-file-arrow-down fa-fw mr-1 text-success"></i>Export User Assignments</a></li>
+                    <li><a class="dropdown-item" onclick="importCsv();"><i class="fa-solid fa-file-arrow-up fa-fw mr-1 text-danger"></i>Import User Assignments</a></li>
                     <li><a class="dropdown-item" onclick="downloadTemplate();"><i class="fa-solid fa-download fa-fw mr-1 text-primary"></i>Download Import Template</a></li>
                 </ul>
                 <i class="fa-solid fa-circle-info fa-lg align-self-center text-info" style="cursor:pointer;" onclick="Swal.fire({html: $('#infoContainer').html(), icon: 'info', showConfirmButton: false});"></i>
@@ -318,6 +318,9 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                     })
                     .done(function(response) {
                         select.closest('td').data('role', newRole);
+                        select.closest('td').attr('data-role', newRole);
+                        const rowIndex = dt.row(select.closest('tr')).index();
+                        dt.cell(rowIndex, 4).data(newRole);
                         dt.rows().invalidate().draw();
                     })
                     .fail(function() {
@@ -774,7 +777,6 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
             const data = $('#roleTable').DataTable().buttons.exportData({
                 format: {
                     body: function(html, row, col, node) {
-                        console.log(html, row, col, node);
                         if (col === 0) {
                             return $(html).text();
                         } else if (col === 1) {
