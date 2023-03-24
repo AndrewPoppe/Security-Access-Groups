@@ -864,8 +864,13 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                 $("tr[data-dt-row='" + rowIdx + "'] td").removeClass("highlight"); // shade only the hovered row
             }
 
+            $('#newRoleName').keyup(function(event) {
+                if (event.which === 13) {
+                    $('#addRoleButton').click();
+                }
+            });
+            window.scroll(0, 0);
         });
-        window.scroll(0, 0);
     </script>
 <?php
 }
