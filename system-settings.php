@@ -49,13 +49,9 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
 ?>
 
     <!-- Modal -->
-    <div class="modal fade" id="infoContainer" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-body">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc velit metus, venenatis in congue sed, ultrices sed nulla. Donec auctor bibendum mauris eget posuere. Ut rhoncus, nulla at auctor volutpat, urna odio ornare nulla, a ultrices neque massa sed est. Vestibulum dignissim feugiat turpis vel egestas. Integer eu purus vel dui egestas varius et ac erat. Donec blandit quam a enim faucibus ultrices. Aenean consectetur efficitur leo, et euismod arcu ultrices non. Ut et tincidunt tortor. Quisque eu interdum erat, vitae convallis ligula. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi interdum sapien nec quam blandit, vel faucibus turpis convallis.
-                </div>
-            </div>
+    <div class="hidden">
+        <div id="infoContainer" class="modal-body p-4 text-center" style="font-size:x-large;">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc velit metus, venenatis in congue sed, ultrices sed nulla. Donec auctor bibendum mauris eget posuere. Ut rhoncus, nulla at auctor volutpat, urna odio ornare nulla, a ultrices neque massa sed est. Vestibulum dignissim feugiat turpis vel egestas. Integer eu purus vel dui egestas varius et ac erat. Donec blandit quam a enim faucibus ultrices. Aenean consectetur efficitur leo, et euismod arcu ultrices non. Ut et tincidunt tortor. Quisque eu interdum erat, vitae convallis ligula. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi interdum sapien nec quam blandit, vel faucibus turpis convallis.
         </div>
     </div>
 
@@ -69,11 +65,11 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                     <span class="sr-only">Toggle Dropdown</span>
                 </button>
                 <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" onclick="exportCsv();"><i class="fa-solid fa-arrow-down fa-fw mr-1"></i>Export Users</a></li>
-                    <li><a class="dropdown-item" onclick="importCsv();"><i class="fa-solid fa-arrow-up fa-fw mr-1"></i>Import Users</a></li>
-                    <li><a class="dropdown-item" onclick="downloadTemplate();"><i class="fa-solid fa-download fa-fw mr-1"></i>Download Import Template</a></li>
+                    <li><a class="dropdown-item" onclick="exportCsv();"><i class="fa-regular fa-file-arrow-down fa-fw mr-1 text-success"></i>Export Users</a></li>
+                    <li><a class="dropdown-item" onclick="importCsv();"><i class="fa-solid fa-file-arrow-up fa-fw mr-1 text-danger"></i>Import Users</a></li>
+                    <li><a class="dropdown-item" onclick="downloadTemplate();"><i class="fa-solid fa-download fa-fw mr-1 text-primary"></i>Download Import Template</a></li>
                 </ul>
-                <i class="fa-solid fa-circle-info fa-lg align-self-center text-info" style="cursor:pointer;" data-toggle="modal" data-target="#infoContainer" aria-expanded="false" aria-controls="collapseExample"></i>
+                <i class="fa-solid fa-circle-info fa-lg align-self-center text-info" style="cursor:pointer;" onclick="Swal.fire({html: $('#infoContainer').html(), icon: 'info', showConfirmButton: false});"></i>
             </div>
 
         </div>
@@ -93,7 +89,7 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
         </table>
     </div>
     <!-- Users Table -->
-    <table id='SUR-System-Table' class="compact hover row-border border">
+    <table id='SUR-System-Table' class="compact row-border border">
         <thead>
             <tr>
                 <th data-id="username" class="py-3">Username</th>
@@ -131,7 +127,6 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
         }
 
         function exportCsv() {
-            alert('This will only export selected users if a filter has been applied');
             const newLine = navigator.userAgent.match(/Windows/) ? '\r\n' : '\n';
             const escapeChar = '"';
             const boundary = '"';
@@ -156,7 +151,9 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                 return s;
             };
 
-            const data = $('#SUR-System-Table').DataTable().buttons.exportData({
+            const dt = $('#SUR-System-Table').DataTable();
+            const search = dt.search();
+            const data = dt.search('').draw().buttons.exportData({
                 format: {
                     header: function(html, col, node) {
                         return $(node).data('id');
@@ -167,8 +164,6 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                         } else if (col === 3) {
                             return $('#SUR-System-Table select').eq(row).find('option:selected').text();
                         } else if (col === 2) {
-                            // const value = $(node).data('value');
-                            // return value == '' ? 0 : value;
                             return $(html).text();
                         } else {
                             return html;
@@ -176,6 +171,7 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                     }
                 }
             });
+            dt.search(search).draw();
 
             const header = join(data.header) + newLine;
             const footer = data.footer ? newLine + join(data.footer) : '';
@@ -265,7 +261,10 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
             }
         });
         $('.roleSelect').select2({
-            minimumResultsForSearch: 20
+            minimumResultsForSearch: 20,
+            templateResult: function(option) {
+                return $(`<span><strong>${option.text}</strong><br><span class="text-secondary">${option.id}</span></span>`);
+            }
         });
         $('.roleSelect').change(function() {
             const select = $(this);
@@ -280,6 +279,7 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                     "role": newRole
                 })
                 .done(function(response) {
+                    select.closest('td').data('role', newRole);
                     dt.rows().invalidate().draw();
                 })
                 .fail(function() {
@@ -320,9 +320,9 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                     <span class="sr-only">Toggle Dropdown</span>
                 </button>
                 <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" onclick="exportRawCsv();">Export Roles (raw)</a></li>
-                    <li><a class="dropdown-item" onclick="exportCsv();">Export Roles (labels)</a></li>
-                    <li><a class="dropdown-item" onclick="importCsv();">Import Roles</a></li>
+                    <li><a class="dropdown-item" onclick="exportRawCsv();"><i class="fa-regular fa-file-arrow-down fa-fw mr-1 text-info"></i>Export Roles (raw)</a></li>
+                    <li><a class="dropdown-item" onclick="exportCsv();"><i class="fa-regular fa-file-arrow-down fa-fw mr-1 text-success"></i>Export Roles (labels)</a></li>
+                    <li><a class="dropdown-item" onclick="importCsv();"><i class="fa-solid fa-file-arrow-up fa-fw mr-1 text-danger"></i>Import Roles</a></li>
                 </ul>
             </div>
             <div class="hidden">
@@ -622,9 +622,10 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
             const url = "<?= $module->getUrl("editSystemRole.php?newRole=true") ?>";
             const newRoleName = $('#newRoleName').val().trim();
             if (newRoleName == "") {
-                Swal.fire({
+                Toast.fire({
                     title: "You must specify a role name",
                     icon: "error",
+                    showConfirmButton: false,
                     didClose: () => {
                         $("#newRoleName").focus()
                     }
@@ -820,7 +821,7 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                 },
                 columnDefs: [{
                     targets: 1,
-                    visible: false
+                    className: "role-id-column"
                 }, {
                     targets: 0,
                     data: function(row, type, val, meta) {

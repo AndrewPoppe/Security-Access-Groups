@@ -657,7 +657,7 @@ class SystemUserRights extends AbstractExternalModule
 
     function generateNewRoleId()
     {
-        $new_role_id = uniqid("role_", true);
+        $new_role_id = uniqid("role_");
 
         if ($this->systemRoleExists($new_role_id)) {
             return $this->generateNewRoleId();
