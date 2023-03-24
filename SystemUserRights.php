@@ -586,7 +586,7 @@ class SystemUserRights extends AbstractExternalModule
             if (empty($log_id)) {
                 throw new \Exception('No role found with the specified id');
             }
-            $params = ["role_name" => $role_name, "permissions" => $permissions];
+            $params = ["role_name" => $role_name, "permissions" => $permissions_converted];
             foreach ($params as $name => $value) {
                 $sql = "UPDATE redcap_external_modules_log_parameters SET value = ? WHERE log_id = ? AND name = ?";
                 $this->query($sql, [$value, $log_id, $name]);
