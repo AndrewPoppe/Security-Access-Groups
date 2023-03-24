@@ -21,9 +21,8 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
 <h4 style='color:#900; margin-top: 0 0 10px;'>
     <i class='fa-solid fa-user-secret'></i>&nbsp;<span>System User Rights</span>
 </h4>
-<p style='margin:20px 0;max-width:1000px;'>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc velit metus, venenatis in congue sed, ultrices sed nulla. Donec auctor bibendum mauris eget posuere. Ut rhoncus, nulla at auctor volutpat, urna odio ornare nulla, a ultrices neque massa sed est. Vestibulum dignissim feugiat turpis vel egestas. Integer eu purus vel dui egestas varius et ac erat. Donec blandit quam a enim faucibus ultrices. Aenean consectetur efficitur leo, et euismod arcu ultrices non. Ut et tincidunt tortor. Quisque eu interdum erat, vitae convallis ligula. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi interdum sapien nec quam blandit, vel faucibus turpis convallis. </p>
 
-<div id="sub-nav" class="d-none d-sm-block" style="margin:5px 20px 15px 0px;">
+<div id="sub-nav" class="d-none d-sm-block mr-4 mb-0 ml-0">
     <ul>
         <li class="<?= $tab === "userlist" ? "active" : "" ?>">
             <a href="<?= $module->getUrl('system-settings.php?tab=userlist') ?>" style="font-size:13px;color:#393733;padding:7px 9px;">
@@ -47,6 +46,9 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
     $roles = $module->getAllSystemRoles();
 
 ?>
+
+    <p style='margin:20px 0;max-width:1000px;'>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc velit metus, venenatis in congue sed, ultrices sed nulla. Donec auctor bibendum mauris eget posuere. Ut rhoncus, nulla at auctor volutpat, urna odio ornare nulla, a ultrices neque massa sed est. Vestibulum dignissim feugiat turpis vel egestas. Integer eu purus vel dui egestas varius et ac erat. Donec blandit quam a enim faucibus ultrices. Aenean consectetur efficitur leo, et euismod arcu ultrices non. Ut et tincidunt tortor. Quisque eu interdum erat, vitae convallis ligula. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi interdum sapien nec quam blandit, vel faucibus turpis convallis. </p>
+
 
     <!-- Modal -->
     <div class="hidden">
@@ -192,6 +194,39 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                 true);
         }
 
+        function importCsv() {
+            $('#importUsersFile').click();
+            console.log('import');
+        }
+
+        function handleFiles() {
+            if (this.files.length !== 1) {
+                return;
+            }
+            const file = this.files[0];
+
+            if (!file.type === "text/csv") {
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                $.post("<?= $module->getUrl("importCsvUsers.php") ?>", {
+                        data: e.target.result
+                    })
+                    .done((response) => {
+                        console.log(JSON.parse(response));
+                    })
+                    .fail((error) => {
+                        console.error(error);
+                    })
+                    .always(() => {
+                        Swal.fire("Sorry", "That feature is not yet implemented.");
+                    })
+            };
+            reader.readAsText(file);
+        }
+
         function downloadTemplate() {
             const newLine = navigator.userAgent.match(/Windows/) ? '\r\n' : '\n';
             const escapeChar = '"';
@@ -234,65 +269,68 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                 true);
         }
 
-        let dt;
-        dt = $('#SUR-System-Table').DataTable({
-            paging: false,
-            info: false,
-            columnDefs: [{
-                targets: [4],
-                visible: false
-            }, {
-                targets: [3],
-                data: function(row, type, val, meta) {
-                    if (type === 'set') {
-                        row.role = val;
-                    } else if (type === 'filter') {
-                        return $(`tr[data-user="${row[0]}"]`).find(':selected').text();
-                    } else if (type === 'sort') {
-                        return $(`tr[data-user="${row[0]}"]`).find(':selected').text();
+        $(document).ready(function() {
+            const importFileElement = document.getElementById("importUsersFile");
+            importFileElement.addEventListener("change", handleFiles, false);
+            let dt;
+            dt = $('#SUR-System-Table').DataTable({
+                paging: false,
+                info: false,
+                columnDefs: [{
+                    targets: [4],
+                    visible: false
+                }, {
+                    targets: [3],
+                    data: function(row, type, val, meta) {
+                        if (type === 'set') {
+                            row.role = val;
+                        } else if (type === 'filter') {
+                            return $(`tr[data-user="${row[0]}"]`).find(':selected').text();
+                        } else if (type === 'sort') {
+                            return $(`tr[data-user="${row[0]}"]`).find(':selected').text();
+                        }
+                        return row.role;
                     }
-                    return row.role;
+                }],
+                dom: '<"toolbar2 d-flex flex-row justify-content-between mb-2"f>t',
+                initComplete: function() {
+                    $('.toolbar2').prepend($('.toolbar_orig').html())
+                    $(this).DataTable().columns.adjust().draw();
                 }
-            }],
-            dom: '<"toolbar2 d-flex flex-row justify-content-between mb-2"f>t',
-            initComplete: function() {
-                $('.toolbar2').prepend($('.toolbar_orig').html())
-                $(this).DataTable().columns.adjust().draw();
-            }
-        });
-        $('.roleSelect').select2({
-            minimumResultsForSearch: 20,
-            templateResult: function(option) {
-                return $(`<span><strong>${option.text}</strong><br><span class="text-secondary">${option.id}</span></span>`);
-            }
-        });
-        $('.roleSelect').change(function() {
-            const select = $(this);
-            const tr = $(this).closest('tr');
-            const user = tr.data('user');
-            const newRole = select.val();
+            });
+            $('.roleSelect').select2({
+                minimumResultsForSearch: 20,
+                templateResult: function(option) {
+                    return $(`<span><strong>${option.text}</strong><br><span class="text-secondary">${option.id}</span></span>`);
+                }
+            });
+            $('.roleSelect').change(function() {
+                const select = $(this);
+                const tr = $(this).closest('tr');
+                const user = tr.data('user');
+                const newRole = select.val();
 
-            const url = '<?= $module->getUrl("setUserRole.php") ?>';
-            let color = "#66ff99";
-            $.post(url, {
-                    "username": user,
-                    "role": newRole
-                })
-                .done(function(response) {
-                    select.closest('td').data('role', newRole);
-                    dt.rows().invalidate().draw();
-                })
-                .fail(function() {
-                    color = "#ff3300";
-                    select.val(select.closest('td').data('role')).select2();
-                })
-                .always(function() {
-                    $(tr).find('td').effect('highlight', {
-                        color: color
-                    }, 3000);
-                });
-
-        })
+                const url = '<?= $module->getUrl("setUserRole.php") ?>';
+                let color = "#66ff99";
+                $.post(url, {
+                        "username": user,
+                        "role": newRole
+                    })
+                    .done(function(response) {
+                        select.closest('td').data('role', newRole);
+                        dt.rows().invalidate().draw();
+                    })
+                    .fail(function() {
+                        color = "#ff3300";
+                        select.val(select.closest('td').data('role')).select2();
+                    })
+                    .always(function() {
+                        $(tr).find('td').effect('highlight', {
+                            color: color
+                        }, 3000);
+                    });
+            });
+        });
     </script>
 <?php
 
@@ -306,6 +344,9 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
     $displayTextForUserRights = $module->getDisplayTextForRights();
 
 ?>
+
+    <p style='margin:20px 0;max-width:1000px;'>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc velit metus, venenatis in congue sed, ultrices sed nulla. Donec auctor bibendum mauris eget posuere. Ut rhoncus, nulla at auctor volutpat, urna odio ornare nulla, a ultrices neque massa sed est. Vestibulum dignissim feugiat turpis vel egestas. Integer eu purus vel dui egestas varius et ac erat. Donec blandit quam a enim faucibus ultrices. Aenean consectetur efficitur leo, et euismod arcu ultrices non. Ut et tincidunt tortor. Quisque eu interdum erat, vitae convallis ligula. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi interdum sapien nec quam blandit, vel faucibus turpis convallis. </p>
+
     <!-- Modal -->
     <div class="modal" id="edit_role_popup" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true"></div>
 
@@ -323,6 +364,7 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                     <li><a class="dropdown-item" onclick="exportRawCsv();"><i class="fa-regular fa-file-arrow-down fa-fw mr-1 text-info"></i>Export Roles (raw)</a></li>
                     <li><a class="dropdown-item" onclick="exportCsv();"><i class="fa-regular fa-file-arrow-down fa-fw mr-1 text-success"></i>Export Roles (labels)</a></li>
                     <li><a class="dropdown-item" onclick="importCsv();"><i class="fa-solid fa-file-arrow-up fa-fw mr-1 text-danger"></i>Import Roles</a></li>
+                    <li><a class="dropdown-item" onclick="exportRawCsv(false);"><i class="fa-solid fa-download fa-fw mr-1 text-primary"></i>Download Import Template</a></li>
                 </ul>
             </div>
             <div class="hidden">
@@ -336,7 +378,7 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
             <div class="col-6 px-0">
                 <input id="newRoleName" class="form-control form-control-sm" type="text" placeholder="Enter new system role name">
             </div>
-            <div class="col ml-2 px-0 justify-content-start">
+            <div class="col ml-1 px-0 justify-content-start">
                 <button class="btn btn-success btn-sm" id="addRoleButton" onclick="addNewRole();" title="Add a New System User Role">
                     <i class="fak fa-solid-tag-circle-plus fa-fw mr-1"></i>
                     <span>Create Role</span>
@@ -640,14 +682,14 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
             return d.getFullYear() + '-' + (d.getMonth() + 1).toString().padStart(2, 0) + '-' + (d.getDate()).toString().padStart(2, 0)
         }
 
-        function exportRawCsv() {
+        function exportRawCsv(includeData = true) {
             const newLine = navigator.userAgent.match(/Windows/) ? '\r\n' : '\n';
             const escapeChar = '"';
             const boundary = '"';
             const separator = ',';
             const extension = '.csv';
             const reBoundary = new RegExp(boundary, 'g');
-            const filename = 'SystemRoles_Raw_' + formatNow() + extension;
+            const filename = (includeData ? 'SystemRoles_Raw_' + formatNow() : 'SystemRoles_Roles_ImportTemplate') + extension;
             let charset = document.characterSet || document.charset;
             if (charset) {
                 charset = ';charset=' + charset;
@@ -665,6 +707,7 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                 return s;
             };
 
+            const rowSelector = includeData ? undefined : -1;
             const data = $('#roleTable').DataTable().buttons.exportData({
                 format: {
                     header: function(html, col, node) {
@@ -680,7 +723,8 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                             return value == '' ? 0 : value;
                         }
                     }
-                }
+                },
+                rows: rowSelector
             });
 
             const header = join(data.header) + newLine;
