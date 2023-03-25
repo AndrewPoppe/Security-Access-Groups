@@ -27,7 +27,37 @@ if (in_array($submit_action, ["add_user", "edit_user"])) {
 
     if ($errors === false) {
         $module->log("User was edited", ["user" => $user]);
-        require $scriptPath;
+        $action_info = [
+            "action" => $submit_action,
+            "rights" => $module->filterPermissions($data),
+            "user" => $user,
+            "project_id" => $pid
+        ];
+
+        ob_start(function ($str) use ($action_info) {
+            $succeeded = strpos($str, "<div class='userSaveMsg") !== false;
+            if ($succeeded) {
+                $action = $action_info["submit_action"] === "add_user" ? "Add user" : "Update user";
+                \Logging::logEvent(
+                    '',                                                                 // SQL
+                    "redcap_user_rights",                                               // table
+                    "update",                                                           // event
+                    $action_info["user"],                                               // record
+                    "user = '" . $action_info["user"] . "'\nrights added = " . json_encode($action_info["rights"]),  // display
+                    $action,                                                            // descrip
+                    "",                                                                 // change_reason
+                    "",                                                                 // userid_override
+                    "",                                                                 // project_id_override
+                    true,                                                               // useNOW
+                    null,                                                               // event_id_override
+                    null,                                                               // instance
+                    false                                                               // bulkProcessing
+                );
+            }
+            return $str;
+        }); // Start output buffering
+        require_once $scriptPath;
+        ob_end_flush(); // End buffering and clean up
     } else {
         echo json_encode(["error" => true, "bad_rights" => ["$user" => $bad_rights]]);
     }

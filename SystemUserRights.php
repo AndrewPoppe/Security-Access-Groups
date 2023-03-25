@@ -345,6 +345,37 @@ class SystemUserRights extends AbstractExternalModule
         return $roleRights;
     }
 
+    // E.g., from ["export-form-form1"=>"1", "export-form-form2"=>"1"] to "[form1,1][form2,1]"
+    function convertExportRightsArrayToString($fullRightsArray)
+    {
+        $result = "";
+        foreach ($fullRightsArray as $key => $value) {
+            if (str_starts_with($key, "export-form-")) {
+                $formName = str_replace("export-form-", "", $key);
+                $result .= "[" . $formName . "," . $value . "]";
+            }
+        }
+        return $result;
+    }
+
+    // E.g., from ["form-form1"=>"1", "form-form2"=>"1"] to "[form1,1][form2,1]"
+    function convertDataEntryRightsArrayToString($fullRightsArray)
+    {
+        $result = "";
+        foreach ($fullRightsArray as $key => $value) {
+            if (str_starts_with($key, "form-") && !str_starts_with($key, "form-editresp-")) {
+                $formName = str_replace("form-", "", $key);
+
+                if ($fullRightsArray["form-editresp-" . $formName] === "on") {
+                    $value = "3";
+                }
+
+                $result .= "[" . $formName . "," . $value . "]";
+            }
+        }
+        return $result;
+    }
+
     function checkProposedRights(array $acceptable_rights, array $requested_rights)
     {
         //$this->log('checking rights', ["acceptable" => json_encode($acceptable_rights), "acceptable_keys" => json_encode(array_keys($acceptable_rights)), "requested" => json_encode($requested_rights)]);
@@ -736,6 +767,17 @@ class SystemUserRights extends AbstractExternalModule
         ];
 
         return $conversions[$rightName] ?? $rightName;
+    }
+
+    function filterPermissions($rawArray)
+    {
+        $allRights = $this->getAllRights();
+        $dataEntryString = $this->convertDataEntryRightsArrayToString($rawArray);
+        $dataExportString = $this->convertExportRightsArrayToString($rawArray);
+        $result = array_intersect_key($rawArray, $allRights);
+        $result["data_export_instruments"] = $dataExportString;
+        $result["data_entry"] = $dataEntryString;
+        return $result;
     }
 
     function getDefaultRights()

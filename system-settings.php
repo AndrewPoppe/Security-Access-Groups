@@ -624,7 +624,15 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                             })
                             .fail(function(error) {
                                 console.error(error.responseText);
-                                Swal.fire('Error', error.responseText, 'error');
+                                Swal.fire({
+                                    title: 'Error',
+                                    html: error.responseText,
+                                    icon: 'error',
+                                    customClass: {
+                                        confirmButton: 'btn btn-primary',
+                                    },
+                                    buttonsStyling: false
+                                });
                             })
                             .always(function() {});
                     }
@@ -718,7 +726,11 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                             if ($(this).val() == '') {
                                 Swal.fire({
                                         title: '<?= $lang['rights_358'] ?>',
-                                        icon: 'error'
+                                        icon: 'error',
+                                        customClass: {
+                                            confirmButton: 'btn btn-primary',
+                                        },
+                                        buttonsStyling: false
                                     })
                                     .then(() => {
                                         $('input[name=role_name_edit]').focus();
