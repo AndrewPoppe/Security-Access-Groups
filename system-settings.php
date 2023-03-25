@@ -279,7 +279,7 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                     if (response == true) {
                         Swal.fire({
                                 icon: 'success',
-                                html: "Successfully imported records.",
+                                html: "Successfully imported assignments.",
                                 customClass: {
                                     confirmButton: 'btn btn-primary',
                                 },
@@ -372,7 +372,9 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                 dom: '<"toolbar2 d-flex flex-row justify-content-between mb-2"f>t',
                 initComplete: function() {
                     $('.toolbar2').prepend($('.toolbar_orig').html())
-                    $(this).DataTable().columns.adjust().draw();
+                    setTimeout(() => {
+                        $(this).DataTable().columns.adjust().draw();
+                    }, 0);
                 }
             });
             $('.roleSelect').select2({
@@ -940,7 +942,9 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                 scrollX: true,
                 initComplete: function() {
                     $('#roleTableWrapper').show();
-                    $(this).DataTable().columns.adjust().draw();
+                    setTimeout(() => {
+                        $(this).DataTable().columns.adjust().draw();
+                    }, 0);
                 },
                 columnDefs: [{
                     targets: 1,

@@ -116,12 +116,13 @@ class CsvUserImport
             <div class="modal-lg modal-dialog modal-dialog-scrollable">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">Confirm changes</h5>
+                        <h5 class="modal-title">Confirm role assignments</h5>
+                        <button type="button" class="btn-close align-self-center" data-bs-dismiss="modal" data-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
                     <div class="container mb-4 w-90" style="font-size:larger;">Examine the table of proposed changes below to verify it is correct. 
                     Only users in highlighted rows will be affected, and for those users the "Role" 
-                    column will show both the <span class="text-danger">current role</span> as well as the <span class="text-success">proposed role</span>.</div>
+                    column will show both the <span class="text-primary font-weight-bold"">proposed role</span> as well as the <span class="text-danger font-weight-bold"">current role</span>.</div>
                     <table class="table">
                         <thead class="thead-dark">
                             <tr>
@@ -137,9 +138,9 @@ class CsvUserImport
             $cellClass = "";
             if (isset($row["newRole"])) {
                 $nothingToDo = false;
-                $rowClass = "table-active";
+                $rowClass = "table-warning";
                 $cellClass = "font-weight-bold";
-                $roleText = '<span>New: </span><span class="text-success">' . $row["newRole"] . '</span><br><span>Current: </span><span class="text-danger">' . $row["currentRole"] . '</span>';
+                $roleText = '<span>New: </span><span class="text-primary">' . $row["newRole"] . '</span><br><span>Current: </span><span class="text-danger">' . $row["currentRole"] . '</span>';
             } else {
                 $roleText = '<span>' . $row["currentRole"] . '</span>';
             }
@@ -154,8 +155,8 @@ class CsvUserImport
                     </table>
                 </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                        <button type="button" class="btn btn-primary" onclick="confirmImport()" ' . ($nothingToDo ? "disabled" : "") . '>Confirm</button>            
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-primary" onclick="confirmImport()" ' . ($nothingToDo ? 'title="There are no changes to make" disabled' : '') . '>Confirm</button>            
                     </div>
                 </div>
             </div>
