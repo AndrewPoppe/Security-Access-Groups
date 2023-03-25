@@ -123,6 +123,18 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
     </table>
 
     <script>
+        var Toast = Swal.mixin({
+            toast: true,
+            position: 'middle',
+            iconColor: 'white',
+            customClass: {
+                popup: 'colored-toast'
+            },
+            showConfirmButton: false,
+            timer: 1500,
+            timerProgressBar: true
+        });
+
         function formatNow() {
             const d = new Date();
             return d.getFullYear() + '-' + (d.getMonth() + 1).toString().padStart(2, 0) + '-' + (d.getDate()).toString().padStart(2, 0)
@@ -211,20 +223,85 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
 
             const reader = new FileReader();
             reader.onload = (e) => {
+                window.csv_file_contents = e.target.result;
                 $.post("<?= $module->getUrl("importCsvUsers.php") ?>", {
-                        data: e.target.result
+                        data: window.csv_file_contents
                     })
                     .done((response) => {
-                        console.log(JSON.parse(response));
+                        $(response).modal('show');
                     })
                     .fail((error) => {
-                        console.error(error);
+                        try {
+                            console.error(JSON.parse(error.responseText).error);
+                            const response = JSON.parse(error.responseText);
+                            let body = response.error.join('<br>') + "<div class='container'>";
+                            if (response.users.length) {
+                                body += "<div class='row justify-content-center m-2'><table><thead><tr><th>Username</th></tr></thead><tbody>";
+                                response.users.forEach((user) => {
+                                    body += `<tr><td>${user}</td></tr>`;
+                                });
+                                body += "</tbody></table></div>";
+                            }
+                            if (response.roles.length) {
+                                body += "<div class='row justify-content-center m-2'><table><thead><tr><th>Role ID</th></tr></thead><tbody>";
+                                response.roles.forEach((role) => {
+                                    body += `<tr><td>${role}</td></tr>`;
+                                });
+                                body += "</tbody></table></div>";
+                            }
+                            body += "</div>";
+                            Swal.fire({
+                                title: 'Error',
+                                html: body,
+                                icon: 'error'
+                            });
+                        } catch (error) {
+                            console.error(error);
+                        }
                     })
                     .always(() => {
-                        Swal.fire("Sorry", "That feature is not yet implemented.");
+                        //Swal.fire("Sorry", "That feature is not yet implemented.");
                     })
             };
             reader.readAsText(file);
+        }
+
+        function confirmImport() {
+            $('.modal').modal('hide');
+            if (!window.csv_file_contents || window.csv_file_contents === "") {
+                return;
+            }
+            $.post("<?= $module->getUrl("importCsvUsers.php") ?>", {
+                    data: window.csv_file_contents,
+                    confirm: true
+                })
+                .done((response) => {
+                    if (response == true) {
+                        Swal.fire({
+                                icon: 'success',
+                                html: "Successfully imported records.",
+                                customClass: {
+                                    confirmButton: 'btn btn-primary',
+                                },
+                                buttonsStyling: false
+                            })
+                            .then(() => {
+                                window.location.reload();
+                            });
+                    } else {
+                        Toast.fire({
+                            icon: 'error',
+                            html: "Error importing CSV"
+                        });
+                    }
+                })
+                .fail((error) => {
+                    Toast.fire({
+                        icon: 'error',
+                        html: "Error importing CSV"
+                    });
+                    console.error(error.responseText);
+                })
         }
 
         function downloadTemplate() {
@@ -330,7 +407,7 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                     .always(function() {
                         $(tr).find('td').effect('highlight', {
                             color: color
-                        }, 3000);
+                        }, 2000);
                     });
             });
         });
@@ -504,7 +581,7 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
         </table>
     </div>
     <script>
-        const Toast = Swal.mixin({
+        var Toast = Swal.mixin({
             toast: true,
             position: 'middle',
             iconColor: 'white',
@@ -838,7 +915,7 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                         console.log(JSON.parse(response));
                     })
                     .fail((error) => {
-                        console.error(error);
+                        console.error(error.responseText);
                     })
                     .always(() => {
                         Swal.fire("Sorry", "That feature is not yet implemented.");

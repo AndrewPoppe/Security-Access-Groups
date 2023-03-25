@@ -66,6 +66,10 @@ div#control_center_window table {
     font-family: "Atkinson Hyperlegible" !important;
 }
 
+div.modal {
+    font-family: "Atkinson Hyperlegible" !important;
+}
+
 div#control_center_window pre {
     font-family: "JetBrainsMono" !important;
 }

@@ -12,19 +12,30 @@ if (!$module->getUser()->isSuperUser()) {
 }
 
 if (!$_SERVER["REQUEST_METHOD"] === "POST") {
+    http_response_code(405);
     exit;
 }
+
+// If we are confirming choices
 
 $CsvString = filter_input(INPUT_POST, "data");
 
 $userImport = new CsvUserImport($module, $CsvString);
 $userImport->parseCsvString();
 
-if (!$userImport->contentsValid()) {
+$contentsValid = $userImport->contentsValid();
+if ($contentsValid !== true) {
     http_response_code(400);
+    echo json_encode([
+        "error" => $userImport->error_messages,
+        "roles" => $userImport->bad_roles,
+        "users" => $userImport->bad_users
+    ]);
     exit;
 }
 
-$assignments = $userImport->getAssignments();
-
-echo json_encode($userImport->csvContents);
+if (filter_input(INPUT_POST, "confirm", FILTER_VALIDATE_BOOLEAN)) {
+    echo $userImport->import();
+} else {
+    echo $userImport->getUpdateTable();
+}
