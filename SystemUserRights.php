@@ -820,6 +820,14 @@ class SystemUserRights extends AbstractExternalModule
         return $allRights;
     }
 
+    function getCurrentRights(string $username, $project_id)
+    {
+        $result = $this->query("SELECT * FROM redcap_user_rights WHERE username = ? AND project_id = ?", [$username, $project_id]);
+        $rights = $result->fetch_assoc();
+        unset($rights["api_token"], $rights["expiration"]);
+        return $rights;
+    }
+
     function getRoleEditForm(array $rights, bool $newRole, $role_name = "", $role_id = "")
     {
         global $lang;

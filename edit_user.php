@@ -23,21 +23,27 @@ if (in_array($submit_action, ["delete_user", "add_role", "delete_role", "copy_ro
 if (in_array($submit_action, ["add_user", "edit_user"])) {
     $acceptable_rights = $module->getAcceptableRights($user);
     $bad_rights = $module->checkProposedRights($acceptable_rights, $data);
+    $current_rights = $module->getCurrentRights($user, $pid);
+    $requested_rights = $module->filterPermissions($data);
     $errors = !empty($bad_rights);
 
     if ($errors === false) {
         $module->log("User was edited", ["user" => $user]);
         $action_info = [
             "action" => $submit_action,
-            "rights" => $module->filterPermissions($data),
+            "rights" => $requested_rights,
+            "currentRights" => $current_rights,
             "user" => $user,
             "project_id" => $pid
         ];
 
-        ob_start(function ($str) use ($action_info) {
+        ob_start(function ($str) use ($action_info, $module) {
             $succeeded = strpos($str, "<div class='userSaveMsg") !== false;
             if ($succeeded) {
                 $action = $action_info["submit_action"] === "add_user" ? "Add user" : "Update user";
+                $module->log('ok', [
+                    "thing" => json_encode(array_diff_assoc($module->getCurrentRights($action_info["user"], $action_info["project_id"]), $action_info["currentRights"]))
+                ]);
                 \Logging::logEvent(
                     '',                                                                 // SQL
                     "redcap_user_rights",                                               // table
