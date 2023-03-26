@@ -517,6 +517,13 @@ class SystemUserRights extends AbstractExternalModule
         return $users;
     }
 
+    function getRoleRightsRaw($role_id)
+    {
+        $sql = "SELECT * FROM redcap_user_roles WHERE role_id = ?";
+        $result = $this->query($sql, [$role_id]);
+        return $result->fetch_assoc();
+    }
+
     function getRoleRights($role_id, $pid = null)
     {
         $project_id = $pid ?? $this->getProjectId();
