@@ -2,8 +2,6 @@
 
 namespace YaleREDCap\SystemUserRights;
 
-require_once "SUR_User.php";
-
 $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "userlist";
 
 ?>

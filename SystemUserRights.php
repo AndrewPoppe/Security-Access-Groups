@@ -2,19 +2,16 @@
 
 namespace YaleREDCap\SystemUserRights;
 
+require_once "APIHandler.php";
+
 use ExternalModules\AbstractExternalModule;
 use YaleREDCap\SystemUserRights\APIHandler;
-
-require_once "SUR_User.php";
-require_once "APIHandler.php";
 
 class SystemUserRights extends AbstractExternalModule
 {
 
     function redcap_every_page_before_render()
     {
-
-        $username = $this->getUser()->getUsername();
 
         // Only run on the pages we're interested in
         if (
@@ -45,11 +42,17 @@ class SystemUserRights extends AbstractExternalModule
                 $this->exitAfterHook();
                 return;
             } else {
-                //$this->log('API PROCESSED AND ALLOWED');
+                [$action, $project_id, $user, $changes] = $API->getApiRequestInfo();
+                $this->logApi($action, $project_id, $user, $changes);
             }
             return;
         }
 
+        try {
+            $username = $this->getUser()->getUsername();
+        } catch (\Throwable $e) {
+            $this->log('Error', ["error" => $e->getMessage()]);
+        }
 
         // Edit User or Role
         if (
@@ -256,6 +259,27 @@ class SystemUserRights extends AbstractExternalModule
         </script>
     <?php
         //var_dump(\UserRights::getRoles($this->getProjectId()));
+    }
+
+    function logApi(string $action, $project_id, $user, array $changes)
+    {
+        ob_start(function ($str) use ($action, $project_id, $user, $changes) {
+
+            if (strpos($str, '{"error":') === 0) {
+                $this->log('api_failed');
+            } else {
+
+                // TODO: GET THIS LOGGED
+                $this->log('api_thing2', [
+                    "action" => $action,
+                    "project_id" => $project_id,
+                    "user" => $user,
+                    "changes" => json_encode($changes),
+                    "str" => $str
+                ]);
+            }
+            return $str;
+        }, 0, PHP_OUTPUT_HANDLER_FLUSHABLE);
     }
 
     function getUserInfo(string $username): ?array

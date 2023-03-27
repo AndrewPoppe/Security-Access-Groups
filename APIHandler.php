@@ -11,12 +11,15 @@ class APIHandler
     private $bad_rights = [];
     private $requestHandled = false;
     private $project_id;
+    private $user;
+    private $action;
     function __construct(SystemUserRights $module, array $post)
     {
         $this->module = $module;
         $this->post = $post;
         $this->token = $this->post["token"];
         $this->data = json_decode($this->post["data"] ?? "{}", true);
+        $this->action = htmlspecialchars($this->post["content"]);
     }
 
     public function handleRequest()
@@ -43,12 +46,14 @@ class APIHandler
 
     public function shouldProcess()
     {
-        $rights = $this->getUserRightsFromToken($_POST["token"]) ?? [];
+        $rights = $this->getUserRightsFromToken($this->post["token"]) ?? [];
         $this->project_id = $rights["project_id"];
+        $this->user = $rights["username"];
+
         $prefix = $this->module->getModuleDirectoryPrefix();
         $isModuleEnabledInProject = (bool) $this->module->isModuleEnabled($prefix, $this->project_id);
-        $isApiUserRightsMethod = in_array($_POST["content"], ["user", "userRole", "userRoleMapping"], true);
-        $dataImported = isset($_POST["data"]);
+        $isApiUserRightsMethod = in_array($this->action, ["user", "userRole", "userRoleMapping"], true);
+        $dataImported = isset($this->post["data"]);
 
         return $isModuleEnabledInProject && $isApiUserRightsMethod && $dataImported;
     }
@@ -94,6 +99,9 @@ class APIHandler
                     continue;
                 }
                 $role_id = $this->module->getRoleIdFromUniqueRoleName($uniqueRoleName);
+                if (empty($role_id)) {
+                    continue;
+                }
                 $role_name = \ExternalModules\ExternalModules::getRoleName($this->project_id, $role_id);
                 $role_rights = $this->module->getRoleRights($role_id, $this->project_id);
                 $acceptable_rights = $this->module->getAcceptableRights($username);
@@ -182,5 +190,11 @@ class APIHandler
         } catch (\Throwable $e) {
             $this->module->log('Error Processing API User Import', ["error" => $e->getMessage()]);
         }
+    }
+
+    function getApiRequestInfo()
+    {
+
+        return [$this->action, $this->project_id, $this->user, $this->data];
     }
 }
