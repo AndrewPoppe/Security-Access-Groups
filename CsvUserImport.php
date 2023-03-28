@@ -123,7 +123,7 @@ class CsvUserImport
                     <div class="container mb-4 w-90" style="font-size:larger;">Examine the table of proposed changes below to verify it is correct. 
                     Only users in highlighted rows will be affected, and for those users the "Role" 
                     column will show both the <span class="text-primary font-weight-bold"">proposed role</span> as well as the <span class="text-danger font-weight-bold"">current role</span>.</div>
-                    <table class="table">
+                    <table class="table table-bordered">
                         <thead class="thead-dark">
                             <tr>
                                 <th>Username</th>
@@ -145,9 +145,9 @@ class CsvUserImport
                 $roleText = '<span>' . $row["currentRole"] . '</span>';
             }
             $html .= '<tr class="' . $rowClass . '">
-                <td class="' . $cellClass . '">' . $row["username"] . '</td>
-                <td class="' . $cellClass . '">' . $row["name"] . '</td>
-                <td>' . $roleText . '</td>        
+                <td class="' . $cellClass . ' align-middle">' . $row["username"] . '</td>
+                <td class="' . $cellClass . ' align-middle">' . $row["name"] . '</td>
+                <td class="align-middle">' . $roleText . '</td>        
             </tr>';
         }
 

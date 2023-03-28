@@ -269,12 +269,19 @@ a.dropdown-item {
     cursor: pointer !important;
 }
 
-.fa-classic,
-.fa-regular,
-.fa-solid,
-.far,
-.fas,
-.fa {
+.fa-sharp,
+.fasl,
+.fasr,
+.fass {
+    font-family: "Font Awesome 6 Sharp" !important;
+}
+
+.fa-classic:not(.fa-sharp, .fasl, .fasr, .fass),
+.fa-regular:not(.fa-sharp, .fasl, .fasr, .fass),
+.fa-solid:not(.fa-sharp, .fasl, .fasr, .fass),
+.far:not(.fa-sharp, .fasl, .fasr, .fass),
+.fas:not(.fa-sharp, .fasl, .fasr, .fass),
+.fa:not(.fa-sharp, .fasl, .fasr, .fass) {
     font-family: "Font Awesome 6 Pro" !important;
 }
 
@@ -323,4 +330,19 @@ table#SUR-System-Table.compact th {
 .select2-container {
     width: 100% !important;
     font-family: "Atkinson Hyperlegible" !important;
+}
+
+div.dataTables_filter input {
+    font-family: "Atkinson Hyperlegible";
+    margin-left: 0 !important;
+}
+
+.select2-container--disabled .select2-selection--single {
+    background-color: inherit !important;
+    border: 0;
+    color: black;
+}
+
+.select2-container--disabled .select2-selection__arrow {
+    visibility: hidden;
 }

@@ -60,14 +60,14 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
         <div class="toolbar_orig">
             <div class="d-flex dropdown">
                 <button type="button" class="btn btn-primary btn-xs dropdown-toggle mr-2" data-toggle="dropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="fa-solid fa-file-excel mr-1"></i>
+                    <i class="fa-sharp fa-file-excel mr-1"></i>
                     <span>Import or Export User Assignments</span>
                     <span class="sr-only">Toggle Dropdown</span>
                 </button>
                 <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" onclick="exportCsv();"><i class="fa-regular fa-file-arrow-down fa-fw mr-1 text-success"></i>Export User Assignments</a></li>
-                    <li><a class="dropdown-item" onclick="importCsv();"><i class="fa-solid fa-file-arrow-up fa-fw mr-1 text-danger"></i>Import User Assignments</a></li>
-                    <li><a class="dropdown-item" onclick="downloadTemplate();"><i class="fa-solid fa-download fa-fw mr-1 text-primary"></i>Download Import Template</a></li>
+                    <li><a class="dropdown-item" onclick="exportCsv();"><i class="fa-sharp fa-regular fa-file-arrow-down fa-fw mr-1 text-success"></i>Export User Assignments</a></li>
+                    <li><a class="dropdown-item" onclick="importCsv();"><i class="fa-sharp fa-solid fa-file-arrow-up fa-fw mr-1 text-danger"></i>Import User Assignments</a></li>
+                    <li><a class="dropdown-item" onclick="downloadTemplate();"><i class="fa-sharp fa-solid fa-download fa-fw mr-1 text-primary"></i>Download Import Template</a></li>
                 </ul>
                 <i class="fa-solid fa-circle-info fa-lg align-self-center text-info" style="cursor:pointer;" onclick="Swal.fire({html: $('#infoContainer').html(), icon: 'info', showConfirmButton: false});"></i>
             </div>
@@ -369,10 +369,15 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                 }],
                 dom: '<"toolbar2 d-flex flex-row justify-content-between mb-2"f>t',
                 initComplete: function() {
-                    $('.toolbar2').prepend($('.toolbar_orig').html())
+                    $('.toolbar2').prepend($('.toolbar_orig').html());
+                    $('div.dataTables_filter input').addClass('form-control');
                     setTimeout(() => {
                         $(this).DataTable().columns.adjust().draw();
                     }, 0);
+                },
+                language: {
+                    search: "_INPUT_",
+                    searchPlaceholder: "Search Users..."
                 }
             });
             $('.roleSelect').select2({
@@ -436,15 +441,15 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
         <div class="d-flex flex-row justify-content-end my-1">
             <div class="dropdown">
                 <button type="button" class="btn btn-primary btn-xs dropdown-toggle mr-2" data-toggle="dropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="fa-solid fa-file-excel mr-1"></i>
+                    <i class="fa-sharp fa-file-excel mr-1"></i>
                     <span>Import or Export Roles</span>
                     <span class="sr-only">Toggle Dropdown</span>
                 </button>
                 <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" onclick="exportRawCsv();"><i class="fa-regular fa-file-arrow-down fa-fw mr-1 text-info"></i>Export Roles (raw)</a></li>
-                    <li><a class="dropdown-item" onclick="exportCsv();"><i class="fa-regular fa-file-arrow-down fa-fw mr-1 text-success"></i>Export Roles (labels)</a></li>
-                    <li><a class="dropdown-item" onclick="importCsv();"><i class="fa-solid fa-file-arrow-up fa-fw mr-1 text-danger"></i>Import Roles</a></li>
-                    <li><a class="dropdown-item" onclick="exportRawCsv(false);"><i class="fa-solid fa-download fa-fw mr-1 text-primary"></i>Download Import Template</a></li>
+                    <li><a class="dropdown-item" onclick="exportRawCsv();"><i class="fa-sharp fa-regular fa-file-arrow-down fa-fw mr-1 text-info"></i>Export Roles (raw)</a></li>
+                    <li><a class="dropdown-item" onclick="exportCsv();"><i class="fa-sharp fa-regular fa-file-arrow-down fa-fw mr-1 text-success"></i>Export Roles (labels)</a></li>
+                    <li><a class="dropdown-item" onclick="importCsv();"><i class="fa-sharp fa-solid fa-file-arrow-up fa-fw mr-1 text-danger"></i>Import Roles</a></li>
+                    <li><a class="dropdown-item" onclick="exportRawCsv(false);"><i class="fa-sharp fa-solid fa-download fa-fw mr-1 text-primary"></i>Download Import Template</a></li>
                 </ul>
             </div>
             <div class="hidden">
