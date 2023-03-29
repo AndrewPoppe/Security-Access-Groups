@@ -55,23 +55,30 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
         </div>
     </div>
 
-    <!-- Import/Export Users -->
+    <!-- Table Controls -->
     <div class="hidden">
         <div class="toolbar_orig">
-            <div class="d-flex dropdown">
-                <button type="button" class="btn btn-primary btn-xs dropdown-toggle mr-2" data-toggle="dropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="fa-sharp fa-file-excel mr-1"></i>
-                    <span>Import or Export User Assignments</span>
-                    <span class="sr-only">Toggle Dropdown</span>
+            <div class="d-flex">
+                <button class="btn btn-danger btn-xs mr-1 editUsersButton" style="width: 8em;" data-editing="false" onclick="toggleEditMode(event);">
+                    <i class="fa-sharp fa-user-pen"></i>
+                    <span>Edit Users</span>
                 </button>
-                <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" onclick="exportCsv();"><i class="fa-sharp fa-regular fa-file-arrow-down fa-fw mr-1 text-success"></i>Export User Assignments</a></li>
-                    <li><a class="dropdown-item" onclick="importCsv();"><i class="fa-sharp fa-solid fa-file-arrow-up fa-fw mr-1 text-danger"></i>Import User Assignments</a></li>
-                    <li><a class="dropdown-item" onclick="downloadTemplate();"><i class="fa-sharp fa-solid fa-download fa-fw mr-1 text-primary"></i>Download Import Template</a></li>
-                </ul>
-                <i class="fa-solid fa-circle-info fa-lg align-self-center text-info" style="cursor:pointer;" onclick="Swal.fire({html: $('#infoContainer').html(), icon: 'info', showConfirmButton: false});"></i>
-            </div>
+                <div class="d-flex dropdown">
+                    <button type="button" class="btn btn-primary btn-xs dropdown-toggle mr-2" data-toggle="dropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fa-sharp fa-file-excel mr-1"></i>
+                        <span>Import or Export User Assignments</span>
+                        <span class="sr-only">Toggle Dropdown</span>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" onclick="exportCsv();"><i class="fa-sharp fa-regular fa-file-arrow-down fa-fw mr-1 text-success"></i>Export User Assignments</a></li>
+                        <li><a class="dropdown-item" onclick="importCsv();"><i class="fa-sharp fa-solid fa-file-arrow-up fa-fw mr-1 text-danger"></i>Import User Assignments</a></li>
+                        <li><a class="dropdown-item" onclick="downloadTemplate();"><i class="fa-sharp fa-solid fa-download fa-fw mr-1 text-primary"></i>Download Import Template</a></li>
+                    </ul>
+                    <i class="fa-solid fa-circle-info fa-lg align-self-center text-info" style="cursor:pointer;" onclick="Swal.fire({html: $('#infoContainer').html(), icon: 'info', showConfirmButton: false});"></i>
 
+                </div>
+
+            </div>
         </div>
         <input type="file" accept="text/csv" class="form-control-file" id="importUsersFile">
         <table id="templateTable">
@@ -106,7 +113,7 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                     <td><?= $user["username"] ?></td>
                     <td><?= $user["user_firstname"] . " " . $user["user_lastname"] ?></td>
                     <td><a href="mailto:<?= $user["user_email"] ?>"><?= $user["user_email"] ?></a></td>
-                    <td data-role="<?= $thisUserRole ?>"><select class="roleSelect">
+                    <td data-role="<?= $thisUserRole ?>"><select class="roleSelect" disabled="true">
                             <?php
                             foreach ($roles as $role) {
                                 echo "<option value='" . $role["role_id"] . "' " . ($role["role_id"] == $thisUserRole ? "selected" : "") . ">" . $role["role_name"] . "</option>";
@@ -136,6 +143,22 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
         function formatNow() {
             const d = new Date();
             return d.getFullYear() + '-' + (d.getMonth() + 1).toString().padStart(2, 0) + '-' + (d.getDate()).toString().padStart(2, 0)
+        }
+
+        function toggleEditMode(event) {
+            const button = $('button.editUsersButton');
+            $('.roleSelect').attr('disabled', (_, attr) => !attr);
+            const editing = $(button).data('editing');
+            $(button).data('editing', !editing);
+            if (editing) {
+                $(button).find('span').text('Edit Users');
+                $(button).addClass('btn-danger');
+                $(button).removeClass('btn-outline-danger');
+            } else {
+                $(button).find('span').text('Stop Editing');
+                $(button).addClass('btn-outline-danger');
+                $(button).removeClass('btn-danger');
+            }
         }
 
         function exportCsv() {
@@ -360,9 +383,11 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                         if (type === 'set') {
                             row.role = val;
                         } else if (type === 'filter') {
-                            return $(`tr[data-user="${row[0]}"]`).find(':selected').text();
+                            return $(`
+            tr[data-user = "${row[0]}"] `).find(':selected').text();
                         } else if (type === 'sort') {
-                            return $(`tr[data-user="${row[0]}"]`).find(':selected').text();
+                            return $(`
+            tr[data-user = "${row[0]}"] `).find(':selected').text();
                         }
                         return row.role;
                     }
@@ -370,6 +395,7 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                 dom: '<"toolbar2 d-flex flex-row justify-content-between mb-2"f>t',
                 initComplete: function() {
                     $('.toolbar2').prepend($('.toolbar_orig').html());
+                    $('.toolbar_orig').remove();
                     $('div.dataTables_filter input').addClass('form-control');
                     setTimeout(() => {
                         $(this).DataTable().columns.adjust().draw();

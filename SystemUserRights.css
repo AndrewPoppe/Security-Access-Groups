@@ -337,6 +337,11 @@ div.dataTables_filter input {
     margin-left: 0 !important;
 }
 
+div.dataTables_filter input::placeholder {
+    color: #999 !important;
+    opacity: 1 !important;
+}
+
 .select2-container--disabled .select2-selection--single {
     background-color: inherit !important;
     border: 0;
@@ -345,4 +350,29 @@ div.dataTables_filter input {
 
 .select2-container--disabled .select2-selection__arrow {
     visibility: hidden;
+}
+
+button.btn-outline-danger.editUsersButton:hover,
+button.btn-outline-danger.editUsersButton:active,
+button.btn-outline-danger.editUsersButton:focus {
+    color: #dc3545;
+    background-color: white;
+    border-color: #dc3545;
+    outline: 1px solid #dc354566;
+}
+
+button.btn-danger.editUsersButton:hover,
+button.btn-danger.editUsersButton:active,
+button.btn-danger.editUsersButton:focus {
+    color: white;
+    background-color: #dc3545;
+    border-color: #dc3545;
+}
+
+button.editUsersButton:focus {
+    box-shadow: none;
+}
+
+button.editUsersButton:hover {
+    outline: 1px solid #dc354566;
 }
