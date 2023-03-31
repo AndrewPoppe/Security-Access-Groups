@@ -26,7 +26,15 @@
         }
     ],
     "links": {
-        "project": [],
+        "project": [
+            {
+                "key": "project-status",
+                "name": "System User Rights",
+                "icon": "fa-solid fas fa-user-secret",
+                "url": "project-status.php",
+                "show-header-and-footer": true
+            }
+        ],
         "control-center": [
             {
                 "key": "system-settings",

@@ -96,7 +96,7 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
         </table>
     </div>
     <!-- Users Table -->
-    <table id='SUR-System-Table' class="compact row-border border">
+    <table id='SUR-System-Table' class="compact cell-border border">
         <thead>
             <tr>
                 <th data-id="username" class="py-3">Username</th>
@@ -154,10 +154,22 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                 $(button).find('span').text('Edit Users');
                 $(button).addClass('btn-danger');
                 $(button).removeClass('btn-outline-danger');
+                $('.roleSelect').select2({
+                    minimumResultsForSearch: 20,
+                    templateSelection: function(selection) {
+                        return $(`<div class="d-flex justify-content-between"><strong>${selection.text}</strong>&nbsp;<span class="text-secondary" style="user-select:all; cursor: text;">${selection.id}</span></div>`);
+                    }
+                });
             } else {
                 $(button).find('span').text('Stop Editing');
                 $(button).addClass('btn-outline-danger');
                 $(button).removeClass('btn-danger');
+                $('.roleSelect').select2({
+                    minimumResultsForSearch: 20,
+                    templateResult: function(option) {
+                        return $(`<span><strong>${option.text}</strong><br><span class="text-secondary">${option.id}</span></span>`);
+                    }
+                });
             }
         }
 
@@ -375,6 +387,20 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                 paging: false,
                 info: false,
                 columnDefs: [{
+                    targets: [0],
+                    width: '25%',
+                    data: function(row, type, val, meta) {
+                        if (type === 'set') {
+                            row.username = val;
+                        } else if (type === 'display') {
+                            return `<a class="user-link" href="${app_path_webroot_full}${app_path_webroot}ControlCenter/view_users.php?username=${row.username}" target="_blank" rel="noopener noreferrer">${row.username}</a>`;
+                        }
+                        return row.username;
+                    }
+                }, {
+                    targets: [1, 2],
+                    width: '25%'
+                }, {
                     targets: [4],
                     visible: false
                 }, {
@@ -408,8 +434,8 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
             });
             $('.roleSelect').select2({
                 minimumResultsForSearch: 20,
-                templateResult: function(option) {
-                    return $(`<span><strong>${option.text}</strong><br><span class="text-secondary">${option.id}</span></span>`);
+                templateSelection: function(selection) {
+                    return $(`<div class="d-flex justify-content-between"><strong>${selection.text}</strong>&nbsp;<span class="text-secondary" style="user-select:all; cursor: text;">${selection.id}</span></div>`);
                 }
             });
             $('.roleSelect').change(function() {
@@ -989,7 +1015,7 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                 },
                 columnDefs: [{
                     targets: 1,
-                    className: "role-id-column"
+                    className: "role-id-column user-select-all"
                 }, {
                     targets: 0,
                     data: function(row, type, val, meta) {

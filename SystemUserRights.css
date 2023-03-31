@@ -77,10 +77,45 @@ div#control_center_window pre {
 table#SUR-System-Table {
     width: 100%;
     border-collapse: collapse;
+    border: 1px solid #aaa !important;
+}
+
+table#SUR-System-Table tbody td:first-child {
+    border-left: 1px solid #aaa !important;
+}
+
+table#SUR-System-Table tbody td:last-child {
+    border-right: 1px solid #aaa !important;
+}
+
+table#SUR-System-Table thead th:not(:first-child) {
+    border-left: 1px solid #ccc !important;
 }
 
 table#SUR-System-Table tr.odd {
     background-color: white !important;
+}
+
+div#SUR-System-Table_filter label {
+    margin-bottom: 0;
+}
+
+table#SUR-System-Table thead {
+    background-color: #ececec;
+}
+
+table#SUR-System-Table tbody tr:hover {
+    background-color: #d9ebf5 !important;
+}
+
+table#SUR-System-Table.compact td,
+table#SUR-System-Table.compact th {
+    padding-left: 8px;
+}
+
+table#SUR-System-Table a.user-link {
+    color: #A00000;
+    text-decoration: underline;
 }
 
 table.roleTable tr.odd,
@@ -297,22 +332,6 @@ a.dropdown-item {
     opacity: .5;
 }
 
-div#SUR-System-Table_filter label {
-    margin-bottom: 0;
-}
-
-table#SUR-System-Table {
-    border: 1px solid rgba(0, 0, 0, 0.3) !important;
-}
-
-table#SUR-System-Table thead {
-    background-color: #ececec;
-}
-
-table#SUR-System-Table tbody tr:hover {
-    background-color: #d9ebf5 !important;
-}
-
 .dropdown-item {
     padding: .25rem 1.5rem .25rem 0.5rem;
 }
@@ -320,11 +339,6 @@ table#SUR-System-Table tbody tr:hover {
 td.role-id-column {
     font-size: small;
     color: #222
-}
-
-table#SUR-System-Table.compact td,
-table#SUR-System-Table.compact th {
-    padding-left: 8px;
 }
 
 .select2-container {

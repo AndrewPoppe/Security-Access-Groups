@@ -261,6 +261,44 @@ class SystemUserRights extends AbstractExternalModule
         //var_dump(\UserRights::getRoles($this->getProjectId()));
     }
 
+    function getCurrentRightsFormatted(string $username, $project_id)
+    {
+        $current_rights = $this->getCurrentRights($username, $project_id);
+        $current_data_export = $this->convertExportRightsStringToArray($current_rights["data_export_instruments"]);
+        $current_data_entry = $this->convertDataEntryRightsStringToArray($current_rights["data_entry"]);
+        $current_rights = array_merge($current_rights, $current_data_export, $current_data_entry);
+        unset($current_rights["data_export_instruments"]);
+        unset($current_rights["data_entry"]);
+        unset($current_rights["data_export_tool"]);
+        unset($current_rights["external_module_config"]);
+        return $current_rights;
+    }
+
+    function getUsersWithBadRights($project_id)
+    {
+        $project = $this->getProject($project_id);
+        $users = $project->getUsers();
+        $bad_rights = [];
+        foreach ($users as $user) {
+            $allRights = $user->getRights($project_id);
+            $expiration = strtotime($allRights["expiration"]);
+            $today = strtotime('today');
+            if ($expiration < $today) {
+                continue;
+            }
+            $username = $user->getUsername();
+            $acceptable_rights = $this->getAcceptableRights($username);
+            $current_rights = $this->getCurrentRightsFormatted($username, $project_id);
+            $bad = $this->checkProposedRights($acceptable_rights, $current_rights);
+            $bad_rights[$username] = [
+                "acceptable" => $acceptable_rights,
+                "current" => $current_rights,
+                "bad" => $bad
+            ];
+        }
+        return $bad_rights;
+    }
+
     function logApi(string $action, $project_id, $user, array $changes)
     {
         ob_start(function ($str) use ($action, $project_id, $user, $changes) {
@@ -349,16 +387,18 @@ class SystemUserRights extends AbstractExternalModule
         $result = $this->query($sql, []);
         $rights = [];
         while ($row = $result->fetch_assoc()) {
-            if (!in_array($row["Field"], ["project_id", "username", "expiration", "role_id", "group_id"], true)) {
+            if (!in_array($row["Field"], ["project_id", "username", "expiration", "role_id", "group_id", "api_token", "data_access_group"], true)) {
                 $rights[$row["Field"]] = $row["Field"];
             }
         }
 
-        $modified = array_filter(\UserRights::getApiUserPrivilegesAttr(), function ($value) {
-            return !in_array($value, ["username", "expiration", "group_id"], true);
-        });
+        return $rights;
 
-        return array_unique(array_merge($rights, $modified));
+        // $modified = array_filter(\UserRights::getApiUserPrivilegesAttr(), function ($value) {
+        //     return !in_array($value, ["username", "expiration", "group_id"], true);
+        // });
+
+        // return array_unique(array_merge($rights, $modified));
     }
 
     function getAcceptableRights(string $username)
@@ -400,6 +440,33 @@ class SystemUserRights extends AbstractExternalModule
         return $result;
     }
 
+    // E.g., from "[form1,1][form2,1]" to ["export-form-form1"=>"1", "export-form-form2"=>"1"] 
+    function convertExportRightsStringToArray($fullRightsString)
+    {
+        $raw = \UserRights::convertFormRightsToArray($fullRightsString);
+        $result = [];
+        foreach ($raw as $key => $value) {
+            $result["export-form-" . $key] = $value;
+        }
+        return $result;
+    }
+
+    // E.g., from "[form1,1][form2,1]" to ["form-form1"=>"1", "form-form2"=>"1"] 
+    function convertDataEntryRightsStringToArray($fullRightsString)
+    {
+        $raw = \UserRights::convertFormRightsToArray($fullRightsString);
+        $result = [];
+        foreach ($raw as $key => $value) {
+            if ($value == 3) {
+                $result["form-" . $key] = 2;
+                $result["form-editresp-" . $key] = "on";
+            } else {
+                $result["form-" . $key] = $value;
+            }
+        }
+        return $result;
+    }
+
     function checkProposedRights(array $acceptable_rights, array $requested_rights)
     {
         //$this->log('checking rights', ["acceptable" => json_encode($acceptable_rights), "acceptable_keys" => json_encode(array_keys($acceptable_rights)), "requested" => json_encode($requested_rights)]);
@@ -408,7 +475,7 @@ class SystemUserRights extends AbstractExternalModule
 
             $right = $this->convertRightName($right);
 
-            $safeRights = ["user", "submit-action", "role_name", "role_name_edit", "redcap_csrf_token", "expiration", "group_role", "data_access_group_id", "unique_role_name", "role_label", "notify_email"];
+            $safeRights = ["project_id", "username", "role_id", "user", "submit-action", "role_name", "role_name_edit", "redcap_csrf_token", "expiration", "group_role", "group_id", "api_token", "data_access_group_id", "unique_role_name", "role_label", "notify_email"];
             if ($value == "0" || in_array($right, $safeRights, true)) {
                 continue;
             }
