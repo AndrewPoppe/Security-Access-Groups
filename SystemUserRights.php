@@ -261,6 +261,11 @@ class SystemUserRights extends AbstractExternalModule
         //var_dump(\UserRights::getRoles($this->getProjectId()));
     }
 
+    function redcap_module_project_enable($version, $project_id)
+    {
+        $this->log('Module Enabled');
+    }
+
     function getCurrentRightsFormatted(string $username, $project_id)
     {
         $current_rights = $this->getCurrentRights($username, $project_id);
@@ -283,7 +288,7 @@ class SystemUserRights extends AbstractExternalModule
             $allRights = $user->getRights($project_id);
             $expiration = strtotime($allRights["expiration"]);
             $today = strtotime('today');
-            if ($expiration < $today) {
+            if ($expiration !== false && $expiration < $today) {
                 continue;
             }
             $username = $user->getUsername();

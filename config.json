@@ -6,7 +6,8 @@
         "redcap_user_rights",
         "redcap_every_page_top",
         "redcap_every_page_before_render",
-        "redcap_module_configuration_settings"
+        "redcap_module_configuration_settings",
+        "redcap_module_project_enable"
     ],
     "authors": [
         {

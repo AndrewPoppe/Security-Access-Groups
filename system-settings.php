@@ -210,7 +210,7 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                             return $('#SUR-System-Table select').eq(row).val();
                         } else if (col === 3) {
                             return $('#SUR-System-Table select').eq(row).find('option:selected').text();
-                        } else if (col === 2) {
+                        } else if (col === 2 || col === 0) {
                             return $(html).text();
                         } else {
                             return html;
@@ -485,7 +485,7 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
     <p style='margin:20px 0;max-width:1000px;'>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc velit metus, venenatis in congue sed, ultrices sed nulla. Donec auctor bibendum mauris eget posuere. Ut rhoncus, nulla at auctor volutpat, urna odio ornare nulla, a ultrices neque massa sed est. Vestibulum dignissim feugiat turpis vel egestas. Integer eu purus vel dui egestas varius et ac erat. Donec blandit quam a enim faucibus ultrices. Aenean consectetur efficitur leo, et euismod arcu ultrices non. Ut et tincidunt tortor. Quisque eu interdum erat, vitae convallis ligula. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi interdum sapien nec quam blandit, vel faucibus turpis convallis. </p>
 
     <!-- Modal -->
-    <div class="modal" id="edit_role_popup" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true"></div>
+    <div class="modal" id="edit_role_popup" data-backdrop="static" data-keyboard="false" aria-labelledby="staticBackdropLabel" aria-hidden="true"></div>
 
 
     <!-- Controls Container -->
@@ -1007,6 +1007,8 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                 fixedHeader: false,
                 fixedColumns: true,
                 scrollX: true,
+                scrollY: '75vh',
+                scrollCollapse: true,
                 initComplete: function() {
                     $('#roleTableWrapper').show();
                     setTimeout(() => {
