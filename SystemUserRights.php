@@ -286,16 +286,19 @@ class SystemUserRights extends AbstractExternalModule
         $bad_rights = [];
         foreach ($users as $user) {
             $allRights = $user->getRights($project_id);
-            $expiration = strtotime($allRights["expiration"]);
-            $today = strtotime('today');
-            if ($expiration !== false && $expiration < $today) {
-                continue;
-            }
+            $expiration = $allRights["expiration"];
             $username = $user->getUsername();
+            $userInfo = $this->getUserInfo($username);
             $acceptable_rights = $this->getAcceptableRights($username);
             $current_rights = $this->getCurrentRightsFormatted($username, $project_id);
             $bad = $this->checkProposedRights($acceptable_rights, $current_rights);
             $bad_rights[$username] = [
+                "username" => $username,
+                "name" => $userInfo["user_firstname"] . " " . $userInfo["user_lastname"],
+                "email" => $user->getEmail(),
+                "expiration" => $expiration == "" ? "never" : $expiration,
+                "system_role" => $this->getUserSystemRole($username),
+                "project_role" => $userInfo["role_id"] ?? "none",
                 "acceptable" => $acceptable_rights,
                 "current" => $current_rights,
                 "bad" => $bad

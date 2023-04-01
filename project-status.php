@@ -22,60 +22,71 @@ if (empty($discrepantRights)) {
     exit();
 }
 ?>
-
-<table class="table">
-    <thead class="thead-dark">
-        <tr>
-            <th><input type="checkbox" onchange="$('.user-selector input').prop('checked', $(this).prop('checked'));"></input></th>
-            <th>Username</th>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Expiration</th>
-            <th>System Role</th>
-            <th>Discrepant Rights</th>
-            <th>Project Role</th>
-        </tr>
-    </thead>
-    <tbody>
-        <?php foreach ($discrepantRights as $user => $thisUsersRights) {
-            $hasDiscrepancy = !empty($thisUsersRights["bad"]); ?>
-            <tr class="<?= $hasDiscrepancy ? "table-danger" : "text-secondary" ?>">
-                <td class="align-middle user-selector"><?= $hasDiscrepancy ? '<input type="checkbox"></input>' : '' ?></td>
-                <td class="align-middle"><strong><?= $user ?></strong></td>
-                <td class="align-middle">Name</td>
-                <td class="align-middle">Email</td>
-                <td class="align-middle">Expiration</td>
-                <td class="align-middle">System Role</td>
-                <td class="align-middle">
-                    <?php
-                    if ($hasDiscrepancy) { ?>
-                        <a class="text-primary" style="text-decoration: underline; cursor: pointer;" data-toggle="modal" data-target="#modal-<?= $user ?>"><?= sizeof($thisUsersRights["bad"]) ?> Rights</a>
-                        <div class="modal fade" id="modal-<?= $user ?>" tabindex="-1" aria-hidden="true">
-                            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-                                <div class="modal-content">
-                                    <div class="modal-body">
-                                        <table class="table table-hover table-borderless">
-                                            <tbody>
-                                                <?php foreach ($thisUsersRights["bad"] as $right) {
-                                                    echo "<tr><td>$right</td></tr>";
-                                                } ?>
-                                            </tbody>
-                                        </table>
+<div>
+    <p style="font-size:large;">Users with Discrepant Rights</p>
+    <p>Current users in the ...</p>
+</div>
+<div class="container ml-0">
+    <table class="table table-sm">
+        <thead class="thead-dark">
+            <tr>
+                <th><input type="checkbox" onchange="$('.user-selector input').prop('checked', $(this).prop('checked'));"></input></th>
+                <th>Username</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Expiration</th>
+                <th>System Role</th>
+                <th>Discrepant Rights</th>
+                <th>Project Role</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php foreach ($discrepantRights as $user => $thisUsersRights) {
+                $badRights = $thisUsersRights["bad"];
+                $hasDiscrepancy = !empty($badRights);
+                $isExpired = $thisUsersRights["expiration"] !== "never" && strtotime($thisUsersRights["expiration"]) < strtotime("today");
+                $rowClass = $hasDiscrepancy ? "table-danger" : "table-success";
+                $rowClass = $isExpired ? "text-secondary" : $rowClass; ?>
+                <tr class="<?= $rowClass ?>">
+                    <td class="align-middle user-selector"><?= $hasDiscrepancy ? '<input type="checkbox"></input>' : '' ?></td>
+                    <td class="align-middle"><strong><?= $user ?></strong></td>
+                    <td class="align-middle"><?= $thisUsersRights["name"] ?></td>
+                    <td class="align-middle"><?= $thisUsersRights["email"] ?></td>
+                    <td class="align-middle"><?= $thisUsersRights["expiration"] ?></td>
+                    <td class="align-middle"><?= $thisUsersRights["system_role"] ?></td>
+                    <td class="align-middle">
+                        <?php
+                        if ($hasDiscrepancy) { ?>
+                            <a class="text-primary" style="text-decoration: underline; cursor: pointer;" data-toggle="modal" data-target="#modal-<?= $user ?>"><?= sizeof($badRights) . (sizeof($badRights) > 1 ? " Rights" : " Right") ?></a>
+                            <div class="modal fade" id="modal-<?= $user ?>" tabindex="-1" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                                    <div class="modal-content">
+                                        <div class="modal-body">
+                                            <div class="d-flex justify-content-center">
+                                                <table class="table table-sm table-hover table-borderless">
+                                                    <tbody>
+                                                        <?php foreach ($badRights as $right) {
+                                                            echo "<tr><td>$right</td></tr>";
+                                                        } ?>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    <?php
-                    } else {
-                        echo "none";
-                    }
-                    ?>
-                </td>
-                <td class="align-middle">Project Role</td>
-            </tr>
-        <?php } ?>
-    </tbody>
-</table>
+                        <?php
+                        } else {
+                            echo "none";
+                        }
+                        ?>
+                    </td>
+                    <td class="align-middle"><?= $thisUsersRights["project_role"] ?></td>
+                </tr>
+            <?php } ?>
+        </tbody>
+    </table>
+</div>
 <script>
 
 </script>
