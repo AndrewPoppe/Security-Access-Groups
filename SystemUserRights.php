@@ -266,6 +266,15 @@ class SystemUserRights extends AbstractExternalModule
         $this->log('Module Enabled');
     }
 
+    function redcap_module_link_check_display($project_id, $link)
+    {
+        if (empty($project_id) || $this->getUser()->isSuperUser()) {
+            return $link;
+        }
+
+        return null;
+    }
+
     function getCurrentRightsFormatted(string $username, $project_id)
     {
         $current_rights = $this->getCurrentRights($username, $project_id);

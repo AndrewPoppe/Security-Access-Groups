@@ -7,7 +7,8 @@
         "redcap_every_page_top",
         "redcap_every_page_before_render",
         "redcap_module_configuration_settings",
-        "redcap_module_project_enable"
+        "redcap_module_project_enable",
+        "redcap_module_link_check_display"
     ],
     "authors": [
         {
@@ -17,20 +18,12 @@
         }
     ],
     "project-settings": [],
-    "system-settings": [
-        {
-            "key": "test",
-            "name": "test",
-            "required": true,
-            "type": "user-list",
-            "repeatable": true
-        }
-    ],
+    "system-settings": [],
     "links": {
         "project": [
             {
                 "key": "project-status",
-                "name": "System User Rights",
+                "name": "Check User Rights",
                 "icon": "fa-solid fas fa-user-secret",
                 "url": "project-status.php",
                 "show-header-and-footer": true

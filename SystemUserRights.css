@@ -70,6 +70,15 @@ div.modal {
     font-family: "Atkinson Hyperlegible" !important;
 }
 
+div.SUR-Container,
+div.SUR-Container a:hover {
+    font-family: "Atkinson Hyperlegible" !important;
+}
+
+    {
+    font-family: "Atkinson Hyperlegible" !important;
+}
+
 div#control_center_window pre {
     font-family: "JetBrainsMono" !important;
 }
