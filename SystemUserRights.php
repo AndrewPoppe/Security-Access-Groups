@@ -307,7 +307,7 @@ class SystemUserRights extends AbstractExternalModule
                 "email" => $user->getEmail(),
                 "expiration" => $expiration == "" ? "never" : $expiration,
                 "system_role" => $this->getUserSystemRole($username),
-                "project_role" => $userInfo["role_id"] ?? "none",
+                "project_role" => $allRights["role_id"] ?? "none",
                 "acceptable" => $acceptable_rights,
                 "current" => $current_rights,
                 "bad" => $bad
@@ -939,6 +939,10 @@ class SystemUserRights extends AbstractExternalModule
     {
         $result = $this->query("SELECT * FROM redcap_user_rights WHERE username = ? AND project_id = ?", [$username, $project_id]);
         $rights = $result->fetch_assoc();
+        if (!empty($rights["role_id"])) {
+            $result2 = $this->query("SELECT * FROM redcap_user_roles WHERE role_id = ?", [$rights["role_id"]]);
+            $rights = $result2->fetch_assoc();
+        }
         unset($rights["api_token"], $rights["expiration"]);
         return $rights;
     }

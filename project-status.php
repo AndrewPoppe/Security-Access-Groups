@@ -53,7 +53,7 @@ namespace YaleREDCap\SystemUserRights;
                         <td class="align-middle"><strong><?= $user ?></strong></td>
                         <td class="align-middle"><?= $thisUsersRights["name"] ?></td>
                         <td class="align-middle"><?= $thisUsersRights["email"] ?></td>
-                        <td class="align-middle"><?= $thisUsersRights["expiration"] ?></td>
+                        <td class="align-middle <?= $isExpired ? 'text-danger' : '' ?>"><?= $thisUsersRights["expiration"] ?></td>
                         <td class="align-middle"><?= $thisUsersRights["system_role"] ?></td>
                         <td class="align-middle">
                             <?php
