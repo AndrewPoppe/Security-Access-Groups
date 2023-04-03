@@ -27,11 +27,16 @@ namespace YaleREDCap\SystemUserRights;
         <p style="font-size:large;">Check User Rights</p>
         <p>Current users in the ...</p>
     </div>
+    <div class="buttonContainer mb-2 pl-3">
+        <button type="button" class="btn btn-xs btn-primary" disabled><i class="fa-sharp fa-regular fa-envelope"></i> Email User(s)</button>
+        <button type="button" class="btn btn-xs btn-info" disabled><i class="fa-kit fa-sharp-regular-envelope-circle-exclamation"></i> Email User Rights Holders</button>
+        <button type="button" class="btn btn-xs btn-danger" disabled><i class="fa-solid fa-user-xmark"></i> Expire User(s)</button>
+    </div>
     <div class="container ml-0">
-        <table class="table table-sm">
+        <table class="table table-sm table-bordered">
             <thead class="thead-dark">
                 <tr>
-                    <th><input type="checkbox" onchange="$('.user-selector input').prop('checked', $(this).prop('checked'));"></input></th>
+                    <th><input type="checkbox" onchange="$('.user-selector input').prop('checked', $(this).prop('checked')).trigger('change');"></input></th>
                     <th>Username</th>
                     <th>Name</th>
                     <th>Email</th>
@@ -92,6 +97,14 @@ namespace YaleREDCap\SystemUserRights;
         </table>
     </div>
     <script>
-
+        $(document).ready(function() {
+            $('.user-selector input').change(function(event) {
+                if ($('.user-selector input').is(':checked')) {
+                    $('.buttonContainer button').prop('disabled', false);
+                } else {
+                    $('.buttonContainer button').prop('disabled', true);
+                }
+            })
+        });
     </script>
 </div>
