@@ -409,11 +409,11 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                         if (type === 'set') {
                             row.role = val;
                         } else if (type === 'filter') {
-                            return $(`
-            tr[data-user = "${row[0]}"] `).find(':selected').text();
+                            console.log(row);
+                            console.log($(`tr[data-user = "${row['username']}"]`).find(':selected').text())
+                            return $(`tr[data-user = "${row['username']}"]`).find(':selected').text();
                         } else if (type === 'sort') {
-                            return $(`
-            tr[data-user = "${row[0]}"] `).find(':selected').text();
+                            return $(`tr[data-user = "${row['username']}"]`).find(':selected').text();
                         }
                         return row.role;
                     }
