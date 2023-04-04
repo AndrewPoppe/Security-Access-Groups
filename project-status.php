@@ -2,6 +2,12 @@
 
 namespace YaleREDCap\SystemUserRights;
 
+require_once "Alerts.php";
+
+use YaleREDCap\SystemUserRights\Alerts;
+
+$Alerts = new Alerts($module);
+
 ?>
 <link href="https://cdn.datatables.net/v/dt/dt-1.13.3/b-2.3.5/b-html5-2.3.5/fc-4.2.1/datatables.min.css" rel="stylesheet" />
 <script src="https://cdn.datatables.net/v/dt/dt-1.13.3/b-2.3.5/b-html5-2.3.5/fc-4.2.1/datatables.min.js"></script>
@@ -18,6 +24,7 @@ namespace YaleREDCap\SystemUserRights;
 
     <?php
     $project_id = $module->getProjectId();
+    $adminUsername = $module->getUser()->getUsername();
     $discrepantRights = $module->getUsersWithBadRights($project_id);
     if (empty($discrepantRights)) {
         exit();
@@ -28,7 +35,7 @@ namespace YaleREDCap\SystemUserRights;
         <p>Current users in the ...</p>
     </div>
     <div class="buttonContainer mb-2 pl-3">
-        <button type="button" class="btn btn-xs btn-primary" disabled><i class="fa-sharp fa-regular fa-envelope"></i> Email User(s)</button>
+        <button type="button" class="btn btn-xs btn-primary" data-toggle="modal" data-target="#emailUsersModal" disabled><i class="fa-sharp fa-regular fa-envelope"></i> Email User(s)</button>
         <button type="button" class="btn btn-xs btn-info" disabled><i class="fa-kit fa-sharp-regular-envelope-circle-exclamation"></i> Email User Rights Holders</button>
         <button type="button" class="btn btn-xs btn-danger" disabled><i class="fa-solid fa-user-xmark"></i> Expire User(s)</button>
     </div>
@@ -53,7 +60,7 @@ namespace YaleREDCap\SystemUserRights;
                     $isExpired = $thisUsersRights["expiration"] !== "never" && strtotime($thisUsersRights["expiration"]) < strtotime("today");
                     $rowClass = $hasDiscrepancy ? "table-danger" : "table-success";
                     $rowClass = $isExpired ? "text-secondary" : $rowClass; ?>
-                    <tr class="<?= $rowClass ?>">
+                    <tr data-user="<?= $user ?>" class="<?= $rowClass ?>">
                         <td class="align-middle user-selector"><?= $hasDiscrepancy ? '<input type="checkbox"></input>' : '' ?></td>
                         <td class="align-middle"><strong><?= $user ?></strong></td>
                         <td class="align-middle"><?= $thisUsersRights["name"] ?></td>
@@ -96,6 +103,7 @@ namespace YaleREDCap\SystemUserRights;
             </tbody>
         </table>
     </div>
+    <?php $Alerts->getUserEmailModal($project_id, $adminUsername); ?>
     <script>
         $(document).ready(function() {
             $('.user-selector input').change(function(event) {
@@ -104,7 +112,42 @@ namespace YaleREDCap\SystemUserRights;
                 } else {
                     $('.buttonContainer button').prop('disabled', true);
                 }
-            })
+            });
+            $('#emailUsersModal').modal('show');
+            tinymce.init({
+                entity_encoding: "raw",
+                default_link_target: '_blank',
+                selector: ".richtext",
+                height: 350,
+                branding: false,
+                statusbar: true,
+                menubar: false,
+                elementpath: false,
+                plugins: ['paste autolink lists link searchreplace code fullscreen table directionality hr'],
+                toolbar1: 'formatselect | hr | bold italic underline link | alignleft aligncenter alignright alignjustify | undo redo',
+                toolbar2: 'bullist numlist | outdent indent | table tableprops tablecellprops | forecolor backcolor | searchreplace code removeformat | fullscreen',
+                contextmenu: "copy paste | link image inserttable | cell row column deletetable",
+                content_css: app_path_webroot + "Resources/webpack/css/fontawesome/css/all.min.css," + app_path_webroot + "Resources/css/style.css",
+                relative_urls: false,
+                convert_urls: false,
+                convert_fonts_to_spans: true,
+                extended_valid_elements: 'i[class]',
+                paste_word_valid_elements: "b,strong,i,em,h1,h2,u,p,ol,ul,li,a[href],span,color,font-size,font-color,font-family,mark,table,tr,td",
+                paste_retain_style_properties: "all",
+                paste_postprocess: function(plugin, args) {
+                    args.node.innerHTML = cleanHTML(args.node.innerHTML);
+                },
+                remove_linebreaks: true,
+                // content_style: 'body { font-weight: bold; }',
+                // formats: {
+                //     bold: {
+                //         inline: 'span',
+                //         styles: {
+                //             'font-weight': 'normal' // Make the 'bold' option function like an 'unbold' instead.
+                //         }
+                //     }
+                // }
+            });
         });
     </script>
 </div>
