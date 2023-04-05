@@ -94,7 +94,7 @@ $Alerts = new Alerts($module);
                                     <div class="modal-dialog modal-dialog-scrollable">
                                         <div class="modal-content">
                                             <div class="modal-header bg-dark text-light">
-                                                <h5>Discrepant Rights for <?= $thisUsersRights["name"] . " (" . $user . ")" ?></h5>
+                                                <h5 class="m-0">Discrepant Rights for <?= $thisUsersRights["name"] . " (" . $user . ")" ?></h5>
                                             </div>
                                             <div class="modal-body">
                                                 <div class="d-flex justify-content-center">
@@ -124,6 +124,7 @@ $Alerts = new Alerts($module);
     </div>
     <?php $Alerts->getUserEmailModal($project_id, $adminUsername); ?>
     <?php $Alerts->getUserRightsHoldersEmailModal($project_id, $adminUsername); ?>
+    <?php $Alerts->getUserExpirationSchedulerModal($project_id); ?>
     <script>
         function openEmailUsersModal() {
             document.querySelector('#emailUsersModal form').reset();
@@ -135,6 +136,58 @@ $Alerts = new Alerts($module);
             document.querySelector('#emailUserRightsHoldersModal form').reset();
             $('.collapse').collapse('hide');
             $('#emailUserRightsHoldersModal').modal('show');
+        }
+
+        function openExpireUsersModal() {
+            document.querySelector('#userExpirationSchedulerModal form').reset();
+            $('#userExpirationSchedulerModal').modal('show');
+        }
+
+        function expireUsers() {
+            const users = $('.user-selector').toArray().map((el) => {
+                if ($(el).find('input').is(':checked')) {
+                    const row = $(el).closest('tr');
+                    return {
+                        username: $(row).find('td').eq(1).text(),
+                        name: $(row).find('td').eq(2).text(),
+                        email: $(row).find('td').eq(3).text()
+                    };
+                }
+            }).filter((el) => el);
+
+            let table = "<table class='table'><thead><tr><th>Username</th><th>Name</th><th>Email</th></tr></thead><tbody>";
+            users.forEach((userRow) => {
+                table += `<tr><td>${userRow["username"]}</td><td>${userRow["name"]}</td><td>${userRow["email"]}</td></tr>`;
+            });
+            table += "</tbody></table>";
+
+            Swal.fire({
+                    title: `Are you sure you want to expire ${users.length > 1 ? "these users" : "this user"} in this project?`,
+                    html: table,
+                    showCancelButton: true,
+                    confirmButtonText: 'Expire User' + (users.length > 1 ? "s" : ""),
+                    customClass: {
+                        confirmButton: 'btn btn-danger mr-2',
+                        cancelButton: 'btn btn-secondary'
+                    },
+                    buttonsStyling: false
+                })
+                .then((response) => {
+                    if (response.isConfirmed) {
+                        $.post("<?= $module->getUrl('expireUsers.php') ?>", {
+                                users: users.map(userRow => userRow["username"])
+                            })
+                            .done(function(response) {
+                                console.log(response);
+                            })
+                            .fail(function(error) {
+                                console.log(error)
+                            })
+                            .always(function() {
+                                //window.location.reload();
+                            });
+                    }
+                })
         }
 
         $(document).ready(function() {

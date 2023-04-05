@@ -301,6 +301,47 @@ class Alerts
                 </div>
             </div>
         </div>
+    <?php
+    }
+
+    /**
+     * @param mixed $project_id 
+     * 
+     * @return string
+     */
+    public function getUserExpirationSchedulerModal($project_id)
+    {
+    ?>
+        <div class="modal fade userAlert" id="userExpirationSchedulerModal" aria-labelledby="userExpirationSchedulerTitle" data-backdrop="static" data-keyboard="false" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header bg-danger text-light">
+                        <h5 class="modal-title" id="userExpirationSchedulerTitle">Schedule Expiration of User(s)</h5>
+                        <button type="button" class="btn-close btn-danger align-self-center" data-bs-dismiss="modal" data-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="userExpirationSchedulerForm">
+                            <div class="row">
+                                <div class="col">
+                                    <div class="border p-4">
+                                        <div class="form-group row">
+                                            <label class="col-sm-5 col-form-label col-form-label-sm">How many days until the users are expired?</label>
+                                            <div class="col-sm-7 mt-2">
+                                                <input name="delayDays" type="number" min="1" value="14" class="form-control form-control-sm">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class=" modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-danger">Schedule Expiration</button>
+                    </div>
+                </div>
+            </div>
+        </div>
 <?php
     }
 
