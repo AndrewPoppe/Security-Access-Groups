@@ -75,10 +75,6 @@ div.SUR-Container a:hover {
     font-family: "Atkinson Hyperlegible" !important;
 }
 
-    {
-    font-family: "Atkinson Hyperlegible" !important;
-}
-
 div#control_center_window pre {
     font-family: "JetBrainsMono" !important;
 }
@@ -398,4 +394,20 @@ button.editUsersButton:focus {
 
 button.editUsersButton:hover {
     outline: 1px solid #dc354566;
+}
+
+.dataPlaceholder {
+    cursor: copy;
+}
+
+.bg-reminder {
+    background-color: #ff000014 !important;
+}
+
+.bg-reminder.border {
+    border: 1px solid #ff000020 !important;
+}
+
+div.modal.userAlert label.col-form-label {
+    font-weight: bold;
 }

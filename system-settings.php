@@ -75,7 +75,6 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                         <li><a class="dropdown-item" onclick="downloadTemplate();"><i class="fa-sharp fa-solid fa-download fa-fw mr-1 text-primary"></i>Download Import Template</a></li>
                     </ul>
                     <i class="fa-solid fa-circle-info fa-lg align-self-center text-info" style="cursor:pointer;" onclick="Swal.fire({html: $('#infoContainer').html(), icon: 'info', showConfirmButton: false});"></i>
-
                 </div>
 
             </div>
