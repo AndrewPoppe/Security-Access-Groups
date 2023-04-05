@@ -411,3 +411,31 @@ button.editUsersButton:hover {
 div.modal.userAlert label.col-form-label {
     font-weight: bold;
 }
+
+button.btn-warning:hover {
+    outline: 1px solid #d39e00 !important;
+}
+
+button.btn-danger:hover {
+    outline: 1px solid #bd2130 !important;
+}
+
+button.btn-secondary:hover {
+    outline: 1px solid #545b62 !important;
+}
+
+.order-1 {
+    order: 1;
+}
+
+.order-2 {
+    order: 2;
+}
+
+.order-3 {
+    order: 3;
+}
+
+.table.discrepancy-table td {
+    border: 1px solid #454d5580;
+}

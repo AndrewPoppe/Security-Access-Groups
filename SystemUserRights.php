@@ -102,6 +102,10 @@ class SystemUserRights extends AbstractExternalModule
                     unset($_SESSION['SUR_bad_rights']);
                 } ?>
 
+                function createRightsTable(bad_rights) {
+                    return `<table class="table table-sm table-borderless table-hover w-50 mt-4 mx-auto" style="font-size:13px; cursor: default;"><tbody><tr><td>${bad_rights.join('</td></tr><tr><td>')}</td></tr></tbody></table>`;
+                }
+
                 function fixLinks() {
                     $('#importUserForm').attr('action', "<?= $this->getUrl("import_export_users.php") ?>");
                     $('#importUsersForm2').attr('action', "<?= $this->getUrl("import_export_users.php") ?>");
@@ -164,7 +168,7 @@ class SystemUserRights extends AbstractExternalModule
                             let users = Object.keys(result.bad_rights);
                             if (!result.role) {
                                 title = `You cannot grant those user rights to user "${users[0]}"`;
-                                text = `The following permissions cannot be granted to that user:<ul><li>${result.bad_rights[users[0]].join('</li><li>')}</li></ul></div>`;
+                                text = `The following permissions cannot be granted to that user:${createRightsTable(result.bad_rights[users[0]])}`;
                             } else {
                                 title = `You cannot grant those rights to the role<br>"${result.role}"`;
                                 text = `The following users are assigned to that role, and the following permissions cannot be granted to them:<br>
@@ -252,6 +256,51 @@ class SystemUserRights extends AbstractExternalModule
                         }
                         fixLinks();
                     });
+                }
+
+                window.setExpiration = function() {
+                    $('#tooltipExpirationBtn').button('disable');
+                    $('#tooltipExpiration').prop('disabled', true);
+                    $('#tooltipExpirationCancel').hide();
+                    $('#tooltipExpirationProgress').show();
+                    $.post("<?= $this->getUrl('set_user_expiration.php?pid=' . $this->getProjectId()) ?>", {
+                            username: $('#tooltipExpirationHiddenUsername').val(),
+                            expiration: $('#tooltipExpiration').val()
+                        },
+                        function(data) {
+                            console.log(data);
+                            if (data == '0') {
+                                alert(woops);
+                                return;
+                            }
+                            try {
+                                const result = JSON.parse(data);
+                                if (!result.error || !result.bad_rights) {
+                                    return;
+                                }
+                                const users = Object.keys(result.bad_rights);
+                                const title = `You cannot grant those user rights to user "${users[0]}"`;
+                                const text = `The following permissions cannot be granted to that user: ${createRightsTable(result.bad_rights[users[0]])}`;
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: title,
+                                    html: text,
+                                    width: '750px'
+                                });
+                                return;
+                            } catch (error) {
+                                $('#user_rights_roles_table_parent').html(data);
+                                enablePageJS();
+                            } finally {
+                                setTimeout(function() {
+                                    $('#tooltipExpiration').prop('disabled', false);
+                                    $('#tooltipExpirationBtn').button('enable');
+                                    $('#tooltipExpirationCancel').show();
+                                    $('#tooltipExpirationProgress').hide();
+                                    $('#userClickExpiration').hide();
+                                }, 400);
+                            }
+                        });
                 }
                 fixLinks();
                 checkImportErrors();

@@ -59,10 +59,10 @@ $Alerts = new Alerts($module);
         </div>
     </div>
     <div class="container ml-0">
-        <table class="table table-sm table-bordered">
+        <table class="table table-sm table-bordered discrepancy-table">
             <thead class="thead-dark">
                 <tr>
-                    <th><input type="checkbox" onchange="$('.user-selector input').prop('checked', $(this).prop('checked')).trigger('change');"></input></th>
+                    <th style="vertical-align: middle !important;"><input style="display:block; margin: 0 auto;" type="checkbox" onchange="$('.user-selector input').prop('checked', $(this).prop('checked')).trigger('change');"></input></th>
                     <th>Username</th>
                     <th>Name</th>
                     <th>Email</th>
@@ -78,18 +78,18 @@ $Alerts = new Alerts($module);
                     $hasDiscrepancy = !empty($badRights);
                     $isExpired = $thisUsersRights["expiration"] !== "never" && strtotime($thisUsersRights["expiration"]) < strtotime("today");
                     $rowClass = $hasDiscrepancy ? "table-danger" : "table-success";
-                    $rowClass = $isExpired ? "text-secondary" : $rowClass; ?>
+                    $rowClass = $isExpired ? "text-secondary bg-light" : $rowClass; ?>
                     <tr data-user="<?= $user ?>" class="<?= $rowClass ?>">
-                        <td class="align-middle user-selector"><?= $hasDiscrepancy ? '<input type="checkbox"></input>' : '' ?></td>
+                        <td style="vertical-align: middle !important;" class="align-middle user-selector"><?= $hasDiscrepancy ? '<input style="display:block; margin: 0 auto;" type="checkbox"></input>' : '' ?></td>
                         <td class="align-middle"><strong><?= $user ?></strong></td>
                         <td class="align-middle"><?= $thisUsersRights["name"] ?></td>
                         <td class="align-middle"><?= $thisUsersRights["email"] ?></td>
-                        <td class="align-middle <?= $isExpired ? 'text-danger' : '' ?>"><?= $thisUsersRights["expiration"] ?></td>
+                        <td class="align-middle"><?= $thisUsersRights["expiration"] ?></td>
                         <td class="align-middle"><?= $thisUsersRights["system_role"] ?></td>
                         <td class="align-middle">
                             <?php
                             if ($hasDiscrepancy) { ?>
-                                <a class="text-primary" style="text-decoration: underline; cursor: pointer;" data-toggle="modal" data-target="#modal-<?= $user ?>"><?= sizeof($badRights) . (sizeof($badRights) > 1 ? " Rights" : " Right") ?></a>
+                                <a class="<?= $isExpired ? "text-secondary" : "text-primary" ?>" style="text-decoration: underline; cursor: pointer;" data-toggle="modal" data-target="#modal-<?= $user ?>"><?= sizeof($badRights) . (sizeof($badRights) > 1 ? " Rights" : " Right") ?></a>
                                 <div class="modal fade" id="modal-<?= $user ?>" tabindex="-1" aria-hidden="true">
                                     <div class="modal-dialog modal-dialog-scrollable">
                                         <div class="modal-content">
@@ -126,6 +126,18 @@ $Alerts = new Alerts($module);
     <?php $Alerts->getUserRightsHoldersEmailModal($project_id, $adminUsername); ?>
     <?php $Alerts->getUserExpirationSchedulerModal($project_id); ?>
     <script>
+        var Toast = Swal.mixin({
+            toast: true,
+            position: 'middle',
+            iconColor: 'white',
+            customClass: {
+                popup: 'colored-toast'
+            },
+            showConfirmButton: false,
+            timer: 1500,
+            timerProgressBar: true
+        });
+
         function openEmailUsersModal() {
             document.querySelector('#emailUsersModal form').reset();
             $('.collapse').collapse('hide');
@@ -164,11 +176,13 @@ $Alerts = new Alerts($module);
             Swal.fire({
                     title: `Are you sure you want to expire ${users.length > 1 ? "these users" : "this user"} in this project?`,
                     html: table,
+                    icon: "warning",
                     showCancelButton: true,
                     confirmButtonText: 'Expire User' + (users.length > 1 ? "s" : ""),
                     customClass: {
-                        confirmButton: 'btn btn-danger mr-2',
-                        cancelButton: 'btn btn-secondary'
+                        confirmButton: 'btn btn-danger order-2',
+                        cancelButton: 'btn btn-secondary order-1 mr-2',
+                        icon: "text-danger border-danger"
                     },
                     buttonsStyling: false
                 })
@@ -178,14 +192,29 @@ $Alerts = new Alerts($module);
                                 users: users.map(userRow => userRow["username"])
                             })
                             .done(function(response) {
-                                console.log(response);
+                                Toast.fire({
+                                        title: 'The user' + (users.length > 1 ? "s were " : " was ") + 'successfully expired.',
+                                        icon: 'success'
+                                    })
+                                    .then(function() {
+                                        window.location.reload();
+                                    });
                             })
                             .fail(function(error) {
-                                console.log(error)
+                                console.error(error.responseText);
+                                Swal.fire({
+                                        title: 'Error',
+                                        html: error.responseText,
+                                        icon: 'error',
+                                        customClass: {
+                                            confirmButton: 'btn btn-primary',
+                                        },
+                                        buttonsStyling: false
+                                    })
+                                    .then(function() {
+                                        window.location.reload();
+                                    });
                             })
-                            .always(function() {
-                                //window.location.reload();
-                            });
                     }
                 })
         }
@@ -239,16 +268,7 @@ $Alerts = new Alerts($module);
                 paste_postprocess: function(plugin, args) {
                     args.node.innerHTML = cleanHTML(args.node.innerHTML);
                 },
-                remove_linebreaks: true,
-                // content_style: 'body { font-weight: bold; }',
-                // formats: {
-                //     bold: {
-                //         inline: 'span',
-                //         styles: {
-                //             'font-weight': 'normal' // Make the 'bold' option function like an 'unbold' instead.
-                //         }
-                //     }
-                // }
+                remove_linebreaks: true
             });
         });
     </script>
