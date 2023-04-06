@@ -146,15 +146,38 @@ $Alerts = new Alerts($module);
         }
 
         function populateDefaultEmailUserModal() {
-            const emailBodyTemplate = `<?= $module->getSystemSetting('email-body-template') ?? "" ?>`;
-            console.log(emailBodyTemplate);
+            const emailBodyTemplate = `<?= $module->getSystemSetting('user-email-body-template') ?? "" ?>`;
             tinymce.get('emailBody').setContent(emailBodyTemplate);
+
+            const emailSubjectTemplate = `<?= $module->getSystemSetting('user-email-subject-template') ?? "" ?>`;
+            $('#emailSubject').val(emailSubjectTemplate);
+
+            const reminderBodyTemplate = `<?= $module->getSystemSetting('user-reminder-email-body-template') ?? "" ?>`;
+            tinymce.get('reminderBody').setContent(reminderBodyTemplate);
+
+            const reminderSubjectTemplate = `<?= $module->getSystemSetting('user-reminder-email-subject-template') ?? "" ?>`;
+            $('#reminderSubject').val(reminderSubjectTemplate);
         }
 
         function openEmailUserRightsHoldersModal() {
             document.querySelector('#emailUserRightsHoldersModal form').reset();
             $('.collapse').collapse('hide');
+            populateDefaultEmailUserRightsHoldersModal();
             $('#emailUserRightsHoldersModal').modal('show');
+        }
+
+        function populateDefaultEmailUserRightsHoldersModal() {
+            const emailBodyTemplate = `<?= $module->getSystemSetting('user-rights-holders-email-body-template') ?? "" ?>`;
+            tinymce.get('emailBody-UserRightsHolders').setContent(emailBodyTemplate);
+
+            const emailSubjectTemplate = `<?= $module->getSystemSetting('user-rights-holders-email-subject-template') ?? "" ?>`;
+            $('#emailSubject-UserRightsHolders').val(emailSubjectTemplate);
+
+            const reminderBodyTemplate = `<?= $module->getSystemSetting('user-rights-holders-reminder-email-body-template') ?? "" ?>`;
+            tinymce.get('reminderBody-UserRightsHolders').setContent(reminderBodyTemplate);
+
+            const reminderSubjectTemplate = `<?= $module->getSystemSetting('user-rights-holders-reminder-email-subject-template') ?? "" ?>`;
+            $('#reminderSubject-UserRightsHolders').val(reminderSubjectTemplate);
         }
 
         function openExpireUsersModal() {
@@ -235,21 +258,35 @@ $Alerts = new Alerts($module);
                 }
             });
 
+            $('.dataPlaceholder').popover({
+                placement: 'top',
+                html: true,
+                content: '<span class="text-danger">Copied!</span>',
+                show: function() {
+                    $(this).fadeIn();
+                },
+                hide: function() {
+                    $(this).fadeOut();
+                }
+            });
+
             const clipboard = new ClipboardJS('.dataPlaceholder', {
                 text: function(trigger) {
                     return $(trigger).text();
                 }
             });
             clipboard.on('success', function(e) {
-                const pos = e.trigger.getBoundingClientRect();
-                $(document.body).append(`<span style="position:absolute; z-index:5000; top: ${pos.top - 3}px; left: ${pos.left - 55}px" class="clipboardSaveProgress">Copied!</span>`);
-                $('.clipboardSaveProgress').toggle('fade', 'fast');
+                // const pos = e.trigger.getBoundingClientRect();
+                $(e.trigger).popover('show');
+                // $(document.body).append(`<span style="position:absolute; z-index:5000; top: ${pos.top}px; left: ${pos.left - 55}px" class="clipboardSaveProgress">Copied!</span>`);
+                // $('.clipboardSaveProgress').toggle('fade', 'fast');
 
                 setTimeout(function() {
-                    $('.clipboardSaveProgress').toggle('fade', 'fast', function() {
-                        $('.clipboardSaveProgress').remove();
-                    });
-                }, 2000);
+                    $(e.trigger).popover('hide');
+                    // $('.clipboardSaveProgress').toggle('fade', 'fast', function() {
+                    //     $('.clipboardSaveProgress').remove();
+                    // });
+                }, 1000);
                 e.clearSelection();
             });
             tinymce.init({

@@ -66,23 +66,11 @@ class Alerts
                                             <div class="col-10 ml-4">
                                                 <span><strong>You can use the following placeholders to insert information into your email subject and body:</strong></span>
                                                 <table>
-                                                    <tr>
-                                                        <td><code class="dataPlaceholder">[user]</code></td>
-                                                        <td>The user's username</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td><code class="dataPlaceholder">[user-fullname]</code></td>
-                                                        <td>The user's name</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td><code class="dataPlaceholder">[user-email]</code></td>
-                                                        <td>The user's email address</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td><code class="dataPlaceholder">[rights]</code></td>
-                                                        <td><span>A formatted list of the rights that do not</span><br><span>conform with the user's security access group.</span></td>
-                                                    </tr>
+                                                    <?php foreach ($this->getPlaceholdersUsers() as $placeholder => $description) {
+                                                        echo "<tr><td><code class='dataPlaceholder'>[$placeholder]</code></td><td>$description</td></tr>";
+                                                    } ?>
                                                 </table>
+                                                <p><span>You can also use <button class="btn btn-xs btn-rcgreen btn-rcgreen-light" style="margin-left:3px;font-size:11px;padding:0px 3px 1px;line-height:14px;" onclick="smartVariableExplainPopup();setTimeout(function() {$('#smart_variable_explain_popup').parent().css('z-index', 1051);},300); return false;">[<i class="fa-solid fa-bolt fa-xs" style="margin:0 1px;"></i>] Smart Variables</button>, but few will be applicable.</span></p>
                                             </div>
                                             <div class="col">
                                                 <button class="btn btn-secondary btn-xs" type="button" onclick="previewEmail($('.primaryEmail'));">Preview</button>
@@ -127,23 +115,11 @@ class Alerts
                                                 <div class="col-10 ml-4">
                                                     <span><strong>You can use the following placeholders to insert information into your email subject and body:</strong></span>
                                                     <table>
-                                                        <tr>
-                                                            <td><code class="dataPlaceholder">[user]</code></td>
-                                                            <td>The user's username</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td><code class="dataPlaceholder">[user-fullname]</code></td>
-                                                            <td>The user's name</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td><code class="dataPlaceholder">[user-email]</code></td>
-                                                            <td>The user's email address</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td><code class="dataPlaceholder">[rights]</code></td>
-                                                            <td><span>A formatted list of the rights that do not</span><br><span>conform with the user's security access group.</span></td>
-                                                        </tr>
+                                                        <?php foreach ($this->getPlaceholdersUsers() as $placeholder => $description) {
+                                                            echo "<tr><td><code class='dataPlaceholder'>[$placeholder]</code></td><td>$description</td></tr>";
+                                                        } ?>
                                                     </table>
+                                                    <p><span>You can also use <button class="btn btn-xs btn-rcgreen btn-rcgreen-light" style="margin-left:3px;font-size:11px;padding:0px 3px 1px;line-height:14px;" onclick="smartVariableExplainPopup();setTimeout(function() {$('#smart_variable_explain_popup').parent().css('z-index', 1051);},300); return false;">[<i class="fa-solid fa-bolt fa-xs" style="margin:0 1px;"></i>] Smart Variables</button>, but few will be applicable.</span></p>
                                                 </div>
                                                 <div class="col">
                                                     <button class="btn btn-secondary btn-xs" type="button" onclick="previewEmail($('.reminderEmail'));">Preview</button>
@@ -174,10 +150,10 @@ class Alerts
             </div>
         </div>
         <script>
-            function previewEmail($emailContainer) {
+            async function previewEmail($emailContainer) {
                 const id = $emailContainer.find('textarea.emailBody').prop('id');
                 const content = tinymce.get(id).getContent();
-                const replacedContent = replaceKeywordsPreview(content);
+                const replacedContent = await replaceKeywordsPreview(content);
                 $('#emailPreview div.modal-body').html(replacedContent);
                 $('#emailUsersModal').css('z-index', 1039);
                 $('#emailPreview').modal('show');
@@ -186,17 +162,20 @@ class Alerts
                 });
             }
 
-            function replaceKeywordsPreview(text) {
+            async function replaceKeywordsPreview(text) {
                 const replacements = [
-                    ['[user]', 'janice123'],
-                    ['[user-fullname]', 'Janice Johnson'],
-                    ['[user-email]', '<a mailto="janice.johnson@email.com">janice.johnson@email.com</a>'],
-                    ['[rights]', '<ul><li>Project Design and Setup</li><li>User Rights</li><li>Create Records</li></ul>']
+                    ['[sag-user]', 'robin123'],
+                    ['[sag-user-fullname]', 'Robin Jones'],
+                    ['[sag-user-email]', '<a mailto="robin.jones@email.com">robin.jones@email.com</a>'],
+                    ['[sag-rights]', '<ul><li>Project Design and Setup</li><li>User Rights</li><li>Create Records</li></ul>']
                 ];
                 replacements.forEach(pair => {
                     text = text.replaceAll(pair[0], pair[1]);
                 });
-                return text;
+
+                return $.post('<?= $this->module->getUrl('replaceSmartVariables.php') ?>', {
+                    text: text
+                });
             }
         </script>
     <?php
@@ -222,7 +201,7 @@ class Alerts
                     </div>
                     <div class="modal-body">
                         <form id="emailUserRightsHoldersForm">
-                            <div class="row mb-2">
+                            <div class="row mb-2 primaryEmail-UserRightsHolders">
                                 <div class="col">
                                     <div class="border bg-light p-4">
                                         <div class="form-group row">
@@ -247,36 +226,27 @@ class Alerts
                                         <div class="form-group row">
                                             <div class="col">
                                                 <label for="emailBody-UserRightsHolders" class="col-form-label col-form-label-sm">Email Body:</label>
-                                                <textarea id="emailBody-UserRightsHolders" name="emailBody" type="text" class="form-control form-control-sm richtext"></textarea>
+                                                <textarea id="emailBody-UserRightsHolders" name="emailBody" type="text" class="form-control form-control-sm richtext emailBody"></textarea>
                                             </div>
                                         </div>
                                         <div class="form-group row" style="font-size: small;">
-                                            <div class="col ml-4">
+                                            <div class="col-10 ml-4">
                                                 <span><strong>You can use the following placeholders to insert information into your email subject and body:</strong></span>
                                                 <table>
-                                                    <tr>
-                                                        <td><code class="dataPlaceholder">[users]</code></td>
-                                                        <td>A formatted list of usernames</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td><code class="dataPlaceholder">[user-fullnames]</code></td>
-                                                        <td>A formatted list of users' full names</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td><code class="dataPlaceholder">[user-emails]</code></td>
-                                                        <td>A formatted list of user emails</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td><code class="dataPlaceholder">[users-rights]</code></td>
-                                                        <td>A formatted list of the rights that do not conform with the user's security access group.</td>
-                                                    </tr>
+                                                    <?php foreach ($this->getPlaceholdersUserRightsHolders() as $placeholder => $description) {
+                                                        echo "<tr><td><code class='dataPlaceholder'>[$placeholder]</code></td><td>$description</td></tr>";
+                                                    } ?>
                                                 </table>
+                                                <p><span>You can also use <button class="btn btn-xs btn-rcgreen btn-rcgreen-light" style="margin-left:3px;font-size:11px;padding:0px 3px 1px;line-height:14px;" onclick="smartVariableExplainPopup();setTimeout(function() {$('#smart_variable_explain_popup').parent().css('z-index', 1051);},300); return false;">[<i class="fa-solid fa-bolt fa-xs" style="margin:0 1px;"></i>] Smart Variables</button>, but few will be applicable.</span></p>
+                                            </div>
+                                            <div class="col">
+                                                <button class="btn btn-secondary btn-xs" type="button" onclick="previewEmailUserRightsHolders($('.primaryEmail-UserRightsHolders'));">Preview</button>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="row">
+                            <div class="row reminderEmail-UserRightsHolders">
                                 <div class="col">
                                     <div class="border bg-reminder p-4">
                                         <div class="form-group row mb-0">
@@ -305,30 +275,21 @@ class Alerts
                                             <div class="form-group row">
                                                 <div class="col">
                                                     <label for="reminderBody-UserRightsHolders" class="col-form-label col-form-label-sm">Reminder Body:</label>
-                                                    <textarea id="reminderBody-UserRightsHolders" name="reminderBody" type="text" class="form-control form-control-sm richtext"></textarea>
+                                                    <textarea id="reminderBody-UserRightsHolders" name="reminderBody" type="text" class="form-control form-control-sm richtext emailBody"></textarea>
                                                 </div>
                                             </div>
                                             <div class="form-group row" style="font-size: small;">
-                                                <div class="col ml-4">
+                                                <div class="col-10 ml-4">
                                                     <span><strong>You can use the following placeholders to insert information into your email subject and body:</strong></span>
                                                     <table>
-                                                        <tr>
-                                                            <td><code class="dataPlaceholder">[users]</code></td>
-                                                            <td>A formatted list of usernames</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td><code class="dataPlaceholder">[user-fullnames]</code></td>
-                                                            <td>A formatted list of users' full names</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td><code class="dataPlaceholder">[user-emails]</code></td>
-                                                            <td>A formatted list of user emails</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td><code class="dataPlaceholder">[users-rights]</code></td>
-                                                            <td>A formatted list of the rights that do not conform with the user's security access group.</td>
-                                                        </tr>
+                                                        <?php foreach ($this->getPlaceholdersUserRightsHolders() as $placeholder => $description) {
+                                                            echo "<tr><td><code class='dataPlaceholder'>[$placeholder]</code></td><td>$description</td></tr>";
+                                                        } ?>
                                                     </table>
+                                                    <p><span>You can also use <button class="btn btn-xs btn-rcgreen btn-rcgreen-light" style="margin-left:3px;font-size:11px;padding:0px 3px 1px;line-height:14px;" onclick="smartVariableExplainPopup();setTimeout(function() {$('#smart_variable_explain_popup').parent().css('z-index', 1051);},300); return false;">[<i class="fa-solid fa-bolt fa-xs" style="margin:0 1px;"></i>] Smart Variables</button>, but few will be applicable.</span></p>
+                                                </div>
+                                                <div class="col">
+                                                    <button class="btn btn-secondary btn-xs" type="button" onclick="previewEmailUserRightsHolders($('.reminderEmail-UserRightsHolders'));">Preview</button>
                                                 </div>
                                             </div>
                                         </div>
@@ -344,6 +305,46 @@ class Alerts
                 </div>
             </div>
         </div>
+        <div class="modal" id="emailPreview-UserRightsHolders" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+                <div class="modal-content">
+                    <div class="modal-body">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+            async function previewEmailUserRightsHolders($emailContainer) {
+                const id = $emailContainer.find('textarea.emailBody').prop('id');
+                const content = tinymce.get(id).getContent();
+                const replacedContent = await replaceKeywordsPreviewUserRightsHolders(content);
+                $('#emailPreview-UserRightsHolders div.modal-body').html(replacedContent);
+                $('#emailUserRightsHoldersModal').css('z-index', 1039);
+                $('#emailPreview-UserRightsHolders').modal('show');
+                $('#emailPreview-UserRightsHolders').on('hidden.bs.modal', function(event) {
+                    $('#emailUserRightsHoldersModal').css('z-index', 1050);
+                });
+            }
+
+            async function replaceKeywordsPreviewUserRightsHolders(text) {
+                const replacements = [
+                    ['[sag-user]', 'robin123'],
+                    ['[sag-user-fullname]', 'Robin Jones'],
+                    ['[sag-user-email]', '<a mailto="robin.jones@email.com">robin.jones@email.com</a>'],
+                    ['[sag-rights]', '<ul><li>Project Design and Setup</li><li>User Rights</li><li>Create Records</li></ul>']
+                ];
+                replacements.forEach(pair => {
+                    text = text.replaceAll(pair[0], pair[1]);
+                });
+
+                return $.post('<?= $this->module->getUrl('replaceSmartVariables.php') ?>', {
+                    text: text
+                });
+            }
+        </script>
     <?php
     }
 
@@ -386,6 +387,29 @@ class Alerts
             </div>
         </div>
 <?php
+    }
+
+    public function getPlaceholdersUserRightsHolders(): array
+    {
+        return [
+            "sag-users" => "A formatted list of usernames",
+            "sag-user-fullnames" => "A formatted list of users' full names",
+            "sag-user-emails" => "A formatted list of user emails",
+            "sag-users-rights" => "A formatted list of the rights that do not conform with the user's security access group.",
+            "sag-users-table" => "A formatted table of usernames, full names, and email addresses",
+            "sag-users-table-full" => "A formatted table of usernames, full names, email addresses, and non-compliant rights",
+            "sag-project-title" => "The title of the project",
+        ];
+    }
+
+    public function getPlaceholdersUsers(): array
+    {
+        return [
+            "sag-user" => "The user's username",
+            "sag-user-fullname" => "The user's full name",
+            "sag-user-email" => "The user's email address",
+            "sag-rights" => "<span>A formatted list of the rights that do not</span><br><span>conform with the user's security access group.</span>"
+        ];
     }
 
     private function getEmailAddresses(string $username): array
