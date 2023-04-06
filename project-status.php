@@ -141,7 +141,14 @@ $Alerts = new Alerts($module);
         function openEmailUsersModal() {
             document.querySelector('#emailUsersModal form').reset();
             $('.collapse').collapse('hide');
+            populateDefaultEmailUserModal();
             $('#emailUsersModal').modal('show');
+        }
+
+        function populateDefaultEmailUserModal() {
+            const emailBodyTemplate = `<?= $module->getSystemSetting('email-body-template') ?? "" ?>`;
+            console.log(emailBodyTemplate);
+            tinymce.get('emailBody').setContent(emailBodyTemplate);
         }
 
         function openEmailUserRightsHoldersModal() {

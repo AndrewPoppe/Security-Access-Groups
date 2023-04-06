@@ -18,7 +18,13 @@
         }
     ],
     "project-settings": [],
-    "system-settings": [],
+    "system-settings": [
+        {
+            "key": "email-body-template",
+            "name": "<strong>Email Template</strong><br>Default template for email alerts to users whose rights are not in compliance",
+            "type": "rich-text"
+        }
+    ],
     "links": {
         "project": [
             {

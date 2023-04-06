@@ -34,7 +34,7 @@ class Alerts
                     </div>
                     <div class="modal-body">
                         <form id="emailUsersForm">
-                            <div class="row mb-2">
+                            <div class="row mb-2 primaryEmail">
                                 <div class="col">
                                     <div class="border bg-light p-4">
                                         <div class="form-group row">
@@ -59,11 +59,11 @@ class Alerts
                                         <div class="form-group row">
                                             <div class="col">
                                                 <label for="emailBody" class="col-form-label col-form-label-sm">Email Body:</label>
-                                                <textarea id="emailBody" name="emailBody" type="text" class="form-control form-control-sm richtext"></textarea>
+                                                <textarea id="emailBody" name="emailBody" type="text" class="form-control form-control-sm richtext emailBody"></textarea>
                                             </div>
                                         </div>
                                         <div class="form-group row" style="font-size: small;">
-                                            <div class="col ml-4">
+                                            <div class="col-10 ml-4">
                                                 <span><strong>You can use the following placeholders to insert information into your email subject and body:</strong></span>
                                                 <table>
                                                     <tr>
@@ -80,15 +80,18 @@ class Alerts
                                                     </tr>
                                                     <tr>
                                                         <td><code class="dataPlaceholder">[rights]</code></td>
-                                                        <td>A formatted list of the rights that do not conform with the user's security access group.</td>
+                                                        <td><span>A formatted list of the rights that do not</span><br><span>conform with the user's security access group.</span></td>
                                                     </tr>
                                                 </table>
+                                            </div>
+                                            <div class="col">
+                                                <button class="btn btn-secondary btn-xs" type="button" onclick="previewEmail($('.primaryEmail'));">Preview</button>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="row">
+                            <div class="row reminderEmail">
                                 <div class="col">
                                     <div class="border bg-reminder p-4">
                                         <div class="form-group row mb-0">
@@ -117,11 +120,11 @@ class Alerts
                                             <div class="form-group row">
                                                 <div class="col">
                                                     <label for="emailBody" class="col-form-label col-form-label-sm">Reminder Body:</label>
-                                                    <textarea id="reminderBody" name="reminderBody" type="text" class="form-control form-control-sm richtext"></textarea>
+                                                    <textarea id="reminderBody" name="reminderBody" type="text" class="form-control form-control-sm richtext emailBody"></textarea>
                                                 </div>
                                             </div>
                                             <div class="form-group row" style="font-size: small;">
-                                                <div class="col ml-4">
+                                                <div class="col-10 ml-4">
                                                     <span><strong>You can use the following placeholders to insert information into your email subject and body:</strong></span>
                                                     <table>
                                                         <tr>
@@ -138,9 +141,12 @@ class Alerts
                                                         </tr>
                                                         <tr>
                                                             <td><code class="dataPlaceholder">[rights]</code></td>
-                                                            <td>A formatted list of the rights that do not conform with the user's security access group.</td>
+                                                            <td><span>A formatted list of the rights that do not</span><br><span>conform with the user's security access group.</span></td>
                                                         </tr>
                                                     </table>
+                                                </div>
+                                                <div class="col">
+                                                    <button class="btn btn-secondary btn-xs" type="button" onclick="previewEmail($('.reminderEmail'));">Preview</button>
                                                 </div>
                                             </div>
                                         </div>
@@ -156,6 +162,43 @@ class Alerts
                 </div>
             </div>
         </div>
+        <div class="modal" id="emailPreview" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+                <div class="modal-content">
+                    <div class="modal-body">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+            function previewEmail($emailContainer) {
+                const id = $emailContainer.find('textarea.emailBody').prop('id');
+                const content = tinymce.get(id).getContent();
+                const replacedContent = replaceKeywordsPreview(content);
+                $('#emailPreview div.modal-body').html(replacedContent);
+                $('#emailUsersModal').css('z-index', 1039);
+                $('#emailPreview').modal('show');
+                $('#emailPreview').on('hidden.bs.modal', function(event) {
+                    $('#emailUsersModal').css('z-index', 1050);
+                });
+            }
+
+            function replaceKeywordsPreview(text) {
+                const replacements = [
+                    ['[user]', 'janice123'],
+                    ['[user-fullname]', 'Janice Johnson'],
+                    ['[user-email]', '<a mailto="janice.johnson@email.com">janice.johnson@email.com</a>'],
+                    ['[rights]', '<ul><li>Project Design and Setup</li><li>User Rights</li><li>Create Records</li></ul>']
+                ];
+                replacements.forEach(pair => {
+                    text = text.replaceAll(pair[0], pair[1]);
+                });
+                return text;
+            }
+        </script>
     <?php
     }
 
