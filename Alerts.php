@@ -163,18 +163,16 @@ class Alerts
             }
 
             async function replaceKeywordsPreview(text) {
-                const replacements = [
-                    ['[sag-user]', 'robin123'],
-                    ['[sag-user-fullname]', 'Robin Jones'],
-                    ['[sag-user-email]', '<a mailto="robin.jones@email.com">robin.jones@email.com</a>'],
-                    ['[sag-rights]', '<ul><li>Project Design and Setup</li><li>User Rights</li><li>Create Records</li></ul>']
-                ];
-                replacements.forEach(pair => {
-                    text = text.replaceAll(pair[0], pair[1]);
-                });
+                const data = {
+                    'sag_user': 'robin123',
+                    'sag_user_fullname': 'Robin Jones',
+                    'sag_user_email': 'robin.jones@email.com',
+                    'sag_rights': ['Project Design and Setup', 'User Rights', 'Create Records']
+                };
 
                 return $.post('<?= $this->module->getUrl('replaceSmartVariables.php') ?>', {
-                    text: text
+                    text: text,
+                    data: data
                 });
             }
         </script>
@@ -330,15 +328,15 @@ class Alerts
             }
 
             async function replaceKeywordsPreviewUserRightsHolders(text) {
-                const replacements = [
-                    ['[sag-user]', 'robin123'],
-                    ['[sag-user-fullname]', 'Robin Jones'],
-                    ['[sag-user-email]', '<a mailto="robin.jones@email.com">robin.jones@email.com</a>'],
-                    ['[sag-rights]', '<ul><li>Project Design and Setup</li><li>User Rights</li><li>Create Records</li></ul>']
-                ];
-                replacements.forEach(pair => {
-                    text = text.replaceAll(pair[0], pair[1]);
-                });
+                // const replacements = [
+                //     ['[sag-user]', 'robin123'],
+                //     ['[sag-user-fullname]', 'Robin Jones'],
+                //     ['[sag-user-email]', '<a mailto="robin.jones@email.com">robin.jones@email.com</a>'],
+                //     ['[sag-rights]', '<ul><li>Project Design and Setup</li><li>User Rights</li><li>Create Records</li></ul>']
+                // ];
+                // replacements.forEach(pair => {
+                //     text = text.replaceAll(pair[0], pair[1]);
+                // });
 
                 return $.post('<?= $this->module->getUrl('replaceSmartVariables.php') ?>', {
                     text: text

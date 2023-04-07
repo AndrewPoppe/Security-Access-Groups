@@ -2,6 +2,10 @@
 
 namespace YaleREDCap\SystemUserRights;
 
+require_once "TextReplacer.php";
+
+use YaleREDCap\SystemUserRights\TextReplacer;
+
 if ($_SERVER["REQUEST_METHOD"] !== "POST") {
     http_response_code(400);
     exit;
@@ -13,7 +17,10 @@ if (!$module->getUser()->isSuperUser()) {
 }
 
 $text = filter_input(INPUT_POST, 'text');
+$data = $_POST["data"] ?? [];
 
-$replaced_text = \Piping::pipeSpecialTags($text, $module->getProjectId());
+$textReplacer = new TextReplacer($module, $text, $data ?? []);
+
+$replaced_text = $textReplacer->replaceText();
 
 echo $replaced_text;
