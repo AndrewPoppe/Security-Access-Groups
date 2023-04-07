@@ -42,7 +42,7 @@ $Alerts = new Alerts($module);
         <p style="font-size:large;">Check User Rights</p>
         <p>Current users in the ...</p>
     </div>
-    <div class="buttonContainer mb-2 pl-3">
+    <div class="buttonContainer mb-2">
         <button type="button" class="btn btn-xs btn-primary" onclick="openEmailUsersModal();" disabled><i class="fa-sharp fa-regular fa-envelope"></i> Email User(s)</button>
         <button type="button" class="btn btn-xs btn-warning" onclick="openEmailUserRightsHoldersModal();" disabled><i class="fa-kit fa-sharp-regular-envelope-circle-exclamation"></i> Email User Rights Holders</button>
         <div class="btn-group dropdown" role="group">
@@ -58,7 +58,7 @@ $Alerts = new Alerts($module);
             <i class="fa-solid fa-circle-info fa-lg align-self-center text-info" style="cursor:pointer;" onclick="Swal.fire({html: $('#infoContainer').html(), icon: 'info', showConfirmButton: false});"></i>
         </div>
     </div>
-    <div class="container ml-0">
+    <div class="container ml-0 pl-0">
         <table class="table table-sm table-bordered discrepancy-table">
             <thead class="thead-dark">
                 <tr>

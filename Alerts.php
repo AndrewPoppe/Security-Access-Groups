@@ -56,14 +56,19 @@ class Alerts
                                                 <input id="emailSubject" name="emailSubject" type="text" class="form-control form-control-sm">
                                             </div>
                                         </div>
-                                        <div class="form-group row">
+                                        <div class="form-group row mb-1">
                                             <div class="col">
                                                 <label for="emailBody" class="col-form-label col-form-label-sm">Email Body:</label>
                                                 <textarea id="emailBody" name="emailBody" type="text" class="form-control form-control-sm richtext emailBody"></textarea>
                                             </div>
                                         </div>
+                                        <div class="form-group row mb-1">
+                                            <div class="col text-right">
+                                                <button class="btn btn-info btn-xs" type="button" onclick="previewEmail($('.primaryEmail'));"><i class="fa-eye fa-regular mr-1"></i>Preview</button>
+                                            </div>
+                                        </div>
                                         <div class="form-group row" style="font-size: small;">
-                                            <div class="col-10 ml-4">
+                                            <div class="col ml-2">
                                                 <span><strong>You can use the following placeholders to insert information into your email subject and body:</strong></span>
                                                 <table>
                                                     <?php foreach ($this->getPlaceholdersUsers() as $placeholder => $description) {
@@ -71,9 +76,6 @@ class Alerts
                                                     } ?>
                                                 </table>
                                                 <p><span>You can also use <button class="btn btn-xs btn-rcgreen btn-rcgreen-light" style="margin-left:3px;font-size:11px;padding:0px 3px 1px;line-height:14px;" onclick="smartVariableExplainPopup();setTimeout(function() {$('#smart_variable_explain_popup').parent().css('z-index', 1051);},300); return false;">[<i class="fa-solid fa-bolt fa-xs" style="margin:0 1px;"></i>] Smart Variables</button>, but few will be applicable.</span></p>
-                                            </div>
-                                            <div class="col">
-                                                <button class="btn btn-secondary btn-xs" type="button" onclick="previewEmail($('.primaryEmail'));">Preview</button>
                                             </div>
                                         </div>
                                     </div>
@@ -105,14 +107,19 @@ class Alerts
                                                     <input id="reminderSubject" name="reminderSubject" type="text" class="form-control form-control-sm">
                                                 </div>
                                             </div>
-                                            <div class="form-group row">
+                                            <div class="form-group row mb-1">
                                                 <div class="col">
                                                     <label for="emailBody" class="col-form-label col-form-label-sm">Reminder Body:</label>
                                                     <textarea id="reminderBody" name="reminderBody" type="text" class="form-control form-control-sm richtext emailBody"></textarea>
                                                 </div>
                                             </div>
+                                            <div class="form-group row mb-1">
+                                                <div class="col text-right">
+                                                    <button class="btn btn-info btn-xs" type="button" onclick="previewEmail($('.reminderEmail'));"><i class="fa-eye fa-regular mr-1"></i>Preview</button>
+                                                </div>
+                                            </div>
                                             <div class="form-group row" style="font-size: small;">
-                                                <div class="col-10 ml-4">
+                                                <div class="col ml-2">
                                                     <span><strong>You can use the following placeholders to insert information into your email subject and body:</strong></span>
                                                     <table>
                                                         <?php foreach ($this->getPlaceholdersUsers() as $placeholder => $description) {
@@ -120,9 +127,6 @@ class Alerts
                                                         } ?>
                                                     </table>
                                                     <p><span>You can also use <button class="btn btn-xs btn-rcgreen btn-rcgreen-light" style="margin-left:3px;font-size:11px;padding:0px 3px 1px;line-height:14px;" onclick="smartVariableExplainPopup();setTimeout(function() {$('#smart_variable_explain_popup').parent().css('z-index', 1051);},300); return false;">[<i class="fa-solid fa-bolt fa-xs" style="margin:0 1px;"></i>] Smart Variables</button>, but few will be applicable.</span></p>
-                                                </div>
-                                                <div class="col">
-                                                    <button class="btn btn-secondary btn-xs" type="button" onclick="previewEmail($('.reminderEmail'));">Preview</button>
                                                 </div>
                                             </div>
                                         </div>
@@ -221,14 +225,19 @@ class Alerts
                                                 <input id="emailSubject-UserRightsHolders" name="emailSubject" type="text" class="form-control form-control-sm">
                                             </div>
                                         </div>
-                                        <div class="form-group row">
+                                        <div class="form-group row mb-1">
                                             <div class="col">
                                                 <label for="emailBody-UserRightsHolders" class="col-form-label col-form-label-sm">Email Body:</label>
                                                 <textarea id="emailBody-UserRightsHolders" name="emailBody" type="text" class="form-control form-control-sm richtext emailBody"></textarea>
                                             </div>
                                         </div>
+                                        <div class="form-group row mb-1">
+                                            <div class="col text-right">
+                                                <button class="btn btn-info btn-xs" type="button" onclick="previewEmailUserRightsHolders($('.primaryEmail-UserRightsHolders'));"><i class="fa-eye fa-regular mr-1"></i>Preview</button>
+                                            </div>
+                                        </div>
                                         <div class="form-group row" style="font-size: small;">
-                                            <div class="col-10 ml-4">
+                                            <div class="col ml-2">
                                                 <span><strong>You can use the following placeholders to insert information into your email subject and body:</strong></span>
                                                 <table>
                                                     <?php foreach ($this->getPlaceholdersUserRightsHolders() as $placeholder => $description) {
@@ -236,9 +245,6 @@ class Alerts
                                                     } ?>
                                                 </table>
                                                 <p><span>You can also use <button class="btn btn-xs btn-rcgreen btn-rcgreen-light" style="margin-left:3px;font-size:11px;padding:0px 3px 1px;line-height:14px;" onclick="smartVariableExplainPopup();setTimeout(function() {$('#smart_variable_explain_popup').parent().css('z-index', 1051);},300); return false;">[<i class="fa-solid fa-bolt fa-xs" style="margin:0 1px;"></i>] Smart Variables</button>, but few will be applicable.</span></p>
-                                            </div>
-                                            <div class="col">
-                                                <button class="btn btn-secondary btn-xs" type="button" onclick="previewEmailUserRightsHolders($('.primaryEmail-UserRightsHolders'));">Preview</button>
                                             </div>
                                         </div>
                                     </div>
@@ -270,14 +276,19 @@ class Alerts
                                                     <input id="reminderSubject-UserRightsHolders" name="reminderSubject" type="text" class="form-control form-control-sm">
                                                 </div>
                                             </div>
-                                            <div class="form-group row">
+                                            <div class="form-group row mb-1">
                                                 <div class="col">
                                                     <label for="reminderBody-UserRightsHolders" class="col-form-label col-form-label-sm">Reminder Body:</label>
                                                     <textarea id="reminderBody-UserRightsHolders" name="reminderBody" type="text" class="form-control form-control-sm richtext emailBody"></textarea>
                                                 </div>
                                             </div>
+                                            <div class="form-group row mb-1">
+                                                <div class="col text-right">
+                                                    <button class="btn btn-info btn-xs" type="button" onclick="previewEmailUserRightsHolders($('.reminderEmail-UserRightsHolders'));"><i class="fa-eye fa-regular mr-1"></i>Preview</button>
+                                                </div>
+                                            </div>
                                             <div class="form-group row" style="font-size: small;">
-                                                <div class="col-10 ml-4">
+                                                <div class="col ml-2">
                                                     <span><strong>You can use the following placeholders to insert information into your email subject and body:</strong></span>
                                                     <table>
                                                         <?php foreach ($this->getPlaceholdersUserRightsHolders() as $placeholder => $description) {
@@ -285,9 +296,6 @@ class Alerts
                                                         } ?>
                                                     </table>
                                                     <p><span>You can also use <button class="btn btn-xs btn-rcgreen btn-rcgreen-light" style="margin-left:3px;font-size:11px;padding:0px 3px 1px;line-height:14px;" onclick="smartVariableExplainPopup();setTimeout(function() {$('#smart_variable_explain_popup').parent().css('z-index', 1051);},300); return false;">[<i class="fa-solid fa-bolt fa-xs" style="margin:0 1px;"></i>] Smart Variables</button>, but few will be applicable.</span></p>
-                                                </div>
-                                                <div class="col">
-                                                    <button class="btn btn-secondary btn-xs" type="button" onclick="previewEmailUserRightsHolders($('.reminderEmail-UserRightsHolders'));">Preview</button>
                                                 </div>
                                             </div>
                                         </div>
@@ -328,18 +336,33 @@ class Alerts
             }
 
             async function replaceKeywordsPreviewUserRightsHolders(text) {
-                // const replacements = [
-                //     ['[sag-user]', 'robin123'],
-                //     ['[sag-user-fullname]', 'Robin Jones'],
-                //     ['[sag-user-email]', '<a mailto="robin.jones@email.com">robin.jones@email.com</a>'],
-                //     ['[sag-rights]', '<ul><li>Project Design and Setup</li><li>User Rights</li><li>Create Records</li></ul>']
-                // ];
-                // replacements.forEach(pair => {
-                //     text = text.replaceAll(pair[0], pair[1]);
-                // });
+
+                const data = {
+                    "sag_users": [
+                        'robin123',
+                        'alex456',
+                        'drew789'
+                    ],
+                    "sag_fullnames": [
+                        'Robin Jones',
+                        'Alex Thomas',
+                        'Drew Jackson'
+                    ],
+                    "sag_emails": [
+                        'robin.jones@email.com',
+                        'alex.thomas@email.com',
+                        'drew.jackson@email.com'
+                    ],
+                    "sag_rights": [
+                        ['Project Design and Setup', 'User Rights', 'Create Records'],
+                        ['Logging', 'Reports & Report Builder'],
+                        ['Data Export - Full Data Set', 'Data Viewing - View & Edit', 'Data Access Groups', 'Stats & Charts', 'Survey Distribution Tools', 'File Repository']
+                    ]
+                };
 
                 return $.post('<?= $this->module->getUrl('replaceSmartVariables.php') ?>', {
-                    text: text
+                    text: text,
+                    data: data
                 });
             }
         </script>
@@ -393,7 +416,6 @@ class Alerts
             "sag-users" => "A formatted list of usernames",
             "sag-user-fullnames" => "A formatted list of users' full names",
             "sag-user-emails" => "A formatted list of user emails",
-            "sag-users-rights" => "A formatted list of the rights that do not conform with the user's security access group.",
             "sag-users-table" => "A formatted table of usernames, full names, and email addresses",
             "sag-users-table-full" => "A formatted table of usernames, full names, email addresses, and non-compliant rights",
             "sag-project-title" => "The title of the project",
@@ -406,7 +428,8 @@ class Alerts
             "sag-user" => "The user's username",
             "sag-user-fullname" => "The user's full name",
             "sag-user-email" => "The user's email address",
-            "sag-rights" => "<span>A formatted list of the rights that do not</span><br><span>conform with the user's security access group.</span>"
+            "sag-rights" => "<span>A formatted list of the rights that do not</span><br><span>conform with the user's security access group.</span>",
+            "sag-project-title" => "The title of the project",
         ];
     }
 
