@@ -77,7 +77,7 @@ $Alerts = new Alerts($module);
                     $badRights = $thisUsersRights["bad"];
                     $hasDiscrepancy = !empty($badRights);
                     $isExpired = $thisUsersRights["expiration"] !== "never" && strtotime($thisUsersRights["expiration"]) < strtotime("today");
-                    $rowClass = $hasDiscrepancy ? "table-danger" : "table-success";
+                    $rowClass = $hasDiscrepancy ? "table-danger" : ""; //"table-success";
                     $rowClass = $isExpired ? "text-secondary bg-light" : $rowClass; ?>
                     <tr data-user="<?= $user ?>" class="<?= $rowClass ?>">
                         <td style="vertical-align: middle !important;" class="align-middle user-selector"><?= $hasDiscrepancy ? '<input style="display:block; margin: 0 auto;" type="checkbox"></input>' : '' ?></td>
@@ -86,7 +86,7 @@ $Alerts = new Alerts($module);
                         <td class="align-middle"><?= $thisUsersRights["email"] ?></td>
                         <td class="align-middle"><?= $thisUsersRights["expiration"] ?></td>
                         <td class="align-middle"><?= $thisUsersRights["system_role"] ?></td>
-                        <td class="align-middle">
+                        <td class="align-middle <?= $hasDiscrepancy ? "" : "table-success" ?>">
                             <?php
                             if ($hasDiscrepancy) { ?>
                                 <a class="<?= $isExpired ? "text-secondary" : "text-primary" ?>" style="text-decoration: underline; cursor: pointer;" data-toggle="modal" data-target="#modal-<?= $user ?>"><?= sizeof($badRights) . (sizeof($badRights) > 1 ? " Rights" : " Right") ?></a>
@@ -112,7 +112,7 @@ $Alerts = new Alerts($module);
                                 </div>
                             <?php
                             } else {
-                                echo "none";
+                                echo "<i class='fa-sharp fa-check mr-1 text-success'></i>None";
                             }
                             ?>
                         </td>

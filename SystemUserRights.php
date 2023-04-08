@@ -996,6 +996,30 @@ class SystemUserRights extends AbstractExternalModule
         return $rights;
     }
 
+    function getUserRightsHolders($project_id)
+    {
+        try {
+            $sql = <<<EOF
+            SELECT rights.username username, 
+            CONCAT(info.user_firstname, " ", info.user_lastname) fullname, 
+            info.user_email email
+            from redcap_user_rights rights
+            left join redcap_user_information info
+            on rights.username = info.username
+            where project_id = ?
+            and user_rights = 1
+            EOF;
+            $result = $this->query($sql, [$project_id]);
+            $users = [];
+            while ($row = $result->fetch_assoc()) {
+                $users[] = $row;
+            }
+            return $users;
+        } catch (\Throwable $e) {
+            $this->log('Error fetching user rights holders', ["error" => $e->getMessage()]);
+        }
+    }
+
     function getRoleEditForm(array $rights, bool $newRole, $role_name = "", $role_id = "")
     {
         global $lang;
