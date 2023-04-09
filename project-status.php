@@ -331,10 +331,10 @@ $Alerts = new Alerts($module);
             $('.user-selector input:checked').each((i, el) => {
                 const row = $(el).closest('tr');
                 users[i] = {
-                    user: $(row).data('user'),
-                    name: $(row).data('name'),
-                    email: $(row).data('email'),
-                    rights: $(row).data('rights')
+                    'sag_user': $(row).data('user'),
+                    'sag_user_fullname': $(row).data('name'),
+                    'sag_user_email': $(row).data('email'),
+                    'sag_rights': $(row).data('rights')
                 }
             });
             return users;

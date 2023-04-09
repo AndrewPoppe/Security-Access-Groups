@@ -2,6 +2,10 @@
 
 namespace YaleREDCap\SystemUserRights;
 
+require_once 'TextReplacer.php';
+
+use YaleREDCap\SystemUserRights\TextReplacer;
+
 if ($_SERVER["REQUEST_METHOD"] !== "POST") {
     http_response_code(400);
     exit;
@@ -18,6 +22,10 @@ $data = filter_input_array(INPUT_POST, [
     'fromEmail' => FILTER_SANITIZE_FULL_SPECIAL_CHARS,
     'emailSubject' => FILTER_SANITIZE_FULL_SPECIAL_CHARS,
     'emailBody' => FILTER_SANITIZE_FULL_SPECIAL_CHARS,
+    'sendReminder' => array(
+        'filter' => FILTER_SANITIZE_FULL_SPECIAL_CHARS,
+        'flags' => FILTER_VALIDATE_BOOL
+    ),
     'delayDays' =>  array(
         'filter'    => FILTER_VALIDATE_INT,
         'options'   => array('min_range' => 1)
@@ -29,5 +37,30 @@ $data = filter_input_array(INPUT_POST, [
         'flags' => FILTER_REQUIRE_ARRAY
     )
 ]);
+
+$users = $data["users"];
+
+foreach ($users as $index => $user) {
+    $thisBodyReplacer = new TextReplacer($module, $data['emailBody'], $user);
+    $thisSubjectReplacer = new TextReplacer($module, $data['emailSubject'], $user);
+
+    $user['emailBody'] = $thisBodyReplacer->replaceText();
+    $user['emailSubject'] = $thisSubjectReplacer->replaceText();
+
+    if ($data['sendReminder'] == true) {
+        $data['it worked'] = 'yes';
+    }
+
+
+    $users[$index] = $user;
+
+    $subject = htmlspecialchars_decode($user['emailSubject']);
+    $body = htmlspecialchars_decode($user['emailBody']);
+
+    $module->log('Sending user email alert', ['user_data' => json_encode($user), 'from' => $data['fromEmail']]);
+    \REDCap::email($user['sag_user_email'], $data['fromEmail'], $subject, $body, null, null, $data['displayFromName']);
+}
+
+$data["users"] = $users;
 
 echo json_encode($data);
