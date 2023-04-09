@@ -9,18 +9,47 @@ class TextReplacer
 
     private $module;
     public $text;
+    public $cleanerText;
     private $data;
 
     public function __construct(SystemUserRights $module, string $text, array $data)
     {
         $this->module = $module;
         $this->text = $text;
+        $this->cleanerText = $this->cleanText($text);
         $this->data = $data;
+    }
+
+    private function cleanText(string $text): string
+    {
+        return strip_tags($text, [
+            "b",
+            "strong",
+            "i",
+            "em",
+            "h1",
+            "h2",
+            "u",
+            "p",
+            "ol",
+            "ul",
+            "li",
+            "a",
+            "span",
+            "color",
+            "font-size",
+            "font-color",
+            "font-family",
+            "mark",
+            "table",
+            "tr",
+            "td"
+        ]);
     }
 
     public function replaceText()
     {
-        $replaced_text = \Piping::pipeSpecialTags($this->text, $this->module->getProjectId());
+        $replaced_text = \Piping::pipeSpecialTags($this->cleanerText, $this->module->getProjectId());
         $replaced_text = $this->replacePlaceholders($replaced_text);
         return $replaced_text;
     }

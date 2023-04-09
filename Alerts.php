@@ -54,13 +54,14 @@ class Alerts
                                             <label for="emailSubject" class="col-sm-3 col-form-label col-form-label-sm">Subject:</label>
                                             <div class="col-sm-9">
                                                 <input id="emailSubject" name="emailSubject" type="text" class="form-control form-control-sm" required aria-required="true">
+                                                <div class="invalid-feedback">You must provide a subject for the email</div>
                                             </div>
-                                            <div class="invalid-feedback">You must provide a subject for the email</div>
                                         </div>
                                         <div class="form-group row mb-1">
                                             <div class="col">
                                                 <label for="emailBody" class="col-form-label col-form-label-sm">Email Body:</label>
                                                 <textarea id="emailBody" name="emailBody" type="text" class="form-control form-control-sm richtext emailBody"></textarea>
+                                                <div class="invalid-feedback">You must provide a body for the email</div>
                                             </div>
                                         </div>
                                         <div class="form-group row mb-1">
@@ -98,20 +99,23 @@ class Alerts
                                             <div class="form-group row">
                                                 <label class="col-sm-3 col-form-label col-form-label-sm">How many days until the reminder is sent?</label>
                                                 <div class="col-sm-9 mt-2">
-                                                    <input name="delayDays" type="number" min="1" value="14" class="form-control form-control-sm">
+                                                    <input name="delayDays" type="number" min="1" value="14" class="form-control form-control-sm" required aria-required="true">
+                                                    <div class="invalid-feedback">You must provide a number of days greater than 1</div>
                                                 </div>
                                             </div>
                                             <hr>
                                             <div class="form-group row">
                                                 <label for="reminderSubject" class="col-sm-3 col-form-label col-form-label-sm">Reminder Subject:</label>
                                                 <div class="col-sm-9">
-                                                    <input id="reminderSubject" name="reminderSubject" type="text" class="form-control form-control-sm">
+                                                    <input id="reminderSubject" name="reminderSubject" type="text" class="form-control form-control-sm" required aria-required="true">
+                                                    <div class="invalid-feedback">You must provide a subject for the reminder email</div>
                                                 </div>
                                             </div>
                                             <div class="form-group row mb-1">
                                                 <div class="col">
                                                     <label for="emailBody" class="col-form-label col-form-label-sm">Reminder Body:</label>
                                                     <textarea id="reminderBody" name="reminderBody" type="text" class="form-control form-control-sm richtext emailBody"></textarea>
+                                                    <div class="invalid-feedback">You must provide a body for the reminder email</div>
                                                 </div>
                                             </div>
                                             <div class="form-group row mb-1">
@@ -134,12 +138,11 @@ class Alerts
                                     </div>
                                 </div>
                             </div>
-                            <button type="submit" class="submitButton" style="display:none;"></button>
                         </form>
                     </div>
                     <div class=" modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal" data-bs-dismiss="modal">Cancel</button>
-                        <button type="button" class="btn btn-primary" onclick="$('#emailUsersForm button.submitButton').click();">Send Alerts</button>
+                        <button type="button" class="btn btn-primary" onclick="sendEmailAlerts();">Send Alerts</button>
                     </div>
                 </div>
             </div>
@@ -155,33 +158,6 @@ class Alerts
                 </div>
             </div>
         </div>
-        <script>
-            async function previewEmail($emailContainer) {
-                const id = $emailContainer.find('textarea.emailBody').prop('id');
-                const content = tinymce.get(id).getContent();
-                const replacedContent = await replaceKeywordsPreview(content);
-                $('#emailPreview div.modal-body').html(replacedContent);
-                $('#emailUsersModal').css('z-index', 1039);
-                $('#emailPreview').modal('show');
-                $('#emailPreview').on('hidden.bs.modal', function(event) {
-                    $('#emailUsersModal').css('z-index', 1050);
-                });
-            }
-
-            async function replaceKeywordsPreview(text) {
-                const data = {
-                    'sag_user': 'robin123',
-                    'sag_user_fullname': 'Robin Jones',
-                    'sag_user_email': 'robin.jones@email.com',
-                    'sag_rights': ['Project Design and Setup', 'User Rights', 'Create Records']
-                };
-
-                return $.post('<?= $this->module->getUrl('replaceSmartVariables.php') ?>', {
-                    text: text,
-                    data: data
-                });
-            }
-        </script>
     <?php
     }
 
@@ -369,50 +345,6 @@ class Alerts
                 </div>
             </div>
         </div>
-        <script>
-            async function previewEmailUserRightsHolders($emailContainer) {
-                const id = $emailContainer.find('textarea.emailBody').prop('id');
-                const content = tinymce.get(id).getContent();
-                const replacedContent = await replaceKeywordsPreviewUserRightsHolders(content);
-                $('#emailPreview-UserRightsHolders div.modal-body').html(replacedContent);
-                $('#emailUserRightsHoldersModal').css('z-index', 1039);
-                $('#emailPreview-UserRightsHolders').modal('show');
-                $('#emailPreview-UserRightsHolders').on('hidden.bs.modal', function(event) {
-                    $('#emailUserRightsHoldersModal').css('z-index', 1050);
-                });
-            }
-
-            async function replaceKeywordsPreviewUserRightsHolders(text) {
-
-                const data = {
-                    "sag_users": [
-                        'robin123',
-                        'alex456',
-                        'drew789'
-                    ],
-                    "sag_fullnames": [
-                        'Robin Jones',
-                        'Alex Thomas',
-                        'Drew Jackson'
-                    ],
-                    "sag_emails": [
-                        'robin.jones@email.com',
-                        'alex.thomas@email.com',
-                        'drew.jackson@email.com'
-                    ],
-                    "sag_rights": [
-                        ['Project Design and Setup', 'User Rights', 'Create Records'],
-                        ['Logging', 'Reports & Report Builder'],
-                        ['Data Export - Full Data Set', 'Data Viewing - View & Edit', 'Data Access Groups', 'Stats & Charts', 'Survey Distribution Tools', 'File Repository']
-                    ]
-                };
-
-                return $.post('<?= $this->module->getUrl('replaceSmartVariables.php') ?>', {
-                    text: text,
-                    data: data
-                });
-            }
-        </script>
     <?php
     }
 

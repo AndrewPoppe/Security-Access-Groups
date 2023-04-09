@@ -439,3 +439,7 @@ button.btn-secondary:hover {
 .table.discrepancy-table td {
     border: 1px solid #454d5580;
 }
+
+div.is-invalid div.tox.tox-tinymce {
+    border: 1px solid var(--danger) !important;
+}

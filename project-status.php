@@ -79,9 +79,9 @@ $Alerts = new Alerts($module);
                     $isExpired = $thisUsersRights["expiration"] !== "never" && strtotime($thisUsersRights["expiration"]) < strtotime("today");
                     $rowClass = $hasDiscrepancy ? "table-danger" : ""; //"table-success";
                     $rowClass = $isExpired ? "text-secondary bg-light" : $rowClass; ?>
-                    <tr data-user="<?= $user ?>" class="<?= $rowClass ?>">
+                    <tr data-user="<?= $user ?>" data-email="<?= $thisUsersRights["email"] ?>" data-name="<?= $thisUsersRights["name"] ?>" data-rights="<?= htmlspecialchars(json_encode($badRights)) ?>" class="<?= $rowClass ?>">
                         <td style="vertical-align: middle !important;" class="align-middle user-selector"><?= $hasDiscrepancy ? '<input style="display:block; margin: 0 auto;" type="checkbox"></input>' : '' ?></td>
-                        <td class="align-middle"><strong><?= $user ?></strong></td>
+                        <td class="align-middle"><?= $isExpired ? $user : "<strong>$user</strong>" ?></td>
                         <td class="align-middle"><?= $thisUsersRights["name"] ?></td>
                         <td class="align-middle"><?= $thisUsersRights["email"] ?></td>
                         <td class="align-middle"><?= $thisUsersRights["expiration"] ?></td>
@@ -249,6 +249,166 @@ $Alerts = new Alerts($module);
                 })
         }
 
+        function sendEmailAlerts() {
+            if (!validateEmailForm()) {
+                return;
+            }
+
+            let emailFormContents = $('#emailUsersForm').serializeObject();
+            emailFormContents.emailBody = tinymce.get('emailBody').getContent();
+            emailFormContents.reminderBody = tinymce.get('reminderBody').getContent();
+            emailFormContents.alertType = 'users';
+            emailFormContents.users = getAlertUserInfo();
+
+            $.post("<?= $module->getUrl('sendAlerts.php') ?>", emailFormContents)
+                .done(response => {
+                    console.log(response);
+                    Swal.fire({
+                        html: response
+                    });
+                })
+                .fail(error => {
+                    console.error(error.responseText);
+                })
+                .always({
+
+                });
+        }
+
+        // TODO: We're going to validate form contents server-side eventually, so this is temporary
+        function validateEmailForm() {
+            let valid = true;
+            if ($('#emailSubject').val().trim() == "") {
+                $('#emailSubject').addClass('is-invalid');
+                valid = false;
+            } else {
+                $('#emailSubject').removeClass('is-invalid');
+            }
+            let emailBody = tinymce.get('emailBody').getContent({
+                format: 'text'
+            }).trim();
+            if (emailBody == '') {
+                $('#emailBody').siblings('label').addClass('is-invalid');
+                $('#emailBody').parent().addClass('is-invalid');
+                valid = false;
+            } else {
+                $('#emailBody').siblings('label').removeClass('is-invalid');
+                $('#emailBody').parent().removeClass('is-invalid');
+            }
+
+            if ($('#sendReminder').is(':checked')) {
+                if ($('#reminderSubject').val().trim() == "") {
+                    $('#reminderSubject').addClass('is-invalid');
+                    valid = false;
+                } else {
+                    $('#reminderSubject').removeClass('is-invalid');
+                }
+
+                let delayDays = $('input[name="delayDays"]').val().trim();
+                if (delayDays == "" || !isInteger(delayDays) || delayDays < 2) {
+                    $('input[name="delayDays"]').addClass('is-invalid');
+                    valid = false;
+                } else {
+                    $('input[name="delayDays"]').removeClass('is-invalid');
+                }
+                let reminderBody = tinymce.get('reminderBody').getContent({
+                    format: 'text'
+                }).trim();
+                if (reminderBody == '') {
+                    $('#reminderBody').siblings('label').addClass('is-invalid');
+                    $('#reminderBody').parent().addClass('is-invalid');
+                    valid = false;
+                } else {
+                    $('#reminderBody').siblings('label').removeClass('is-invalid');
+                    $('#reminderBody').parent().removeClass('is-invalid');
+                }
+            }
+            return valid;
+        }
+
+        function getAlertUserInfo() {
+            const users = [];
+            $('.user-selector input:checked').each((i, el) => {
+                const row = $(el).closest('tr');
+                users[i] = {
+                    user: $(row).data('user'),
+                    name: $(row).data('name'),
+                    email: $(row).data('email'),
+                    rights: $(row).data('rights')
+                }
+            });
+            return users;
+        }
+
+        async function previewEmail($emailContainer) {
+            const id = $emailContainer.find('textarea.emailBody').prop('id');
+            const content = tinymce.get(id).getContent();
+            const replacedContent = await replaceKeywordsPreview(content);
+            $('#emailPreview div.modal-body').html(replacedContent);
+            $('#emailUsersModal').css('z-index', 1039);
+            $('#emailPreview').modal('show');
+            $('#emailPreview').on('hidden.bs.modal', function(event) {
+                $('#emailUsersModal').css('z-index', 1050);
+            });
+        }
+
+        async function replaceKeywordsPreview(text) {
+            const data = {
+                'sag_user': 'robin123',
+                'sag_user_fullname': 'Robin Jones',
+                'sag_user_email': 'robin.jones@email.com',
+                'sag_rights': ['Project Design and Setup', 'User Rights', 'Create Records']
+            };
+
+            return $.post('<?= $module->getUrl('replaceSmartVariables.php') ?>', {
+                text: text,
+                data: data
+            });
+        }
+
+        async function previewEmailUserRightsHolders($emailContainer) {
+            const id = $emailContainer.find('textarea.emailBody').prop('id');
+            const content = tinymce.get(id).getContent();
+            const replacedContent = await replaceKeywordsPreviewUserRightsHolders(content);
+            $('#emailPreview-UserRightsHolders div.modal-body').html(replacedContent);
+            $('#emailUserRightsHoldersModal').css('z-index', 1039);
+            $('#emailPreview-UserRightsHolders').modal('show');
+            $('#emailPreview-UserRightsHolders').on('hidden.bs.modal', function(event) {
+                $('#emailUserRightsHoldersModal').css('z-index', 1050);
+            });
+        }
+
+        async function replaceKeywordsPreviewUserRightsHolders(text) {
+
+            const data = {
+                "sag_users": [
+                    'robin123',
+                    'alex456',
+                    'drew789'
+                ],
+                "sag_fullnames": [
+                    'Robin Jones',
+                    'Alex Thomas',
+                    'Drew Jackson'
+                ],
+                "sag_emails": [
+                    'robin.jones@email.com',
+                    'alex.thomas@email.com',
+                    'drew.jackson@email.com'
+                ],
+                "sag_rights": [
+                    ['Project Design and Setup', 'User Rights', 'Create Records'],
+                    ['Logging', 'Reports & Report Builder'],
+                    ['Data Export - Full Data Set', 'Data Viewing - View & Edit', 'Data Access Groups', 'Stats & Charts', 'Survey Distribution Tools', 'File Repository']
+                ]
+            };
+
+            return $.post('<?= $module->getUrl('replaceSmartVariables.php') ?>', {
+                text: text,
+                data: data
+            });
+        }
+
         $(document).ready(function() {
             $('.user-selector input').change(function(event) {
                 if ($('.user-selector input').is(':checked')) {
@@ -276,16 +436,9 @@ $Alerts = new Alerts($module);
                 }
             });
             clipboard.on('success', function(e) {
-                // const pos = e.trigger.getBoundingClientRect();
                 $(e.trigger).popover('show');
-                // $(document.body).append(`<span style="position:absolute; z-index:5000; top: ${pos.top}px; left: ${pos.left - 55}px" class="clipboardSaveProgress">Copied!</span>`);
-                // $('.clipboardSaveProgress').toggle('fade', 'fast');
-
                 setTimeout(function() {
                     $(e.trigger).popover('hide');
-                    // $('.clipboardSaveProgress').toggle('fade', 'fast', function() {
-                    //     $('.clipboardSaveProgress').remove();
-                    // });
                 }, 1000);
                 e.clearSelection();
             });
