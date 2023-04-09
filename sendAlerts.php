@@ -40,6 +40,8 @@ $data = filter_input_array(INPUT_POST, [
 
 $users = $data["users"];
 
+
+// TODO: Add some (most?) of this logic to the Alerts class
 foreach ($users as $index => $user) {
     $thisBodyReplacer = new TextReplacer($module, $data['emailBody'], $user);
     $thisSubjectReplacer = new TextReplacer($module, $data['emailSubject'], $user);
@@ -47,18 +49,33 @@ foreach ($users as $index => $user) {
     $user['emailBody'] = $thisBodyReplacer->replaceText();
     $user['emailSubject'] = $thisSubjectReplacer->replaceText();
 
-    if ($data['sendReminder'] == true) {
-        $data['it worked'] = 'yes';
-    }
-
-
     $users[$index] = $user;
 
+    // Send Immediate Alert
     $subject = htmlspecialchars_decode($user['emailSubject']);
     $body = htmlspecialchars_decode($user['emailBody']);
-
-    $module->log('Sending user email alert', ['user_data' => json_encode($user), 'from' => $data['fromEmail']]);
+    $module->log('user alert email', ['user' => $user['sag_user'], 'type' => $data['alertType'], 'user_data' => json_encode($user), 'from' => $data['fromEmail']]);
     \REDCap::email($user['sag_user_email'], $data['fromEmail'], $subject, $body, null, null, $data['displayFromName']);
+
+    // Schedule Reminder if Needed
+    if ($data['sendReminder'] == true) {
+        $thisReminderBodyReplacer = new TextReplacer($module, $data['reminderBody'], $user);
+        $thisReminderSubjectReplacer = new TextReplacer($module, $data['reminderSubject'], $user);
+        $user['reminderBody'] = $thisReminderBodyReplacer->replaceText();
+        $user['reminderSubject'] = $thisReminderSubjectReplacer->replaceText();
+
+        $user['reminderTime'] = strtotime("today +" . $data['delayDays'] . " days");
+
+        // TODO: Alerts class should definitely handle this
+        // schedule the reminder
+        $module->log('user alert reminder', [
+            'user' => $user['sag_user'],
+            'type' => $data['alertType'],
+            'user_data' => json_encode($user),
+            'from' => $data['fromEmail'],
+            'reminderTime' => $user['reminderTime']
+        ]);
+    }
 }
 
 $data["users"] = $users;

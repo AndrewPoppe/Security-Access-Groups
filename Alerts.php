@@ -436,4 +436,21 @@ class Alerts
         $result = $this->module->query($sql, []);
         return $result->fetch_assoc()["value"];
     }
+
+    /**
+     * @param null $project_id - optionally restrict to just this project's alerts
+     * 
+     * @return array log_id's of all alerts (sent and otherwise)
+     */
+    public function getAllAlertsIds($project_id = null): array
+    {
+        $sql = "SELECT log_id WHERE message = 'user alert reminder'" . (is_null($project_id) ? "" : " and project_id = ?");
+        $params = is_null($project_id) ? [] : [$project_id];
+        $result = $this->module->queryLogs($sql, $params);
+        $log_ids = [];
+        while ($row = $result->fetch_assoc()) {
+            $log_ids[] = $row['log_id'];
+        }
+        return $log_ids;
+    }
 }

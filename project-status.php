@@ -7,6 +7,9 @@ require_once "Alerts.php";
 use YaleREDCap\SystemUserRights\Alerts;
 
 $Alerts = new Alerts($module);
+var_dump($Alerts->getAllAlertsIds());
+var_dump($Alerts->getAllAlertsIds(18));
+var_dump($Alerts->getAllAlertsIds(19));
 
 ?>
 <link href="https://cdn.datatables.net/v/dt/dt-1.13.3/b-2.3.5/b-html5-2.3.5/fc-4.2.1/datatables.min.css" rel="stylesheet" />
