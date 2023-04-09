@@ -305,7 +305,7 @@ $Alerts = new Alerts($module);
                 }
 
                 let delayDays = $('input[name="delayDays"]').val().trim();
-                if (delayDays == "" || !isInteger(delayDays) || delayDays < 2) {
+                if (delayDays == "" || !isInteger(delayDays) || delayDays < 1) {
                     $('input[name="delayDays"]').addClass('is-invalid');
                     valid = false;
                 } else {
