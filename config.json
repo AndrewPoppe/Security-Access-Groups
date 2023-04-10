@@ -100,6 +100,15 @@
             }
         ]
     },
+    "crons": [
+        {
+            "cron_name": "send_reminders",
+            "cron_description": "Check daily for reminder emails due to be sent",
+            "method": "send_reminders",
+            "cron_frequency": "86400",
+            "cron_max_run_time": "60"
+        }
+    ],
     "enable-every-page-hooks-on-system-pages": true,
     "no-auth-pages": [],
     "framework-version": 9,
@@ -108,6 +117,5 @@
         "php-version-max": "7.99.99",
         "redcap-version-min": "12.4.0",
         "redcap-version-max": ""
-    },
-    "crons": []
+    }
 }

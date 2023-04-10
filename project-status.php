@@ -7,9 +7,6 @@ require_once "Alerts.php";
 use YaleREDCap\SystemUserRights\Alerts;
 
 $Alerts = new Alerts($module);
-var_dump($Alerts->getAllAlertsIds());
-var_dump($Alerts->getAllAlertsIds(18));
-var_dump($Alerts->getAllAlertsIds(19));
 
 ?>
 <link href="https://cdn.datatables.net/v/dt/dt-1.13.3/b-2.3.5/b-html5-2.3.5/fc-4.2.1/datatables.min.css" rel="stylesheet" />
@@ -41,6 +38,24 @@ var_dump($Alerts->getAllAlertsIds(19));
         exit();
     }
     ?>
+    <div class="clearfix">
+        <div id="sub-nav" class="d-none d-sm-block mr-4 mb-0 ml-0">
+            <ul>
+                <li class="<?= $tab === "userlist" ? "active" : "" ?>">
+                    <a href="<?= $module->getUrl('system-settings.php?tab=userlist') ?>" style="font-size:13px;color:#393733;padding:7px 9px;">
+                        <i class="fa-solid fa-users"></i>
+                        Users
+                    </a>
+                </li>
+                <li class="<?= $tab === "roles" ? "active" : "" ?>">
+                    <a href="<?= $module->getUrl('system-settings.php?tab=roles') ?>" style="font-size:13px;color:#393733;padding:7px 9px;">
+                        <i class="fa-solid fa-user-tag"></i>
+                        Roles
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
     <div>
         <p style="font-size:large;">Check User Rights</p>
         <p>Current users in the ...</p>
@@ -73,6 +88,8 @@ var_dump($Alerts->getAllAlertsIds(19));
                     <th>System Role</th>
                     <th>Discrepant Rights</th>
                     <th>Project Role</th>
+                    <th>User Alert Sent</th>
+                    <th>Reminder</th>
                 </tr>
             </thead>
             <tbody>
@@ -120,6 +137,8 @@ var_dump($Alerts->getAllAlertsIds(19));
                             ?>
                         </td>
                         <td class="align-middle"><?= $thisUsersRights["project_role"] ?></td>
+                        <td class="align-middle"><?= $Alerts->getUserEmailSentFormatted($project_id, $user); ?></td>
+                        <td class="align-middle"><?= $Alerts->getUserReminderStatusFormatted($project_id, $user); ?></td>
                     </tr>
                 <?php } ?>
             </tbody>

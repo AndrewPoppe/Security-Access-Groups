@@ -444,7 +444,7 @@ class Alerts
      */
     public function getAllAlertsIds($project_id = null): array
     {
-        $sql = "SELECT log_id WHERE message = 'user alert reminder'" . (is_null($project_id) ? "" : " and project_id = ?");
+        $sql = "SELECT log_id WHERE message = 'user alert reminder'" . (is_null($project_id) ? "and (project_id is null or project_id is not null)" : " and project_id = ?");
         $params = is_null($project_id) ? [] : [$project_id];
         $result = $this->module->queryLogs($sql, $params);
         $log_ids = [];
@@ -452,5 +452,124 @@ class Alerts
             $log_ids[] = $row['log_id'];
         }
         return $log_ids;
+    }
+
+    /**
+     * @param mixed $project_id
+     * @param string $username
+     * 
+     * @return string formatted string suitable to populate a table cell
+     */
+    public function getUserEmailSentFormatted($project_id, string $username): string
+    {
+        $sentEmail = $this->getUserEmailSent($project_id, $username);
+
+        if (is_null($sentEmail)) {
+            return "";
+        }
+
+        // TODO: if multiple exist, display all of them, not just most recent
+
+        return "<div style='text-align:center;' title='Sent " . \REDCap::escapeHtml($sentEmail['timestamp']) . "'><i class='fa-solid fa-envelope-circle-check text-success'></i></div>";
+    }
+
+    /**
+     * @param mixed $project_id
+     * @param string $username
+     * 
+     * @return array|null array with log_id and timestamp for most recent email alert sent. returns null if no alert found
+     */
+    private function getUserEmailSent($project_id, string $username)
+    {
+        $sql = "SELECT log_id, timestamp WHERE message = 'user alert email' AND project_id = ? AND user = ? ORDER BY timestamp desc";
+        $params = [$project_id, $username];
+        $result = $this->module->queryLogs($sql, $params);
+        return $result->fetch_assoc();
+    }
+
+    public function getUserReminderStatusFormatted($project_id, string $username): string
+    {
+        $status = $this->getUserReminderStatus($project_id, $username);
+
+        $icon = '';
+        $title = '';
+        if (empty($status)) {
+            return "";
+        }
+        if ($status["status"] == "not scheduled") {
+            $icon = '<i class="fa-solid fa-dash text-secondary"></i>';
+            $title = "Reminder not scheduled";
+        } else if ($status["status"] == "cancelled") {
+            $icon = '<i class="fa-solid fa-xmark text-warning"></i>';
+            $title = "Reminder cancelled";
+        } else if ($status["status"] == "scheduled") {
+            $icon = '<i class="fa-regular fa-envelope"></i>';
+            $title = "Reminder set to send on " . $status['reminder_timestamp'];
+        } else {
+            $icon = '<i class="fa-solid fa-envelope-circle-check text-success"></i>';
+            $title = "Reminder sent at " . $status['sent_timestamp'];
+        }
+        return "<div style='text-align:center;' title='" . $title . "'>" . $icon . "</div>";
+    }
+
+    private function getUserReminderStatus($project_id, string $username)
+    {
+        $emailSent = $this->getUserEmailSent($project_id, $username);
+        if (empty($emailSent)) {
+            return;
+        }
+
+        $sql_reminder_set = "SELECT log_id, timestamp, reminderTime WHERE message = 'user alert reminder' AND project_id = ? AND user = ? ORDER BY timestamp desc";
+        $sql_reminder_sent = "SELECT log_id, timestamp WHERE message = 'user alert reminder sent' AND project_id = ? AND user = ? ORDER BY timestamp desc";
+        $params = [$project_id, $username];
+
+        $result_reminder_set = $this->module->queryLogs($sql_reminder_set, $params);
+        $reminder_set = $result_reminder_set->fetch_assoc();
+
+        $result_reminder_sent = $this->module->queryLogs($sql_reminder_sent, $params);
+        $reminder_sent = $result_reminder_sent->fetch_assoc();
+
+        // TODO: Figure out cancellation
+
+        $result = [];
+        if (!empty($reminder_sent)) {
+            $result['status'] = 'sent';
+            $result['sent_timestamp'] = $reminder_sent['timestamp'];
+        } else if (!empty($reminder_set)) {
+            $result['status'] = 'scheduled';
+            $result['reminder_timestamp'] = date('Y-m-d', $reminder_set['reminderTime']);
+        } else {
+            $result['status'] = 'not scheduled';
+        }
+        return $result;
+    }
+
+    public function sendReminders($project_id)
+    {
+        $reminders = $this->getRemindersToSend($project_id);
+        foreach ($reminders as $reminder) {
+            // Send Alert
+            $subject = htmlspecialchars_decode($reminder['reminderSubject']);
+            $body = htmlspecialchars_decode($reminder['reminderBody']);
+            $this->module->log('user alert reminder sent', ['reminder' => $reminder['reminder_id'], 'user' => $reminder['user'], 'type' => $reminder['type'], 'user_data' => json_encode($reminder['user_data']), 'from' => $reminder['from']]);
+            \REDCap::email($reminder['sag_user_email'], $reminder['fromEmail'], $subject, $body, null, null, $reminder['displayFromName']);
+        }
+    }
+
+    private function getRemindersToSend($project_id): array
+    {
+        $sql_all_future = "SELECT log_id, timestamp WHERE message = 'user alert reminder' AND project_id = ? AND reminderTime <= ?";
+        $params_all_future = [$project_id, strtotime("now")];
+        $result_all_future = $this->module->queryLogs($sql_all_future, $params_all_future);
+        $reminders_to_send = [];
+        while ($row = $result_all_future->fetch_assoc()) {
+            // TODO: Deal with cancelled
+            $sql_sent = "SELECT log_id WHERE message = 'user alert reminder sent' AND reminder = ? AND project_id = ?";
+            $result_sent = $this->module->queryLogs($sql_sent, [$row['reminder'], $project_id]);
+            if (empty($result_sent->fetch_assoc())) {
+                $reminders_to_send[] = $row;
+            }
+        }
+        return $reminders_to_send;
     }
 }

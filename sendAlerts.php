@@ -3,8 +3,10 @@
 namespace YaleREDCap\SystemUserRights;
 
 require_once 'TextReplacer.php';
+require_once 'Alerts.php';
 
 use YaleREDCap\SystemUserRights\TextReplacer;
+use YaleREDCap\SystemUserRights\Alerts;
 
 if ($_SERVER["REQUEST_METHOD"] !== "POST") {
     http_response_code(400);
@@ -40,6 +42,7 @@ $data = filter_input_array(INPUT_POST, [
 
 $users = $data["users"];
 
+$Alerts = new Alerts($module);
 
 // TODO: Add some (most?) of this logic to the Alerts class
 foreach ($users as $index => $user) {

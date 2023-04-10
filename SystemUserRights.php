@@ -3,12 +3,16 @@
 namespace YaleREDCap\SystemUserRights;
 
 require_once "APIHandler.php";
+require_once "Alerts.php";
 
 use ExternalModules\AbstractExternalModule;
 use YaleREDCap\SystemUserRights\APIHandler;
 
 class SystemUserRights extends AbstractExternalModule
 {
+
+
+    // TODO: IGNORE EXPIRED USERS!
 
     function redcap_every_page_before_render()
     {
@@ -84,6 +88,54 @@ class SystemUserRights extends AbstractExternalModule
             $this->log('attempt to upload roles or role mappings directly', ["page" => PAGE, "data" => json_encode($_POST), "user" => $username]);
             $this->exitAfterHook();
             return;
+        }
+    }
+
+    // CRON job
+    function send_reminders($cronInfo = array())
+    {
+        try {
+            $Alerts = new Alerts($this);
+            $enabledSystemwide = $this->getSystemSetting('enabled');
+            $prefix = $this->getModuleDirectoryPrefix();
+
+            if ($enabledSystemwide == true) {
+                $all_project_ids = $this->getAllProjectIds();
+                $project_ids = array_filter($all_project_ids, function ($project_id) use ($prefix) {
+                    return $this->isModuleEnabled($prefix, $project_id);
+                });
+            } else {
+                $project_ids = $this->getProjectsWithModuleEnabled();
+            }
+
+            foreach ($project_ids as $localProjectId) {
+                // Specifying project id just to prevent reminders being sent
+                // for projects that no longer have the module enabled.
+                $Alerts->sendReminders($localProjectId);
+            }
+
+            return "The \"{$cronInfo['cron_name']}\" cron job completed successfully.";
+        } catch (\Exception $e) {
+            $this->log("Error sending reminders", ["error" => $e->getMessage()]);
+            return "The \"{$cronInfo['cron_name']}\" cron job failed: " . $e->getMessage();
+        }
+    }
+
+    function getAllProjectIds()
+    {
+        try {
+            $query = "select project_id from redcap_projects
+            where created_by is not null
+            and completed_time is null
+            and date_deleted is null";
+            $result = $this->query($query, []);
+            $project_ids = [];
+            while ($row = $result->fetch_assoc()) {
+                $project_ids[] = $row["project_id"];
+            }
+            return $project_ids;
+        } catch (\Exception $e) {
+            $this->log("Error fetching all projects", ["error" => $e->getMessage()]);
         }
     }
 
@@ -307,7 +359,6 @@ class SystemUserRights extends AbstractExternalModule
             });
         </script>
     <?php
-        //var_dump(\UserRights::getRoles($this->getProjectId()));
     }
 
     function redcap_module_project_enable($version, $project_id)
