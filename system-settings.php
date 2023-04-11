@@ -7,7 +7,21 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
 ?>
 <link href="https://cdn.datatables.net/v/dt/dt-1.13.3/b-2.3.5/b-html5-2.3.5/fc-4.2.1/datatables.min.css" rel="stylesheet" />
 <script src="https://cdn.datatables.net/v/dt/dt-1.13.3/b-2.3.5/b-html5-2.3.5/fc-4.2.1/datatables.min.js"></script>
-<script src="https://kit.fontawesome.com/015226af80.js" crossorigin="anonymous"></script>
+
+<!-- <link href="<?= $module->getUrl('assets/fontawesome/css/fontawesome.min.css') ?>" rel="stylesheet" />
+<link href="<?= $module->getUrl('assets/fontawesome/css/regular.min.css') ?>" rel="stylesheet" />
+<link href="<?= $module->getUrl('assets/fontawesome/css/sharp-regular.min.css') ?>" rel="stylesheet" />
+<link href="<?= $module->getUrl('assets/fontawesome/css/sharp-solid.min.css') ?>" rel="stylesheet" />
+<link href="<?= $module->getUrl('assets/fontawesome/css/solid.min.css') ?>" rel="stylesheet" />
+<link href="<?= $module->getUrl('assets/fontawesome/css/custom-icons.min.css') ?>" rel="stylesheet" /> -->
+
+<script defer src="<?= $module->getUrl('assets/fontawesome/js/regular.min.js') ?>"></script>
+<script defer src="<?= $module->getUrl('assets/fontawesome/js/sharp-regular.min.js') ?>"></script>
+<script defer src="<?= $module->getUrl('assets/fontawesome/js/sharp-solid.min.js') ?>"></script>
+<script defer src="<?= $module->getUrl('assets/fontawesome/js/solid.min.js') ?>"></script>
+<script defer src="<?= $module->getUrl('assets/fontawesome/js/custom-icons.min.js') ?>"></script>
+<script defer src="<?= $module->getUrl('assets/fontawesome/js/fontawesome.min.js') ?>"></script>
+
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -514,7 +528,7 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                 </div>
                 <div class="col ml-1 px-0 justify-content-start">
                     <button class="btn btn-success btn-sm" id="addRoleButton" onclick="addNewRole();" title="Add a New System User Role">
-                        <i class="fak fa-solid-tag-circle-plus fa-fw mr-1"></i>
+                        <i class="fa-kit fa-solid-tag-circle-plus fa-fw mr-1"></i>
                         <span>Create Role</span>
                     </button>
                 </div>

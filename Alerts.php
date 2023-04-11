@@ -203,12 +203,14 @@ class Alerts
                                                     <label for="emailSubject-UserRightsHolders" class="col-sm-3 col-form-label col-form-label-sm">Subject:</label>
                                                     <div class="col-sm-9">
                                                         <input id="emailSubject-UserRightsHolders" name="emailSubject" type="text" class="form-control form-control-sm">
+                                                        <div class="invalid-feedback">You must provide a subject for the email</div>
                                                     </div>
                                                 </div>
                                                 <div class="form-group row mb-1">
                                                     <div class="col">
                                                         <label for="emailBody-UserRightsHolders" class="col-form-label col-form-label-sm">Email Body:</label>
                                                         <textarea id="emailBody-UserRightsHolders" name="emailBody" type="text" class="form-control form-control-sm richtext emailBody"></textarea>
+                                                        <div class="invalid-feedback">You must provide a body for the email</div>
                                                     </div>
                                                 </div>
                                                 <div class="form-group row mb-1">
@@ -246,7 +248,8 @@ class Alerts
                                                     <div class="form-group row">
                                                         <label class="col-sm-3 col-form-label col-form-label-sm">How many days until the reminder is sent?</label>
                                                         <div class="col-sm-9 mt-2">
-                                                            <input name="delayDays" type="number" min="1" value="14" class="form-control form-control-sm">
+                                                            <input name="delayDays-UserRightsHolders" type="number" min="1" value="14" class="form-control form-control-sm">
+                                                            <div class="invalid-feedback">You must provide a number of days greater than 1</div>
                                                         </div>
                                                     </div>
                                                     <hr>
@@ -254,11 +257,13 @@ class Alerts
                                                         <label for="reminderSubject-UserRightsHolders" class="col-sm-3 col-form-label col-form-label-sm">Reminder Subject:</label>
                                                         <div class="col-sm-9">
                                                             <input id="reminderSubject-UserRightsHolders" name="reminderSubject" type="text" class="form-control form-control-sm">
+                                                            <div class="invalid-feedback">You must provide a subject for the reminder email</div>
                                                         </div>
                                                     </div>
                                                     <div class="form-group row mb-1">
                                                         <div class="col">
                                                             <label for="reminderBody-UserRightsHolders" class="col-form-label col-form-label-sm">Reminder Body:</label>
+                                                            <div class="invalid-feedback">You must provide a body for the reminder email</div>
                                                             <textarea id="reminderBody-UserRightsHolders" name="reminderBody" type="text" class="form-control form-control-sm richtext emailBody"></textarea>
                                                         </div>
                                                     </div>
@@ -289,7 +294,7 @@ class Alerts
                                             <div class="mb-1" style="font-size: 14px;">
                                                 <strong>Select the recipients:</strong>
                                             </div>
-                                            <table class="table table-sm table-bordered" style="font-size: 12px;">
+                                            <table id="recipientTable_UserRightsHolders" class="table table-sm table-bordered" style="font-size: 12px;">
                                                 <colgroup>
                                                     <col class="col-md-1">
                                                     <col class="col-md-2">
@@ -321,6 +326,7 @@ class Alerts
                                                     ?>
                                                 </tbody>
                                             </table>
+                                            <div class="invalid-feedback">You must select at least one recipient</div>
                                         </div>
                                     </div>
                                 </div>
@@ -329,7 +335,7 @@ class Alerts
                     </div>
                     <div class=" modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal" data-bs-dismiss="modal">Cancel</button>
-                        <button type="button" class="btn btn-warning">Send Alerts</button>
+                        <button type="button" class="btn btn-warning" onclick="sendEmailAlerts_UserRightsHolders();">Send Alerts</button>
                     </div>
                 </div>
             </div>
@@ -371,7 +377,7 @@ class Alerts
                                         <div class="form-group row">
                                             <label class="col-sm-5 col-form-label col-form-label-sm">How many days until the users are expired?</label>
                                             <div class="col-sm-7 mt-2">
-                                                <input name="delayDays" type="number" min="1" value="14" class="form-control form-control-sm">
+                                                <input name="delayDays-expiration" type="number" min="1" value="14" class="form-control form-control-sm">
                                             </div>
                                         </div>
                                     </div>
@@ -442,7 +448,7 @@ class Alerts
      * 
      * @return array log_id's of all alerts (sent and otherwise)
      */
-    public function getAllAlertsIds($project_id = null): array
+    public function getAllReminderIds($project_id = null): array
     {
         $sql = "SELECT log_id WHERE message = 'user alert reminder'" . (is_null($project_id) ? "and (project_id is null or project_id is not null)" : " and project_id = ?");
         $params = is_null($project_id) ? [] : [$project_id];
@@ -470,7 +476,7 @@ class Alerts
 
         // TODO: if multiple exist, display all of them, not just most recent
 
-        return "<div style='text-align:center;' title='Sent " . \REDCap::escapeHtml($sentEmail['timestamp']) . "'><i class='fa-solid fa-envelope-circle-check text-success'></i></div>";
+        return "<div title='Sent " . \REDCap::escapeHtml($sentEmail['timestamp']) . "'><i class='fa-solid fa-envelope-circle-check text-success'></i></div>";
     }
 
     /**
@@ -509,7 +515,7 @@ class Alerts
             $icon = '<i class="fa-solid fa-envelope-circle-check text-success"></i>';
             $title = "Reminder sent at " . $status['sent_timestamp'];
         }
-        return "<div style='text-align:center;' title='" . $title . "'>" . $icon . "</div>";
+        return "<div title='" . $title . "'>" . $icon . "</div>";
     }
 
     private function getUserReminderStatus($project_id, string $username)
@@ -544,29 +550,35 @@ class Alerts
         return $result;
     }
 
-    public function sendReminders($project_id)
+    public function sendUserReminders($project_id)
     {
-        $reminders = $this->getRemindersToSend($project_id);
+        $reminders = $this->getUserRemindersToSend($project_id);
         foreach ($reminders as $reminder) {
             // Send Alert
             $subject = htmlspecialchars_decode($reminder['reminderSubject']);
             $body = htmlspecialchars_decode($reminder['reminderBody']);
-            $this->module->log('user alert reminder sent', ['reminder' => $reminder['reminder_id'], 'user' => $reminder['user'], 'type' => $reminder['type'], 'user_data' => json_encode($reminder['user_data']), 'from' => $reminder['from']]);
-            \REDCap::email($reminder['sag_user_email'], $reminder['fromEmail'], $subject, $body, null, null, $reminder['displayFromName']);
+            $this->module->log('user alert reminder sent', ['reminder' => $reminder['reminder_id'], 'user' => $reminder['user'], 'type' => $reminder['type'], 'user_data' => $reminder['user_data'], 'from' => $reminder['from'], 'project_id' => $project_id]);
+            \REDCap::email($reminder['sag_user_email'], $reminder['from'], $subject, $body, null, null, $reminder['displayFromName']);
         }
     }
 
-    private function getRemindersToSend($project_id): array
+    private function getUserRemindersToSend($project_id): array
     {
-        $sql_all_future = "SELECT log_id, timestamp WHERE message = 'user alert reminder' AND project_id = ? AND reminderTime <= ?";
+        $sql_all_future = "SELECT log_id, `user`, `type`, `user_data`, `from`, `timestamp` WHERE message = 'user alert reminder' AND project_id = ? AND reminderTime <= ?";
         $params_all_future = [$project_id, strtotime("now")];
         $result_all_future = $this->module->queryLogs($sql_all_future, $params_all_future);
         $reminders_to_send = [];
         while ($row = $result_all_future->fetch_assoc()) {
             // TODO: Deal with cancelled
             $sql_sent = "SELECT log_id WHERE message = 'user alert reminder sent' AND reminder = ? AND project_id = ?";
-            $result_sent = $this->module->queryLogs($sql_sent, [$row['reminder'], $project_id]);
+            $result_sent = $this->module->queryLogs($sql_sent, [$row['log_id'], $project_id]);
             if (empty($result_sent->fetch_assoc())) {
+                $user_data = json_decode($row["user_data"], true);
+                $row["reminderSubject"] = $user_data["reminderSubject"];
+                $row["reminderBody"] = $user_data["reminderBody"];
+                $row["reminder_id"] = $row["log_id"];
+                $row["displayFromName"] = $user_data["displayFromName"];
+                $row["sag_user_email"] = $user_data["sag_user_email"];
                 $reminders_to_send[] = $row;
             }
         }

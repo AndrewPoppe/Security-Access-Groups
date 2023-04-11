@@ -71,6 +71,7 @@ div.modal {
 }
 
 div.SUR-Container,
+div.SUR-Container a,
 div.SUR-Container a:hover {
     font-family: "Atkinson Hyperlegible" !important;
 }
@@ -442,4 +443,9 @@ button.btn-secondary:hover {
 
 div.is-invalid div.tox.tox-tinymce {
     border: 1px solid var(--danger) !important;
+}
+
+table.table.is-invalid td.user-rights-holder-selector input {
+    border: 1px solid var(--danger) !important;
+    box-shadow: 0 0 0 0.1rem rgba(255, 0, 0, .25) !important;
 }

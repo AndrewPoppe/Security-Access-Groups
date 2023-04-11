@@ -92,7 +92,7 @@ class SystemUserRights extends AbstractExternalModule
     }
 
     // CRON job
-    function send_reminders($cronInfo = array())
+    function sendReminders($cronInfo = array())
     {
         try {
             $Alerts = new Alerts($this);
@@ -111,7 +111,7 @@ class SystemUserRights extends AbstractExternalModule
             foreach ($project_ids as $localProjectId) {
                 // Specifying project id just to prevent reminders being sent
                 // for projects that no longer have the module enabled.
-                $Alerts->sendReminders($localProjectId);
+                $Alerts->sendUserReminders($localProjectId);
             }
 
             return "The \"{$cronInfo['cron_name']}\" cron job completed successfully.";

@@ -8,10 +8,19 @@ use YaleREDCap\SystemUserRights\Alerts;
 
 $Alerts = new Alerts($module);
 
+//$module->removeLogs("message = 'user alert reminder sent' AND (project_id IS NULL OR project_id IS NOT NULL)", []);
+
 ?>
 <link href="https://cdn.datatables.net/v/dt/dt-1.13.3/b-2.3.5/b-html5-2.3.5/fc-4.2.1/datatables.min.css" rel="stylesheet" />
 <script src="https://cdn.datatables.net/v/dt/dt-1.13.3/b-2.3.5/b-html5-2.3.5/fc-4.2.1/datatables.min.js"></script>
-<script src="https://kit.fontawesome.com/015226af80.js" crossorigin="anonymous"></script>
+
+<script defer src="<?= $module->getUrl('assets/fontawesome/js/regular.min.js') ?>"></script>
+<script defer src="<?= $module->getUrl('assets/fontawesome/js/sharp-regular.min.js') ?>"></script>
+<script defer src="<?= $module->getUrl('assets/fontawesome/js/sharp-solid.min.js') ?>"></script>
+<script defer src="<?= $module->getUrl('assets/fontawesome/js/solid.min.js') ?>"></script>
+<script defer src="<?= $module->getUrl('assets/fontawesome/js/custom-icons.min.js') ?>"></script>
+<script defer src="<?= $module->getUrl('assets/fontawesome/js/fontawesome.min.js') ?>"></script>
+
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -38,19 +47,20 @@ $Alerts = new Alerts($module);
         exit();
     }
     ?>
+
     <div class="clearfix">
         <div id="sub-nav" class="d-none d-sm-block mr-4 mb-0 ml-0">
             <ul>
-                <li class="<?= $tab === "userlist" ? "active" : "" ?>">
-                    <a href="<?= $module->getUrl('system-settings.php?tab=userlist') ?>" style="font-size:13px;color:#393733;padding:7px 9px;">
-                        <i class="fa-solid fa-users"></i>
-                        Users
+                <li class="active">
+                    <a href="<?= $module->getUrl('project-status.php') ?>" style="font-size:13px;color:#393733;padding:7px 9px;">
+                        <i class="fa-regular fa-clipboard-check"></i>
+                        Project Status
                     </a>
                 </li>
-                <li class="<?= $tab === "roles" ? "active" : "" ?>">
-                    <a href="<?= $module->getUrl('system-settings.php?tab=roles') ?>" style="font-size:13px;color:#393733;padding:7px 9px;">
-                        <i class="fa-solid fa-user-tag"></i>
-                        Roles
+                <li>
+                    <a href="<?= $module->getUrl('project-alert-log.php') ?>" style="font-size:13px;color:#393733;padding:7px 9px;">
+                        <i class="fa-regular fa-envelopes-bulk"></i>
+                        Alert Log
                     </a>
                 </li>
             </ul>
@@ -78,7 +88,7 @@ $Alerts = new Alerts($module);
     </div>
     <div class="container ml-0 pl-0">
         <table class="table table-sm table-bordered discrepancy-table">
-            <thead class="thead-dark">
+            <thead class="thead-dark text-center">
                 <tr>
                     <th style="vertical-align: middle !important;"><input style="display:block; margin: 0 auto;" type="checkbox" onchange="$('.user-selector input').prop('checked', $(this).prop('checked')).trigger('change');"></input></th>
                     <th>Username</th>
@@ -88,7 +98,7 @@ $Alerts = new Alerts($module);
                     <th>System Role</th>
                     <th>Discrepant Rights</th>
                     <th>Project Role</th>
-                    <th>User Alert Sent</th>
+                    <th>Alert</th>
                     <th>Reminder</th>
                 </tr>
             </thead>
@@ -104,9 +114,9 @@ $Alerts = new Alerts($module);
                         <td class="align-middle"><?= $isExpired ? $user : "<strong>$user</strong>" ?></td>
                         <td class="align-middle"><?= $thisUsersRights["name"] ?></td>
                         <td class="align-middle"><?= $thisUsersRights["email"] ?></td>
-                        <td class="align-middle"><?= $thisUsersRights["expiration"] ?></td>
-                        <td class="align-middle"><?= $thisUsersRights["system_role"] ?></td>
-                        <td class="align-middle <?= $hasDiscrepancy ? "" : "table-success" ?>">
+                        <td class="align-middle text-center"><?= $thisUsersRights["expiration"] ?></td>
+                        <td class="align-middle text-center"><span class="user-select-all"><?= $thisUsersRights["system_role"] ?></span></td>
+                        <td class="align-middle text-center <?= $hasDiscrepancy ? "" : "table-success" ?>">
                             <?php
                             if ($hasDiscrepancy) { ?>
                                 <a class="<?= $isExpired ? "text-secondary" : "text-primary" ?>" style="text-decoration: underline; cursor: pointer;" data-toggle="modal" data-target="#modal-<?= $user ?>"><?= sizeof($badRights) . (sizeof($badRights) > 1 ? " Rights" : " Right") ?></a>
@@ -136,9 +146,9 @@ $Alerts = new Alerts($module);
                             }
                             ?>
                         </td>
-                        <td class="align-middle"><?= $thisUsersRights["project_role"] ?></td>
-                        <td class="align-middle"><?= $Alerts->getUserEmailSentFormatted($project_id, $user); ?></td>
-                        <td class="align-middle"><?= $Alerts->getUserReminderStatusFormatted($project_id, $user); ?></td>
+                        <td class="align-middle text-center"><?= $thisUsersRights["project_role"] ?></td>
+                        <td class="align-middle text-center"><?= $Alerts->getUserEmailSentFormatted($project_id, $user); ?></td>
+                        <td class="align-middle text-center"><?= $Alerts->getUserReminderStatusFormatted($project_id, $user); ?></td>
                     </tr>
                 <?php } ?>
             </tbody>
@@ -360,6 +370,102 @@ $Alerts = new Alerts($module);
                 }
             });
             return users;
+        }
+
+
+        function sendEmailAlerts_UserRightsHolders() {
+            if (!validateEmailForm_UserRightsHolders()) {
+                return;
+            }
+
+            let emailFormContents = $('#emailUserRightsHoldersForm').serializeObject();
+            emailFormContents.emailBody = tinymce.get('emailBody-UserRightsHolders').getContent();
+            emailFormContents.reminderBody = tinymce.get('reminderBody-UserRightsHolders').getContent();
+            emailFormContents.alertType = 'userRightsHolders';
+            emailFormContents.users = getAlertUserInfo();
+            emailFormContents.recipients = getUserRightsHolderAlertRecipients();
+
+            console.log(emailFormContents);
+            return;
+
+            $.post("<?= $module->getUrl('sendAlerts.php') ?>", emailFormContents)
+                .done(response => {
+                    console.log(response);
+                    Swal.fire({
+                        html: response
+                    });
+                })
+                .fail(error => {
+                    console.error(error.responseText);
+                })
+                .always({
+
+                });
+        }
+
+        // TODO: We're going to validate form contents server-side eventually, so this is temporary
+        function validateEmailForm_UserRightsHolders() {
+            let valid = true;
+            if ($('#emailSubject-UserRightsHolders').val().trim() == "") {
+                $('#emailSubject-UserRightsHolders').addClass('is-invalid');
+                valid = false;
+            } else {
+                $('#emailSubject-UserRightsHolders').removeClass('is-invalid');
+            }
+            let emailBody = tinymce.get('emailBody-UserRightsHolders').getContent({
+                format: 'text'
+            }).trim();
+            if (emailBody == '') {
+                $('#emailBody-UserRightsHolders').siblings('label').addClass('is-invalid');
+                $('#emailBody-UserRightsHolders').parent().addClass('is-invalid');
+                valid = false;
+            } else {
+                $('#emailBody-UserRightsHolders').siblings('label').removeClass('is-invalid');
+                $('#emailBody-UserRightsHolders').parent().removeClass('is-invalid');
+            }
+
+            if ($('#sendReminder-UserRightsHolders').is(':checked')) {
+                if ($('#reminderSubject-UserRightsHolders').val().trim() == "") {
+                    $('#reminderSubject-UserRightsHolders').addClass('is-invalid');
+                    valid = false;
+                } else {
+                    $('#reminderSubject-UserRightsHolders').removeClass('is-invalid');
+                }
+
+                let delayDays = $('input[name="delayDays-UserRightsHolders"]').val().trim();
+                if (delayDays == "" || !isInteger(delayDays) || delayDays < 1) {
+                    $('input[name="delayDays-UserRightsHolders"]').addClass('is-invalid');
+                    valid = false;
+                } else {
+                    $('input[name="delayDays-UserRightsHolders"]').removeClass('is-invalid');
+                }
+                let reminderBody = tinymce.get('reminderBody-UserRightsHolders').getContent({
+                    format: 'text'
+                }).trim();
+                if (reminderBody == '') {
+                    $('#reminderBody-UserRightsHolders').siblings('label').addClass('is-invalid');
+                    $('#reminderBody-UserRightsHolders').parent().addClass('is-invalid');
+                    valid = false;
+                } else {
+                    $('#reminderBody-UserRightsHolders').siblings('label').removeClass('is-invalid');
+                    $('#reminderBody-UserRightsHolders').parent().removeClass('is-invalid');
+                }
+            }
+
+            const anyChecked = $('.user-rights-holder-selector input').toArray().some(el => $(el).is(':checked'));
+            if (!anyChecked) {
+                $('#recipientTable_UserRightsHolders').addClass('is-invalid');
+                valid = false;
+            } else {
+
+                $('#recipientTable_UserRightsHolders').removeClass('is-invalid');
+            }
+
+            return valid;
+        }
+
+        function getUserRightsHolderAlertRecipients() {
+            return $('.user-rights-holder-selector input:checked').toArray().map(el => $(el).closest('tr').data('user'));
         }
 
         async function previewEmail($emailContainer) {
