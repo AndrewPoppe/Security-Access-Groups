@@ -81,14 +81,14 @@ $Alerts = new Alerts($module);
                 <span class="sr-only">Toggle Dropdown</span>
             </button>
             <ul class="dropdown-menu">
-                <li><a class="dropdown-item" onclick="expireUsers();"><i class="fa-solid fa-user-xmark fa-fw mr-1 text-danger"></i>Expire User(s) now</a></li>
-                <li><a class="dropdown-item" onclick="openExpireUsersModal();"><i class="fa-sharp fa-solid fa-calendar-days fa-fw mr-1 text-success"></i>Schedule Expiration of User(s)</a></li>
+                <li><a class="dropdown-item" onclick="openExpireUsersModal();"><i class="fa-solid fa-user-xmark fa-fw mr-1 text-danger"></i>Expire User(s) now</a></li>
+                <li><a class="dropdown-item" onclick="openScheduleExpireUsersModal();"><i class="fa-sharp fa-solid fa-calendar-days fa-fw mr-1 text-success"></i>Schedule Expiration of User(s)</a></li>
             </ul>
             <i class="fa-solid fa-circle-info fa-lg align-self-center text-info" style="cursor:pointer;" onclick="Swal.fire({html: $('#infoContainer').html(), icon: 'info', showConfirmButton: false});"></i>
         </div>
     </div>
     <div class="container ml-0 pl-0">
-        <table class="table table-sm table-bordered discrepancy-table">
+        <table class="table table-bordered discrepancy-table">
             <thead class="thead-dark text-center">
                 <tr>
                     <th style="vertical-align: middle !important;"><input style="display:block; margin: 0 auto;" type="checkbox" onchange="$('.user-selector input').prop('checked', $(this).prop('checked')).trigger('change');"></input></th>
@@ -157,6 +157,7 @@ $Alerts = new Alerts($module);
     </div>
     <?php $Alerts->getUserEmailModal($project_id, $adminUsername); ?>
     <?php $Alerts->getUserRightsHoldersEmailModal($project_id, $adminUsername); ?>
+    <?php $Alerts->getUserExpirationModal($project_id, $adminUsername); ?>
     <?php $Alerts->getUserExpirationSchedulerModal($project_id); ?>
     <script>
         var Toast = Swal.mixin({
@@ -214,6 +215,11 @@ $Alerts = new Alerts($module);
         }
 
         function openExpireUsersModal() {
+            document.querySelector('#userExpirationModal form').reset();
+            $('#userExpirationModal').modal('show');
+        }
+
+        function openScheduleExpireUsersModal() {
             document.querySelector('#userExpirationSchedulerModal form').reset();
             $('#userExpirationSchedulerModal').modal('show');
         }
@@ -474,10 +480,10 @@ $Alerts = new Alerts($module);
             const content = tinymce.get(id).getContent();
             const replacedContent = await replaceKeywordsPreview(content);
             $('#emailPreview div.modal-body').html(replacedContent);
-            $('#emailUsersModal').css('z-index', 1039);
+            $emailContainer.closest('.modal').css('z-index', 1039);
             $('#emailPreview').modal('show');
             $('#emailPreview').on('hidden.bs.modal', function(event) {
-                $('#emailUsersModal').css('z-index', 1050);
+                $emailContainer.closest('.modal').css('z-index', 1050);
             });
         }
 
@@ -530,6 +536,32 @@ $Alerts = new Alerts($module);
                     ['Logging', 'Reports & Report Builder'],
                     ['Data Export - Full Data Set', 'Data Viewing - View & Edit', 'Data Access Groups', 'Stats & Charts', 'Survey Distribution Tools', 'File Repository']
                 ]
+            };
+
+            return $.post('<?= $module->getUrl('replaceSmartVariables.php') ?>', {
+                text: text,
+                data: data
+            });
+        }
+
+        async function previewEmailUserExpiration($emailContainer) {
+            const id = $emailContainer.find('textarea.emailBody').prop('id');
+            const content = tinymce.get(id).getContent();
+            const replacedContent = await replaceKeywordsPreviewUserExpiration(content);
+            $('#emailPreview div.modal-body').html(replacedContent);
+            $emailContainer.closest('.modal').css('z-index', 1039);
+            $('#emailPreview').modal('show');
+            $('#emailPreview').on('hidden.bs.modal', function(event) {
+                $emailContainer.closest('.modal').css('z-index', 1050);
+            });
+        }
+
+        async function replaceKeywordsPreviewUserExpiration(text) {
+            const data = {
+                'sag_user': 'robin123',
+                'sag_user_fullname': 'Robin Jones',
+                'sag_user_email': 'robin.jones@email.com',
+                'sag_rights': ['Project Design and Setup', 'User Rights', 'Create Records']
             };
 
             return $.post('<?= $module->getUrl('replaceSmartVariables.php') ?>', {

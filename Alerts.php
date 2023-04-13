@@ -354,6 +354,97 @@ class Alerts
     <?php
     }
 
+
+    /**
+     * @param mixed $project_id
+     * 
+     * @return string
+     */
+    public function getUserExpirationModal($project_id, string $adminUsername)
+    {
+        $emailAddresses = $this->getEmailAddresses($adminUsername);
+    ?>
+        <div class="modal fade userExpirationAlert" id="userExpirationModal" aria-labelledby="userExpirationTitle" data-backdrop="static" data-keyboard="false" aria-hidden="true">
+            <div class="modal-lg modal-dialog modal-dialog-scrollable">
+                <div class="modal-content">
+                    <div class="modal-header bg-danger text-light">
+                        <h5 class="modal-title" id="userExpirationTitle">Expire Project Users</h5>
+                        <button type="button" class="btn-close btn-danger align-self-center" data-bs-dismiss="modal" data-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="userExpirationForm">
+                            <div class="row mb-2 primaryEmail">
+                                <div class="col">
+                                    <div class="border bg-light p-4">
+                                        <div class="form-group row">
+                                            <label for="fromEmail" class="col-sm-3 col-form-label col-form-label-sm">From:</label>
+                                            <div class="col-sm-4">
+                                                <input id="displayFromName-userExpiration" name="displayFromName" type="text" class="form-control form-control-sm" placeholder="Display name (optional)">
+                                            </div>
+                                            <div class="col-sm-5 pl-0">
+                                                <select id="fromEmail-userExpiration" name="fromEmail" class="form-control form-control-sm">
+                                                    <?php foreach ($emailAddresses as $key => $emailAddress) { ?>
+                                                        <option <?= $key == 0 ? "selected" : "" ?>><?= $emailAddress ?></option>
+                                                    <?php } ?>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label for="emailSubject-userExpiration" class="col-sm-3 col-form-label col-form-label-sm">Subject:</label>
+                                            <div class="col-sm-9">
+                                                <input id="emailSubject-userExpiration" name="emailSubject" type="text" class="form-control form-control-sm" required aria-required="true">
+                                                <div class="invalid-feedback">You must provide a subject for the email</div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row mb-1">
+                                            <div class="col">
+                                                <label for="emailBody-userExpiration" class="col-form-label col-form-label-sm">Email Body:</label>
+                                                <textarea id="emailBody-userExpiration" name="emailBody" type="text" class="form-control form-control-sm richtext emailBody"></textarea>
+                                                <div class="invalid-feedback">You must provide a body for the email</div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row mb-1">
+                                            <div class="col text-right">
+                                                <button class="btn btn-info btn-xs" type="button" onclick="previewEmailUserExpiration($('#userExpirationForm .primaryEmail'));"><i class="fa-eye fa-regular mr-1"></i>Preview</button>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row" style="font-size: small;">
+                                            <div class="col ml-2">
+                                                <span><strong>You can use the following placeholders to insert information into your email subject and body:</strong></span>
+                                                <table>
+                                                    <?php foreach ($this->getPlaceholdersUsers() as $placeholder => $description) {
+                                                        echo "<tr><td><code class='dataPlaceholder'>[$placeholder]</code></td><td>$description</td></tr>";
+                                                    } ?>
+                                                </table>
+                                                <p><span>You can also use <button class="btn btn-xs btn-rcgreen btn-rcgreen-light" style="margin-left:3px;font-size:11px;padding:0px 3px 1px;line-height:14px;" onclick="smartVariableExplainPopup();setTimeout(function() {$('#smart_variable_explain_popup').parent().css('z-index', 1051);},300); return false;">[<i class="fa-solid fa-bolt fa-xs" style="margin:0 1px;"></i>] Smart Variables</button>, but few will be applicable.</span></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class=" modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-danger" onclick="expireUsersAndSendAlerts();">Expire Users</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal" id="emailPreview" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+                <div class="modal-content">
+                    <div class="modal-body">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <?php
+    }
+
     /**
      * @param mixed $project_id 
      * 
