@@ -8,6 +8,7 @@ use YaleREDCap\SystemUserRights\Alerts;
 
 $Alerts = new Alerts($module);
 
+// TODO: Remove this
 //$module->removeLogs("message = 'user alert reminder sent' AND (project_id IS NULL OR project_id IS NOT NULL)", []);
 
 ?>
