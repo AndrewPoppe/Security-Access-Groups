@@ -409,6 +409,22 @@ button.editUsersButton:hover {
     border: 1px solid #ff000020 !important;
 }
 
+.bg-users {
+    background-color: #b8daff !important;
+}
+
+.bg-users.border {
+    border: 1px solid #7abaff !important;
+}
+
+.bg-userRightsHolders {
+    background-color: #ffeeba !important;
+}
+
+.bg-userRightsHolders.border {
+    border: 1px solid #ffdf7e !important;
+}
+
 div.modal.userAlert label.col-form-label {
     font-weight: bold;
 }

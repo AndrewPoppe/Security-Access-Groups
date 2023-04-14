@@ -147,17 +147,6 @@ class Alerts
                 </div>
             </div>
         </div>
-        <div class="modal" id="emailPreview" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-lg">
-                <div class="modal-content">
-                    <div class="modal-body">
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    </div>
-                </div>
-            </div>
-        </div>
     <?php
     }
 
@@ -340,17 +329,6 @@ class Alerts
                 </div>
             </div>
         </div>
-        <div class="modal" id="emailPreview-UserRightsHolders" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-lg">
-                <div class="modal-content">
-                    <div class="modal-body">
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    </div>
-                </div>
-            </div>
-        </div>
     <?php
     }
 
@@ -364,7 +342,7 @@ class Alerts
     {
         $emailAddresses = $this->getEmailAddresses($adminUsername);
     ?>
-        <div class="modal fade userExpirationAlert" id="userExpirationModal" aria-labelledby="userExpirationTitle" data-backdrop="static" data-keyboard="false" aria-hidden="true">
+        <div class="modal fade userAlert" id="userExpirationModal" aria-labelledby="userExpirationTitle" data-backdrop="static" data-keyboard="false" aria-hidden="true">
             <div class="modal-lg modal-dialog modal-dialog-scrollable">
                 <div class="modal-content">
                     <div class="modal-header bg-danger text-light">
@@ -373,50 +351,130 @@ class Alerts
                     </div>
                     <div class="modal-body">
                         <form id="userExpirationForm">
-                            <div class="row mb-2 primaryEmail">
+                            <div class="row mb-2 userExpirationListContainer">
                                 <div class="col">
-                                    <div class="border bg-light p-4">
-                                        <div class="form-group row">
-                                            <label for="fromEmail" class="col-sm-3 col-form-label col-form-label-sm">From:</label>
-                                            <div class="col-sm-4">
-                                                <input id="displayFromName-userExpiration" name="displayFromName" type="text" class="form-control form-control-sm" placeholder="Display name (optional)">
-                                            </div>
-                                            <div class="col-sm-5 pl-0">
-                                                <select id="fromEmail-userExpiration" name="fromEmail" class="form-control form-control-sm">
-                                                    <?php foreach ($emailAddresses as $key => $emailAddress) { ?>
-                                                        <option <?= $key == 0 ? "selected" : "" ?>><?= $emailAddress ?></option>
-                                                    <?php } ?>
-                                                </select>
+                                    <div class="border bg-light">
+                                        <div class="row ml-4 mt-3">
+                                            <h5><strong>The following users will be expired:</strong></h5>
+                                        </div>
+                                        <div class="form-group row ml-4 my-0">
+                                            <table id="userExpirationTable" class="table table-sm table-hover table-borderless w-50 ml-2">
+                                                <tbody></tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mb-2 userNotification">
+                                <div class="col">
+                                    <div class="border bg-users p-4">
+                                        <div class="form-group row mb-0">
+                                            <label class="col-sm col-form-label col-form-label-sm">Send Notification to User(s)?</label>
+                                            <div class="col-sm">
+                                                <div class="form-check">
+                                                    <input id="sendUserNotification" name="sendUserNotification" type="checkbox" class="form-check-input" value="1" onchange="$('#userNotificationInfo').collapse(this.checked ? 'show' : 'hide');">
+                                                    <label class="form-check-label" for="sendUserNotification">Yes, send a notification</label>
+                                                </div>
                                             </div>
                                         </div>
-                                        <div class="form-group row">
-                                            <label for="emailSubject-userExpiration" class="col-sm-3 col-form-label col-form-label-sm">Subject:</label>
-                                            <div class="col-sm-9">
-                                                <input id="emailSubject-userExpiration" name="emailSubject" type="text" class="form-control form-control-sm" required aria-required="true">
-                                                <div class="invalid-feedback">You must provide a subject for the email</div>
+                                        <div class="collapse mt-2" id="userNotificationInfo">
+                                            <div class="form-group row">
+                                                <label for="fromEmail" class="col-sm-3 col-form-label col-form-label-sm">From:</label>
+                                                <div class="col-sm-4">
+                                                    <input id="displayFromName-userExpiration" name="displayFromName" type="text" class="form-control form-control-sm" placeholder="Display name (optional)">
+                                                </div>
+                                                <div class="col-sm-5 pl-0">
+                                                    <select id="fromEmail-userExpiration" name="fromEmail" class="form-control form-control-sm">
+                                                        <?php foreach ($emailAddresses as $key => $emailAddress) { ?>
+                                                            <option <?= $key == 0 ? "selected" : "" ?>><?= $emailAddress ?></option>
+                                                        <?php } ?>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="form-group row">
+                                                <label for="emailSubject-userExpiration" class="col-sm-3 col-form-label col-form-label-sm">Subject:</label>
+                                                <div class="col-sm-9">
+                                                    <input id="emailSubject-userExpiration" name="emailSubject" type="text" class="form-control form-control-sm" required aria-required="true">
+                                                    <div class="invalid-feedback">You must provide a subject for the email</div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group row mb-1">
+                                                <div class="col">
+                                                    <label for="emailBody-userExpiration" class="col-form-label col-form-label-sm">Email Body:</label>
+                                                    <textarea id="emailBody-userExpiration" name="emailBody" type="text" class="form-control form-control-sm richtext emailBody"></textarea>
+                                                    <div class="invalid-feedback">You must provide a body for the email</div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group row mb-1">
+                                                <div class="col text-right">
+                                                    <button class="btn btn-info btn-xs" type="button" onclick="previewEmailUserExpiration($('#userExpirationForm .userNotification'));"><i class="fa-eye fa-regular mr-1"></i>Preview</button>
+                                                </div>
+                                            </div>
+                                            <div class="form-group row mt-2" style="font-size: small;">
+                                                <div class="col mx-3 p-2" style="background-color:#FFFFFF80;">
+                                                    <span><strong>You can use the following placeholders to insert information into your email subject and body:</strong></span>
+                                                    <table>
+                                                        <?php foreach ($this->getPlaceholdersUsers() as $placeholder => $description) {
+                                                            echo "<tr><td><code class='dataPlaceholder'>[$placeholder]</code></td><td>$description</td></tr>";
+                                                        } ?>
+                                                    </table>
+                                                    <p><span>You can also use <button class="btn btn-xs btn-rcgreen btn-rcgreen-light" style="margin-left:3px;font-size:11px;padding:0px 3px 1px;line-height:14px;" onclick="smartVariableExplainPopup();setTimeout(function() {$('#smart_variable_explain_popup').parent().css('z-index', 1051);},300); return false;">[<i class="fa-solid fa-bolt fa-xs" style="margin:0 1px;"></i>] Smart Variables</button>, but few will be applicable.</span></p>
+                                                </div>
                                             </div>
                                         </div>
-                                        <div class="form-group row mb-1">
-                                            <div class="col">
-                                                <label for="emailBody-userExpiration" class="col-form-label col-form-label-sm">Email Body:</label>
-                                                <textarea id="emailBody-userExpiration" name="emailBody" type="text" class="form-control form-control-sm richtext emailBody"></textarea>
-                                                <div class="invalid-feedback">You must provide a body for the email</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row userRightsHoldersNotification">
+                                <div class="col">
+                                    <div class="border bg-userRightsHolders p-4">
+                                        <div class="form-group row mb-0">
+                                            <label class="col-sm col-form-label col-form-label-sm">Send Notification to User Rights Holders?</label>
+                                            <div class="col-sm">
+                                                <div class="form-check">
+                                                    <input id="sendNotification-UserRightsHolders" name="sendNotification-UserRightsHolders" type="checkbox" class="form-check-input" value="1" onchange="$('#notificationInfo-UserRightsHolders').collapse(this.checked ? 'show' : 'hide');">
+                                                    <label class="form-check-label" for="sendNotification-UserRightsHolders">Yes, send a notification</label>
+                                                </div>
                                             </div>
                                         </div>
-                                        <div class="form-group row mb-1">
-                                            <div class="col text-right">
-                                                <button class="btn btn-info btn-xs" type="button" onclick="previewEmailUserExpiration($('#userExpirationForm .primaryEmail'));"><i class="fa-eye fa-regular mr-1"></i>Preview</button>
+                                        <div class="collapse mt-2" id="notificationInfo-UserRightsHolders">
+                                            <div class="form-group row">
+                                                <label class="col-sm-3 col-form-label col-form-label-sm">How many days until the reminder is sent?</label>
+                                                <div class="col-sm-9 mt-2">
+                                                    <input name="delayDays-UserRightsHolders" type="number" min="1" value="14" class="form-control form-control-sm">
+                                                    <div class="invalid-feedback">You must provide a number of days greater than 1</div>
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="form-group row" style="font-size: small;">
-                                            <div class="col ml-2">
-                                                <span><strong>You can use the following placeholders to insert information into your email subject and body:</strong></span>
-                                                <table>
-                                                    <?php foreach ($this->getPlaceholdersUsers() as $placeholder => $description) {
-                                                        echo "<tr><td><code class='dataPlaceholder'>[$placeholder]</code></td><td>$description</td></tr>";
-                                                    } ?>
-                                                </table>
-                                                <p><span>You can also use <button class="btn btn-xs btn-rcgreen btn-rcgreen-light" style="margin-left:3px;font-size:11px;padding:0px 3px 1px;line-height:14px;" onclick="smartVariableExplainPopup();setTimeout(function() {$('#smart_variable_explain_popup').parent().css('z-index', 1051);},300); return false;">[<i class="fa-solid fa-bolt fa-xs" style="margin:0 1px;"></i>] Smart Variables</button>, but few will be applicable.</span></p>
+                                            <hr>
+                                            <div class="form-group row">
+                                                <label for="reminderSubject-UserRightsHolders" class="col-sm-3 col-form-label col-form-label-sm">Reminder Subject:</label>
+                                                <div class="col-sm-9">
+                                                    <input id="reminderSubject-UserRightsHolders" name="reminderSubject" type="text" class="form-control form-control-sm">
+                                                    <div class="invalid-feedback">You must provide a subject for the reminder email</div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group row mb-1">
+                                                <div class="col">
+                                                    <label for="reminderBody-UserRightsHolders" class="col-form-label col-form-label-sm">Reminder Body:</label>
+                                                    <div class="invalid-feedback">You must provide a body for the reminder email</div>
+                                                    <textarea id="reminderBody-UserRightsHolders" name="reminderBody" type="text" class="form-control form-control-sm richtext emailBody"></textarea>
+                                                </div>
+                                            </div>
+                                            <div class="form-group row mb-1">
+                                                <div class="col text-right">
+                                                    <button class="btn btn-info btn-xs" type="button" onclick="previewEmailUserRightsHolders($('#userExpirationForm .userRightsHoldersNotification'));"><i class="fa-eye fa-regular mr-1"></i>Preview</button>
+                                                </div>
+                                            </div>
+                                            <div class="form-group row mt-2" style="font-size: small;">
+                                                <div class="col mx-3 p-2" style="background-color:#FFFFFFA0;">
+                                                    <span><strong>You can use the following placeholders to insert information into your email subject and body:</strong></span>
+                                                    <table>
+                                                        <?php foreach ($this->getPlaceholdersUserRightsHolders() as $placeholder => $description) {
+                                                            echo "<tr><td><code class='dataPlaceholder'>[$placeholder]</code></td><td>$description</td></tr>";
+                                                        } ?>
+                                                    </table>
+                                                    <p><span>You can also use <button class="btn btn-xs btn-rcgreen btn-rcgreen-light" style="margin-left:3px;font-size:11px;padding:0px 3px 1px;line-height:14px;" onclick="smartVariableExplainPopup();setTimeout(function() {$('#smart_variable_explain_popup').parent().css('z-index', 1051);},300); return false;">[<i class="fa-solid fa-bolt fa-xs" style="margin:0 1px;"></i>] Smart Variables</button>, but few will be applicable.</span></p>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -431,17 +489,20 @@ class Alerts
                 </div>
             </div>
         </div>
-        <div class="modal" id="emailPreview" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-lg">
-                <div class="modal-content">
-                    <div class="modal-body">
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <script>
+            $('#notificationInfo-UserRightsHolders').on('shown.bs.collapse', function() {
+                if (!$('#sendNotification-UserRightsHolders').is(':checked')) $(this).collapse('hide')
+            });
+            $('#notificationInfo-UserRightsHolders').on('hidden.bs.collapse', function() {
+                if ($('#sendNotification-UserRightsHolders').is(':checked')) $(this).collapse('show')
+            });
+            $('#userNotificationInfo').on('shown.bs.collapse', function() {
+                if (!$('#sendUserNotification').is(':checked')) $(this).collapse('hide')
+            });
+            $('#userNotificationInfo').on('hidden.bs.collapse', function() {
+                if ($('#sendUserNotification').is(':checked')) $(this).collapse('show')
+            });
+        </script>
     <?php
     }
 
@@ -479,6 +540,23 @@ class Alerts
                     <div class=" modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal" data-bs-dismiss="modal">Cancel</button>
                         <button type="button" class="btn btn-danger">Schedule Expiration</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <?php
+    }
+
+    public function getEmailPreviewModal()
+    {
+    ?>
+        <div class="modal" id="emailPreview" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+                <div class="modal-content">
+                    <div class="modal-body">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                     </div>
                 </div>
             </div>

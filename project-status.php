@@ -159,6 +159,7 @@ $Alerts = new Alerts($module);
     <?php $Alerts->getUserRightsHoldersEmailModal($project_id, $adminUsername); ?>
     <?php $Alerts->getUserExpirationModal($project_id, $adminUsername); ?>
     <?php $Alerts->getUserExpirationSchedulerModal($project_id); ?>
+    <?php $Alerts->getEmailPreviewModal(); ?>
     <script>
         var Toast = Swal.mixin({
             toast: true,
@@ -216,6 +217,12 @@ $Alerts = new Alerts($module);
 
         function openExpireUsersModal() {
             document.querySelector('#userExpirationModal form').reset();
+            const usersToExpire = getSelectedUsers();
+            let tableRows = "";
+            usersToExpire.forEach(user => {
+                tableRows += `<tr><td><strong>${user.name}</strong> (${user.username}) - ${user.email}</td></tr>`;
+            })
+            $('#userExpirationTable tbody').html(tableRows);
             $('#userExpirationModal').modal('show');
         }
 
@@ -224,8 +231,8 @@ $Alerts = new Alerts($module);
             $('#userExpirationSchedulerModal').modal('show');
         }
 
-        function expireUsers() {
-            const users = $('.user-selector').toArray().map((el) => {
+        function getSelectedUsers() {
+            return $('.user-selector').toArray().map((el) => {
                 if ($(el).find('input').is(':checked')) {
                     const row = $(el).closest('tr');
                     return {
@@ -235,6 +242,10 @@ $Alerts = new Alerts($module);
                     };
                 }
             }).filter((el) => el);
+        }
+
+        function expireUsers() {
+            const users = getSelectedUsers();
 
             let table = "<table class='table'><thead><tr><th>Username</th><th>Name</th><th>Email</th></tr></thead><tbody>";
             users.forEach((userRow) => {
@@ -505,10 +516,10 @@ $Alerts = new Alerts($module);
             const id = $emailContainer.find('textarea.emailBody').prop('id');
             const content = tinymce.get(id).getContent();
             const replacedContent = await replaceKeywordsPreviewUserRightsHolders(content);
-            $('#emailPreview-UserRightsHolders div.modal-body').html(replacedContent);
+            $('#emailPreview div.modal-body').html(replacedContent);
             $('#emailUserRightsHoldersModal').css('z-index', 1039);
-            $('#emailPreview-UserRightsHolders').modal('show');
-            $('#emailPreview-UserRightsHolders').on('hidden.bs.modal', function(event) {
+            $('#emailPreview').modal('show');
+            $('#emailPreview').on('hidden.bs.modal', function(event) {
                 $('#emailUserRightsHoldersModal').css('z-index', 1050);
             });
         }
