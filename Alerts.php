@@ -343,7 +343,7 @@ class Alerts
         $emailAddresses = $this->getEmailAddresses($adminUsername);
     ?>
         <div class="modal fade userAlert" id="userExpirationModal" aria-labelledby="userExpirationTitle" data-backdrop="static" data-keyboard="false" aria-hidden="true">
-            <div class="modal-lg modal-dialog modal-dialog-scrollable">
+            <div class="modal-lg modal-dialog modal-dialog-scrollable" id="userExpirationModalSecondary">
                 <div class="modal-content">
                     <div class="modal-header bg-danger text-light">
                         <h5 class="modal-title" id="userExpirationTitle">Expire Project Users</h5>
@@ -432,7 +432,7 @@ class Alerts
                                             <label class="col-sm col-form-label col-form-label-sm">Send Notification to User Rights Holders?</label>
                                             <div class="col-sm">
                                                 <div class="form-check">
-                                                    <input id="sendNotification-UserRightsHolders" name="sendNotification-UserRightsHolders" type="checkbox" class="form-check-input" value="1" onchange="$('#notificationInfo-UserRightsHolders').collapse(this.checked ? 'show' : 'hide');">
+                                                    <input id="sendNotification-UserRightsHolders" name="sendNotification-UserRightsHolders" type="checkbox" class="form-check-input" value="1" onchange="userExpirationUserRightsHoldersToggle(this.checked);">
                                                     <label class="form-check-label" for="sendNotification-UserRightsHolders">Yes, send a notification</label>
                                                 </div>
                                             </div>
@@ -479,6 +479,43 @@ class Alerts
                                         </div>
                                     </div>
                                 </div>
+                                <div class="col-4 collapse pl-0" id="expireUsersUserRightsHolderSelection">
+
+                                    <div class="mb-1" style="font-size: 14px;">
+                                        <strong>Select the recipients:</strong>
+                                    </div>
+                                    <table id="recipientTable_UserRightsHolders" class="table table-sm table-bordered" style="font-size: 12px;">
+                                        <colgroup>
+                                            <col class="col-md-1">
+                                            <col class="col-md-2">
+                                            <col class="col-md-4">
+                                            <col class="col-md-5">
+                                        </colgroup>
+                                        <thead class="thead-light">
+                                            <tr>
+                                                <th scope="col" style="color: #333 !important;"><input style="display:block; margin: 0 auto;" type="checkbox" class="selectAll" id="selectAllUserRightsHolders" onchange="$('.user-rights-holder-selector input').prop('checked', $(this).prop('checked')).trigger('change');"></th>
+                                                <th scope="col" style="color: #333 !important;">REDCap Username</th>
+                                                <th scope="col" style="color: #333 !important;">Name</th>
+                                                <th scope="col" style="color: #333 !important;">Email</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="word-wrap" style="word-wrap: anywhere;">
+                                            <?php
+                                            $userRightsHolders = $this->module->getUserRightsHolders($this->module->getProjectId());
+                                            foreach ($userRightsHolders as $userRightsHolder) { ?>
+                                                <tr data-user="<?= $userRightsHolder["username"] ?>">
+                                                    <td class="align-middle user-rights-holder-selector" style="vertical-align: middle !important;"><input style="display:block; margin: 0 auto;" type="checkbox"></td>
+                                                    <td><?= $userRightsHolder["username"] ?></td>
+                                                    <td><?= $userRightsHolder["fullname"] ?></td>
+                                                    <td><?= $userRightsHolder["email"] ?></td>
+                                                </tr>
+                                            <?php }
+                                            ?>
+                                        </tbody>
+                                    </table>
+                                    <div class="invalid-feedback">You must select at least one recipient</div>
+
+                                </div>
                             </div>
                         </form>
                     </div>
@@ -491,17 +528,40 @@ class Alerts
         </div>
         <script>
             $('#notificationInfo-UserRightsHolders').on('shown.bs.collapse', function() {
-                if (!$('#sendNotification-UserRightsHolders').is(':checked')) $(this).collapse('hide')
+                if (!$('#sendNotification-UserRightsHolders').is(':checked')) $(this).collapse('hide');
             });
             $('#notificationInfo-UserRightsHolders').on('hidden.bs.collapse', function() {
-                if ($('#sendNotification-UserRightsHolders').is(':checked')) $(this).collapse('show')
+                if ($('#sendNotification-UserRightsHolders').is(':checked')) $(this).collapse('show');
             });
             $('#userNotificationInfo').on('shown.bs.collapse', function() {
-                if (!$('#sendUserNotification').is(':checked')) $(this).collapse('hide')
+                if (!$('#sendUserNotification').is(':checked')) $(this).collapse('hide');
             });
             $('#userNotificationInfo').on('hidden.bs.collapse', function() {
-                if ($('#sendUserNotification').is(':checked')) $(this).collapse('show')
+                if ($('#sendUserNotification').is(':checked')) $(this).collapse('show');
             });
+            $('#expireUsersUserRightsHolderSelection').on('shown.bs.collapsed', function() {
+                if (!$('#sendNotification-UserRightsHolders').is(':checked')) $(this).collapse('hide');
+            });
+            $('#expireUsersUserRightsHolderSelection').on('hidden.bs.collapse', function() {
+                if ($('#sendNotification-UserRightsHolders').is(':checked')) $(this).collapse('show');
+            });
+
+            function userExpirationUserRightsHoldersToggle(checked) {
+                if (checked) {
+                    $('#notificationInfo-UserRightsHolders').collapse("show");
+                    $('#expireUsersUserRightsHolderSelection').collapse("show");
+                    $('#userExpirationModalSecondary').addClass("modal-xl").removeClass("modal-lg");
+                    $('div.row.userExpirationListContainer > div.col').addClass('col-8').removeClass('col');
+                    $('div.row.userNotification > div.col').addClass('col-8').removeClass('col');
+                } else {
+                    $('#notificationInfo-UserRightsHolders').collapse("hide");
+                    $('#expireUsersUserRightsHolderSelection').collapse("hide");
+                    $('#userExpirationModalSecondary').addClass("modal-lg").removeClass("modal-xl");
+                    $('div.row.userExpirationListContainer > div.col-8').addClass('col').removeClass('col-8');
+                    $('div.row.userNotification > div.col-8').addClass('col').removeClass('col-8');
+                }
+
+            }
         </script>
     <?php
     }
