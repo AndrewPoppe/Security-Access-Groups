@@ -407,7 +407,7 @@ class Alerts
                                             </div>
                                             <div class="form-group row mb-1">
                                                 <div class="col text-right">
-                                                    <button class="btn btn-info btn-xs" type="button" onclick="previewEmailUserExpiration($('#userExpirationForm .userNotification'));"><i class="fa-eye fa-regular mr-1"></i>Preview</button>
+                                                    <button class="btn btn-info btn-xs" type="button" onclick="previewEmail($('#userExpirationForm .userNotification'));"><i class="fa-eye fa-regular mr-1"></i>Preview</button>
                                                 </div>
                                             </div>
                                             <div class="form-group row mt-2" style="font-size: small;">
@@ -432,32 +432,24 @@ class Alerts
                                             <label class="col-sm col-form-label col-form-label-sm">Send Notification to User Rights Holders?</label>
                                             <div class="col-sm">
                                                 <div class="form-check">
-                                                    <input id="sendNotification-UserRightsHolders" name="sendNotification-UserRightsHolders" type="checkbox" class="form-check-input" value="1" onchange="userExpirationUserRightsHoldersToggle(this.checked);">
-                                                    <label class="form-check-label" for="sendNotification-UserRightsHolders">Yes, send a notification</label>
+                                                    <input id="sendNotification-userExpiration-UserRightsHolders" name="sendNotification-userExpiration-UserRightsHolders" type="checkbox" class="form-check-input" value="1" onchange="userExpirationUserRightsHoldersToggle(this.checked);">
+                                                    <label class="form-check-label" for="sendNotification-userExpiration-UserRightsHolders">Yes, send a notification</label>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="collapse mt-2" id="notificationInfo-UserRightsHolders">
+                                        <div class="collapse mt-2" id="notificationInfo-userExpiration-UserRightsHolders">
                                             <div class="form-group row">
-                                                <label class="col-sm-3 col-form-label col-form-label-sm">How many days until the reminder is sent?</label>
-                                                <div class="col-sm-9 mt-2">
-                                                    <input name="delayDays-UserRightsHolders" type="number" min="1" value="14" class="form-control form-control-sm">
-                                                    <div class="invalid-feedback">You must provide a number of days greater than 1</div>
-                                                </div>
-                                            </div>
-                                            <hr>
-                                            <div class="form-group row">
-                                                <label for="reminderSubject-UserRightsHolders" class="col-sm-3 col-form-label col-form-label-sm">Reminder Subject:</label>
+                                                <label for="emailSubject-userExpiration-UserRightsHolders" class="col-sm-3 col-form-label col-form-label-sm">Subject:</label>
                                                 <div class="col-sm-9">
-                                                    <input id="reminderSubject-UserRightsHolders" name="reminderSubject" type="text" class="form-control form-control-sm">
-                                                    <div class="invalid-feedback">You must provide a subject for the reminder email</div>
+                                                    <input id="emailSubject-userExpiration-UserRightsHolders" name="emailSubject" type="text" class="form-control form-control-sm">
+                                                    <div class="invalid-feedback">You must provide a subject for the email</div>
                                                 </div>
                                             </div>
                                             <div class="form-group row mb-1">
                                                 <div class="col">
-                                                    <label for="reminderBody-UserRightsHolders" class="col-form-label col-form-label-sm">Reminder Body:</label>
-                                                    <div class="invalid-feedback">You must provide a body for the reminder email</div>
-                                                    <textarea id="reminderBody-UserRightsHolders" name="reminderBody" type="text" class="form-control form-control-sm richtext emailBody"></textarea>
+                                                    <label for="emailBody-userExpiration-UserRightsHolders" class="col-form-label col-form-label-sm">Email Body:</label>
+                                                    <div class="invalid-feedback">You must provide a body for the email</div>
+                                                    <textarea id="emailBody-userExpiration-UserRightsHolders" name="emailBody" type="text" class="form-control form-control-sm richtext emailBody"></textarea>
                                                 </div>
                                             </div>
                                             <div class="form-group row mb-1">
@@ -479,7 +471,7 @@ class Alerts
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-4 collapse pl-0" id="expireUsersUserRightsHolderSelection">
+                                <div class="col-4 pl-0" id="expireUsersUserRightsHolderSelection">
 
                                     <div class="mb-1" style="font-size: 14px;">
                                         <strong>Select the recipients:</strong>
@@ -491,12 +483,12 @@ class Alerts
                                             <col class="col-md-4">
                                             <col class="col-md-5">
                                         </colgroup>
-                                        <thead class="thead-light">
+                                        <thead class="table-warning">
                                             <tr>
-                                                <th scope="col" style="color: #333 !important;"><input style="display:block; margin: 0 auto;" type="checkbox" class="selectAll" id="selectAllUserRightsHolders" onchange="$('.user-rights-holder-selector input').prop('checked', $(this).prop('checked')).trigger('change');"></th>
-                                                <th scope="col" style="color: #333 !important;">REDCap Username</th>
-                                                <th scope="col" style="color: #333 !important;">Name</th>
-                                                <th scope="col" style="color: #333 !important;">Email</th>
+                                                <th scope="col"><input style="display:block; margin: 0 auto;" type="checkbox" class="selectAll" id="selectAllUserRightsHolders" onchange="$('.user-rights-holder-selector input').prop('checked', $(this).prop('checked')).trigger('change');"></th>
+                                                <th scope="col">REDCap Username</th>
+                                                <th scope="col">Name</th>
+                                                <th scope="col">Email</th>
                                             </tr>
                                         </thead>
                                         <tbody class="word-wrap" style="word-wrap: anywhere;">
@@ -540,25 +532,27 @@ class Alerts
                 if ($('#sendUserNotification').is(':checked')) $(this).collapse('show');
             });
             $('#expireUsersUserRightsHolderSelection').on('shown.bs.collapsed', function() {
-                if (!$('#sendNotification-UserRightsHolders').is(':checked')) $(this).collapse('hide');
+                if (!$('#sendNotification-userExpiration-UserRightsHolders').is(':checked')) $(this).collapse('hide');
             });
             $('#expireUsersUserRightsHolderSelection').on('hidden.bs.collapse', function() {
-                if ($('#sendNotification-UserRightsHolders').is(':checked')) $(this).collapse('show');
+                if ($('#sendNotification-userExpiration-UserRightsHolders').is(':checked')) $(this).collapse('show');
             });
 
             function userExpirationUserRightsHoldersToggle(checked) {
                 if (checked) {
-                    $('#notificationInfo-UserRightsHolders').collapse("show");
-                    $('#expireUsersUserRightsHolderSelection').collapse("show");
+                    $('#notificationInfo-userExpiration-UserRightsHolders').collapse("show");
+                    // $('#expireUsersUserRightsHolderSelection').collapse("show");
+                    $('#expireUsersUserRightsHolderSelection').show();
                     $('#userExpirationModalSecondary').addClass("modal-xl").removeClass("modal-lg");
                     $('div.row.userExpirationListContainer > div.col').addClass('col-8').removeClass('col');
                     $('div.row.userNotification > div.col').addClass('col-8').removeClass('col');
                 } else {
-                    $('#notificationInfo-UserRightsHolders').collapse("hide");
-                    $('#expireUsersUserRightsHolderSelection').collapse("hide");
-                    $('#userExpirationModalSecondary').addClass("modal-lg").removeClass("modal-xl");
                     $('div.row.userExpirationListContainer > div.col-8').addClass('col').removeClass('col-8');
                     $('div.row.userNotification > div.col-8').addClass('col').removeClass('col-8');
+                    // $('#expireUsersUserRightsHolderSelection').collapse("hide");
+                    $('#expireUsersUserRightsHolderSelection').hide();
+                    $('#notificationInfo-userExpiration-UserRightsHolders').collapse("hide");
+                    $('#userExpirationModalSecondary').addClass("modal-lg").removeClass("modal-xl");
                 }
 
             }

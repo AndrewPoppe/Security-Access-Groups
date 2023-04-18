@@ -217,6 +217,7 @@ $Alerts = new Alerts($module);
 
         function openExpireUsersModal() {
             document.querySelector('#userExpirationModal form').reset();
+            userExpirationUserRightsHoldersToggle(false);
             const usersToExpire = getSelectedUsers();
             let tableRows = "";
             usersToExpire.forEach(user => {
@@ -515,12 +516,14 @@ $Alerts = new Alerts($module);
         async function previewEmailUserRightsHolders($emailContainer) {
             const id = $emailContainer.find('textarea.emailBody').prop('id');
             const content = tinymce.get(id).getContent();
+            console.log(content);
             const replacedContent = await replaceKeywordsPreviewUserRightsHolders(content);
+            console.log(replacedContent);
             $('#emailPreview div.modal-body').html(replacedContent);
-            $('#emailUserRightsHoldersModal').css('z-index', 1039);
+            $emailContainer.closest('.modal').css('z-index', 1039);
             $('#emailPreview').modal('show');
             $('#emailPreview').on('hidden.bs.modal', function(event) {
-                $('#emailUserRightsHoldersModal').css('z-index', 1050);
+                $emailContainer.closest('.modal').css('z-index', 1050);
             });
         }
 
