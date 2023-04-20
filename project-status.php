@@ -74,21 +74,14 @@ $Alerts = new Alerts($module);
     <div class="buttonContainer mb-2">
         <button type="button" class="btn btn-xs btn-primary" onclick="openEmailUsersModal();" disabled><i class="fa-sharp fa-regular fa-envelope"></i> Email User(s)</button>
         <button type="button" class="btn btn-xs btn-warning" onclick="openEmailUserRightsHoldersModal();" disabled><i class="fa-kit fa-sharp-regular-envelope-circle-exclamation"></i> Email User Rights Holders</button>
-        <div class="btn-group dropdown" role="group">
-            <button type="button" class="btn btn-danger btn-xs dropdown-toggle mr-1" data-toggle="dropdown" data-bs-toggle="dropdown" aria-expanded="false" disabled>
-                <i class="fa-solid fa-user-xmark mr-1"></i>
-                <span>Expire User(s)</span>
-                <span class="sr-only">Toggle Dropdown</span>
-            </button>
-            <ul class="dropdown-menu">
-                <li><a class="dropdown-item" onclick="openExpireUsersModal();"><i class="fa-solid fa-user-xmark fa-fw mr-1 text-danger"></i>Expire User(s) now</a></li>
-                <li><a class="dropdown-item" onclick="openScheduleExpireUsersModal();"><i class="fa-sharp fa-solid fa-calendar-days fa-fw mr-1 text-success"></i>Schedule Expiration of User(s)</a></li>
-            </ul>
+        <button type="button" class="btn btn-xs btn-danger" onclick="openExpireUsersModal();" disabled><i class="fa-solid fa-user-xmark fa-fw"></i> Expire User(s)</button>
+        <div class="btn-group" role="group">
             <i class="fa-solid fa-circle-info fa-lg align-self-center text-info" style="cursor:pointer;" onclick="Swal.fire({html: $('#infoContainer').html(), icon: 'info', showConfirmButton: false});"></i>
         </div>
     </div>
     <div class="container ml-0 pl-0">
-        <table class="table table-bordered discrepancy-table">
+        <!-- <table class="table table-bordered discrepancy-table"> -->
+        <table class="discrepancy-table cell-border border hover">
             <thead class="thead-dark text-center">
                 <tr>
                     <th style="vertical-align: middle !important;"><input style="display:block; margin: 0 auto;" type="checkbox" onchange="$('.user-selector input').prop('checked', $(this).prop('checked')).trigger('change');"></input></th>
@@ -104,54 +97,56 @@ $Alerts = new Alerts($module);
                 </tr>
             </thead>
             <tbody>
-                <?php foreach ($discrepantRights as $user => $thisUsersRights) {
-                    $badRights = $thisUsersRights["bad"];
-                    $hasDiscrepancy = !empty($badRights);
-                    $isExpired = $thisUsersRights["expiration"] !== "never" && strtotime($thisUsersRights["expiration"]) < strtotime("today");
-                    $rowClass = $hasDiscrepancy ? "table-danger" : ""; //"table-success";
-                    $rowClass = $isExpired ? "text-secondary bg-light" : $rowClass; ?>
-                    <tr data-user="<?= $user ?>" data-email="<?= $thisUsersRights["email"] ?>" data-name="<?= $thisUsersRights["name"] ?>" data-rights="<?= htmlspecialchars(json_encode($badRights)) ?>" class="<?= $rowClass ?>">
-                        <td style="vertical-align: middle !important;" class="align-middle user-selector"><?= $hasDiscrepancy ? '<input style="display:block; margin: 0 auto;" type="checkbox"></input>' : '' ?></td>
-                        <td class="align-middle"><?= $isExpired ? $user : "<strong>$user</strong>" ?></td>
-                        <td class="align-middle"><?= $thisUsersRights["name"] ?></td>
-                        <td class="align-middle"><?= $thisUsersRights["email"] ?></td>
-                        <td class="align-middle text-center"><?= $thisUsersRights["expiration"] ?></td>
-                        <td class="align-middle text-center"><span class="user-select-all"><?= $thisUsersRights["system_role"] ?></span></td>
-                        <td class="align-middle text-center <?= $hasDiscrepancy ? "" : "table-success" ?>">
-                            <?php
-                            if ($hasDiscrepancy) { ?>
-                                <a class="<?= $isExpired ? "text-secondary" : "text-primary" ?>" style="text-decoration: underline; cursor: pointer;" data-toggle="modal" data-target="#modal-<?= $user ?>"><?= sizeof($badRights) . (sizeof($badRights) > 1 ? " Rights" : " Right") ?></a>
-                                <div class="modal fade" id="modal-<?= $user ?>" tabindex="-1" aria-hidden="true">
-                                    <div class="modal-dialog modal-dialog-scrollable">
-                                        <div class="modal-content">
-                                            <div class="modal-header bg-dark text-light">
-                                                <h5 class="m-0">Discrepant Rights for <?= $thisUsersRights["name"] . " (" . $user . ")" ?></h5>
-                                            </div>
-                                            <div class="modal-body">
-                                                <div class="d-flex justify-content-center">
-                                                    <table class="table table-sm table-hover table-borderless mb-0">
-                                                        <tbody>
-                                                            <?php foreach ($badRights as $right) {
-                                                                echo "<tr style='cursor: default;'><td><span>$right</span></td></tr>";
-                                                            } ?>
-                                                        </tbody>
-                                                    </table>
+                <?php foreach ([0, 1, 2, 3, 4, 5, 6, 7, 8, 9] as $i) {
+                    foreach ($discrepantRights as $user => $thisUsersRights) {
+                        $badRights = $thisUsersRights["bad"];
+                        $hasDiscrepancy = !empty($badRights);
+                        $isExpired = $thisUsersRights["expiration"] !== "never" && strtotime($thisUsersRights["expiration"]) < strtotime("today");
+                        $rowClass = $hasDiscrepancy ? "table-danger" : "bg-light"; //"table-success";
+                        $rowClass = $isExpired ? "text-secondary bg-light" : $rowClass; ?>
+                        <tr data-user="<?= $user ?>" data-email="<?= $thisUsersRights["email"] ?>" data-name="<?= $thisUsersRights["name"] ?>" data-rights="<?= htmlspecialchars(json_encode($badRights)) ?>" class="<?= $rowClass ?>">
+                            <td style="vertical-align: middle !important;" class="align-middle user-selector"><?= $hasDiscrepancy ? '<input style="display:block; margin: 0 auto;" type="checkbox"></input>' : '' ?></td>
+                            <td class="align-middle"><?= $isExpired ? $user : "<strong>$user</strong>" ?></td>
+                            <td class="align-middle"><?= $thisUsersRights["name"] ?></td>
+                            <td class="align-middle"><?= $thisUsersRights["email"] ?></td>
+                            <td class="align-middle text-center"><?= $thisUsersRights["expiration"] ?></td>
+                            <td class="align-middle text-center"><span class="user-select-all"><?= $thisUsersRights["system_role"] ?></span></td>
+                            <td class="align-middle text-center <?= $hasDiscrepancy ? "" : "table-success" ?>">
+                                <?php
+                                if ($hasDiscrepancy) { ?>
+                                    <a class="<?= $isExpired ? "text-secondary" : "text-primary" ?>" style="text-decoration: underline; cursor: pointer;" data-toggle="modal" data-target="#modal-<?= $user ?>"><?= sizeof($badRights) . (sizeof($badRights) > 1 ? " Rights" : " Right") ?></a>
+                                    <div class="modal fade" id="modal-<?= $user ?>" tabindex="-1" aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-scrollable">
+                                            <div class="modal-content">
+                                                <div class="modal-header bg-dark text-light">
+                                                    <h5 class="m-0">Discrepant Rights for <?= $thisUsersRights["name"] . " (" . $user . ")" ?></h5>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <div class="d-flex justify-content-center">
+                                                        <table class="table table-sm table-hover table-borderless mb-0">
+                                                            <tbody>
+                                                                <?php foreach ($badRights as $right) {
+                                                                    echo "<tr style='cursor: default;'><td><span>$right</span></td></tr>";
+                                                                } ?>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                            <?php
-                            } else {
-                                echo "<i class='fa-sharp fa-check mr-1 text-success'></i>None";
-                            }
-                            ?>
-                        </td>
-                        <td class="align-middle text-center"><?= $thisUsersRights["project_role"] ?></td>
-                        <td class="align-middle text-center"><?= $Alerts->getUserEmailSentFormatted($project_id, $user); ?></td>
-                        <td class="align-middle text-center"><?= $Alerts->getUserReminderStatusFormatted($project_id, $user); ?></td>
-                    </tr>
-                <?php } ?>
+                                <?php
+                                } else {
+                                    echo "<i class='fa-sharp fa-check mr-1 text-success'></i>None";
+                                }
+                                ?>
+                            </td>
+                            <td class="align-middle text-center"><?= $thisUsersRights["project_role"] ?></td>
+                            <td class="align-middle text-center"><?= $Alerts->getUserEmailSentFormatted($project_id, $user); ?></td>
+                            <td class="align-middle text-center"><?= $Alerts->getUserReminderStatusFormatted($project_id, $user); ?></td>
+                        </tr>
+                <?php }
+                } ?>
             </tbody>
         </table>
     </div>
@@ -402,7 +397,7 @@ $Alerts = new Alerts($module);
             emailFormContents.reminderBody = tinymce.get('reminderBody-UserRightsHolders').getContent();
             emailFormContents.alertType = 'userRightsHolders';
             emailFormContents.users = getAlertUserInfo();
-            emailFormContents.recipients = getUserRightsHolderAlertRecipients();
+            emailFormContents.recipients = getUserRightsHolderAlertRecipients('emailUserRightsHoldersForm');
 
             console.log(emailFormContents);
             return;
@@ -471,7 +466,7 @@ $Alerts = new Alerts($module);
                 }
             }
 
-            const anyChecked = $('.user-rights-holder-selector input').toArray().some(el => $(el).is(':checked'));
+            const anyChecked = $('#recipientTable_UserRightsHolders .user-rights-holder-selector input').toArray().some(el => $(el).is(':checked'));
             if (!anyChecked) {
                 $('#recipientTable_UserRightsHolders').addClass('is-invalid');
                 valid = false;
@@ -483,8 +478,105 @@ $Alerts = new Alerts($module);
             return valid;
         }
 
-        function getUserRightsHolderAlertRecipients() {
-            return $('.user-rights-holder-selector input:checked').toArray().map(el => $(el).closest('tr').data('user'));
+        function expireUsersAndSendAlerts() {
+            if (!validateEmailForm_UserExpiration()) {
+                return;
+            }
+
+            let emailFormContents = $('#emailUserRightsHoldersForm').serializeObject();
+            emailFormContents.emailBody = tinymce.get('emailBody-UserRightsHolders').getContent();
+            emailFormContents.reminderBody = tinymce.get('reminderBody-UserRightsHolders').getContent();
+            emailFormContents.alertType = 'userRightsHolders';
+            emailFormContents.users = getAlertUserInfo();
+            emailFormContents.recipients = getUserRightsHolderAlertRecipients('emailUserRightsHoldersForm');
+
+            console.log(emailFormContents);
+            return;
+
+            $.post("<?= $module->getUrl('sendAlerts.php') ?>", emailFormContents)
+                .done(response => {
+                    console.log(response);
+                    Swal.fire({
+                        html: response
+                    });
+                })
+                .fail(error => {
+                    console.error(error.responseText);
+                })
+                .always({
+
+                });
+        }
+
+        // TODO: We're going to validate form contents server-side eventually, so this is temporary
+        function validateEmailForm_UserExpiration() {
+            let valid = true;
+            let delayDays = $('#delayDays-expiration').val().trim();
+            if (delayDays == "" || !isInteger(delayDays) || delayDays < 0) {
+                $('#delayDays-expiration').addClass('is-invalid');
+                valid = false;
+            } else {
+                $('#delayDays-expiration').removeClass('is-invalid');
+            }
+
+            if ($('#sendUserNotification').is(':checked')) {
+                let userEmailSubject = $('#emailSubject-userExpiration').val().trim();
+                if (userEmailSubject == '') {
+                    $('#emailSubject-userExpiration').addClass('is-invalid');
+                    valid = false;
+                } else {
+                    $('#emailSubject-userExpiration').removeClass('is-invalid');
+                }
+
+                let userEmailBody = tinymce.get('emailBody-userExpiration').getContent({
+                    format: 'text'
+                }).trim();
+                if (userEmailBody == '') {
+                    $('#emailBody-userExpiration').siblings('label').addClass('is-invalid');
+                    $('#emailBody-userExpiration').parent().addClass('is-invalid');
+                    valid = false;
+                } else {
+                    $('#emailBody-userExpiration').siblings('label').removeClass('is-invalid');
+                    $('#emailBody-userExpiration').parent().removeClass('is-invalid');
+                }
+            }
+
+            if ($('#sendNotification-userExpiration-UserRightsHolders').is(':checked')) {
+                let userRightsHolderEmailSubject = $('#emailSubject-userExpiration-UserRightsHolders').val().trim();
+                if (userRightsHolderEmailSubject == '') {
+                    $('#emailSubject-userExpiration-UserRightsHolders').addClass('is-invalid');
+                    valid = false;
+                } else {
+                    $('#emailSubject-userExpiration-UserRightsHolders').removeClass('is-invalid');
+                }
+
+                let userRightsHolderEmailBody = tinymce.get('emailBody-userExpiration-UserRightsHolders').getContent({
+                    format: 'text'
+                }).trim();
+                if (userRightsHolderEmailBody == '') {
+                    $('#emailBody-userExpiration-UserRightsHolders').siblings('label').addClass('is-invalid');
+                    $('#emailBody-userExpiration-UserRightsHolders').parent().addClass('is-invalid');
+                    valid = false;
+                } else {
+                    $('#emailBody-userExpiration-UserRightsHolders').siblings('label').removeClass('is-invalid');
+                    $('#emailBody-userExpiration-UserRightsHolders').parent().removeClass('is-invalid');
+                }
+
+                const anyChecked = $('#recipientTable_userExpiration_UserRightsHolders .user-rights-holder-selector input').toArray().some(el => $(el).is(':checked'));
+                if (!anyChecked) {
+                    $('#recipientTable_userExpiration_UserRightsHolders').addClass('is-invalid');
+                    valid = false;
+                } else {
+
+                    $('#recipientTable_userExpiration_UserRightsHolders').removeClass('is-invalid');
+                }
+            }
+
+            return valid;
+        }
+
+        function getUserRightsHolderAlertRecipients(form_id) {
+            return $(`#${form_id} .user-rights-holder-selector input:checked`).toArray().map(el => $(el).closest('tr').data('user'));
         }
 
         async function previewEmail($emailContainer) {
@@ -641,6 +733,18 @@ $Alerts = new Alerts($module);
                     args.node.innerHTML = cleanHTML(args.node.innerHTML);
                 },
                 remove_linebreaks: true
+            });
+
+            $('table.discrepancy-table').DataTable({
+                sort: false,
+                filter: false,
+                paging: false,
+                info: false,
+                scrollY: '75vh',
+                scrollCollapse: true,
+                initComplete: function() {
+                    $('table.discrepancy-table').addClass('table');
+                }
             });
         });
     </script>

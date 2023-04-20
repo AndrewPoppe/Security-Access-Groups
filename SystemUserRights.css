@@ -453,8 +453,21 @@ button.btn-secondary:hover {
     order: 3;
 }
 
-.table.discrepancy-table td {
+.table.discrepancy-table {
+    border-collapse: collapse;
+}
+
+/* .table.discrepancy-table td {
     border: 1px solid #454d5580;
+} */
+
+/* .table.discrepancy-table td {
+    border: none;
+} */
+
+.table.discrepancy-table tr.odd,
+.table.discrepancy-table tr.even {
+    background-color: inherit !important;
 }
 
 div.is-invalid div.tox.tox-tinymce {

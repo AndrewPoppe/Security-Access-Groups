@@ -351,6 +351,7 @@ class Alerts
                     </div>
                     <div class="modal-body">
                         <form id="userExpirationForm">
+                            <!-- User Expiration Info -->
                             <div class="row mb-2 userExpirationListContainer">
                                 <div class="col">
                                     <div class="border bg-light">
@@ -362,9 +363,25 @@ class Alerts
                                                 <tbody></tbody>
                                             </table>
                                         </div>
+                                        <hr>
+                                        <div class="form-group row mx-3">
+                                            <div class="col-sm-7">
+                                                <div class="row">
+                                                    <label class="col-form-label col-form-label-sm">Set the number of days until the users are expired</label>
+                                                </div>
+                                                <div class="row">
+                                                    <span class="text-dangerrc">Choose a value of "0" to expire the users immediately</span>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-5 mt-2">
+                                                <input id="delayDays-expiration" name="delayDays-expiration" type="number" min="0" value="0" class="form-control form-control-sm">
+                                                <div class="invalid-feedback">You must provide a number of days of at least 0</div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
+                            <!-- User Notification -->
                             <div class="row mb-2 userNotification">
                                 <div class="col">
                                     <div class="border bg-users p-4">
@@ -425,6 +442,7 @@ class Alerts
                                     </div>
                                 </div>
                             </div>
+                            <!-- User Rights Holders Notification -->
                             <div class="row userRightsHoldersNotification">
                                 <div class="col">
                                     <div class="border bg-userRightsHolders p-4">
@@ -476,7 +494,7 @@ class Alerts
                                     <div class="mb-1" style="font-size: 14px;">
                                         <strong>Select the recipients:</strong>
                                     </div>
-                                    <table id="recipientTable_UserRightsHolders" class="table table-sm table-bordered" style="font-size: 12px;">
+                                    <table id="recipientTable_userExpiration_UserRightsHolders" class="table table-sm table-bordered" style="font-size: 12px;">
                                         <colgroup>
                                             <col class="col-md-1">
                                             <col class="col-md-2">
