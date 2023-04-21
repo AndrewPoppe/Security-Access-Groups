@@ -111,9 +111,9 @@ $Alerts = new Alerts($module);
                 </div>
             </div>
         </div>
-        <button type="button" class="btn btn-xs btn-primary" onclick="openEmailUsersModal();" disabled><i class="fa-sharp fa-regular fa-envelope"></i> Email User(s)</button>
-        <button type="button" class="btn btn-xs btn-warning" onclick="openEmailUserRightsHoldersModal();" disabled><i class="fa-kit fa-sharp-regular-envelope-circle-exclamation"></i> Email User Rights Holders</button>
-        <button type="button" class="btn btn-xs btn-danger" onclick="openExpireUsersModal();" disabled><i class="fa-solid fa-user-xmark fa-fw"></i> Expire User(s)</button>
+        <button type="button" class="btn btn-xs btn-primary action" onclick="openEmailUsersModal();" disabled><i class="fa-sharp fa-regular fa-envelope"></i> Email User(s)</button>
+        <button type="button" class="btn btn-xs btn-warning action" onclick="openEmailUserRightsHoldersModal();" disabled><i class="fa-kit fa-sharp-regular-envelope-circle-exclamation"></i> Email User Rights Holders</button>
+        <button type="button" class="btn btn-xs btn-danger action" onclick="openExpireUsersModal();" disabled><i class="fa-solid fa-user-xmark fa-fw"></i> Expire User(s)</button>
         <div class="btn-group" role="group">
             <i class="fa-solid fa-circle-info fa-lg align-self-center text-info" style="cursor:pointer;" onclick="Swal.fire({html: $('#infoContainer').html(), icon: 'info', showConfirmButton: false});"></i>
         </div>
@@ -716,14 +716,6 @@ $Alerts = new Alerts($module);
         }
 
         $(document).ready(function() {
-            $('.user-selector input').change(function(event) {
-                if ($('.user-selector input').is(':checked')) {
-                    $('.buttonContainer button').prop('disabled', false);
-                } else {
-                    $('.buttonContainer button').prop('disabled', true);
-                }
-            });
-
             $('.dataPlaceholder').popover({
                 placement: 'top',
                 html: true,
@@ -784,6 +776,13 @@ $Alerts = new Alerts($module);
                 dom: "t",
                 initComplete: function() {
                     $('table.discrepancy-table').addClass('table');
+                    $('.user-selector input').change(function(event) {
+                        if ($('.user-selector input').is(':checked')) {
+                            $('.buttonContainer button.action').prop('disabled', false);
+                        } else {
+                            $('.buttonContainer button.action').prop('disabled', true);
+                        }
+                    });
                 },
                 columnDefs: [{
                     targets: [0],
