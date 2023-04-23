@@ -73,38 +73,31 @@ $Alerts = new Alerts($module);
     </div>
     <div class="buttonContainer mb-2">
         <div class="btn-group">
-            <button type="button" class="btn btn-xs btn-outline-secondary dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                Filter Users
+            <button id="displayUsersButton" type="button" class="btn btn-xs btn-outline-secondary dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                <i class="fa-sharp fa-regular fa-eye"></i> Display Users
             </button>
             <div class="dropdown-menu" id="userFilter">
                 <div class="form-check pl-4 mr-2">
-                    <input class="form-check-input" type="checkbox" value="1" id="allUsers" checked>
-                    <label class="form-check-label" for="allUsers">
-                        All users
-                    </label>
-                </div>
-                <div class="dropdown-divider"></div>
-                <div class="form-check pl-4 mr-2">
-                    <input class="form-check-input" type="checkbox" value="1" id="expiredUsers">
+                    <input class="form-check-input" type="checkbox" value="1" id="expiredUsers" checked>
                     <label class="form-check-label" for="expiredUsers">
                         Expired users
                     </label>
                 </div>
                 <div class="form-check pl-4 mr-2">
-                    <input class="form-check-input" type="checkbox" value="1" id="nonExpiredUsers">
+                    <input class="form-check-input" type="checkbox" value="1" id="nonExpiredUsers" checked>
                     <label class="form-check-label" for="nonExpiredUsers">
                         Non-Expired users
                     </label>
                 </div>
                 <div class="dropdown-divider"></div>
                 <div class="form-check pl-4 mr-2">
-                    <input class="form-check-input" type="checkbox" value="1" id="discrepantUsers">
+                    <input class="form-check-input" type="checkbox" value="1" id="discrepantUsers" checked>
                     <label class="form-check-label" for="discrepantUsers">
                         Users with discrepant rights
                     </label>
                 </div>
                 <div class="form-check pl-4 mr-2">
-                    <input class="form-check-input" type="checkbox" value="1" id="nonDiscrepantUsers">
+                    <input class="form-check-input" type="checkbox" value="1" id="nonDiscrepantUsers" checked>
                     <label class="form-check-label" for="nonDiscrepantUsers">
                         Users without discrepant rights
                     </label>
@@ -144,7 +137,7 @@ $Alerts = new Alerts($module);
                         $rowClass = $hasDiscrepancy ? "table-danger" : "bg-light"; //"table-success";
                         $rowClass = $isExpired ? "text-secondary bg-light" : $rowClass; ?>
                         <tr data-user="<?= $user ?>" data-email="<?= $thisUsersRights["email"] ?>" data-name="<?= $thisUsersRights["name"] ?>" data-rights="<?= htmlspecialchars(json_encode($badRights)) ?>" class="<?= $rowClass ?>">
-                            <td style="vertical-align: middle !important;" class="align-middle user-selector"><?= '<div data-discrepant="' . $hasDiscrepancy . '" data-expired="' . $isExpired . '">' . ($hasDiscrepancy ? '<input style="display:block; margin: 0 auto;" type="checkbox"></input>' : '') . '</div>' ?></td>
+                            <td style="vertical-align: middle !important;" class="align-middle user-selector"><?= '<div data-discrepant="' . $hasDiscrepancy . '" data-expired="' . $isExpired . '">' . ($hasDiscrepancy ? '<input style="display:block; margin: 0 auto;" type="checkbox" onchange="window.handleActionButtons()"></input>' : '') . '</div>' ?></td>
                             <td class="align-middle"><?= $isExpired ? $user : "<strong>$user</strong>" ?></td>
                             <td class="align-middle"><?= $thisUsersRights["name"] ?></td>
                             <td class="align-middle"><?= $thisUsersRights["email"] ?></td>
@@ -766,6 +759,22 @@ $Alerts = new Alerts($module);
                 remove_linebreaks: true
             });
 
+            function handleDisplayUsersButton(allUsersVisible) {
+                if (allUsersVisible) {
+                    $('#displayUsersButton').addClass('btn-outline-secondary').removeClass('btn-secondary');
+                } else {
+                    $('#displayUsersButton').addClass('btn-secondary').removeClass('btn-outline-secondary');
+                }
+            }
+
+            window.handleActionButtons = function() {
+                if ($('.user-selector input').is(':checked')) {
+                    $('.buttonContainer button.action').prop('disabled', false);
+                } else {
+                    $('.buttonContainer button.action').prop('disabled', true);
+                }
+            }
+
             const dt = $('table.discrepancy-table').DataTable({
                 sort: false,
                 //filter: false,
@@ -773,16 +782,29 @@ $Alerts = new Alerts($module);
                 info: false,
                 scrollY: '75vh',
                 scrollCollapse: true,
+                stateSave: true,
+                stateDuration: 60 * 60 * 24 * 365,
+                stateSaveCallback: function(settings, data) {
+                    let checkboxStatus = {};
+                    $('#userFilter input').toArray().forEach(el => checkboxStatus[el.id] = el.checked);
+                    data.checkboxStatus = checkboxStatus;
+                    localStorage.setItem('DataTables_' + settings.sInstance, JSON.stringify(data))
+                },
+                stateLoadCallback: function(settings) {
+                    const data = JSON.parse(localStorage.getItem('DataTables_' + settings.sInstance));
+                    let allChecked = true;
+                    for (let id in data.checkboxStatus) {
+                        const thisChecked = data.checkboxStatus[id];
+                        allChecked = allChecked && thisChecked;
+                        document.getElementById(id).checked = thisChecked;
+                    }
+                    handleDisplayUsersButton(allChecked);
+                    delete(data.checkboxStatus);
+                    return data;
+                },
                 dom: "t",
                 initComplete: function() {
                     $('table.discrepancy-table').addClass('table');
-                    $('.user-selector input').change(function(event) {
-                        if ($('.user-selector input').is(':checked')) {
-                            $('.buttonContainer button.action').prop('disabled', false);
-                        } else {
-                            $('.buttonContainer button.action').prop('disabled', true);
-                        }
-                    });
                 },
                 columnDefs: [{
                     targets: [0],
@@ -801,27 +823,37 @@ $Alerts = new Alerts($module);
                 }]
             });
 
-            $('#userFilter input').on('change', (e) => {
-                if ((e.target.id === "allUsers" && e.target.checked) || !$('#userFilter input').toArray().some(el => el.checked)) {
-                    $('#userFilter input').each((i, el) => el.checked = true);
-                    dt.columns(0).search('').draw();
-                } else {
-
-                    $('#allUsers')[0].checked = false;
-                    let searchTerm = "";
-                    // Expired/Current
-                    const expired = $('#expiredUsers').is(':checked') ? 'expired' : undefined;
-                    const nonExpired = $('#nonExpiredUsers').is(':checked') ? 'current' : undefined;
+            $('#userFilter label').click(function(e) {
+                e.stopPropagation()
+            });
+            $('#userFilter input').change(function(e) {
+                let searchTerm = "";
+                // Expired/Current
+                const expiredChecked = $('#expiredUsers').is(':checked');
+                const nonExpiredChecked = $('#nonExpiredUsers').is(':checked');
+                const expired = expiredChecked ? 'expired' : undefined;
+                const nonExpired = nonExpiredChecked ? 'current' : undefined;
+                if (expiredChecked || nonExpiredChecked) {
                     searchTerm += '(' + [expired, nonExpired].filter(el => el).join('|') + ') ';
-
-                    // Discrepant/Compliant
-                    const discrepant = $('#discrepantUsers').is(':checked') ? 'discrepant' : undefined;
-                    const nonDiscrepant = $('#nonDiscrepantUsers').is(':checked') ? 'compliant' : undefined;
-                    searchTerm += '(' + [discrepant, nonDiscrepant].filter(el => el).join('|') + ')';
-
-                    console.log(searchTerm);
-                    dt.columns(0).search(searchTerm, true).draw();
+                } else {
+                    searchTerm += 'none ';
                 }
+
+                // Discrepant/Compliant
+                const discrepantChecked = $('#discrepantUsers').is(':checked');
+                const nonDiscrepantChecked = $('#nonDiscrepantUsers').is(':checked');
+                const discrepant = discrepantChecked ? 'discrepant' : undefined;
+                const nonDiscrepant = nonDiscrepantChecked ? 'compliant' : undefined;
+                if (discrepantChecked || nonDiscrepantChecked) {
+                    searchTerm += '(' + [discrepant, nonDiscrepant].filter(el => el).join('|') + ') ';
+                } else {
+                    searchTerm += 'none';
+                }
+
+                const allChecked = expiredChecked && nonExpiredChecked && discrepantChecked && nonDiscrepantChecked;
+                handleDisplayUsersButton(allChecked);
+                dt.columns(0).search(searchTerm, true).draw();
+                window.handleActionButtons();
             });
         });
     </script>
