@@ -23,14 +23,33 @@ $data = filter_input_array(INPUT_POST, [
     'displayFromName' => FILTER_SANITIZE_FULL_SPECIAL_CHARS,
     'fromEmail' => FILTER_SANITIZE_FULL_SPECIAL_CHARS,
     'emailSubject' => FILTER_SANITIZE_FULL_SPECIAL_CHARS,
+    'emailSubject-userExpiration-UserRightsHolders' => FILTER_SANITIZE_FULL_SPECIAL_CHARS,
     'emailBody' => FILTER_SANITIZE_FULL_SPECIAL_CHARS,
+    'usersEmailBody' => FILTER_SANITIZE_FULL_SPECIAL_CHARS,
+    'userRightsHoldersEmailBody' => FILTER_SANITIZE_FULL_SPECIAL_CHARS,
     'sendReminder' => array(
+        'filter' => FILTER_SANITIZE_FULL_SPECIAL_CHARS,
+        'flags' => FILTER_VALIDATE_BOOL
+    ),
+    'sendUserNotification' => array(
+        'filter' => FILTER_SANITIZE_FULL_SPECIAL_CHARS,
+        'flags' => FILTER_VALIDATE_BOOL
+    ),
+    'sendNotification-userExpiration-UserRightsHolders' => array(
         'filter' => FILTER_SANITIZE_FULL_SPECIAL_CHARS,
         'flags' => FILTER_VALIDATE_BOOL
     ),
     'delayDays' =>  array(
         'filter'    => FILTER_VALIDATE_INT,
         'options'   => array('min_range' => 1)
+    ),
+    'delayDays-expiration' =>  array(
+        'filter'    => FILTER_VALIDATE_INT,
+        'options'   => array('min_range' => 0)
+    ),
+    'recipients' => array(
+        'filter' => FILTER_SANITIZE_FULL_SPECIAL_CHARS,
+        'flags' => FILTER_REQUIRE_ARRAY
     ),
     'reminderSubject' => FILTER_SANITIZE_FULL_SPECIAL_CHARS,
     'reminderBody' => FILTER_SANITIZE_FULL_SPECIAL_CHARS,
@@ -39,6 +58,10 @@ $data = filter_input_array(INPUT_POST, [
         'flags' => FILTER_REQUIRE_ARRAY
     )
 ]);
+
+echo json_encode($data);
+exit();
+
 
 $users = $data["users"];
 

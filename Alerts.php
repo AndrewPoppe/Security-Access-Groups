@@ -355,8 +355,8 @@ class Alerts
                             <div class="row mb-2 userExpirationListContainer">
                                 <div class="col">
                                     <div class="border bg-light">
-                                        <div class="row ml-4 mt-3">
-                                            <h5><strong>The following users will be expired:</strong></h5>
+                                        <div class="row ml-4 mt-3 text-dangerrc">
+                                            <h5><strong><i class="fa-solid fa-triangle-exclamation"></i> The following users will be expired in this project:</strong></h5>
                                         </div>
                                         <div class="form-group row ml-4 my-0">
                                             <table id="userExpirationTable" class="table table-sm table-hover table-borderless w-50 ml-2">
@@ -459,7 +459,7 @@ class Alerts
                                             <div class="form-group row">
                                                 <label for="emailSubject-userExpiration-UserRightsHolders" class="col-sm-3 col-form-label col-form-label-sm">Subject:</label>
                                                 <div class="col-sm-9">
-                                                    <input id="emailSubject-userExpiration-UserRightsHolders" name="emailSubject" type="text" class="form-control form-control-sm">
+                                                    <input id="emailSubject-userExpiration-UserRightsHolders" name="emailSubject-userExpiration-UserRightsHolders" type="text" class="form-control form-control-sm">
                                                     <div class="invalid-feedback">You must provide a subject for the email</div>
                                                 </div>
                                             </div>

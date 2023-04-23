@@ -272,59 +272,27 @@ $Alerts = new Alerts($module);
             }).filter((el) => el);
         }
 
-        function expireUsers() {
+        async function expireUsers() {
             const users = getSelectedUsers();
-
-            let table = "<table class='table'><thead><tr><th>Username</th><th>Name</th><th>Email</th></tr></thead><tbody>";
-            users.forEach((userRow) => {
-                table += `<tr><td>${userRow["username"]}</td><td>${userRow["name"]}</td><td>${userRow["email"]}</td></tr>`;
-            });
-            table += "</tbody></table>";
-
-            Swal.fire({
-                    title: `Are you sure you want to expire ${users.length > 1 ? "these users" : "this user"} in this project?`,
-                    html: table,
-                    icon: "warning",
-                    showCancelButton: true,
-                    confirmButtonText: 'Expire User' + (users.length > 1 ? "s" : ""),
-                    customClass: {
-                        confirmButton: 'btn btn-danger order-2',
-                        cancelButton: 'btn btn-secondary order-1 mr-2',
-                        icon: "text-danger border-danger"
-                    },
-                    buttonsStyling: false
+            await $.post("<?= $module->getUrl('expireUsers.php') ?>", {
+                    users: users.map(userRow => userRow["username"])
                 })
-                .then((response) => {
-                    if (response.isConfirmed) {
-                        $.post("<?= $module->getUrl('expireUsers.php') ?>", {
-                                users: users.map(userRow => userRow["username"])
-                            })
-                            .done(function(response) {
-                                Toast.fire({
-                                        title: 'The user' + (users.length > 1 ? "s were " : " was ") + 'successfully expired.',
-                                        icon: 'success'
-                                    })
-                                    .then(function() {
-                                        window.location.reload();
-                                    });
-                            })
-                            .fail(function(error) {
-                                console.error(error.responseText);
-                                Swal.fire({
-                                        title: 'Error',
-                                        html: error.responseText,
-                                        icon: 'error',
-                                        customClass: {
-                                            confirmButton: 'btn btn-primary',
-                                        },
-                                        buttonsStyling: false
-                                    })
-                                    .then(function() {
-                                        window.location.reload();
-                                    });
-                            })
-                    }
-                })
+                .fail(function(error) {
+                    console.error(error.responseText);
+                    Swal.fire({
+                            title: 'Error',
+                            html: error.responseText,
+                            icon: 'error',
+                            customClass: {
+                                confirmButton: 'btn btn-primary',
+                            },
+                            buttonsStyling: false
+                        })
+                        .then(function() {
+                            window.location.reload();
+                        });
+                });
+            return true;
         }
 
         function sendEmailAlerts() {
@@ -514,30 +482,41 @@ $Alerts = new Alerts($module);
             if (!validateEmailForm_UserExpiration()) {
                 return;
             }
+            const users = getAlertUserInfo();
+            let formContents = $('#userExpirationForm').serializeObject();
+            formContents.usersEmailBody = tinymce.get('emailBody-userExpiration').getContent();
+            formContents.userRightsHoldersEmailBody = tinymce.get('emailBody-userExpiration-UserRightsHolders').getContent();
+            formContents.alertType = 'expiration';
+            formContents.users = users;
+            formContents.recipients = getUserRightsHolderAlertRecipients('userExpirationForm');
 
-            let emailFormContents = $('#emailUserRightsHoldersForm').serializeObject();
-            emailFormContents.emailBody = tinymce.get('emailBody-UserRightsHolders').getContent();
-            emailFormContents.reminderBody = tinymce.get('reminderBody-UserRightsHolders').getContent();
-            emailFormContents.alertType = 'userRightsHolders';
-            emailFormContents.users = getAlertUserInfo();
-            emailFormContents.recipients = getUserRightsHolderAlertRecipients('emailUserRightsHoldersForm');
+            console.log(formContents);
 
-            console.log(emailFormContents);
-            return;
+            expireUsers().then(() => {
+                if (!formContents.sendUserNotification && !formContents["sendNotification-userExpiration-UserRightsHolders"]) {
+                    Toast.fire({
+                            title: 'The user' + (users.length > 1 ? "s were " : " was ") + 'successfully expired.',
+                            icon: 'success'
+                        })
+                        .then(function() {
+                            window.location.reload();
+                        });
+                } else {
+                    $.post("<?= $module->getUrl('sendAlerts.php') ?>", formContents)
+                        .done(response => {
+                            console.log(response);
+                            Swal.fire({
+                                html: response
+                            });
+                        })
+                        .fail(error => {
+                            console.error(error.responseText);
+                        })
+                        .always({
 
-            $.post("<?= $module->getUrl('sendAlerts.php') ?>", emailFormContents)
-                .done(response => {
-                    console.log(response);
-                    Swal.fire({
-                        html: response
-                    });
-                })
-                .fail(error => {
-                    console.error(error.responseText);
-                })
-                .always({
-
-                });
+                        });
+                }
+            })
         }
 
         // TODO: We're going to validate form contents server-side eventually, so this is temporary
