@@ -5,8 +5,8 @@ namespace YaleREDCap\SystemUserRights;
 $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "userlist";
 
 ?>
-<link href="https://cdn.datatables.net/v/dt/dt-1.13.3/b-2.3.5/b-html5-2.3.5/fc-4.2.1/datatables.min.css" rel="stylesheet" />
-<script src="https://cdn.datatables.net/v/dt/dt-1.13.3/b-2.3.5/b-html5-2.3.5/fc-4.2.1/datatables.min.js"></script>
+<link href="https://cdn.datatables.net/v/dt/dt-1.13.4/b-2.3.6/b-html5-2.3.6/fc-4.2.2/rr-1.3.3/sr-1.2.2/datatables.min.css" rel="stylesheet" />
+<script src="https://cdn.datatables.net/v/dt/dt-1.13.4/b-2.3.6/b-html5-2.3.6/fc-4.2.2/rr-1.3.3/sr-1.2.2/datatables.min.js"></script>
 
 <!-- <link href="<?= $module->getUrl('assets/fontawesome/css/fontawesome.min.css') ?>" rel="stylesheet" />
 <link href="<?= $module->getUrl('assets/fontawesome/css/regular.min.css') ?>" rel="stylesheet" />
@@ -544,6 +544,7 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                 <!-- <table id="roleTable" class="table table-striped table-hover table-bordered table-responsive align-middle" style="width: 100%;"> -->
                 <thead>
                     <tr style="vertical-align: bottom; text-align: center;">
+                        <th>Order</th>
                         <th data-key="role_name">Role</th>
                         <th data-key="role_id">Role ID</th>
                         <?php foreach ($displayTextForUserRights as  $key => $text) {
@@ -552,11 +553,12 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                     </tr>
                 </thead>
                 <tbody>
-                    <?php foreach ($roles as $role) {
+                    <?php foreach ($roles as $index => $role) {
                         $theseRights = json_decode($role["permissions"], true);
                     ?>
                         <tr data-roleId="<?= \REDCap::escapeHtml($role["role_id"]) ?>">
-                            <td><a class="SUR_roleLink text-primary" onclick="editRole($(this).closest('tr').data('roleid'));"><?= \REDCap::escapeHtml($role["role_name"]) ?></a></td>
+                            <td><?= $index ?></td>
+                            <td class="dt-rowReorder-grab"><a class="SUR_roleLink text-primary" onclick="editRole($(this).closest('tr').data('roleid'));"><?= \REDCap::escapeHtml($role["role_name"]) ?></a></td>
                             <td><?= \REDCap::escapeHtml($role["role_id"]) ?></td>
                             <?php
                             $shieldcheck = '<i class="fa-solid fa-shield-check fa-xl" style="color: green;"></i>';
@@ -816,6 +818,7 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
 
             function editRole(role_id, role_name) {
                 const url = "<?= $module->getUrl("editSystemRole.php?newRole=false") ?>";
+                console.log(url, role_id, role_name);
                 openRoleEditor(url, role_id, role_name);
             }
 
@@ -875,14 +878,21 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                         },
                         body: function(html, row, col, node) {
                             if (col === 0) {
-                                return $(html).text();
+                                return;
                             } else if (col === 1) {
+                                return $(html).text();
+                            } else if (col === 2) {
                                 return html;
                             } else {
                                 const value = $(node).data('value');
                                 return value == '' ? 0 : value;
                             }
                         }
+                    },
+                    customizeData: function(data) {
+                        data.header.shift();
+                        data.body.forEach(row => row.shift());
+                        return data;
                     },
                     rows: rowSelector
                 });
@@ -935,8 +945,10 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                     format: {
                         body: function(html, row, col, node) {
                             if (col === 0) {
-                                return $(html).text();
+                                return;
                             } else if (col === 1) {
+                                return $(html).text();
+                            } else if (col === 2) {
                                 return html;
                             } else {
                                 let result = $(node).text();
@@ -949,6 +961,11 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                                 return result;
                             }
                         }
+                    },
+                    customizeData: function(data) {
+                        data.header.shift();
+                        data.body.forEach(row => row.shift());
+                        return data;
                     }
                 });
 
@@ -1004,7 +1021,6 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                 reader.readAsText(file);
             }
 
-
             $(document).ready(function() {
                 const importFileElement = document.getElementById("importRolesFile");
                 importFileElement.addEventListener("change", handleFiles, false);
@@ -1014,33 +1030,49 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                     info: false,
                     paging: false,
                     rowReorder: true,
-                    ordering: false,
+                    ordering: true,
                     fixedHeader: false,
                     fixedColumns: true,
                     scrollX: true,
                     scrollY: '75vh',
                     scrollCollapse: true,
+                    rowReorder: {
+                        //selector: 'tr',
+                        snapX: 0
+                    },
                     initComplete: function() {
                         $('#roleTableWrapper').show();
                         setTimeout(() => {
+                            $(this).DataTable().stateRestore();
                             $(this).DataTable().columns.adjust().draw();
                         }, 0);
                     },
                     columnDefs: [{
-                        targets: 1,
-                        className: "role-id-column user-select-all"
-                    }, {
-                        targets: 0,
-                        data: function(row, type, val, meta) {
-                            if (type === 'set') {
-                                row.role_display = val;
-                                row.role_name = $(val).text();
-                            } else if (type === 'display') {
-                                return row.role_display;
+                            targets: 2,
+                            orderable: false,
+                            className: "role-id-column user-select-all"
+                        }, {
+                            targets: 1,
+                            orderable: false,
+                            data: function(row, type, val, meta) {
+                                if (type === 'set') {
+                                    row.role_display = val;
+                                    row.role_name = $(val).text();
+                                } else if (type === 'display') {
+                                    return row.role_display;
+                                }
+                                return row.role_name;
                             }
-                            return row.role_name;
+                        },
+                        {
+                            targets: 0,
+                            orderable: true,
+                            visible: false
+                        }, {
+                            targets: '_all',
+                            orderable: false
                         }
-                    }]
+                    ]
                 });
 
                 table.on('draw', function() {
@@ -1049,14 +1081,42 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                         row.onmouseleave = dehover;
                     });
                 });
+
+                table.on('row-reordered', function(e, diff, edit) {
+                    setTimeout(() => {
+                        const order = table.column(2).data().toArray();
+                        localStorage.setItem('DataTables_roleOrder', JSON.stringify(order));
+                    }, 0);
+                });
+
                 table.rows().every(function() {
                     const rowNode = this.node();
                     const rowIndex = this.index();
                     $(rowNode).attr('data-dt-row', rowIndex);
                 });
+
+                const theseSettingsString = localStorage.getItem('DataTables_roleOrder');
+                if (theseSettingsString) {
+                    const theseSettings = JSON.parse(theseSettingsString);
+                    table.rows().every(function(rowIdx, tableLoop, rowLoop) {
+                        const thisRoleId = table.cell(rowLoop, 2).data();
+                        const desiredIndex = theseSettings.indexOf(thisRoleId);
+                        table.cell(rowLoop, 0).data(desiredIndex);
+                    });
+                    table.order([0, 'asc']).draw();
+                };
+
                 $('.dataTable tbody tr').each((i, row) => {
                     row.onmouseenter = hover;
                     row.onmouseleave = dehover;
+                });
+
+                table.on('row-reorder', function(e, diff, edit) {
+                    const data = table.rows().data();
+                    const newOrder = [];
+                    for (let i = 0; i < data.length; i++) {
+                        newOrder.push(data[i][0]);
+                    }
                 });
 
                 function hover() {

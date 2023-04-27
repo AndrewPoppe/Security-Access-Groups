@@ -146,6 +146,15 @@ table.roleTable tr.even>td.dtfc-fixed-left.highlight {
     background-color: #d9ebf5 !important;
 }
 
+body:not(.dt-rowReorder-noOverflow) td.dt-rowReorder-grab {
+    cursor: grab;
+}
+
+
+div.dt-rowReorder-float-parent {
+    cursor: grabbing !important;
+}
+
 select.roleSelect {
     width: 100%;
 }

@@ -11,6 +11,15 @@ use YaleREDCap\SystemUserRights\APIHandler;
 class SystemUserRights extends AbstractExternalModule
 {
 
+    private $defaultRoleId = "role_Default";
+    private $defaultRoleName = "Default Role";
+    private $defaultRights = [];
+
+    function __construct()
+    {
+        parent::__construct();
+        $this->defaultRights = $this->getSystemRoleRightsById($this->defaultRoleId);
+    }
 
     // TODO: IGNORE EXPIRED USERS!
 
@@ -753,14 +762,20 @@ class SystemUserRights extends AbstractExternalModule
         return strrev(preg_replace("/^.*v_/", "", strrev($this->getModuleDirectoryName()), 1));
     }
 
+    function setUserSystemRole($username, $role_id)
+    {
+        $setting = $username . "-role";
+        $this->setSystemSetting($setting, $role_id);
+    }
+
     function getUserSystemRole($username)
     {
         $setting = $username . "-role";
         //$this->removeSystemSetting($setting);
         $role = $this->getSystemSetting($setting);
-        if (!isset($role)) {
-            $role = "NA";
-            $this->setSystemSetting($setting, $role);
+        if (empty($role) || !$this->systemRoleExists($role)) {
+            $role = $this->defaultRoleId;
+            $this->setUserSystemRole($username, $role);
         }
         return $role;
     }
@@ -769,8 +784,20 @@ class SystemUserRights extends AbstractExternalModule
     {
         $rights = json_decode($permissions, true);
         foreach ($rights as $key => $value) {
-            if ($value == "on") {
+            if ($value === "on") {
                 $rights[$key] = 1;
+            }
+            if ($key === "data_quality_resolution") {
+                // 0: no access
+                // 1: view only
+                // 4: open queries only
+                // 2: respond only to opened queries
+                // 5: open and respond to queries
+                // 3: open, close, and respond to queries
+                $rights["data_quality_resolution_view"] = intval($value) > 0 ? 1 : 0;
+                $rights["data_quality_resolution_open"] = in_array(intval($value), [3, 4, 5], true) ? 1 : 0;
+                $rights["data_quality_resolution_respond"] = in_array(intval($value), [2, 3, 5], true) ? 1 : 0;
+                $rights["data_quality_resolution_close"] = intval($value) === 3 ? 1 : 0;
             }
         }
         return json_encode($rights);
@@ -862,7 +889,7 @@ class SystemUserRights extends AbstractExternalModule
     function deleteSystemRole($role_id)
     {
         try {
-            $result = $this->removeLogs("message = 'role' AND role_id = ? AND project_id is null", [$role_id]);
+            $result = $this->removeLogs("message = 'role' AND role_id = ? AND (project_id IS NULL OR project_id IS NOT NULL) ", [$role_id]);
             $this->log('deleted system role', ["user" => $this->getUser()->getUsername(), "role_id" => $role_id]);
             return $result;
         } catch (\Throwable $e) {
@@ -884,11 +911,35 @@ class SystemUserRights extends AbstractExternalModule
         return $roles;
     }
 
+    function setDefaultSystemRole()
+    {
+        $rights = $this->getDefaultRights();
+        $rights['role_id'] = $this->defaultRoleId;
+        $rights['role_name_edit'] = $this->defaultRoleName;
+        $rights['dataViewing'] = '3';
+        $rights['dataExport'] = '3';
+        $this->saveSystemRole($this->defaultRoleId, $this->defaultRoleName, json_encode($rights));
+        return $rights;
+    }
+
     function getSystemRoleRightsById($role_id)
     {
+        if (empty($role_id)) {
+            $role_id = $this->defaultRoleId;
+        }
         $sql = "SELECT role_id, role_name, permissions WHERE message = 'role' AND role_id = ? AND (project_id IS NULL OR project_id IS NOT NULL) ORDER BY log_id DESC LIMIT 1";
         $result = $this->queryLogs($sql, [$role_id]);
-        return $result->fetch_assoc();
+        $rights = $result->fetch_assoc();
+        if (empty($rights)) {
+            $role_id2 = $this->defaultRoleId;
+            $result2 = $this->queryLogs($sql, [$role_id2]);
+            $rights = $result2->fetch_assoc();
+
+            if (empty($rights)) {
+                $rights = $this->setDefaultSystemRole();
+            }
+        }
+        return $rights;
     }
 
     function systemRoleExists($role_id)
