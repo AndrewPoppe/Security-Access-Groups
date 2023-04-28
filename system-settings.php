@@ -504,7 +504,7 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
             <div class="d-flex flex-row justify-content-end my-1">
                 <div class="dropdown">
                     <button type="button" class="btn btn-primary btn-xs dropdown-toggle mr-2" data-toggle="dropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="fa-sharp fa-file-excel mr-1"></i>
+                        <i class="fa-sharp fa-file-excel"></i>
                         <span>Import or Export Roles</span>
                         <span class="sr-only">Toggle Dropdown</span>
                     </button>
@@ -528,7 +528,7 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                 </div>
                 <div class="col ml-1 px-0 justify-content-start">
                     <button class="btn btn-success btn-sm" id="addRoleButton" onclick="addNewRole();" title="Add a New System User Role">
-                        <i class="fa-kit fa-solid-tag-circle-plus fa-fw mr-1"></i>
+                        <i class="fa-kit fa-solid-tag-circle-plus fa-fw"></i>
                         <span>Create Role</span>
                     </button>
                 </div>

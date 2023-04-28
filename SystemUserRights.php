@@ -972,6 +972,7 @@ class SystemUserRights extends AbstractExternalModule
             'data_access_groups' => $lang['global_22'],
             'data_entry' => $lang['rights_373'],
             'data_export_tool' => $lang['rights_428'],
+            'alerts' => $lang['global_154'],
             'reports' => $lang['rights_96'],
             'graphical' => $lang['report_builder_78'],
             'participants' => $lang['app_24'],

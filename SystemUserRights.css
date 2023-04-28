@@ -487,3 +487,39 @@ table.table.is-invalid td.user-rights-holder-selector input {
     border: 1px solid var(--danger) !important;
     box-shadow: 0 0 0 0.1rem rgba(255, 0, 0, .25) !important;
 }
+
+div#discrepancy-table_wrapper div.dataTables_scrollHead {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.3) !important;
+}
+
+div#discrepancy-table_wrapper div.dataTables_scrollHead th {
+    border-bottom: none !important;
+}
+
+div#discrepancy-table_wrapper div.dataTables_scrollHead table.border {
+    border-bottom: none;
+}
+
+div#discrepancy-table_wrapper div.dataTables_scrollBody {
+    border: none !important;
+}
+
+div#discrepancy-table_wrapper div.dataTables_scrollBody table.border {
+    border-top: none !important;
+}
+
+div#discrepancy-table_wrapper div.dataTables_scrollBody th {
+    border-top: none !important;
+}
+
+div#discrepancy-table_wrapper table.border {
+    border: none !important;
+}
+
+div#discrepancy-table_wrapper {
+    border: 1px solid rgba(0, 0, 0, 0.3) !important;
+}
+
+div#discrepancy-table_wrapper div.dataTables_scrollHead {
+    background-color: #ececec
+}

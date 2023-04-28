@@ -2,14 +2,6 @@
     "name": "System User Rights",
     "namespace": "YaleREDCap\\SystemUserRights",
     "description": "Placeholder",
-    "permissions": [
-        "redcap_user_rights",
-        "redcap_every_page_top",
-        "redcap_every_page_before_render",
-        "redcap_module_configuration_settings",
-        "redcap_module_project_enable",
-        "redcap_module_link_check_display"
-    ],
     "authors": [
         {
             "name": "Andrew Poppe",
@@ -111,11 +103,11 @@
     ],
     "enable-every-page-hooks-on-system-pages": true,
     "no-auth-pages": [],
-    "framework-version": 9,
+    "framework-version": 12,
     "compatibility": {
         "php-version-min": "7.4.00",
         "php-version-max": "7.99.99",
-        "redcap-version-min": "12.4.0",
+        "redcap-version-min": "13.1.0",
         "redcap-version-max": ""
     }
 }

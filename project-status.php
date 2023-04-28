@@ -114,7 +114,7 @@ $Alerts = new Alerts($module);
     <div class="container ml-0 pl-0">
         <!-- <table class="table table-bordered discrepancy-table"> -->
         <table id="discrepancy-table" class="discrepancy-table row-border border hover">
-            <thead class="thead-dark text-center">
+            <thead class="text-center" style="background-color:#ececec">
                 <tr>
                     <th style="vertical-align: middle !important;"><input style="display:block; margin: 0 auto;" type="checkbox" onchange="$('.user-selector input').prop('checked', $(this).prop('checked')).trigger('change');"></input></th>
                     <th>Username</th>
@@ -244,6 +244,7 @@ $Alerts = new Alerts($module);
 
         function openExpireUsersModal() {
             document.querySelector('#userExpirationModal form').reset();
+            $('#userNotificationInfo').collapse('hide');
             userExpirationUserRightsHoldersToggle(false);
             const usersToExpire = getSelectedUsers();
             let tableRows = "";
@@ -770,7 +771,10 @@ $Alerts = new Alerts($module);
                     localStorage.setItem('DataTables_' + settings.sInstance, JSON.stringify(data))
                 },
                 stateLoadCallback: function(settings) {
-                    const data = JSON.parse(localStorage.getItem('DataTables_' + settings.sInstance));
+                    const dataString = localStorage.getItem('DataTables_' + settings.sInstance);
+                    if (!dataString) return settings;
+                    const data = JSON.parse(dataString);
+                    if (!data.checkboxStatus) return settings;
                     let allChecked = true;
                     for (let id in data.checkboxStatus) {
                         const thisChecked = data.checkboxStatus[id];
