@@ -22,7 +22,8 @@ class SystemUserRights extends AbstractExternalModule
 
     // TODO: IGNORE EXPIRED USERS!
 
-    function redcap_every_page_before_render() {
+    function redcap_every_page_before_render()
+    {
         // Only run on the pages we're interested in
         if (
             $_SERVER["REQUEST_METHOD"] !== "POST" ||
@@ -210,6 +211,7 @@ class SystemUserRights extends AbstractExternalModule
                         });
                     }
                 }
+
                 window.saveUserFormAjax = function() {
                     showProgress(1);
                     const permissions = $('form#user_rights_form').serializeObject();
@@ -813,7 +815,7 @@ class SystemUserRights extends AbstractExternalModule
      * @param string $role_id
      * @param string $role_name
      * @param string $permissions - json-encoded string of user rights
-     * 
+     *
      * @return [type]
      */
     function saveSystemRole(string $role_id, string $role_name, string $permissions)
@@ -987,7 +989,7 @@ class SystemUserRights extends AbstractExternalModule
             'data_quality_resolution' => $lang['dataqueries_137'],
             'api' => $lang['setup_77'],
             'mobile_app' => $lang['global_118'],
-            'realtime_webservice_mapping' =>  "CDP/DDP" . " " . $lang['ws_19'],
+            'realtime_webservice_mapping' => "CDP/DDP" . " " . $lang['ws_19'],
             'realtime_webservice_adjudicate' => "CDP/DDP" . " " . $lang['ws_20'],
             'dts' => $lang['rights_132'],
             'record_create' => $lang['rights_99'],
@@ -1003,7 +1005,7 @@ class SystemUserRights extends AbstractExternalModule
             $rights['data_quality_resolution_open'] = 'Data Quality Resolution - Open Queries';
             $rights['data_quality_resolution_respond'] = 'Data Quality Resolution - Respond to Queries';
             $rights['data_quality_resolution_close'] = 'Data Quality Resolution - Close Queries';
-            $rights['api_export'] =  $lang['rights_139'];
+            $rights['api_export'] = $lang['rights_139'];
             $rights['api_import'] = $lang['rights_314'];
             $rights['mobile_app_download_data'] = $lang['rights_306'];
             $rights['lock_record_multiform'] = $lang['rights_370'];
@@ -1077,7 +1079,7 @@ class SystemUserRights extends AbstractExternalModule
         if (isset($allRights["mobile_app_download_data"])) $allRights["mobile_app_download_data"] = 0;
         if (isset($allRights["random_setup"])) $allRights["random_setup"] = 0;
         if (isset($allRights["random_dashboard"])) $allRights["random_dashboard"] = 0;
-        if (isset($allRights["random_perform"])) $allRights["random_perform"] =  1;
+        if (isset($allRights["random_perform"])) $allRights["random_perform"] = 1;
         if (isset($allRights["realtime_webservice_mapping"])) $allRights["realtime_webservice_mapping"] = 0;
         if (isset($allRights["realtime_webservice_adjudicate"])) $allRights["realtime_webservice_adjudicate"] = 0;
         if (isset($allRights["mycap_participants"])) $allRights["mycap_participants"] = 1;
@@ -1301,11 +1303,13 @@ class SystemUserRights extends AbstractExternalModule
                                                     </div>
                                                     <div class="form-check">
                                                         <input id='double_data_p1' class="form-check-input" type='radio' name='double_data' value='1' <?= $rights["double_data"] == 1 ? "checked" : "" ?>>
-                                                        <label for="double_data_p1" class="form-check-label"><?= $lang['rights_52'] ?> #1</label>
+                                                        <label for="double_data_p1" class="form-check-label"><?= $lang['rights_52'] ?>
+                                                            #1</label>
                                                     </div>
                                                     <div class="form-check">
                                                         <input id='double_data_p2' class="form-check-input" type='radio' name='double_data' value='2' <?= $rights["double_data"] == 2 ? "checked" : "" ?>>
-                                                        <label for="double_data_p2" class="form-check-label"><?= $lang['rights_52'] ?> #2</label>
+                                                        <label for="double_data_p2" class="form-check-label"><?= $lang['rights_52'] ?>
+                                                            #2</label>
                                                     </div>
                                                 </div>
                                             </div>
@@ -1342,7 +1346,7 @@ class SystemUserRights extends AbstractExternalModule
                                                 <div class="col">
                                                     <i class="fa-solid fa-fw fa-receipt"></i>&nbsp;&nbsp;<?= $lang['app_07'] ?>
                                                 </div>
-                                                <div class="col"> <input type='checkbox' name='data_logging' <?= $rights["data_logging"] == 1 ? "checked" : "" ?>>
+                                                <div class="col"><input type='checkbox' name='data_logging' <?= $rights["data_logging"] == 1 ? "checked" : "" ?>>
                                                 </div>
                                             </div>
                                         <?php } ?>
@@ -1418,7 +1422,8 @@ class SystemUserRights extends AbstractExternalModule
                                                     </div>
                                                     <div class='form-check'>
                                                         <input class='form-check-input data_quality_resolution data_quality_resolution_respond' type='checkbox' id='data_quality_resolution_respond' name='data_quality_resolution_respond' <?= $rights["data_quality_resolution_respond"] == '1' ? "checked" : "" ?> onchange="if(!this.checked) {$('.data_quality_resolution_close').prop('checked', false);} else {$('.data_quality_resolution_view').prop('checked', true);}">
-                                                        <label class='form-check-label' for='data_quality_resolution_respond'>Respond to Queries</label>
+                                                        <label class='form-check-label' for='data_quality_resolution_respond'>Respond to
+                                                            Queries</label>
                                                     </div>
                                                     <div class='form-check'>
                                                         <input class='form-check-input data_quality_resolution data_quality_resolution_close' type='checkbox' id='data_quality_resolution_close' name='data_quality_resolution_close' <?= $rights["data_quality_resolution_close"] == '1' ? "checked" : "" ?> onchange="if(this.checked) {$('.data_quality_resolution').prop('checked', true);}">
@@ -1452,7 +1457,9 @@ class SystemUserRights extends AbstractExternalModule
                                             <div class="SUR-form-row row">
                                                 <div class="col mt-1">
                                                     <div>
-                                                        <i class="fa-solid fa-fw fa-database"></i>&nbsp;&nbsp; Clinical Data Pull from EHR -or- Dynamic Data Pull from External Source System
+                                                        <i class="fa-solid fa-fw fa-database"></i>&nbsp;&nbsp; Clinical
+                                                        Data Pull from EHR -or- Dynamic Data Pull from External Source
+                                                        System
                                                     </div>
                                                 </div>
                                                 <div class="col">
@@ -1611,7 +1618,9 @@ class SystemUserRights extends AbstractExternalModule
                                         <?php if (isset($allRights["lock_record_multiform"])) { ?>
                                             <div class="SUR-form-row row">
                                                 <div class="col">
-                                                    <div><i class="fa-solid fa-fw fa-unlock-alt"></i>&nbsp;&nbsp;<?= $lang['rights_370'] ?></div>
+                                                    <div>
+                                                        <i class="fa-solid fa-fw fa-unlock-alt"></i>&nbsp;&nbsp;<?= $lang['rights_370'] ?>
+                                                    </div>
                                                 </div>
                                                 <div class="col">
                                                     <div>
@@ -1640,7 +1649,8 @@ class SystemUserRights extends AbstractExternalModule
                                                 <div class='fs13 pb-2 font-weight-bold'><?= $lang['rights_373'] ?></div>
                                                 <div class="form-check">
                                                     <input class="form-check-input" type="radio" name="dataViewing" id="dataViewingNoAccess" value="0" <?= $rights["dataViewing"] == 0 ? "checked" : "" ?>>
-                                                    <label class="form-check-label" for="dataViewingNoAccess"><?= $lang['rights_47'] ?><br><?= $lang['rights_395'] ?></label>
+                                                    <label class="form-check-label" for="dataViewingNoAccess"><?= $lang['rights_47'] ?>
+                                                        <br><?= $lang['rights_395'] ?></label>
                                                 </div>
                                                 <div class="form-check">
                                                     <input class="form-check-input" type="radio" name="dataViewing" id="dataViewingReadOnly" value="1" <?= $rights["dataViewing"] == '1' ? "checked" : "" ?>>
@@ -1683,7 +1693,8 @@ class SystemUserRights extends AbstractExternalModule
                 </div>
                 <div class="modal-footer">
                     <button id="SUR_Save" type="button" class="btn btn-<?= $newRole ? "success" : "primary" ?>"><?= $newRole ? "Save New Role" : "Save Changes" ?></button>
-                    <button id="SUR_Cancel" type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-dismiss="modal">Cancel</button>
+                    <button id="SUR_Cancel" type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-dismiss="modal">Cancel
+                    </button>
                     <?php if (!$newRole) { ?>
                         <button id="SUR_Copy" type="button" class="btn btn-info btn-sm">Copy role</button>
                         <button id="SUR_Delete" type="button" class="btn btn-danger btn-sm">Delete role</button>

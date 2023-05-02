@@ -1,10 +1,10 @@
 <?php
-/** @var \YaleREDCap\SystemUserRights\SystemUserRights $module */
 
 namespace YaleREDCap\SystemUserRights;
 
-require_once "Alerts.php";
+/** @var SystemUserRights $module */
 
+require_once "Alerts.php";
 $Alerts = new Alerts($module);
 
 // TODO: Remove this
@@ -43,6 +43,7 @@ $Alerts = new Alerts($module);
     $project_id = $module->getProjectId();
     $adminUsername = $module->getUser()->getUsername();
     $discrepantRights = $module->getUsersWithBadRights($project_id);
+
     if (empty($discrepantRights)) {
         exit();
     }
