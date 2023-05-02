@@ -6,7 +6,6 @@ require_once "APIHandler.php";
 require_once "Alerts.php";
 
 use ExternalModules\AbstractExternalModule;
-use YaleREDCap\SystemUserRights\APIHandler;
 
 class SystemUserRights extends AbstractExternalModule
 {
@@ -23,9 +22,7 @@ class SystemUserRights extends AbstractExternalModule
 
     // TODO: IGNORE EXPIRED USERS!
 
-    function redcap_every_page_before_render()
-    {
-
+    function redcap_every_page_before_render() {
         // Only run on the pages we're interested in
         if (
             $_SERVER["REQUEST_METHOD"] !== "POST" ||

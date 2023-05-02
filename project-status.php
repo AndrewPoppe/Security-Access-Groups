@@ -1,10 +1,9 @@
 <?php
+/** @var \YaleREDCap\SystemUserRights\SystemUserRights $module */
 
 namespace YaleREDCap\SystemUserRights;
 
 require_once "Alerts.php";
-
-use YaleREDCap\SystemUserRights\Alerts;
 
 $Alerts = new Alerts($module);
 
