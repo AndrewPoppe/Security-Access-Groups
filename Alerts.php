@@ -2,12 +2,10 @@
 
 namespace YaleREDCap\SystemUserRights;
 
-use YaleREDCap\SystemUserRights\SystemUserRights;
-
 class Alerts
 {
 
-    private $module;
+    private SystemUserRights $module;
 
     public function __construct(SystemUserRights $module)
     {
@@ -18,9 +16,9 @@ class Alerts
      * @param mixed $project_id 
      * @param string $adminUsername
      * 
-     * @return string
+     * @return void
      */
-    public function getUserEmailModal($project_id, string $adminUsername)
+    public function getUserEmailModal($project_id, string $adminUsername) : void
     {
         $emailAddresses = $this->getEmailAddresses($adminUsername);
 
@@ -38,7 +36,7 @@ class Alerts
                                 <div class="col">
                                     <div class="border bg-light p-4">
                                         <div class="form-group row">
-                                            <label for="fromEmail" class="col-sm-3 col-form-label col-form-label-sm">From:</label>
+                                            <label for="displayFromName" class="col-sm-3 col-form-label col-form-label-sm">From:</label>
                                             <div class="col-sm-4">
                                                 <input id="displayFromName" name="displayFromName" type="text" class="form-control form-control-sm" placeholder="Display name (optional)">
                                             </div>
@@ -77,7 +75,7 @@ class Alerts
                                                         echo "<tr><td><code class='dataPlaceholder'>[$placeholder]</code></td><td>$description</td></tr>";
                                                     } ?>
                                                 </table>
-                                                <p><span>You can also use <button class="btn btn-xs btn-rcgreen btn-rcgreen-light" style="margin-left:3px;font-size:11px;padding:0px 3px 1px;line-height:14px;" onclick="smartVariableExplainPopup();setTimeout(function() {$('#smart_variable_explain_popup').parent().css('z-index', 1051);},300); return false;">[<i class="fa-solid fa-bolt fa-xs" style="margin:0 1px;"></i>] Smart Variables</button>, but few will be applicable.</span></p>
+                                                <p><span>You can also use <button class="btn btn-xs btn-rcgreen btn-rcgreen-light" style="margin-left:3px;font-size:11px;padding:0 3px 1px;line-height:14px;" onclick="smartVariableExplainPopup();setTimeout(function() {$('#smart_variable_explain_popup').parent().css('z-index', 1051);},300); return false;">[<i class="fa-solid fa-bolt fa-xs" style="margin:0 1px;"></i>] Smart Variables</button>, but few will be applicable.</span></p>
                                             </div>
                                         </div>
                                     </div>
@@ -90,16 +88,16 @@ class Alerts
                                             <label class="col-sm-3 col-form-label col-form-label-sm">Send Reminder?</label>
                                             <div class="col-sm-9">
                                                 <div class="form-check">
-                                                    <input id="sendReminder" name="sendReminder" type="checkbox" name="sendReminder" class="form-check-input" value="1" data-toggle="collapse" data-target="#reminderInfo" aria-expanded="false" aria-controls="reminderInfo">
+                                                    <input id="sendReminder" name="sendReminder" type="checkbox" class="form-check-input" value="1" data-toggle="collapse" data-target="#reminderInfo" aria-expanded="false" aria-controls="reminderInfo">
                                                     <label class="form-check-label" for="sendReminder">Yes, send a reminder</label>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="collapse mt-2" id="reminderInfo">
                                             <div class="form-group row">
-                                                <label class="col-sm-3 col-form-label col-form-label-sm">How many days until the reminder is sent?</label>
+                                                <label for="delayDays" class="col-sm-3 col-form-label col-form-label-sm">How many days until the reminder is sent?</label>
                                                 <div class="col-sm-9 mt-2">
-                                                    <input name="delayDays" type="number" min="1" value="14" class="form-control form-control-sm" required aria-required="true">
+                                                    <input id="delayDays" name="delayDays" type="number" min="1" value="14" class="form-control form-control-sm" required aria-required="true">
                                                     <div class="invalid-feedback">You must provide a number of days greater than 1</div>
                                                 </div>
                                             </div>
@@ -113,7 +111,7 @@ class Alerts
                                             </div>
                                             <div class="form-group row mb-1">
                                                 <div class="col">
-                                                    <label for="emailBody" class="col-form-label col-form-label-sm">Reminder Body:</label>
+                                                    <label for="reminderBody" class="col-form-label col-form-label-sm">Reminder Body:</label>
                                                     <textarea id="reminderBody" name="reminderBody" type="text" class="form-control form-control-sm richtext emailBody"></textarea>
                                                     <div class="invalid-feedback">You must provide a body for the reminder email</div>
                                                 </div>
@@ -131,7 +129,7 @@ class Alerts
                                                             echo "<tr><td><code class='dataPlaceholder'>[$placeholder]</code></td><td>$description</td></tr>";
                                                         } ?>
                                                     </table>
-                                                    <p><span>You can also use <button class="btn btn-xs btn-rcgreen btn-rcgreen-light" style="margin-left:3px;font-size:11px;padding:0px 3px 1px;line-height:14px;" onclick="smartVariableExplainPopup();setTimeout(function() {$('#smart_variable_explain_popup').parent().css('z-index', 1051);},300); return false;">[<i class="fa-solid fa-bolt fa-xs" style="margin:0 1px;"></i>] Smart Variables</button>, but few will be applicable.</span></p>
+                                                    <p><span>You can also use <button class="btn btn-xs btn-rcgreen btn-rcgreen-light" style="margin-left:3px;font-size:11px;padding:0 3px 1px;line-height:14px;" onclick="smartVariableExplainPopup();setTimeout(function() {$('#smart_variable_explain_popup').parent().css('z-index', 1051);},300); return false;">[<i class="fa-solid fa-bolt fa-xs" style="margin:0 1px;"></i>] Smart Variables</button>, but few will be applicable.</span></p>
                                                 </div>
                                             </div>
                                         </div>
@@ -154,9 +152,9 @@ class Alerts
      * @param mixed $project_id 
      * @param string $adminUsername
      * 
-     * @return string
+     * @return void
      */
-    public function getUserRightsHoldersEmailModal($project_id, string $adminUsername)
+    public function getUserRightsHoldersEmailModal($project_id, string $adminUsername) : void
     {
         $emailAddresses = $this->getEmailAddresses($adminUsername);
 
@@ -176,7 +174,7 @@ class Alerts
                                         <div class="col">
                                             <div class="border bg-light p-4">
                                                 <div class="form-group row">
-                                                    <label for="fromEmail-UserRightsHolders" class="col-sm-3 col-form-label col-form-label-sm">From:</label>
+                                                    <label for="displayFromName-UserRightsHolders" class="col-sm-3 col-form-label col-form-label-sm">From:</label>
                                                     <div class="col-sm-4">
                                                         <input id="displayFromName-UserRightsHolders" name="displayFromName" type="text" class="form-control form-control-sm" placeholder="Display name (optional)">
                                                     </div>
@@ -215,7 +213,7 @@ class Alerts
                                                                 echo "<tr><td><code class='dataPlaceholder'>[$placeholder]</code></td><td>$description</td></tr>";
                                                             } ?>
                                                         </table>
-                                                        <p><span>You can also use <button class="btn btn-xs btn-rcgreen btn-rcgreen-light" style="margin-left:3px;font-size:11px;padding:0px 3px 1px;line-height:14px;" onclick="smartVariableExplainPopup();setTimeout(function() {$('#smart_variable_explain_popup').parent().css('z-index', 1051);},300); return false;">[<i class="fa-solid fa-bolt fa-xs" style="margin:0 1px;"></i>] Smart Variables</button>, but few will be applicable.</span></p>
+                                                        <p><span>You can also use <button class="btn btn-xs btn-rcgreen btn-rcgreen-light" style="margin-left:3px;font-size:11px;padding:0 3px 1px;line-height:14px;" onclick="smartVariableExplainPopup();setTimeout(function() {$('#smart_variable_explain_popup').parent().css('z-index', 1051);},300); return false;">[<i class="fa-solid fa-bolt fa-xs" style="margin:0 1px;"></i>] Smart Variables</button>, but few will be applicable.</span></p>
                                                     </div>
                                                 </div>
                                             </div>
@@ -228,16 +226,16 @@ class Alerts
                                                     <label class="col-sm-3 col-form-label col-form-label-sm">Send Reminder?</label>
                                                     <div class="col-sm-9">
                                                         <div class="form-check">
-                                                            <input id="sendReminder-UserRightsHolders" name="sendReminder" type="checkbox" name="sendReminder" class="form-check-input" value="1" data-toggle="collapse" data-target="#reminderInfo-UserRightsHolders" aria-expanded="false" aria-controls="reminderInfo">
+                                                            <input id="sendReminder-UserRightsHolders" name="sendReminder" type="checkbox" class="form-check-input" value="1" data-toggle="collapse" data-target="#reminderInfo-UserRightsHolders" aria-expanded="false" aria-controls="reminderInfo">
                                                             <label class="form-check-label" for="sendReminder-UserRightsHolders">Yes, send a reminder</label>
                                                         </div>
                                                     </div>
                                                 </div>
                                                 <div class="collapse mt-2" id="reminderInfo-UserRightsHolders">
                                                     <div class="form-group row">
-                                                        <label class="col-sm-3 col-form-label col-form-label-sm">How many days until the reminder is sent?</label>
+                                                        <label for="delayDays-UserRightsHolders" class="col-sm-3 col-form-label col-form-label-sm">How many days until the reminder is sent?</label>
                                                         <div class="col-sm-9 mt-2">
-                                                            <input name="delayDays-UserRightsHolders" type="number" min="1" value="14" class="form-control form-control-sm">
+                                                            <input id="delayDays-UserRightsHolders" name="delayDays-UserRightsHolders" type="number" min="1" value="14" class="form-control form-control-sm">
                                                             <div class="invalid-feedback">You must provide a number of days greater than 1</div>
                                                         </div>
                                                     </div>

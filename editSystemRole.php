@@ -1,8 +1,9 @@
 <?php
 
 namespace YaleREDCap\SystemUserRights;
+/** @var SystemUserRights $module */
 
-if (!$module->getUser()->isSuperUser()) {
+if (!$module->framework->getUser()->isSuperUser()) {
     http_response_code(401);
     exit;
 }
@@ -30,14 +31,11 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
 
     if ($newRole === true) {
         $defaultRights = $module->getDefaultRights();
-        $form_contents = $module->getRoleEditForm($defaultRights, $newRole, $role_name);
-        echo $form_contents;
+        $module->getRoleEditForm($defaultRights, true, $role_name);
     } else {
         $this_role = $module->getSystemRoleRightsById($role_id);
         $rights = json_decode($this_role["permissions"], true);
-        $form_contents = $module->getRoleEditForm($rights, false, $this_role["role_name"], $role_id);
-        echo $form_contents;
+        $module->getRoleEditForm($rights, false, $this_role["role_name"], $role_id);
     }
-
     exit;
 }

@@ -7,6 +7,9 @@ require_once "Alerts.php";
 
 use ExternalModules\AbstractExternalModule;
 
+/**
+ * @property \ExternalModules\Framework $framework
+ */
 class SystemUserRights extends AbstractExternalModule
 {
 
