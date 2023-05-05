@@ -58,6 +58,10 @@ $data = filter_input_array(INPUT_POST, [
     )
 ]);
 
+if ( $data['alertType'] === 'expiration' ) {
+    $data['sag_expiration_date'] = date('Y-m-d', strtotime("+" . $data['delayDays-expiration'] . " days"));
+}
+
 $Alert = new Alert($module, $data);
 $Alert->sendAlerts();
 echo json_encode($data);

@@ -57,17 +57,6 @@ class Alert
                 $subjectReplacer = new TextReplacer($this->module, $this->getEmailSubject(), $user);
                 $subject         = $subjectReplacer->replaceText();
 
-                $alert_log_id = $this->module->framework->log('ALERT', [
-                    "user"            => json_encode($user),
-                    "recipient"       => $user['sag_user'],
-                    "recipientEmail"  => $user['sag_user_email'],
-                    "alertType"       => $this->getAlertType(),
-                    "displayFromName" => $this->getDisplayFromName(),
-                    "fromEmail"       => $this->getFromEmail(),
-                    "emailSubject"    => $subject,
-                    "emailBody"       => $body,
-                ]);
-
                 $email_success = \REDCap::email(
                     $user['sag_user_email'],
                     $this->getFromEmail(),
@@ -81,6 +70,17 @@ class Alert
                 if ( !$email_success ) {
                     throw (new \Exception("Error sending email to " . $user['sag_user_email']));
                 }
+
+                $alert_log_id = $this->module->framework->log('ALERT', [
+                    "user"            => json_encode($user),
+                    "recipient"       => $user['sag_user'],
+                    "recipientEmail"  => $user['sag_user_email'],
+                    "alertType"       => $this->getAlertType(),
+                    "displayFromName" => $this->getDisplayFromName(),
+                    "fromEmail"       => $this->getFromEmail(),
+                    "emailSubject"    => $subject,
+                    "emailBody"       => $body,
+                ]);
 
                 if ( $this->getSendReminder() ) {
                     $reminderSubjectReplacer = new TextReplacer($this->module, $this->getReminderSubject(), $user);
@@ -171,6 +171,107 @@ class Alert
             }
         } catch ( \Throwable $e ) {
             $this->module->framework->log("Error sending user rights holder alert", [ 'error' => $e->getMessage() ]);
+        }
+    }
+
+    private function sendUserExpirationAlertsAndScheduleReminders()
+    {
+        if ( $this->getSendUserNotification() ) {
+            $this->sendUserExpirationUserAlertsAndScheduleReminders();
+        }
+
+        if ( $this->getSendNotificationUserExpirationUserRightsHolders() ) {
+            $this->sendUserExpirationUserRightsHoldersAlertsAndScheduleReminders();
+        }
+    }
+
+    private function sendUserExpirationUserAlertsAndScheduleReminders()
+    {
+        try {
+            $users = $this->getUsers();
+            foreach ( $users as $user ) {
+                $user['sag_expiration_date'] = $this->getSagExpirationDate();
+                $bodyReplacer                = new TextReplacer($this->module, $this->getUsersEmailBody(), $user);
+                $body                        = $bodyReplacer->replaceText();
+                $this->module->log('body', [ 'body' => $body ]);
+                $subjectReplacer = new TextReplacer($this->module, $this->getEmailSubject(), $user);
+                $subject         = $subjectReplacer->replaceText();
+
+                $email_success = \REDCap::email(
+                    $user['sag_user_email'],
+                    $this->getFromEmail(),
+                    $subject,
+                    $body,
+                    null,
+                    null,
+                    $this->getDisplayFromName()
+                );
+
+                if ( !$email_success ) {
+                    throw (new \Exception("Error sending expiration email to " . $user['sag_user_email']));
+                }
+
+                $this->module->framework->log('ALERT', [
+                    "user"            => json_encode($user),
+                    "recipient"       => $user['sag_user'],
+                    "recipientEmail"  => $user['sag_user_email'],
+                    "alertType"       => $this->getAlertType(),
+                    "displayFromName" => $this->getDisplayFromName(),
+                    "fromEmail"       => $this->getFromEmail(),
+                    "emailSubject"    => $subject,
+                    "emailBody"       => $body,
+                    "expirationDate"  => $this->getSagExpirationDate()
+                ]);
+
+            }
+        } catch ( \Throwable $e ) {
+            $this->module->framework->log("Error sending expiration users alert", [ 'error' => $e->getMessage() ]);
+        }
+
+    }
+
+    private function sendUserExpirationUserRightsHoldersAlertsAndScheduleReminders()
+    {
+        try {
+            $recipients                      = $this->getRecipients();
+            $userData                        = $this->convertUsersToData();
+            $userData["sag_expiration_date"] = $this->getSagExpirationDate();
+            foreach ( $recipients as $recipient ) {
+                $recipientEmail = $this->module->framework->getUser($recipient)->getEmail();
+
+                $bodyReplacer    = new TextReplacer($this->module, $this->getUserRightsHoldersEmailBody(), $userData);
+                $body            = $bodyReplacer->replaceText();
+                $subjectReplacer = new TextReplacer($this->module, $this->getEmailSubjectUserExpirationUserRightsHolders(), $userData);
+                $subject         = $subjectReplacer->replaceText();
+
+                $email_success = \REDCap::email(
+                    $recipientEmail,
+                    $this->getFromEmail(),
+                    $subject,
+                    $body,
+                    null,
+                    null,
+                    $this->getDisplayFromName()
+                );
+
+                if ( !$email_success ) {
+                    throw (new \Exception("Error sending expiration email to " . $recipientEmail));
+                }
+
+                $this->module->framework->log('ALERT', [
+                    "recipient"        => $recipient,
+                    "recipientAddress" => $recipientEmail,
+                    "users"            => json_encode($this->getUsers()),
+                    "alertType"        => $this->getAlertType(),
+                    "displayFromName"  => $this->getDisplayFromName(),
+                    "fromEmail"        => $this->getFromEmail(),
+                    "emailSubject"     => $subject,
+                    "emailBody"        => $body,
+                    "expirationDate"   => $this->getSagExpirationDate()
+                ]);
+            }
+        } catch ( \Throwable $e ) {
+            $this->module->framework->log("Error sending user expiration alert to user rights holder", [ 'error' => $e->getMessage() ]);
         }
     }
 
@@ -271,6 +372,11 @@ class Alert
     public function getUsers()
     {
         return $this->alertData['users'];
+    }
+
+    public function getSagExpirationDate()
+    {
+        return $this->alertData['sag_expiration_date'];
     }
 
 }

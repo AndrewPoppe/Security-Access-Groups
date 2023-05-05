@@ -50,6 +50,7 @@ class TextReplacer
         $text = $this->replace_sag_user_emails($text);
         $text = $this->replace_sag_users_table($text);
         $text = $this->replace_sag_users_table_full($text);
+        $text = $this->replace_sag_expiration_date($text);
 
         return $text;
     }
@@ -196,6 +197,16 @@ class TextReplacer
         $table .= $this->getSagUsersTableCss();
 
         return str_replace($placeholder, $table, $text);
+    }
+
+    private function replace_sag_expiration_date($text)
+    {
+        $placeholder = '[sag-expiration-date]';
+        if ( !str_contains($text, $placeholder) ) {
+            return $text;
+        }
+        $expiration_date = $this->data["sag_expiration_date"] ?? "";
+        return str_replace($placeholder, $expiration_date, $text);
     }
 
     private function getSagUsersTableCss()
