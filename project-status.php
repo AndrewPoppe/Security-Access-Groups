@@ -227,7 +227,6 @@ $Alerts = new Alerts($module);
     <?php $Alerts->getUserEmailModal($project_id, $adminUsername); ?>
     <?php $Alerts->getUserRightsHoldersEmailModal($project_id, $adminUsername); ?>
     <?php $Alerts->getUserExpirationModal($project_id, $adminUsername); ?>
-    <?php $Alerts->getUserExpirationSchedulerModal($project_id); ?>
     <?php $Alerts->getEmailPreviewModal(); ?>
     <script>
         var Toast = Swal.mixin({
@@ -297,19 +296,14 @@ $Alerts = new Alerts($module);
             $('#userExpirationModal').modal('show');
         }
 
-        function openScheduleExpireUsersModal() {
-            document.querySelector('#userExpirationSchedulerModal form').reset();
-            $('#userExpirationSchedulerModal').modal('show');
-        }
-
         function getSelectedUsers() {
             return $('.user-selector').toArray().map((el) => {
                 if ($(el).find('input').is(':checked')) {
                     const row = $(el).closest('tr');
                     return {
-                        username: $(row).find('td').eq(1).text(),
-                        name: $(row).find('td').eq(2).text(),
-                        email: $(row).find('td').eq(3).text()
+                        username: $(row).data('user'),
+                        name: $(row).data('name'),
+                        email: $(row).data('email')
                     };
                 }
             }).filter((el) => el);
@@ -317,6 +311,8 @@ $Alerts = new Alerts($module);
 
         async function expireUsers() {
             const users = getSelectedUsers();
+
+            console.log(users);
             await $.post("<?= $module->getUrl('expireUsers.php') ?>", {
                 users: users.map(userRow => userRow["username"])
             })
