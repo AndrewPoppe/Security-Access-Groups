@@ -267,7 +267,7 @@ class Alerts
                                                                     echo "<tr><td><code class='dataPlaceholder'>[$placeholder]</code></td><td>$description</td></tr>";
                                                                 } ?>
                                                             </table>
-                                                            <p><span>You can also use <button class="btn btn-xs btn-rcgreen btn-rcgreen-light" style="margin-left:3px;font-size:11px;padding:0px 3px 1px;line-height:14px;" onclick="smartVariableExplainPopup();setTimeout(function() {$('#smart_variable_explain_popup').parent().css('z-index', 1051);},300); return false;">[<i class="fa-solid fa-bolt fa-xs" style="margin:0 1px;"></i>] Smart Variables</button>, but few will be applicable.</span></p>
+                                                            <p><span>You can also use <button class="btn btn-xs btn-rcgreen btn-rcgreen-light" style="margin-left:3px;font-size:11px;padding:0 3px 1px;line-height:14px;" onclick="smartVariableExplainPopup();setTimeout(function() {$('#smart_variable_explain_popup').parent().css('z-index', 1051);},300); return false;">[<i class="fa-solid fa-bolt fa-xs" style="margin:0 1px;"></i>] Smart Variables</button>, but few will be applicable.</span></p>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -724,7 +724,7 @@ class Alerts
      * 
      * @return array|null array with log_id and timestamp for most recent email alert sent. returns null if no alert found
      */
-    private function getUserEmailSent($project_id, string $username)
+    private function getUserEmailSent($project_id, string $username) : ?array
     {
         $sql = "SELECT log_id, timestamp WHERE message = 'user alert email' AND project_id = ? AND user = ? ORDER BY timestamp desc";
         $params = [$project_id, $username];

@@ -11,7 +11,8 @@ $Alerts = new Alerts($module);
 //$module->removeLogs("message = 'user alert reminder sent' AND (project_id IS NULL OR project_id IS NOT NULL)", []);
 
 ?>
-<link href="https://cdn.datatables.net/v/dt/dt-1.13.3/b-2.3.5/b-html5-2.3.5/fc-4.2.1/datatables.min.css" rel="stylesheet" />
+<link href="https://cdn.datatables.net/v/dt/dt-1.13.3/b-2.3.5/b-html5-2.3.5/fc-4.2.1/datatables.min.css"
+    rel="stylesheet" />
 <script src="https://cdn.datatables.net/v/dt/dt-1.13.3/b-2.3.5/b-html5-2.3.5/fc-4.2.1/datatables.min.js"></script>
 
 <script defer src="<?= $module->getUrl('assets/fontawesome/js/regular.min.js') ?>"></script>
@@ -30,7 +31,13 @@ $Alerts = new Alerts($module);
 <!-- Modal -->
 <div class="hidden">
     <div id="infoContainer" class="modal-body p-4 text-center" style="font-size:x-large;">
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc velit metus, venenatis in congue sed, ultrices sed nulla. Donec auctor bibendum mauris eget posuere. Ut rhoncus, nulla at auctor volutpat, urna odio ornare nulla, a ultrices neque massa sed est. Vestibulum dignissim feugiat turpis vel egestas. Integer eu purus vel dui egestas varius et ac erat. Donec blandit quam a enim faucibus ultrices. Aenean consectetur efficitur leo, et euismod arcu ultrices non. Ut et tincidunt tortor. Quisque eu interdum erat, vitae convallis ligula. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi interdum sapien nec quam blandit, vel faucibus turpis convallis.
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc velit metus, venenatis in congue sed, ultrices sed
+        nulla. Donec auctor bibendum mauris eget posuere. Ut rhoncus, nulla at auctor volutpat, urna odio ornare nulla,
+        a ultrices neque massa sed est. Vestibulum dignissim feugiat turpis vel egestas. Integer eu purus vel dui
+        egestas varius et ac erat. Donec blandit quam a enim faucibus ultrices. Aenean consectetur efficitur leo, et
+        euismod arcu ultrices non. Ut et tincidunt tortor. Quisque eu interdum erat, vitae convallis ligula. Lorem ipsum
+        dolor sit amet, consectetur adipiscing elit. Morbi interdum sapien nec quam blandit, vel faucibus turpis
+        convallis.
     </div>
 </div>
 
@@ -40,11 +47,11 @@ $Alerts = new Alerts($module);
     </div>
 
     <?php
-    $project_id = $module->getProjectId();
-    $adminUsername = $module->getUser()->getUsername();
+    $project_id       = $module->framework->getProjectId();
+    $adminUsername    = $module->framework->getUser()->getUsername();
     $discrepantRights = $module->getUsersWithBadRights($project_id);
 
-    if (empty($discrepantRights)) {
+    if ( empty($discrepantRights) ) {
         exit();
     }
     ?>
@@ -53,13 +60,15 @@ $Alerts = new Alerts($module);
         <div id="sub-nav" class="d-none d-sm-block mr-4 mb-0 ml-0">
             <ul>
                 <li class="active">
-                    <a href="<?= $module->getUrl('project-status.php') ?>" style="font-size:13px;color:#393733;padding:7px 9px;">
+                    <a href="<?= $module->getUrl('project-status.php') ?>"
+                        style="font-size:13px;color:#393733;padding:7px 9px;">
                         <i class="fa-regular fa-clipboard-check"></i>
                         Project Status
                     </a>
                 </li>
                 <li>
-                    <a href="<?= $module->getUrl('project-alert-log.php') ?>" style="font-size:13px;color:#393733;padding:7px 9px;">
+                    <a href="<?= $module->getUrl('project-alert-log.php') ?>"
+                        style="font-size:13px;color:#393733;padding:7px 9px;">
                         <i class="fa-regular fa-envelopes-bulk"></i>
                         Alert Log
                     </a>
@@ -73,7 +82,8 @@ $Alerts = new Alerts($module);
     </div>
     <div class="buttonContainer mb-2">
         <div class="btn-group">
-            <button id="displayUsersButton" type="button" class="btn btn-xs btn-outline-secondary dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+            <button id="displayUsersButton" type="button" class="btn btn-xs btn-outline-secondary dropdown-toggle"
+                data-toggle="dropdown" aria-expanded="false">
                 <i class="fa-sharp fa-regular fa-eye"></i> Display Users
             </button>
             <div class="dropdown-menu" id="userFilter">
@@ -104,11 +114,16 @@ $Alerts = new Alerts($module);
                 </div>
             </div>
         </div>
-        <button type="button" class="btn btn-xs btn-primary action" onclick="openEmailUsersModal();" disabled><i class="fa-sharp fa-regular fa-envelope"></i> Email User(s)</button>
-        <button type="button" class="btn btn-xs btn-warning action" onclick="openEmailUserRightsHoldersModal();" disabled><i class="fa-kit fa-sharp-regular-envelope-circle-exclamation"></i> Email User Rights Holders</button>
-        <button type="button" class="btn btn-xs btn-danger action" onclick="openExpireUsersModal();" disabled><i class="fa-solid fa-user-xmark fa-fw"></i> Expire User(s)</button>
+        <button type="button" class="btn btn-xs btn-primary action" onclick="openEmailUsersModal();" disabled><i
+                class="fa-sharp fa-regular fa-envelope"></i> Email User(s)</button>
+        <button type="button" class="btn btn-xs btn-warning action" onclick="openEmailUserRightsHoldersModal();"
+            disabled><i class="fa-kit fa-sharp-regular-envelope-circle-exclamation"></i> Email User Rights
+            Holders</button>
+        <button type="button" class="btn btn-xs btn-danger action" onclick="openExpireUsersModal();" disabled><i
+                class="fa-solid fa-user-xmark fa-fw"></i> Expire User(s)</button>
         <div class="btn-group" role="group">
-            <i class="fa-solid fa-circle-info fa-lg align-self-center text-info" style="cursor:pointer;" onclick="Swal.fire({html: $('#infoContainer').html(), icon: 'info', showConfirmButton: false});"></i>
+            <i class="fa-solid fa-circle-info fa-lg align-self-center text-info" style="cursor:pointer;"
+                onclick="Swal.fire({html: $('#infoContainer').html(), icon: 'info', showConfirmButton: false});"></i>
         </div>
     </div>
     <div class="container ml-0 pl-0">
@@ -116,7 +131,10 @@ $Alerts = new Alerts($module);
         <table id="discrepancy-table" class="discrepancy-table row-border border hover">
             <thead class="text-center" style="background-color:#ececec">
                 <tr>
-                    <th style="vertical-align: middle !important;"><input style="display:block; margin: 0 auto;" type="checkbox" onchange="$('.user-selector input').prop('checked', $(this).prop('checked')).trigger('change');"></input></th>
+                    <th style="vertical-align: middle !important;"><input style="display:block; margin: 0 auto;"
+                            type="checkbox"
+                            onchange="$('.user-selector input').prop('checked', $(this).prop('checked')).trigger('change');"></input>
+                    </th>
                     <th>Username</th>
                     <th>Name</th>
                     <th>Email</th>
@@ -129,35 +147,53 @@ $Alerts = new Alerts($module);
                 </tr>
             </thead>
             <tbody>
-                <?php foreach ([0, 1, 2, 3, 4, 5, 6, 7, 8, 9] as $i) {
-                    foreach ($discrepantRights as $user => $thisUsersRights) {
-                        $badRights = $thisUsersRights["bad"];
+                <?php foreach ( [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 ] as $i ) {
+                    foreach ( $discrepantRights as $user => $thisUsersRights ) {
+                        $badRights      = $thisUsersRights["bad"];
                         $hasDiscrepancy = !empty($badRights);
-                        $isExpired = $thisUsersRights["expiration"] !== "never" && strtotime($thisUsersRights["expiration"]) < strtotime("today");
-                        $rowClass = $hasDiscrepancy ? "table-danger" : "bg-light"; //"table-success";
-                        $rowClass = $isExpired ? "text-secondary bg-light" : $rowClass; ?>
-                        <tr data-user="<?= $user ?>" data-email="<?= $thisUsersRights["email"] ?>" data-name="<?= $thisUsersRights["name"] ?>" data-rights="<?= htmlspecialchars(json_encode($badRights)) ?>" class="<?= $rowClass ?>">
-                            <td style="vertical-align: middle !important;" class="align-middle user-selector"><?= '<div data-discrepant="' . $hasDiscrepancy . '" data-expired="' . $isExpired . '">' . ($hasDiscrepancy ? '<input style="display:block; margin: 0 auto;" type="checkbox" onchange="window.handleActionButtons()"></input>' : '') . '</div>' ?></td>
-                            <td class="align-middle"><?= $isExpired ? $user : "<strong>$user</strong>" ?></td>
-                            <td class="align-middle"><?= $thisUsersRights["name"] ?></td>
-                            <td class="align-middle"><?= $thisUsersRights["email"] ?></td>
-                            <td class="align-middle text-center"><?= $thisUsersRights["expiration"] ?></td>
-                            <td class="align-middle text-center"><span class="user-select-all"><?= $thisUsersRights["system_role"] ?></span></td>
+                        $isExpired      = $thisUsersRights["expiration"] !== "never" && strtotime($thisUsersRights["expiration"]) < strtotime("today");
+                        $rowClass       = $hasDiscrepancy ? "table-danger" : "bg-light"; //"table-success";
+                        $rowClass       = $isExpired ? "text-secondary bg-light" : $rowClass; ?>
+                        <tr data-user="<?= $user ?>" data-email="<?= $thisUsersRights["email"] ?>"
+                            data-name="<?= $thisUsersRights["name"] ?>"
+                            data-rights="<?= htmlspecialchars(json_encode($badRights)) ?>" class="<?= $rowClass ?>">
+                            <td style="vertical-align: middle !important;" class="align-middle user-selector">
+                                <?= '<div data-discrepant="' . $hasDiscrepancy . '" data-expired="' . $isExpired . '">' . ($hasDiscrepancy ? '<input style="display:block; margin: 0 auto;" type="checkbox" onchange="window.handleActionButtons()"></input>' : '') . '</div>' ?>
+                            </td>
+                            <td class="align-middle">
+                                <?= $isExpired ? $user : "<strong>$user</strong>" ?>
+                            </td>
+                            <td class="align-middle">
+                                <?= $thisUsersRights["name"] ?>
+                            </td>
+                            <td class="align-middle">
+                                <?= $thisUsersRights["email"] ?>
+                            </td>
+                            <td class="align-middle text-center">
+                                <?= $thisUsersRights["expiration"] ?>
+                            </td>
+                            <td class="align-middle text-center"><span class="user-select-all">
+                                    <?= $thisUsersRights["system_role"] ?>
+                                </span></td>
                             <td class="align-middle text-center <?= $hasDiscrepancy ? "" : "table-success" ?>">
                                 <?php
-                                if ($hasDiscrepancy) { ?>
-                                    <a class="<?= $isExpired ? "text-secondary" : "text-primary" ?>" style="text-decoration: underline; cursor: pointer;" data-toggle="modal" data-target="#modal-<?= $user ?>"><?= sizeof($badRights) . (sizeof($badRights) > 1 ? " Rights" : " Right") ?></a>
+                                if ( $hasDiscrepancy ) { ?>
+                                    <a class="<?= $isExpired ? "text-secondary" : "text-primary" ?>"
+                                        style="text-decoration: underline; cursor: pointer;" data-toggle="modal"
+                                        data-target="#modal-<?= $user ?>"><?= sizeof($badRights) . (sizeof($badRights) > 1 ? " Rights" : " Right") ?></a>
                                     <div class="modal fade" id="modal-<?= $user ?>" tabindex="-1" aria-hidden="true">
                                         <div class="modal-dialog modal-dialog-scrollable">
                                             <div class="modal-content">
                                                 <div class="modal-header bg-dark text-light">
-                                                    <h5 class="m-0">Discrepant Rights for <?= $thisUsersRights["name"] . " (" . $user . ")" ?></h5>
+                                                    <h5 class="m-0">Discrepant Rights for
+                                                        <?= $thisUsersRights["name"] . " (" . $user . ")" ?>
+                                                    </h5>
                                                 </div>
                                                 <div class="modal-body">
                                                     <div class="d-flex justify-content-center">
                                                         <table class="table table-sm table-hover table-borderless mb-0">
                                                             <tbody>
-                                                                <?php foreach ($badRights as $right) {
+                                                                <?php foreach ( $badRights as $right ) {
                                                                     echo "<tr style='cursor: default;'><td><span>$right</span></td></tr>";
                                                                 } ?>
                                                             </tbody>
@@ -167,17 +203,23 @@ $Alerts = new Alerts($module);
                                             </div>
                                         </div>
                                     </div>
-                                <?php
+                                    <?php
                                 } else {
                                     echo "<i class='fa-sharp fa-check mr-1 text-success'></i>None";
                                 }
                                 ?>
                             </td>
-                            <td class="align-middle text-center"><?= $thisUsersRights["project_role"] ?></td>
-                            <td class="align-middle text-center"><?= $Alerts->getUserEmailSentFormatted($project_id, $user); ?></td>
-                            <td class="align-middle text-center"><?= $Alerts->getUserReminderStatusFormatted($project_id, $user); ?></td>
+                            <td class="align-middle text-center">
+                                <?= $thisUsersRights["project_role"] ?>
+                            </td>
+                            <td class="align-middle text-center">
+                                <?= $Alerts->getUserEmailSentFormatted($project_id, $user); ?>
+                            </td>
+                            <td class="align-middle text-center">
+                                <?= $Alerts->getUserReminderStatusFormatted($project_id, $user); ?>
+                            </td>
                         </tr>
-                <?php }
+                    <?php }
                 } ?>
             </tbody>
         </table>
@@ -276,20 +318,20 @@ $Alerts = new Alerts($module);
         async function expireUsers() {
             const users = getSelectedUsers();
             await $.post("<?= $module->getUrl('expireUsers.php') ?>", {
-                    users: users.map(userRow => userRow["username"])
-                })
-                .fail(function(error) {
+                users: users.map(userRow => userRow["username"])
+            })
+                .fail(function (error) {
                     console.error(error.responseText);
                     Swal.fire({
-                            title: 'Error',
-                            html: error.responseText,
-                            icon: 'error',
-                            customClass: {
-                                confirmButton: 'btn btn-primary',
-                            },
-                            buttonsStyling: false
-                        })
-                        .then(function() {
+                        title: 'Error',
+                        html: error.responseText,
+                        icon: 'error',
+                        customClass: {
+                            confirmButton: 'btn btn-primary',
+                        },
+                        buttonsStyling: false
+                    })
+                        .then(function () {
                             window.location.reload();
                         });
                 });
@@ -306,6 +348,8 @@ $Alerts = new Alerts($module);
             emailFormContents.reminderBody = tinymce.get('reminderBody').getContent();
             emailFormContents.alertType = 'users';
             emailFormContents.users = getAlertUserInfo();
+
+            console.log(emailFormContents);
 
             $.post("<?= $module->getUrl('sendAlerts.php') ?>", emailFormContents)
                 .done(response => {
@@ -381,7 +425,7 @@ $Alerts = new Alerts($module);
                     'sag_user': $(row).data('user'),
                     'sag_user_fullname': $(row).data('name'),
                     'sag_user_email': $(row).data('email'),
-                    'sag_rights': $(row).data('rights')
+                    'sag_user_rights': $(row).data('rights')
                 }
             });
             return users;
@@ -401,7 +445,6 @@ $Alerts = new Alerts($module);
             emailFormContents.recipients = getUserRightsHolderAlertRecipients('emailUserRightsHoldersForm');
 
             console.log(emailFormContents);
-            return;
 
             $.post("<?= $module->getUrl('sendAlerts.php') ?>", emailFormContents)
                 .done(response => {
@@ -496,10 +539,10 @@ $Alerts = new Alerts($module);
             expireUsers().then(() => {
                 if (!formContents.sendUserNotification && !formContents["sendNotification-userExpiration-UserRightsHolders"]) {
                     Toast.fire({
-                            title: 'The user' + (users.length > 1 ? "s were " : " was ") + 'successfully expired.',
-                            icon: 'success'
-                        })
-                        .then(function() {
+                        title: 'The user' + (users.length > 1 ? "s were " : " was ") + 'successfully expired.',
+                        icon: 'success'
+                    })
+                        .then(function () {
                             window.location.reload();
                         });
                 } else {
@@ -598,7 +641,7 @@ $Alerts = new Alerts($module);
             $('#emailPreview div.modal-body').html(replacedContent);
             $emailContainer.closest('.modal').css('z-index', 1039);
             $('#emailPreview').modal('show');
-            $('#emailPreview').on('hidden.bs.modal', function(event) {
+            $('#emailPreview').on('hidden.bs.modal', function (event) {
                 $emailContainer.closest('.modal').css('z-index', 1050);
             });
         }
@@ -608,7 +651,7 @@ $Alerts = new Alerts($module);
                 'sag_user': 'robin123',
                 'sag_user_fullname': 'Robin Jones',
                 'sag_user_email': 'robin.jones@email.com',
-                'sag_rights': ['Project Design and Setup', 'User Rights', 'Create Records']
+                'sag_user_rights': ['Project Design and Setup', 'User Rights', 'Create Records']
             };
 
             return $.post('<?= $module->getUrl('replaceSmartVariables.php') ?>', {
@@ -626,7 +669,7 @@ $Alerts = new Alerts($module);
             $('#emailPreview div.modal-body').html(replacedContent);
             $emailContainer.closest('.modal').css('z-index', 1039);
             $('#emailPreview').modal('show');
-            $('#emailPreview').on('hidden.bs.modal', function(event) {
+            $('#emailPreview').on('hidden.bs.modal', function (event) {
                 $emailContainer.closest('.modal').css('z-index', 1050);
             });
         }
@@ -669,7 +712,7 @@ $Alerts = new Alerts($module);
             $('#emailPreview div.modal-body').html(replacedContent);
             $emailContainer.closest('.modal').css('z-index', 1039);
             $('#emailPreview').modal('show');
-            $('#emailPreview').on('hidden.bs.modal', function(event) {
+            $('#emailPreview').on('hidden.bs.modal', function (event) {
                 $emailContainer.closest('.modal').css('z-index', 1050);
             });
         }
@@ -679,7 +722,7 @@ $Alerts = new Alerts($module);
                 'sag_user': 'robin123',
                 'sag_user_fullname': 'Robin Jones',
                 'sag_user_email': 'robin.jones@email.com',
-                'sag_rights': ['Project Design and Setup', 'User Rights', 'Create Records']
+                'sag_user_rights': ['Project Design and Setup', 'User Rights', 'Create Records']
             };
 
             return $.post('<?= $module->getUrl('replaceSmartVariables.php') ?>', {
@@ -688,27 +731,27 @@ $Alerts = new Alerts($module);
             });
         }
 
-        $(document).ready(function() {
+        $(document).ready(function () {
             $('.dataPlaceholder').popover({
                 placement: 'top',
                 html: true,
                 content: '<span class="text-danger">Copied!</span>',
-                show: function() {
+                show: function () {
                     $(this).fadeIn();
                 },
-                hide: function() {
+                hide: function () {
                     $(this).fadeOut();
                 }
             });
 
             const clipboard = new ClipboardJS('.dataPlaceholder', {
-                text: function(trigger) {
+                text: function (trigger) {
                     return $(trigger).text();
                 }
             });
-            clipboard.on('success', function(e) {
+            clipboard.on('success', function (e) {
                 $(e.trigger).popover('show');
-                setTimeout(function() {
+                setTimeout(function () {
                     $(e.trigger).popover('hide');
                 }, 1000);
                 e.clearSelection();
@@ -733,7 +776,7 @@ $Alerts = new Alerts($module);
                 extended_valid_elements: 'i[class]',
                 paste_word_valid_elements: "b,strong,i,em,h1,h2,u,p,ol,ul,li,a[href],span,color,font-size,font-color,font-family,mark,table,tr,td",
                 paste_retain_style_properties: "all",
-                paste_postprocess: function(plugin, args) {
+                paste_postprocess: function (plugin, args) {
                     args.node.innerHTML = cleanHTML(args.node.innerHTML);
                 },
                 remove_linebreaks: true
@@ -747,7 +790,7 @@ $Alerts = new Alerts($module);
                 }
             }
 
-            window.handleActionButtons = function() {
+            window.handleActionButtons = function () {
                 if ($('.user-selector input').is(':checked')) {
                     $('.buttonContainer button.action').prop('disabled', false);
                 } else {
@@ -764,13 +807,13 @@ $Alerts = new Alerts($module);
                 scrollCollapse: true,
                 stateSave: true,
                 stateDuration: 60 * 60 * 24 * 365,
-                stateSaveCallback: function(settings, data) {
+                stateSaveCallback: function (settings, data) {
                     let checkboxStatus = {};
                     $('#userFilter input').toArray().forEach(el => checkboxStatus[el.id] = el.checked);
                     data.checkboxStatus = checkboxStatus;
                     localStorage.setItem('DataTables_' + settings.sInstance, JSON.stringify(data))
                 },
-                stateLoadCallback: function(settings) {
+                stateLoadCallback: function (settings) {
                     const dataString = localStorage.getItem('DataTables_' + settings.sInstance);
                     if (!dataString) return settings;
                     const data = JSON.parse(dataString);
@@ -782,16 +825,16 @@ $Alerts = new Alerts($module);
                         document.getElementById(id).checked = thisChecked;
                     }
                     handleDisplayUsersButton(allChecked);
-                    delete(data.checkboxStatus);
+                    delete (data.checkboxStatus);
                     return data;
                 },
                 dom: "t",
-                initComplete: function() {
+                initComplete: function () {
                     $('table.discrepancy-table').addClass('table');
                 },
                 columnDefs: [{
                     targets: [0],
-                    data: function(row, type, val, meta) {
+                    data: function (row, type, val, meta) {
                         if (type === 'set') {
                             row.expired = $(val).data('expired') ? 'expired' : 'current';
                             row.discrepant = $(val).data('discrepant') ? 'discrepant' : 'compliant';
@@ -806,10 +849,10 @@ $Alerts = new Alerts($module);
                 }]
             });
 
-            $('#userFilter label').click(function(e) {
+            $('#userFilter label').click(function (e) {
                 e.stopPropagation()
             });
-            $('#userFilter input').change(function(e) {
+            $('#userFilter input').change(function (e) {
                 let searchTerm = "";
                 // Expired/Current
                 const expiredChecked = $('#expiredUsers').is(':checked');

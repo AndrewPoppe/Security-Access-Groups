@@ -1,6 +1,9 @@
 <?php
 
 namespace YaleREDCap\SystemUserRights;
+
+use YaleREDCap\SystemUserRights;
+
 /** @var SystemUserRights $module */
 
 if (!$module->framework->getUser()->isSuperUser()) {

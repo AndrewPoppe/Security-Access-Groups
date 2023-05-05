@@ -14,37 +14,16 @@ class TextReplacer
 
     public function __construct(SystemUserRights $module, string $text, array $data)
     {
-        $this->module = $module;
-        $this->text = $text;
+        $this->module      = $module;
+        $this->text        = $text;
         $this->cleanerText = $this->cleanText($text);
-        $this->data = $data;
+        $this->data        = $data;
     }
 
-    private function cleanText(string $text): string
+    private function cleanText(string $text) : string
     {
-        return strip_tags($text, [
-            "b",
-            "strong",
-            "i",
-            "em",
-            "h1",
-            "h2",
-            "u",
-            "p",
-            "ol",
-            "ul",
-            "li",
-            "a",
-            "span",
-            "color",
-            "font-size",
-            "font-color",
-            "font-family",
-            "mark",
-            "table",
-            "tr",
-            "td"
-        ]);
+        $dirty_text = htmlspecialchars_decode($text);
+        return \REDCap::filterHtml($dirty_text);
     }
 
     public function replaceText()
@@ -78,7 +57,7 @@ class TextReplacer
     private function replace_sag_user($text)
     {
         $placeholder = '[sag-user]';
-        if (!str_contains($text, $placeholder)) {
+        if ( !str_contains($text, $placeholder) ) {
             return $text;
         }
         $username = $this->data["sag_user"] ?? "";
@@ -88,7 +67,7 @@ class TextReplacer
     private function replace_sag_user_fullname($text)
     {
         $placeholder = '[sag-user-fullname]';
-        if (!str_contains($text, $placeholder)) {
+        if ( !str_contains($text, $placeholder) ) {
             return $text;
         }
         $fullname = $this->data["sag_user_fullname"] ?? "";
@@ -98,10 +77,10 @@ class TextReplacer
     private function replace_sag_user_email($text)
     {
         $placeholder = '[sag-user-email]';
-        if (!str_contains($text, $placeholder)) {
+        if ( !str_contains($text, $placeholder) ) {
             return $text;
         }
-        $email = $this->data["sag_user_email"] ?? "";
+        $email             = $this->data["sag_user_email"] ?? "";
         $email_replacement = '<a href="mailto:' . $email . '">' . $email . '</a>';
         return str_replace($placeholder, $email_replacement, $text);
     }
@@ -109,10 +88,10 @@ class TextReplacer
     private function replace_sag_rights($text)
     {
         $placeholder = '[sag-rights]';
-        if (!str_contains($text, $placeholder)) {
+        if ( !str_contains($text, $placeholder) ) {
             return $text;
         }
-        $rights = $this->data["sag_rights"] ?? [];
+        $rights             = $this->data["sag_user_rights"] ?? [];
         $rights_replacement = $this->makeList($rights);
         return str_replace($placeholder, $rights_replacement, $text);
     }
@@ -120,7 +99,7 @@ class TextReplacer
     private function replace_sag_project_title($text)
     {
         $placeholder = '[sag-project-title]';
-        if (!str_contains($text, $placeholder)) {
+        if ( !str_contains($text, $placeholder) ) {
             return $text;
         }
         $title = $this->module->getProject()->getTitle() ?? "";
@@ -130,10 +109,10 @@ class TextReplacer
     private function replace_sag_users($text)
     {
         $placeholder = '[sag-users]';
-        if (!str_contains($text, $placeholder)) {
+        if ( !str_contains($text, $placeholder) ) {
             return $text;
         }
-        $users = $this->data["sag_users"] ?? [];
+        $users             = $this->data["sag_users"] ?? [];
         $users_replacement = $this->makeList($users);
         return str_replace($placeholder, $users_replacement, $text);
     }
@@ -141,10 +120,10 @@ class TextReplacer
     private function replace_sag_user_fullnames($text)
     {
         $placeholder = '[sag-user-fullnames]';
-        if (!str_contains($text, $placeholder)) {
+        if ( !str_contains($text, $placeholder) ) {
             return $text;
         }
-        $fullnames = $this->data["sag_fullnames"] ?? [];
+        $fullnames             = $this->data["sag_fullnames"] ?? [];
         $fullnames_replacement = $this->makeList($fullnames);
         return str_replace($placeholder, $fullnames_replacement, $text);
     }
@@ -152,12 +131,12 @@ class TextReplacer
     private function replace_sag_user_emails($text)
     {
         $placeholder = '[sag-user-emails]';
-        if (!str_contains($text, $placeholder)) {
+        if ( !str_contains($text, $placeholder) ) {
             return $text;
         }
 
-        $emails = $this->data["sag_emails"] ?? [];
-        $emails = array_map(function ($email) {
+        $emails             = $this->data["sag_emails"] ?? [];
+        $emails             = array_map(function ($email) {
             return "<a href='mailto:$email'>$email</a>";
         }, $emails);
         $emails_replacement = $this->makeList($emails);
@@ -167,21 +146,21 @@ class TextReplacer
     private function replace_sag_users_table($text)
     {
         $placeholder = '[sag-users-table]';
-        if (!str_contains($text, $placeholder)) {
+        if ( !str_contains($text, $placeholder) ) {
             return $text;
         }
 
-        $users = $this->data["sag_users"] ?? [];
+        $users     = $this->data["sag_users"] ?? [];
         $fullnames = $this->data["sag_fullnames"] ?? [];
-        $emails = $this->data["sag_emails"] ?? [];
-        $emails = array_map(function ($email) {
+        $emails    = $this->data["sag_emails"] ?? [];
+        $emails    = array_map(function ($email) {
             return "<a href='mailto:$email'>$email</a>";
         }, $emails);
 
         $table = "<table class='sag_users'><thead><tr><th>Name</th><th>REDCap Username</th><th>Email Address</th></tr></thead><tbody>";
-        foreach ($users as $index => $username) {
+        foreach ( $users as $index => $username ) {
             $fullname = $fullnames[$index] ?? "";
-            $email = $emails[$index] ?? "";
+            $email    = $emails[$index] ?? "";
             $table .= "<tr><td>$fullname</td><td>$username</td><td>$email</td></tr>";
         }
         $table .= "</tbody></table>";
@@ -193,24 +172,24 @@ class TextReplacer
     private function replace_sag_users_table_full($text)
     {
         $placeholder = '[sag-users-table-full]';
-        if (!str_contains($text, $placeholder)) {
+        if ( !str_contains($text, $placeholder) ) {
             return $text;
         }
 
-        $users = $this->data["sag_users"] ?? [];
+        $users     = $this->data["sag_users"] ?? [];
         $fullnames = $this->data["sag_fullnames"] ?? [];
-        $emails = $this->data["sag_emails"] ?? [];
-        $emails = array_map(function ($email) {
+        $emails    = $this->data["sag_emails"] ?? [];
+        $emails    = array_map(function ($email) {
             return "<a href='mailto:$email'>$email</a>";
         }, $emails);
-        $rights = $this->data["sag_rights"] ?? [];
+        $rights    = $this->data["sag_rights"] ?? [];
 
         $table = "<table class='sag_users'><thead><tr><th>Name</th><th>REDCap Username</th><th>Email Address</th><th>Noncompliant Rights</th></tr></thead><tbody>";
-        foreach ($users as $index => $username) {
-            $fullname = $fullnames[$index] ?? "";
-            $email = $emails[$index] ?? "";
+        foreach ( $users as $index => $username ) {
+            $fullname     = $fullnames[$index] ?? "";
+            $email        = $emails[$index] ?? "";
             $these_rights = $rights[$index] ?? [];
-            $rights_list = $this->makeList($these_rights);
+            $rights_list  = $this->makeList($these_rights);
             $table .= "<tr><td>$fullname</td><td>$username</td><td>$email</td><td>$rights_list</td></tr>";
         }
         $table .= "</tbody></table>";
