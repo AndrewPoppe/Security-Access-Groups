@@ -80,6 +80,11 @@
                 "icon": "fa-solid fas fa-user-secret",
                 "url": "project-status.php",
                 "show-header-and-footer": true
+            },
+            {
+                "key": "project-alert-log",
+                "url": "project-alert-log.php",
+                "show-header-and-footer": true
             }
         ],
         "control-center": [

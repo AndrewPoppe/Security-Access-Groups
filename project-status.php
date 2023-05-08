@@ -22,8 +22,6 @@ $Alerts = new Alerts($module);
 <script defer src="<?= $module->getUrl('assets/fontawesome/js/custom-icons.min.js') ?>"></script>
 <script defer src="<?= $module->getUrl('assets/fontawesome/js/fontawesome.min.js') ?>"></script>
 
-<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.10/dist/clipboard.min.js"></script>
 <link rel='stylesheet' type='text/css' href='<?= $module->getUrl('SystemUserRights.css') ?>' />
@@ -43,17 +41,13 @@ $Alerts = new Alerts($module);
 
 <div class="SUR-Container">
     <div class="projhdr">
-        <i class='fa-solid fa-user-secret'></i>&nbsp;<span>System User Rights</span>
+        <i class='fa-solid fa-user-secret'></i>&nbsp;<span>Security Access Groups</span>
     </div>
 
     <?php
     $project_id       = $module->framework->getProjectId();
     $adminUsername    = $module->framework->getUser()->getUsername();
     $discrepantRights = $module->getUsersWithBadRights($project_id);
-
-    if ( empty($discrepantRights) ) {
-        exit();
-    }
     ?>
 
     <div class="clearfix">
@@ -258,7 +252,8 @@ $Alerts = new Alerts($module);
             const reminderBodyTemplate = `<?= $module->getSystemSetting('user-reminder-email-body-template') ?? "" ?>`;
             tinymce.get('reminderBody').setContent(reminderBodyTemplate);
 
-            const reminderSubjectTemplate = `<?= $module->getSystemSetting('user-reminder-email-subject-template') ?? "" ?>`;
+            const reminderSubjectTemplate =
+                `<?= $module->getSystemSetting('user-reminder-email-subject-template') ?? "" ?>`;
             $('#reminderSubject').val(reminderSubjectTemplate);
         }
 
@@ -273,13 +268,16 @@ $Alerts = new Alerts($module);
             const emailBodyTemplate = `<?= $module->getSystemSetting('user-rights-holders-email-body-template') ?? "" ?>`;
             tinymce.get('emailBody-UserRightsHolders').setContent(emailBodyTemplate);
 
-            const emailSubjectTemplate = `<?= $module->getSystemSetting('user-rights-holders-email-subject-template') ?? "" ?>`;
+            const emailSubjectTemplate =
+                `<?= $module->getSystemSetting('user-rights-holders-email-subject-template') ?? "" ?>`;
             $('#emailSubject-UserRightsHolders').val(emailSubjectTemplate);
 
-            const reminderBodyTemplate = `<?= $module->getSystemSetting('user-rights-holders-reminder-email-body-template') ?? "" ?>`;
+            const reminderBodyTemplate =
+                `<?= $module->getSystemSetting('user-rights-holders-reminder-email-body-template') ?? "" ?>`;
             tinymce.get('reminderBody-UserRightsHolders').setContent(reminderBodyTemplate);
 
-            const reminderSubjectTemplate = `<?= $module->getSystemSetting('user-rights-holders-reminder-email-subject-template') ?? "" ?>`;
+            const reminderSubjectTemplate =
+                `<?= $module->getSystemSetting('user-rights-holders-reminder-email-subject-template') ?? "" ?>`;
             $('#reminderSubject-UserRightsHolders').val(reminderSubjectTemplate);
         }
 
@@ -506,7 +504,8 @@ $Alerts = new Alerts($module);
                 }
             }
 
-            const anyChecked = $('#recipientTable_UserRightsHolders .user-rights-holder-selector input').toArray().some(el => $(el).is(':checked'));
+            const anyChecked = $('#recipientTable_UserRightsHolders .user-rights-holder-selector input').toArray().some(
+                el => $(el).is(':checked'));
             if (!anyChecked) {
                 $('#recipientTable_UserRightsHolders').addClass('is-invalid');
                 valid = false;
@@ -525,7 +524,8 @@ $Alerts = new Alerts($module);
             const users = getAlertUserInfo();
             let formContents = $('#userExpirationForm').serializeObject();
             formContents.usersEmailBody = tinymce.get('emailBody-userExpiration').getContent();
-            formContents.userRightsHoldersEmailBody = tinymce.get('emailBody-userExpiration-UserRightsHolders').getContent();
+            formContents.userRightsHoldersEmailBody = tinymce.get('emailBody-userExpiration-UserRightsHolders')
+                .getContent();
             formContents.alertType = 'expiration';
             formContents.users = users;
             formContents.recipients = getUserRightsHolderAlertRecipients('userExpirationForm');
@@ -533,9 +533,11 @@ $Alerts = new Alerts($module);
             console.log(formContents);
 
             expireUsers().then(() => {
-                if (!formContents.sendUserNotification && !formContents["sendNotification-userExpiration-UserRightsHolders"]) {
+                if (!formContents.sendUserNotification && !formContents[
+                    "sendNotification-userExpiration-UserRightsHolders"]) {
                     Toast.fire({
-                        title: 'The user' + (users.length > 1 ? "s were " : " was ") + 'successfully expired.',
+                        title: 'The user' + (users.length > 1 ? "s were " : " was ") +
+                            'successfully expired.',
                         icon: 'success'
                     })
                         .then(function () {
@@ -613,7 +615,8 @@ $Alerts = new Alerts($module);
                     $('#emailBody-userExpiration-UserRightsHolders').parent().removeClass('is-invalid');
                 }
 
-                const anyChecked = $('#recipientTable_userExpiration_UserRightsHolders .user-rights-holder-selector input').toArray().some(el => $(el).is(':checked'));
+                const anyChecked = $('#recipientTable_userExpiration_UserRightsHolders .user-rights-holder-selector input')
+                    .toArray().some(el => $(el).is(':checked'));
                 if (!anyChecked) {
                     $('#recipientTable_userExpiration_UserRightsHolders').addClass('is-invalid');
                     valid = false;
@@ -627,7 +630,8 @@ $Alerts = new Alerts($module);
         }
 
         function getUserRightsHolderAlertRecipients(form_id) {
-            return $(`#${form_id} .user-rights-holder-selector input:checked`).toArray().map(el => $(el).closest('tr').data('user'));
+            return $(`#${form_id} .user-rights-holder-selector input:checked`).toArray().map(el => $(el).closest('tr').data(
+                'user'));
         }
 
         async function previewEmail($emailContainer) {
@@ -691,7 +695,9 @@ $Alerts = new Alerts($module);
                 "sag_rights": [
                     ['Project Design and Setup', 'User Rights', 'Create Records'],
                     ['Logging', 'Reports & Report Builder'],
-                    ['Data Export - Full Data Set', 'Data Viewing - View & Edit', 'Data Access Groups', 'Stats & Charts', 'Survey Distribution Tools', 'File Repository']
+                    ['Data Export - Full Data Set', 'Data Viewing - View & Edit', 'Data Access Groups',
+                        'Stats & Charts', 'Survey Distribution Tools', 'File Repository'
+                    ]
                 ]
             };
 
@@ -761,7 +767,9 @@ $Alerts = new Alerts($module);
                 statusbar: true,
                 menubar: true,
                 elementpath: false,
-                plugins: ['paste autolink lists link searchreplace code fullscreen table directionality hr'],
+                plugins: [
+                    'paste autolink lists link searchreplace code fullscreen table directionality hr'
+                ],
                 toolbar1: 'formatselect | hr | bold italic underline link | fontsizeselect | alignleft aligncenter alignright alignjustify | undo redo',
                 toolbar2: 'bullist numlist | outdent indent | table tableprops tablecellprops | forecolor backcolor | searchreplace code removeformat | fullscreen',
                 contextmenu: "copy paste | link inserttable | cell row column deletetable",
@@ -833,7 +841,8 @@ $Alerts = new Alerts($module);
                     data: function (row, type, val, meta) {
                         if (type === 'set') {
                             row.expired = $(val).data('expired') ? 'expired' : 'current';
-                            row.discrepant = $(val).data('discrepant') ? 'discrepant' : 'compliant';
+                            row.discrepant = $(val).data('discrepant') ? 'discrepant' :
+                                'compliant';
                             row.inputVal = val;
                         } else if (type === 'display') {
                             return row.inputVal;
@@ -872,7 +881,8 @@ $Alerts = new Alerts($module);
                     searchTerm += 'none';
                 }
 
-                const allChecked = expiredChecked && nonExpiredChecked && discrepantChecked && nonDiscrepantChecked;
+                const allChecked = expiredChecked && nonExpiredChecked && discrepantChecked &&
+                    nonDiscrepantChecked;
                 handleDisplayUsersButton(allChecked);
                 dt.columns(0).search(searchTerm, true).draw();
                 window.handleActionButtons();

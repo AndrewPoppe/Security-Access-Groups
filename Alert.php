@@ -74,7 +74,7 @@ class Alert
                 $alert_log_id = $this->module->framework->log('ALERT', [
                     "user"            => json_encode($user),
                     "recipient"       => $user['sag_user'],
-                    "recipientEmail"  => $user['sag_user_email'],
+                    "recipientAddress"  => $user['sag_user_email'],
                     "alertType"       => $this->getAlertType(),
                     "displayFromName" => $this->getDisplayFromName(),
                     "fromEmail"       => $this->getFromEmail(),
@@ -92,7 +92,7 @@ class Alert
                     $this->module->framework->log('REMINDER', [
                         "user"            => json_encode($user),
                         "recipient"       => $user['sag_user'],
-                        "recipientEmail"  => $user['sag_user_email'],
+                        "recipientAddress"  => $user['sag_user_email'],
                         "alertType"       => $this->getAlertType(),
                         "displayFromName" => $this->getDisplayFromName(),
                         "fromEmail"       => $this->getFromEmail(),
@@ -214,7 +214,7 @@ class Alert
                 $this->module->framework->log('ALERT', [
                     "user"            => json_encode($user),
                     "recipient"       => $user['sag_user'],
-                    "recipientEmail"  => $user['sag_user_email'],
+                    "recipientAddress"  => $user['sag_user_email'],
                     "alertType"       => $this->getAlertType(),
                     "displayFromName" => $this->getDisplayFromName(),
                     "fromEmail"       => $this->getFromEmail(),
