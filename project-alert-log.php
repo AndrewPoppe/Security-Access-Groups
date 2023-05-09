@@ -8,12 +8,21 @@ if ( !$module->framework->getUser()->isSuperUser() ) {
     exit;
 }
 
-var_dump((new Alerts($module))->getAlerts());
+$Alerts = new Alerts($module);
+$alerts = $Alerts->getAlerts();
+foreach ( $alerts as $alerts ) {
+    //$Alerts->deleteAlert($alerts['id']);
+}
+
+var_dump($alerts);
 
 ?>
-<link href="https://cdn.datatables.net/v/dt/dt-1.13.3/b-2.3.5/b-html5-2.3.5/fc-4.2.1/datatables.min.css"
+<link
+    href="https://cdn.datatables.net/v/dt/dt-1.13.4/b-2.3.6/b-html5-2.3.6/fc-4.2.2/fh-3.3.2/r-2.4.1/rr-1.3.3/sr-1.2.2/datatables.min.css"
     rel="stylesheet" />
-<script src="https://cdn.datatables.net/v/dt/dt-1.13.3/b-2.3.5/b-html5-2.3.5/fc-4.2.1/datatables.min.js"></script>
+<script
+    src="https://cdn.datatables.net/v/dt/dt-1.13.4/b-2.3.6/b-html5-2.3.6/fc-4.2.2/fh-3.3.2/r-2.4.1/rr-1.3.3/sr-1.2.2/datatables.min.js">
+    </script>
 
 <script defer src="<?= $module->getUrl('assets/fontawesome/js/regular.min.js') ?>"></script>
 <script defer src="<?= $module->getUrl('assets/fontawesome/js/sharp-regular.min.js') ?>"></script>
@@ -51,46 +60,44 @@ var_dump((new Alerts($module))->getAlerts());
             </ul>
         </div>
     </div>
-
-    <table id="alertLogTable" class="" style="width: 100%">
-        <thead>
-            <tr>
-                <th>users</th>
-                <th>timestamp</th>
-                <th>type</th>
-                <th>alertType</th>
-                <th>to</th>
-                <th>from</th>
-                <th>reminderDate</th>
-            </tr>
-        </thead>
-    </table>
+    <div class="alertLogWrapper my-4 w-75">
+        <table id="alertLogTable" class="border" style="">
+            <thead>
+                <tr>
+                    <th>id</th>
+                    <th>Send Time</th>
+                    <th>Alert Type</th>
+                    <th>User(s)</th>
+                    <th>Recipient(s)</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
 </div>
 <script>
-$('#alertLogTable').DataTable({
-    ajax: "<?= $module->getUrl('ajax/alerts.php') ?>",
-    deferRender: true,
-    columns: [{
-            data: 'users'
+    $('#alertLogTable').DataTable({
+        ajax: "<?= $module->getUrl('ajax/alerts.php') ?>",
+        deferRender: true,
+        columns: [{
+            data: 'id',
         },
         {
-            data: 'timestamp'
+            data: 'sendTime',
         },
         {
-            data: 'type'
+            data: 'alertType',
         },
         {
-            data: 'alertType'
+            data: 'users',
         },
         {
-            data: 'to'
+            data: 'recipients',
         },
         {
-            data: 'from'
-        },
-        {
-            data: 'reminderDate'
+            data: 'status',
         }
-    ],
-});
+        ],
+        responsive: true
+    });
 </script>

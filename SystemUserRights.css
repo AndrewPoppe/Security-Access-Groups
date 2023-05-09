@@ -523,3 +523,27 @@ div#discrepancy-table_wrapper {
 div#discrepancy-table_wrapper div.dataTables_scrollHead {
     background-color: #ececec
 }
+
+table#alertLogTable {
+    border-collapse: collapse;
+}
+
+table#alertLogTable tr.even {
+    background-color: inherit !important;
+}
+
+table#alertLogTable tr.odd {
+    background-color: #f3f3f3 !important;
+}
+
+table#alertLogTable tbody tr:hover {
+    background-color: #d9ebf5 !important;
+}
+
+table#alertLogTable thead tr {
+    background-color: #ececec !important;
+}
+
+table#alertLogTable.border {
+    border: 1px solid rgba(0, 0, 0, 0.3) !important;
+}

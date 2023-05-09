@@ -72,14 +72,15 @@ class Alert
                 }
 
                 $alert_log_id = $this->module->framework->log('ALERT', [
-                    "user"            => json_encode($user),
-                    "recipient"       => $user['sag_user'],
-                    "recipientAddress"  => $user['sag_user_email'],
-                    "alertType"       => $this->getAlertType(),
-                    "displayFromName" => $this->getDisplayFromName(),
-                    "fromEmail"       => $this->getFromEmail(),
-                    "emailSubject"    => $subject,
-                    "emailBody"       => $body,
+                    "user"             => json_encode($user),
+                    "recipient"        => $user['sag_user'],
+                    "recipientAddress" => $user['sag_user_email'],
+                    "alertType"        => $this->getAlertType(),
+                    "displayFromName"  => $this->getDisplayFromName(),
+                    "fromEmail"        => $this->getFromEmail(),
+                    "emailSubject"     => $subject,
+                    "emailBody"        => $body,
+                    "sentTimestamp"    => time()
                 ]);
 
                 if ( $this->getSendReminder() ) {
@@ -87,19 +88,21 @@ class Alert
                     $reminderSubject         = $reminderSubjectReplacer->replaceText();
                     $reminderBodyReplacer    = new TextReplacer($this->module, $this->getReminderBody(), $user);
                     $reminderBody            = $reminderBodyReplacer->replaceText();
-                    $reminderDate            = date('Y-m-d', strtotime("+" . $this->getDelayDays() . " days"));
+                    $reminderDate            = strtotime("+" . $this->getDelayDays() . " days");
 
                     $this->module->framework->log('REMINDER', [
-                        "user"            => json_encode($user),
-                        "recipient"       => $user['sag_user'],
-                        "recipientAddress"  => $user['sag_user_email'],
-                        "alertType"       => $this->getAlertType(),
-                        "displayFromName" => $this->getDisplayFromName(),
-                        "fromEmail"       => $this->getFromEmail(),
-                        "emailSubject"    => $reminderSubject,
-                        "emailBody"       => $reminderBody,
-                        "reminderDate"    => $reminderDate,
-                        "alert_log_id"    => $alert_log_id
+                        "user"             => json_encode($user),
+                        "recipient"        => $user['sag_user'],
+                        "recipientAddress" => $user['sag_user_email'],
+                        "alertType"        => $this->getAlertType(),
+                        "displayFromName"  => $this->getDisplayFromName(),
+                        "fromEmail"        => $this->getFromEmail(),
+                        "emailSubject"     => $reminderSubject,
+                        "emailBody"        => $reminderBody,
+                        "reminderDate"     => $reminderDate,
+                        "alert_log_id"     => $alert_log_id,
+                        "status"           => "scheduled",
+                        "sentTimestamp"    => -1
                     ]);
                 }
             }
@@ -146,6 +149,7 @@ class Alert
                     "fromEmail"        => $this->getFromEmail(),
                     "emailSubject"     => $subject,
                     "emailBody"        => $body,
+                    "sentTimestamp"    => time()
                 ]);
 
                 if ( $this->getSendReminder() ) {
@@ -153,7 +157,7 @@ class Alert
                     $reminderSubject         = $reminderSubjectReplacer->replaceText();
                     $reminderBodyReplacer    = new TextReplacer($this->module, $this->getReminderBody(), $userData);
                     $reminderBody            = $reminderBodyReplacer->replaceText();
-                    $reminderDate            = date('Y-m-d', strtotime("+" . $this->getDelayDays() . " days"));
+                    $reminderDate            = strtotime("+" . $this->getDelayDays() . " days");
 
                     $this->module->framework->log('REMINDER', [
                         "recipient"        => $recipient,
@@ -165,7 +169,9 @@ class Alert
                         "emailSubject"     => $reminderSubject,
                         "emailBody"        => $reminderBody,
                         "reminderDate"     => $reminderDate,
-                        "alert_log_id"     => $alert_log_id
+                        "alert_log_id"     => $alert_log_id,
+                        "status"           => "scheduled",
+                        "sentTimestamp"    => -1
                     ]);
                 }
             }
@@ -212,15 +218,16 @@ class Alert
                 }
 
                 $this->module->framework->log('ALERT', [
-                    "user"            => json_encode($user),
-                    "recipient"       => $user['sag_user'],
-                    "recipientAddress"  => $user['sag_user_email'],
-                    "alertType"       => $this->getAlertType(),
-                    "displayFromName" => $this->getDisplayFromName(),
-                    "fromEmail"       => $this->getFromEmail(),
-                    "emailSubject"    => $subject,
-                    "emailBody"       => $body,
-                    "expirationDate"  => $this->getSagExpirationDate()
+                    "user"             => json_encode($user),
+                    "recipient"        => $user['sag_user'],
+                    "recipientAddress" => $user['sag_user_email'],
+                    "alertType"        => $this->getAlertType(),
+                    "displayFromName"  => $this->getDisplayFromName(),
+                    "fromEmail"        => $this->getFromEmail(),
+                    "emailSubject"     => $subject,
+                    "emailBody"        => $body,
+                    "expirationDate"   => $this->getSagExpirationDate(),
+                    "sentTimestamp"    => time()
                 ]);
 
             }
