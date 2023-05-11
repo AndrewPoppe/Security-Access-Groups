@@ -44,6 +44,10 @@ $data = filter_input_array(INPUT_POST, [
         'filter'  => FILTER_VALIDATE_INT,
         'options' => array( 'min_range' => 1 )
     ),
+    'delayDays-UserRightsHolders'                       => array(
+        'filter'  => FILTER_VALIDATE_INT,
+        'options' => array( 'min_range' => 1 )
+    ),
     'delayDays-expiration'                              => array(
         'filter'  => FILTER_VALIDATE_INT,
         'options' => array( 'min_range' => 0 )

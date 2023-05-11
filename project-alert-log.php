@@ -8,6 +8,12 @@ if ( !$module->framework->getUser()->isSuperUser() ) {
     exit;
 }
 
+// $Alerts = new Alerts($module);
+// $alerts = $Alerts->getAlerts();
+// foreach ( $alerts as $alert ) {
+//     $Alerts->deleteAlert($alert['id']);
+// }
+
 ?>
 <link
     href="https://cdn.datatables.net/v/dt/dt-1.13.4/b-2.3.6/b-html5-2.3.6/fc-4.2.2/fh-3.3.2/r-2.4.1/rr-1.3.3/sr-1.2.2/datatables.min.css"
@@ -20,6 +26,7 @@ if ( !$module->framework->getUser()->isSuperUser() ) {
 <script defer src="<?= $module->getUrl('assets/fontawesome/js/sharp-regular.min.js') ?>"></script>
 <script defer src="<?= $module->getUrl('assets/fontawesome/js/sharp-solid.min.js') ?>"></script>
 <script defer src="<?= $module->getUrl('assets/fontawesome/js/solid.min.js') ?>"></script>
+<script defer src="<?= $module->getUrl('assets/fontawesome/js/duotone.min.js') ?>"></script>
 <script defer src="<?= $module->getUrl('assets/fontawesome/js/custom-icons.min.js') ?>"></script>
 <script defer src="<?= $module->getUrl('assets/fontawesome/js/fontawesome.min.js') ?>"></script>
 
@@ -86,6 +93,18 @@ if ( !$module->framework->getUser()->isSuperUser() ) {
 </div>
 
 <script>
+var Toast = Swal.mixin({
+    toast: true,
+    position: 'middle',
+    iconColor: 'white',
+    customClass: {
+        popup: 'colored-toast'
+    },
+    showConfirmButton: false,
+    timer: 1500,
+    timerProgressBar: true
+});
+
 function openAlertPreview(alert_id) {
     // console.log('openAlertPreview:', alert_id);
     // Swal.fire({
@@ -122,14 +141,80 @@ function createAlertPreviewModal(data) {
     $('#alertPreviewModal').modal('show');
 }
 
+function deleteAlert(alert_id) {
+    Swal.fire({
+            title: 'Are you sure?',
+            text: "You are about to delete this alert. This action cannot be undone.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Delete Alert',
+            customClass: {
+                confirmButton: 'btn btn-danger m-1',
+                cancelButton: 'btn btn-secondary m-1'
+            },
+            buttonsStyling: false
+        })
+        .then((result) => {
+            if (result.isConfirmed) {
+                $.post('<?= $module->framework->getUrl('ajax/delete-alert.php') ?>', {
+                        alert_id: alert_id
+                    })
+                    .done(function(json) {
+                        const data = JSON.parse(json);
+                        console.log(data);
+                        if (data) {
+                            Toast.fire({
+                                icon: 'success',
+                                title: 'Alert deleted successfully.'
+                            });
+                            $('#alertLogTable').DataTable().ajax.reload();
+                        } else {
+                            Swal.fire({
+                                title: 'There was an error deleting the alert.',
+                                html: data.message,
+                                icon: 'error'
+                            })
+                        }
+                    })
+                    .fail(function(data) {
+                        Swal.fire({
+                            title: 'There was an error deleting the alert.',
+                            html: data.responseText,
+                            icon: 'error'
+                        })
+                    });
+            }
+        });
+}
+
 $('#alertLogTable').DataTable({
     ajax: "<?= $module->getUrl('ajax/alerts.php') ?>",
     deferRender: true,
     columns: [{
             data: 'id',
+            visible: false
         },
         {
-            data: 'sendTime',
+            data: function(row, type, set, meta) {
+                if (type === 'display') {
+                    const sent = moment.now() > (row.sendTime * 1000);
+                    const color = sent ? "text-success" : "text-secondary";
+                    const icon = sent ?
+                        `<span class="fa-stack fa-sm" style="width: 1.15em; height: 1.15em; vertical-align: top;">
+                            <i class='fa-sharp fa-solid fa-check-circle fa-stack-1x'></i>
+                        </span>` :
+                        `<span class="fa-stack fa-sm" style="width: 1.15em; height: 1.15em; vertical-align: top;">
+                            <i class="fa-duotone fa-clock-three fa-stack-1x text-dark" style="--fa-primary-color: #000000; --fa-secondary-color: #000000; --fa-secondary-opacity: 0.1"></i>
+                            <i class="fa-regular fa-circle fa-stack-1x text-dark"></i>
+                        </span>`;
+                    const deleteButton = sent ? "" :
+                        `<a href='javascript:;' onclick='deleteAlert(${row.id});'><i class='fa-solid fa-xmark text-danger'></i></a>`;
+                    const formattedDate = moment(row.sendTime * 1000).format('MM/DD/YYYY hh:mm A');
+                    return `<span class="${color}">${icon} ${formattedDate} ${deleteButton}</span>`;
+                } else {
+                    return row.sendTime;
+                }
+            },
         },
         {
             data: 'alertType',

@@ -159,7 +159,7 @@ class Alert
                     $reminderSubject         = $reminderSubjectReplacer->replaceText();
                     $reminderBodyReplacer    = new TextReplacer($this->module, $this->getReminderBody(), $userData);
                     $reminderBody            = $reminderBodyReplacer->replaceText();
-                    $reminderDate            = strtotime("+" . $this->getDelayDays() . " days");
+                    $reminderDate            = strtotime("+" . $this->getDelayDaysUserRightsHolders() . " days");
 
                     $this->module->framework->log('REMINDER', [
                         "recipient"        => $recipient,
@@ -276,7 +276,8 @@ class Alert
                     "fromEmail"        => $this->getFromEmailUserExpirationUserRightsHolders(),
                     "emailSubject"     => $subject,
                     "emailBody"        => $body,
-                    "expirationDate"   => $this->getSagExpirationDate()
+                    "expirationDate"   => $this->getSagExpirationDate(),
+                    "sentTimestamp"    => time()
                 ]);
             }
         } catch ( \Throwable $e ) {
@@ -366,6 +367,11 @@ class Alert
     public function getDelayDays()
     {
         return $this->alertData['delayDays'];
+    }
+
+    public function getDelayDaysUserRightsHolders()
+    {
+        return $this->alertData['delayDays-UserRightsHolders'];
     }
 
     public function getDelayDaysExpiration()
