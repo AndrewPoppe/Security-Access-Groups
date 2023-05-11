@@ -132,22 +132,22 @@ $Alerts = new Alerts($module);
                     <th>Username</th>
                     <th>Name</th>
                     <th>Email</th>
-                    <th>Expiration</th>
-                    <th>System Role</th>
-                    <th>Discrepant Rights</th>
-                    <th>Project Role</th>
-                    <th>Alert</th>
-                    <th>Reminder</th>
+                    <th class="dt-head-center">Expiration</th>
+                    <th class="dt-head-center">System Role</th>
+                    <th class="dt-head-center">Discrepant Rights</th>
+                    <th class="dt-head-center">Project Role</th>
+                    <th class="dt-head-center">Alert</th>
+                    <th class="dt-head-center">Reminder</th>
                 </tr>
             </thead>
             <tbody>
-                <?php foreach ( [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 ] as $i ) {
-                    foreach ( $discrepantRights as $user => $thisUsersRights ) {
-                        $badRights      = $thisUsersRights["bad"];
-                        $hasDiscrepancy = !empty($badRights);
-                        $isExpired      = $thisUsersRights["expiration"] !== "never" && strtotime($thisUsersRights["expiration"]) < strtotime("today");
-                        $rowClass       = $hasDiscrepancy ? "table-danger" : "bg-light"; //"table-success";
-                        $rowClass       = $isExpired ? "text-secondary bg-light" : $rowClass; ?>
+                <?php //foreach ( [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 ] as $i ) {
+                foreach ( $discrepantRights as $user => $thisUsersRights ) {
+                    $badRights      = $thisUsersRights["bad"];
+                    $hasDiscrepancy = !empty($badRights);
+                    $isExpired      = $thisUsersRights["expiration"] !== "never" && strtotime($thisUsersRights["expiration"]) < strtotime("today");
+                    $rowClass       = $hasDiscrepancy ? "table-danger" : "bg-light"; //"table-success";
+                    $rowClass       = $isExpired ? "text-secondary bg-light" : $rowClass; ?>
                 <tr data-user="<?= $user ?>" data-email="<?= $thisUsersRights["email"] ?>"
                     data-name="<?= $thisUsersRights["name"] ?>"
                     data-rights="<?= htmlspecialchars(json_encode($badRights)) ?>" class="<?= $rowClass ?>">
@@ -171,7 +171,7 @@ $Alerts = new Alerts($module);
                         </span></td>
                     <td class="align-middle text-center <?= $hasDiscrepancy ? "" : "table-success" ?>">
                         <?php
-                                if ( $hasDiscrepancy ) { ?>
+                            if ( $hasDiscrepancy ) { ?>
                         <a class="<?= $isExpired ? "text-secondary" : "text-primary" ?>"
                             style="text-decoration: underline; cursor: pointer;" data-toggle="modal"
                             data-target="#modal-<?= $user ?>"><?= sizeof($badRights) . (sizeof($badRights) > 1 ? " Rights" : " Right") ?></a>
@@ -188,8 +188,8 @@ $Alerts = new Alerts($module);
                                             <table class="table table-sm table-hover table-borderless mb-0">
                                                 <tbody>
                                                     <?php foreach ( $badRights as $right ) {
-                                                                    echo "<tr style='cursor: default;'><td><span>$right</span></td></tr>";
-                                                                } ?>
+                                                                echo "<tr style='cursor: default;'><td><span>$right</span></td></tr>";
+                                                            } ?>
                                                 </tbody>
                                             </table>
                                         </div>
@@ -198,10 +198,10 @@ $Alerts = new Alerts($module);
                             </div>
                         </div>
                         <?php
-                                } else {
-                                    echo "<i class='fa-sharp fa-check mr-1 text-success'></i>None";
-                                }
-                                ?>
+                            } else {
+                                echo "<i class='fa-sharp fa-check mr-1 text-success'></i>None";
+                            }
+                            ?>
                     </td>
                     <td class="align-middle text-center">
                         <?= $thisUsersRights["project_role"] ?>
@@ -214,7 +214,7 @@ $Alerts = new Alerts($module);
                     </td>
                 </tr>
                 <?php }
-                } ?>
+                //} ?>
             </tbody>
         </table>
     </div>

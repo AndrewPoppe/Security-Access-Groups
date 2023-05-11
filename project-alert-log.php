@@ -203,12 +203,12 @@ $('#alertLogTable').DataTable({
                         `<span class="fa-stack fa-sm" style="width: 1.15em; height: 1.15em; vertical-align: top;">
                             <i class='fa-sharp fa-solid fa-check-circle fa-stack-1x'></i>
                         </span>` :
-                        `<span class="fa-stack fa-sm" style="width: 1.15em; height: 1.15em; vertical-align: top;">
+                        `<span class="fa-stack fa-sm" style="width: 1.15em; height: 1.15em; vertical-align: top; opacity: 0.5;">
                             <i class="fa-duotone fa-clock-three fa-stack-1x text-dark" style="--fa-primary-color: #000000; --fa-secondary-color: #000000; --fa-secondary-opacity: 0.1"></i>
                             <i class="fa-regular fa-circle fa-stack-1x text-dark"></i>
                         </span>`;
                     const deleteButton = sent ? "" :
-                        `<a href='javascript:;' onclick='deleteAlert(${row.id});'><i class='fa-solid fa-xmark text-danger'></i></a>`;
+                        `<a class='deleteAlertButton' href='javascript:;' onclick='deleteAlert(${row.id});'><i class='fa-solid fa-xmark text-danger'></i></a>`;
                     const formattedDate = moment(row.sendTime * 1000).format('MM/DD/YYYY hh:mm A');
                     return `<span class="${color}">${icon} ${formattedDate} ${deleteButton}</span>`;
                 } else {

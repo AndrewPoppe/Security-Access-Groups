@@ -547,3 +547,11 @@ table#alertLogTable thead tr {
 table#alertLogTable.border {
     border: 1px solid rgba(0, 0, 0, 0.3) !important;
 }
+
+a.deleteAlertButton {
+    opacity: 0.5;
+}
+
+a.deleteAlertButton:hover {
+    opacity: 1;
+}
