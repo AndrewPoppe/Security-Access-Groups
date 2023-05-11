@@ -21,7 +21,9 @@ class Alert
         $this->module->framework->log('Sending alerts', [
             "alertType"                                         => $alertType,
             "displayFromName"                                   => $this->getDisplayFromName(),
+            "displayFromName-userExpiration-UserRightsHolders"  => $this->getDisplayFromNameUserExpirationUserRightsHolders(),
             "fromEmail"                                         => $this->getFromEmail(),
+            "fromEmail-userExpiration-UserRightsHolders"        => $this->getFromEmailUserExpirationUserRightsHolders(),
             "emailSubject"                                      => $this->getEmailSubject(),
             "emailSubject-userExpiration-UserRightsHolders"     => $this->getEmailSubjectUserExpirationUserRightsHolders(),
             "emailBody"                                         => $this->getEmailBody(),
@@ -253,12 +255,12 @@ class Alert
 
                 $email_success = \REDCap::email(
                     $recipientEmail,
-                    $this->getFromEmail(),
+                    $this->getFromEmailUserExpirationUserRightsHolders(),
                     $subject,
                     $body,
                     null,
                     null,
-                    $this->getDisplayFromName()
+                    $this->getDisplayFromNameUserExpirationUserRightsHolders()
                 );
 
                 if ( !$email_success ) {
@@ -270,8 +272,8 @@ class Alert
                     "recipientAddress" => $recipientEmail,
                     "users"            => json_encode($this->getUsers()),
                     "alertType"        => $this->getAlertType(),
-                    "displayFromName"  => $this->getDisplayFromName(),
-                    "fromEmail"        => $this->getFromEmail(),
+                    "displayFromName"  => $this->getDisplayFromNameUserExpirationUserRightsHolders(),
+                    "fromEmail"        => $this->getFromEmailUserExpirationUserRightsHolders(),
                     "emailSubject"     => $subject,
                     "emailBody"        => $body,
                     "expirationDate"   => $this->getSagExpirationDate()
@@ -306,9 +308,19 @@ class Alert
         return $this->alertData['displayFromName'];
     }
 
+    public function getDisplayFromNameUserExpirationUserRightsHolders()
+    {
+        return $this->alertData['displayFromName-userExpiration-UserRightsHolders'];
+    }
+
     public function getFromEmail()
     {
         return $this->alertData['fromEmail'];
+    }
+
+    public function getFromEmailUserExpirationUserRightsHolders()
+    {
+        return $this->alertData['fromEmail-userExpiration-UserRightsHolders'];
     }
 
     public function getEmailSubject()

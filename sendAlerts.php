@@ -20,7 +20,9 @@ if ( !$module->getUser()->isSuperUser() ) {
 $data = filter_input_array(INPUT_POST, [
     'alertType'                                         => FILTER_SANITIZE_FULL_SPECIAL_CHARS,
     'displayFromName'                                   => FILTER_SANITIZE_FULL_SPECIAL_CHARS,
+    'displayFromName-userExpiration-UserRightsHolders'  => FILTER_SANITIZE_FULL_SPECIAL_CHARS,
     'fromEmail'                                         => FILTER_SANITIZE_FULL_SPECIAL_CHARS,
+    'fromEmail-userExpiration-UserRightsHolders'        => FILTER_SANITIZE_FULL_SPECIAL_CHARS,
     'emailSubject'                                      => FILTER_SANITIZE_FULL_SPECIAL_CHARS,
     'emailSubject-userExpiration-UserRightsHolders'     => FILTER_SANITIZE_FULL_SPECIAL_CHARS,
     'emailBody'                                         => FILTER_SANITIZE_FULL_SPECIAL_CHARS,

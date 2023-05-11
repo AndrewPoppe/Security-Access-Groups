@@ -529,11 +529,11 @@ table#alertLogTable {
 }
 
 table#alertLogTable tr.even {
-    background-color: inherit !important;
+    background-color: #f3f3f3 !important;
 }
 
 table#alertLogTable tr.odd {
-    background-color: #f3f3f3 !important;
+    background-color: inherit !important;
 }
 
 table#alertLogTable tbody tr:hover {
