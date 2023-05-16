@@ -1,8 +1,6 @@
 <?php
 
-namespace YaleREDCap\SystemUserRights;
-
-use YaleREDCap\SystemUserRights\SystemUserRights;
+namespace YaleREDCap\SecurityAccessGroups;
 
 class CsvUserImport
 {
@@ -14,17 +12,17 @@ class CsvUserImport
     public $bad_users = [];
     public $error_messages = [];
     public $assignments = [];
-    function __construct(SystemUserRights $module, string $csvString)
+    function __construct(SecurityAccessGroups $module, string $csvString)
     {
-        $this->module = $module;
+        $this->module    = $module;
         $this->csvString = $csvString;
     }
 
     public function parseCsvString()
     {
         $lineEnding = str_contains($this->csvString, "\r\n") ? "\r\n" : "\n";
-        $Data = str_getcsv($this->csvString, $lineEnding);
-        foreach ($Data as &$Row) $Row = str_getcsv($Row, ",");
+        $Data       = str_getcsv($this->csvString, $lineEnding);
+        foreach ( $Data as &$Row ) $Row = str_getcsv($Row, ",");
         $this->csvContents = $Data;
     }
 
@@ -33,53 +31,53 @@ class CsvUserImport
         $header = $this->csvContents[0];
 
         $usernameIndex = array_search("username", $header, true);
-        $roleIdIndex = array_search("role_id", $header, true);
-        if ($usernameIndex === false || $roleIdIndex === false) {
+        $roleIdIndex   = array_search("role_id", $header, true);
+        if ( $usernameIndex === false || $roleIdIndex === false ) {
             $this->error_messages[] = "Input file did not contain 'username' and/or 'role_id' columns.";
             return false;
         }
 
         $valid = true;
 
-        foreach ($this->csvContents as $key => $row) {
+        foreach ( $this->csvContents as $key => $row ) {
             $thisRowClean = true;
-            if ($key === array_key_first($this->csvContents)) {
+            if ( $key === array_key_first($this->csvContents) ) {
                 continue;
             }
             $thisUsername = trim($row[$usernameIndex]);
-            if (empty($thisUsername)) {
+            if ( empty($thisUsername) ) {
                 $this->error_messages[] = "One or more username was invalid.";
-                $thisRowClean = false;
+                $thisRowClean           = false;
             }
-            if (is_null($this->module->getUserInfo($thisUsername))) {
+            if ( is_null($this->module->getUserInfo($thisUsername)) ) {
                 $this->bad_users[] = htmlspecialchars($thisUsername, ENT_QUOTES);
-                $thisRowClean = false;
+                $thisRowClean      = false;
             }
 
             $thisRole = trim($row[$roleIdIndex]);
-            if (empty($thisRole)) {
+            if ( empty($thisRole) ) {
                 $this->error_messages[] = "One or more role id was invalid.";
-                $thisRowClean = false;
+                $thisRowClean           = false;
             }
-            if ($this->module->systemRoleExists($thisRole) == false) {
+            if ( $this->module->systemRoleExists($thisRole) == false ) {
                 $this->bad_roles[] = htmlspecialchars($thisRole, ENT_QUOTES);
-                $thisRowClean = false;
+                $thisRowClean      = false;
             }
-            if (!$thisRowClean) {
+            if ( !$thisRowClean ) {
                 $valid = false;
             } else {
-                $this->cleanContents[] = ["user" => $thisUsername, "role" => $thisRole];
+                $this->cleanContents[] = [ "user" => $thisUsername, "role" => $thisRole ];
             }
         }
 
-        if (!empty($this->bad_users) || !empty($this->bad_roles)) {
+        if ( !empty($this->bad_users) || !empty($this->bad_roles) ) {
             $this->error_messages[] = "The following users and/or roles do not exist.";
-            $valid = false;
+            $valid                  = false;
         }
 
-        if (empty($this->cleanContents)) {
+        if ( empty($this->cleanContents) ) {
             $this->error_messages[] = "No valid user role assignments were present in the import file.";
-            $valid = false;
+            $valid                  = false;
         }
 
         $this->error_messages = array_values(array_unique($this->error_messages));
@@ -88,21 +86,21 @@ class CsvUserImport
 
     private function getAssignments()
     {
-        foreach ($this->cleanContents as $row) {
-            $currentRole = $this->module->getUserSystemRole($row["user"]);
-            $userInfo = $this->module->getUserInfo($row["user"]);
+        foreach ( $this->cleanContents as $row ) {
+            $currentRole       = $this->module->getUserSystemRole($row["user"]);
+            $userInfo          = $this->module->getUserInfo($row["user"]);
             $requestedRoleInfo = $this->module->getSystemRoleRightsById($row["role"]);
-            $currentRoleInfo = $this->module->getSystemRoleRightsById($currentRole);
+            $currentRoleInfo   = $this->module->getSystemRoleRightsById($currentRole);
 
             $result = [
-                "username" => $userInfo["username"],
-                "name" => $userInfo["user_firstname"] . " " . $userInfo["user_lastname"],
+                "username"    => $userInfo["username"],
+                "name"        => $userInfo["user_firstname"] . " " . $userInfo["user_lastname"],
                 "currentRole" => "<strong>" . $currentRoleInfo["role_name"] . "</strong> (" . $currentRoleInfo["role_id"] . ")"
             ];
 
-            if ($currentRole !== $row["role"]) {
+            if ( $currentRole !== $row["role"] ) {
                 $result["newRoleId"] = $requestedRoleInfo["role_id"];
-                $result["newRole"] = "<strong>" . $requestedRoleInfo["role_name"] . "</strong> (" . $requestedRoleInfo["role_id"] . ")";
+                $result["newRole"]   = "<strong>" . $requestedRoleInfo["role_name"] . "</strong> (" . $requestedRoleInfo["role_id"] . ")";
             }
 
             $this->assignments[] = $result;
@@ -112,7 +110,7 @@ class CsvUserImport
     public function getUpdateTable()
     {
         $this->getAssignments();
-        $html = '<div class="modal fade">
+        $html        = '<div class="modal fade">
             <div class="modal-lg modal-dialog modal-dialog-scrollable">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -133,14 +131,14 @@ class CsvUserImport
                         </thead>
                         <tbody>';
         $nothingToDo = true;
-        foreach ($this->assignments as $row) {
-            $rowClass = "text-secondary";
+        foreach ( $this->assignments as $row ) {
+            $rowClass  = "text-secondary";
             $cellClass = "";
-            if (isset($row["newRole"])) {
+            if ( isset($row["newRole"]) ) {
                 $nothingToDo = false;
-                $rowClass = "table-warning";
-                $cellClass = "font-weight-bold";
-                $roleText = '<span>New: </span><span class="text-primary">' . $row["newRole"] . '</span><br><span>Current: </span><span class="text-danger">' . $row["currentRole"] . '</span>';
+                $rowClass    = "table-warning";
+                $cellClass   = "font-weight-bold";
+                $roleText    = '<span>New: </span><span class="text-primary">' . $row["newRole"] . '</span><br><span>Current: </span><span class="text-danger">' . $row["currentRole"] . '</span>';
             } else {
                 $roleText = '<span>' . $row["currentRole"] . '</span>';
             }
@@ -169,18 +167,18 @@ class CsvUserImport
         $this->getAssignments();
         $success = false;
         try {
-            foreach ($this->assignments as $row) {
+            foreach ( $this->assignments as $row ) {
                 $username = $row["username"];
-                $role = $row["newRoleId"];
-                if (empty($role)) {
+                $role     = $row["newRoleId"];
+                if ( empty($role) ) {
                     continue;
                 }
                 $setting = $username . "-role";
                 $this->module->setSystemSetting($setting, $role);
             }
             $success = true;
-        } catch (\Throwable $e) {
-            $this->module->log('Error importing role assignments', ["error" => $e->getMessage()]);
+        } catch ( \Throwable $e ) {
+            $this->module->log('Error importing role assignments', [ "error" => $e->getMessage() ]);
         } finally {
             return $success;
         }

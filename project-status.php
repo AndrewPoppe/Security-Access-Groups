@@ -1,10 +1,10 @@
 <?php
 
-namespace YaleREDCap\SystemUserRights;
+namespace YaleREDCap\SecurityAccessGroups;
 
-/** @var SystemUserRights $module */
+/** @var SecurityAccessGroups $module */
 
-require_once "Alerts.php";
+require_once "classes/Alerts.php";
 $Alerts = new Alerts($module);
 
 // TODO: Remove this
@@ -24,7 +24,7 @@ $Alerts = new Alerts($module);
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.10/dist/clipboard.min.js"></script>
-<link rel='stylesheet' type='text/css' href='<?= $module->getUrl('SystemUserRights.css') ?>' />
+<link rel='stylesheet' type='text/css' href='<?= $module->getUrl('SecurityAccessGroups.css') ?>' />
 
 <!-- Modal -->
 <div class="hidden">
@@ -41,7 +41,7 @@ $Alerts = new Alerts($module);
 
 <div class="SUR-Container">
     <div class="projhdr">
-        <i class='fa-solid fa-user-secret'></i>&nbsp;<span>Security Access Groups</span>
+        <i class='fa-solid fa-users-between-lines'></i>&nbsp;<span>Security Access Groups</span>
     </div>
 
     <?php
@@ -311,7 +311,7 @@ $Alerts = new Alerts($module);
         const users = getSelectedUsers();
 
         console.log(users);
-        await $.post("<?= $module->getUrl('expireUsers.php') ?>", {
+        await $.post("<?= $module->getUrl('ajax/expireUsers.php') ?>", {
                 users: users.map(userRow => userRow["username"])
             })
             .fail(function(error) {
@@ -345,7 +345,7 @@ $Alerts = new Alerts($module);
 
         console.log(emailFormContents);
 
-        $.post("<?= $module->getUrl('sendAlerts.php') ?>", emailFormContents)
+        $.post("<?= $module->getUrl('ajax/sendAlerts.php') ?>", emailFormContents)
             .done(response => {
                 console.log(response);
                 Swal.fire({
@@ -440,7 +440,7 @@ $Alerts = new Alerts($module);
 
         console.log(emailFormContents);
 
-        $.post("<?= $module->getUrl('sendAlerts.php') ?>", emailFormContents)
+        $.post("<?= $module->getUrl('ajax/sendAlerts.php') ?>", emailFormContents)
             .done(response => {
                 console.log(response);
                 Swal.fire({
@@ -544,7 +544,7 @@ $Alerts = new Alerts($module);
                         window.location.reload();
                     });
             } else {
-                $.post("<?= $module->getUrl('sendAlerts.php') ?>", formContents)
+                $.post("<?= $module->getUrl('ajax/sendAlerts.php') ?>", formContents)
                     .done(response => {
                         console.log(response);
                         Swal.fire({
@@ -654,7 +654,7 @@ $Alerts = new Alerts($module);
             'sag_user_rights': ['Project Design and Setup', 'User Rights', 'Create Records']
         };
 
-        return $.post('<?= $module->getUrl('replaceSmartVariables.php') ?>', {
+        return $.post('<?= $module->getUrl('ajax/replaceSmartVariables.php') ?>', {
             text: text,
             data: data
         });
@@ -701,7 +701,7 @@ $Alerts = new Alerts($module);
             ]
         };
 
-        return $.post('<?= $module->getUrl('replaceSmartVariables.php') ?>', {
+        return $.post('<?= $module->getUrl('ajax/replaceSmartVariables.php') ?>', {
             text: text,
             data: data
         });
@@ -727,7 +727,7 @@ $Alerts = new Alerts($module);
             'sag_user_rights': ['Project Design and Setup', 'User Rights', 'Create Records']
         };
 
-        return $.post('<?= $module->getUrl('replaceSmartVariables.php') ?>', {
+        return $.post('<?= $module->getUrl('ajax/replaceSmartVariables.php') ?>', {
             text: text,
             data: data
         });
@@ -773,7 +773,7 @@ $Alerts = new Alerts($module);
             toolbar1: 'formatselect | hr | bold italic underline link | fontsizeselect | alignleft aligncenter alignright alignjustify | undo redo',
             toolbar2: 'bullist numlist | outdent indent | table tableprops tablecellprops | forecolor backcolor | searchreplace code removeformat | fullscreen',
             contextmenu: "copy paste | link inserttable | cell row column deletetable",
-            content_css: "<?= $module->getUrl('SystemUserRights.css') ?>",
+            content_css: "<?= $module->getUrl('SecurityAccessGroups.css') ?>",
             relative_urls: false,
             convert_urls: false,
             convert_fonts_to_spans: true,

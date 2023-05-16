@@ -1,6 +1,6 @@
 {
-    "name": "System User Rights",
-    "namespace": "YaleREDCap\\SystemUserRights",
+    "name": "Security Access Groups",
+    "namespace": "YaleREDCap\\SecurityAccessGroups",
     "description": "Placeholder",
     "authors": [
         {
@@ -76,8 +76,8 @@
         "project": [
             {
                 "key": "project-status",
-                "name": "Check User Rights",
-                "icon": "fa-solid fas fa-user-secret",
+                "name": "Security Access Groups",
+                "icon": "fa-solid  fa-users-between-lines",
                 "url": "project-status.php",
                 "show-header-and-footer": true
             },
@@ -90,8 +90,8 @@
         "control-center": [
             {
                 "key": "system-settings",
-                "name": "System User Rights",
-                "icon": "fa-solid fas fa-user-secret",
+                "name": "Security Access Groups",
+                "icon": "fa-solid  fa-users-between-lines",
                 "url": "system-settings.php",
                 "show-header-and-footer": true
             }

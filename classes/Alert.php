@@ -1,14 +1,14 @@
 <?php
-namespace YaleREDCap\SystemUserRights;
 
-require_once 'TextReplacer.php';
-use YaleREDCap\SystemUserRights\TextReplacer;
+namespace YaleREDCap\SecurityAccessGroups;
+
+require_once "TextReplacer.php";
 
 class Alert
 {
     private $alertData;
     private $module;
-    public function __construct(SystemUserRights $module, array $alertData)
+    public function __construct(SecurityAccessGroups $module, array $alertData)
     {
         $this->alertData = $alertData;
         $this->module    = $module;

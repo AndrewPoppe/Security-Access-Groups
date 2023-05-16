@@ -1,8 +1,6 @@
 <?php
 
-namespace YaleREDCap\SystemUserRights;
-
-use YaleREDCap\SystemUserRights\SystemUserRights;
+namespace YaleREDCap\SecurityAccessGroups;
 
 class TextReplacer
 {
@@ -12,7 +10,7 @@ class TextReplacer
     public $cleanerText;
     private $data;
 
-    public function __construct(SystemUserRights $module, string $text, array $data)
+    public function __construct(SecurityAccessGroups $module, string $text, array $data)
     {
         $this->module      = $module;
         $this->text        = $text;

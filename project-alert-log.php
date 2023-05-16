@@ -1,7 +1,7 @@
 <?php
-namespace YaleREDCap\SystemUserRights;
+namespace YaleREDCap\SecurityAccessGroups;
 
-/** @var SystemUserRights $module */
+/** @var SecurityAccessGroups $module */
 
 if ( !$module->framework->getUser()->isSuperUser() ) {
     http_response_code(401);
@@ -32,12 +32,12 @@ if ( !$module->framework->getUser()->isSuperUser() ) {
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.10/dist/clipboard.min.js"></script>
-<link rel='stylesheet' type='text/css' href='<?= $module->getUrl('SystemUserRights.css') ?>' />
+<link rel='stylesheet' type='text/css' href='<?= $module->getUrl('SecurityAccessGroups.css') ?>' />
 
 
 <div class="SUR-Container">
     <div class="projhdr">
-        <i class='fa-solid fa-user-secret'></i>&nbsp;<span>Security Access Groups</span>
+        <i class='fa-solid fa-users-between-lines'></i>&nbsp;<span>Security Access Groups</span>
     </div>
     <div class="clearfix">
         <div id="sub-nav" class="d-none d-sm-block mr-4 mb-0 ml-0">
@@ -68,7 +68,7 @@ if ( !$module->framework->getUser()->isSuperUser() ) {
                     <th>Alert Type</th>
                     <th>View Alert</th>
                     <th>User(s)</th>
-                    <th>Recipient(s)</th>
+                    <th>Recipient</th>
                     <th>Status</th>
                 </tr>
             </thead>
@@ -201,14 +201,14 @@ $('#alertLogTable').DataTable({
                     const color = sent ? "text-success" : "text-secondary";
                     const icon = sent ?
                         `<span class="fa-stack fa-sm" style="width: 1.15em; height: 1.15em; vertical-align: top;">
-                            <i class='fa-sharp fa-solid fa-check-circle fa-stack-1x'></i>
+                            <i class='fa-sharp fa-solid fa-check-circle fa-stack-1x' title="Alert sent"></i>
                         </span>` :
-                        `<span class="fa-stack fa-sm" style="width: 1.15em; height: 1.15em; vertical-align: top; opacity: 0.5;">
+                        `<span class="fa-stack fa-sm" style="width: 1.15em; height: 1.15em; vertical-align: top; opacity: 0.5;" title="Alert scheduled">
                             <i class="fa-duotone fa-clock-three fa-stack-1x text-dark" style="--fa-primary-color: #000000; --fa-secondary-color: #000000; --fa-secondary-opacity: 0.1"></i>
                             <i class="fa-regular fa-circle fa-stack-1x text-dark"></i>
                         </span>`;
                     const deleteButton = sent ? "" :
-                        `<a class='deleteAlertButton' href='javascript:;' onclick='deleteAlert(${row.id});'><i class='fa-solid fa-xmark text-danger'></i></a>`;
+                        `<a class='deleteAlertButton' href='javascript:;' onclick='deleteAlert(${row.id});'><i class='fa-solid fa-xmark text-danger' title="Delete alert"></i></a>`;
                     const formattedDate = moment(row.sendTime * 1000).format('MM/DD/YYYY hh:mm A');
                     return `<span class="${color}">${icon} ${formattedDate} ${deleteButton}</span>`;
                 } else {
@@ -217,7 +217,22 @@ $('#alertLogTable').DataTable({
             },
         },
         {
-            data: 'alertType',
+            data: function(row, type, set, meta) {
+                if (type === 'display') {
+                    let result = '';
+                    if (row.alertType === 'users') {
+                        result = 'User Alert';
+                    } else if (row.alertType === 'userRightsHolders') {
+                        result = 'User Rights Holder Alert';
+                    } else if (row.alertType === 'expiration') {
+                        result = 'Expiration Alert';
+                    }
+
+                    return result + (row.reminder ? ' (Reminder)' : '');
+                } else {
+                    return row.alertType;
+                }
+            },
         },
         {
             data: function(row, type, set, meta) {
@@ -225,7 +240,20 @@ $('#alertLogTable').DataTable({
             }
         },
         {
-            data: 'users',
+            data: function(row, type, set, meta) {
+                const users = row['users'];
+                if (type === 'display') {
+                    let result = [];
+                    for (let user of users.split('<br>')) {
+                        result.push(
+                            `<a rel="noreferrer noopener" target="_blank" href="${app_path_webroot_full + app_path_webroot + 'ControlCenter/view_users.php?username=' + user}">${user}</a>`
+                        );
+                    }
+                    return result.join('<br>');
+                } else {
+                    return users;
+                }
+            },
         },
         {
             data: 'recipients',

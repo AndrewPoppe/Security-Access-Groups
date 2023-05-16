@@ -1,8 +1,8 @@
 <?php
 
-namespace YaleREDCap\SystemUserRights;
+namespace YaleREDCap\SecurityAccessGroups;
 
-/* @var SystemUserRights $module */
+/** @var SecurityAccessGroups $module */
 
 if ( !$module->framework->getUser()->isSuperUser() ) {
     http_response_code(401);

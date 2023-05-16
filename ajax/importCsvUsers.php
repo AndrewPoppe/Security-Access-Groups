@@ -1,17 +1,19 @@
 <?php
 
-namespace YaleREDCap\SystemUserRights;
+namespace YaleREDCap\SecurityAccessGroups;
 
-require_once "CsvUserImport.php";
+/** @var SecurityAccessGroups $module */
 
-use YaleREDCap\SystemUserRights\CsvUserImport;
+require_once $module->framework->getSafePath("classes/CsvUserImport.php");
 
-if (!$module->getUser()->isSuperUser()) {
+use YaleREDCap\SecurityAccessGroups\CsvUserImport;
+
+if ( !$module->getUser()->isSuperUser() ) {
     http_response_code(401);
     exit;
 }
 
-if (!$_SERVER["REQUEST_METHOD"] === "POST") {
+if ( !$_SERVER["REQUEST_METHOD"] === "POST" ) {
     http_response_code(405);
     exit;
 }
@@ -24,7 +26,7 @@ $userImport = new CsvUserImport($module, $CsvString);
 $userImport->parseCsvString();
 
 $contentsValid = $userImport->contentsValid();
-if ($contentsValid !== true) {
+if ( $contentsValid !== true ) {
     http_response_code(400);
     echo json_encode([
         "error" => $userImport->error_messages,
@@ -34,7 +36,7 @@ if ($contentsValid !== true) {
     exit;
 }
 
-if (filter_input(INPUT_POST, "confirm", FILTER_VALIDATE_BOOLEAN)) {
+if ( filter_input(INPUT_POST, "confirm", FILTER_VALIDATE_BOOLEAN) ) {
     echo $userImport->import();
 } else {
     echo $userImport->getUpdateTable();

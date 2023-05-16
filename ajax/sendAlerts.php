@@ -1,11 +1,10 @@
 <?php
 
-namespace YaleREDCap\SystemUserRights;
+namespace YaleREDCap\SecurityAccessGroups;
 
-require_once 'TextReplacer.php';
-require_once 'Alert.php';
+/** @var SecurityAccessGroups $module */
 
-use YaleREDCap\SystemUserRights\Alert;
+require_once $module->framework->getSafePath("classes/Alert.php");
 
 if ( $_SERVER["REQUEST_METHOD"] !== "POST" ) {
     http_response_code(400);
@@ -68,7 +67,13 @@ if ( $data['alertType'] === 'expiration' ) {
     $data['sag_expiration_date'] = date('Y-m-d', strtotime("+" . $data['delayDays-expiration'] . " days"));
 }
 
-$Alert = new Alert($module, $data);
-$Alert->sendAlerts();
+$module->framework->log('Sending alerts', [ 'data' => json_encode($data) ]);
+try {
+    $Alert = new Alert($module, $data);
+    $Alert->sendAlerts();
+    $module->framework->log('Sent alerts', [ 'data' => json_encode($data) ]);
+} catch ( \Throwable $e ) {
+    $module->framework->log('Error sending alerts: ', [ 'error' => $e->getMessage() ]);
+}
 echo json_encode($data);
 exit();
