@@ -100,9 +100,9 @@
     "crons": [
         {
             "cron_name": "send_reminders",
-            "cron_description": "Check hourly for reminder emails due to be sent",
+            "cron_description": "Check every minute for reminder emails due to be sent",
             "method": "sendReminders",
-            "cron_frequency": "3600",
+            "cron_frequency": "60",
             "cron_max_run_time": "60"
         }
     ],

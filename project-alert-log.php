@@ -22,17 +22,17 @@ if ( !$module->framework->getUser()->isSuperUser() ) {
     src="https://cdn.datatables.net/v/dt/dt-1.13.4/b-2.3.6/b-html5-2.3.6/fc-4.2.2/fh-3.3.2/r-2.4.1/rr-1.3.3/sr-1.2.2/datatables.min.js">
 </script>
 
-<script defer src="<?= $module->getUrl('assets/fontawesome/js/regular.min.js') ?>"></script>
-<script defer src="<?= $module->getUrl('assets/fontawesome/js/sharp-regular.min.js') ?>"></script>
-<script defer src="<?= $module->getUrl('assets/fontawesome/js/sharp-solid.min.js') ?>"></script>
-<script defer src="<?= $module->getUrl('assets/fontawesome/js/solid.min.js') ?>"></script>
-<script defer src="<?= $module->getUrl('assets/fontawesome/js/duotone.min.js') ?>"></script>
-<script defer src="<?= $module->getUrl('assets/fontawesome/js/custom-icons.min.js') ?>"></script>
-<script defer src="<?= $module->getUrl('assets/fontawesome/js/fontawesome.min.js') ?>"></script>
+<script defer src="<?= $module->framework->getUrl('assets/fontawesome/js/regular.min.js') ?>"></script>
+<script defer src="<?= $module->framework->getUrl('assets/fontawesome/js/sharp-regular.min.js') ?>"></script>
+<script defer src="<?= $module->framework->getUrl('assets/fontawesome/js/sharp-solid.min.js') ?>"></script>
+<script defer src="<?= $module->framework->getUrl('assets/fontawesome/js/solid.min.js') ?>"></script>
+<script defer src="<?= $module->framework->getUrl('assets/fontawesome/js/duotone.min.js') ?>"></script>
+<script defer src="<?= $module->framework->getUrl('assets/fontawesome/js/custom-icons.min.js') ?>"></script>
+<script defer src="<?= $module->framework->getUrl('assets/fontawesome/js/fontawesome.min.js') ?>"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.10/dist/clipboard.min.js"></script>
-<link rel='stylesheet' type='text/css' href='<?= $module->getUrl('SecurityAccessGroups.css') ?>' />
+<link rel='stylesheet' type='text/css' href='<?= $module->framework->getUrl('SecurityAccessGroups.css') ?>' />
 
 
 <div class="SUR-Container">
@@ -43,14 +43,14 @@ if ( !$module->framework->getUser()->isSuperUser() ) {
         <div id="sub-nav" class="d-none d-sm-block mr-4 mb-0 ml-0">
             <ul>
                 <li>
-                    <a href="<?= $module->getUrl('project-status.php') ?>"
+                    <a href="<?= $module->framework->getUrl('project-status.php') ?>"
                         style="font-size:13px;color:#393733;padding:7px 9px;">
                         <i class="fa-regular fa-clipboard-check"></i>
                         Project Status
                     </a>
                 </li>
                 <li class="active">
-                    <a href="<?= $module->getUrl('project-alert-log.php') ?>"
+                    <a href="<?= $module->framework->getUrl('project-alert-log.php') ?>"
                         style="font-size:13px;color:#393733;padding:7px 9px;">
                         <i class="fa-regular fa-envelopes-bulk"></i>
                         Alert Log
@@ -188,7 +188,7 @@ function deleteAlert(alert_id) {
 }
 
 $('#alertLogTable').DataTable({
-    ajax: "<?= $module->getUrl('ajax/alerts.php') ?>",
+    ajax: "<?= $module->framework->getUrl('ajax/alerts.php') ?>",
     deferRender: true,
     columns: [{
             data: 'id',
@@ -197,18 +197,38 @@ $('#alertLogTable').DataTable({
         {
             data: function(row, type, set, meta) {
                 if (type === 'display') {
-                    const sent = moment.now() > (row.sendTime * 1000);
-                    const color = sent ? "text-success" : "text-secondary";
-                    const icon = sent ?
-                        `<span class="fa-stack fa-sm" style="width: 1.15em; height: 1.15em; vertical-align: top;">
+
+                    console.log(row);
+
+                    let color = "";
+                    let icon = "";
+                    let sent = false;
+                    let deleteButton = "";
+
+                    if (row.reminder && moment.now() > (row.sendTime * 1000)) {
+                        const status = row.status ?? "error";
+                        color = status === "error" ? "text-danger" : "text-success";
+                        icon = status === "error" ?
+                            `<span class="fa-stack fa-sm" style="width: 1.15em; height: 1.15em; vertical-align: top;">
+                            <i class='fa-solid fa-circle-exclamation fa-stack-1x' title="Error sending reminder"></i>
+                        </span>` :
+                            `<span class="fa-stack fa-sm" style="width: 1.15em; height: 1.15em; vertical-align: top;">
+                            <i class='fa-sharp fa-solid fa-check-circle fa-stack-1x' title="Reminder sent"></i>
+                        </span>`;
+                    } else {
+                        const sent = moment.now() > (row.sendTime * 1000);
+                        color = sent ? "text-success" : "text-secondary";
+                        icon = sent ?
+                            `<span class="fa-stack fa-sm" style="width: 1.15em; height: 1.15em; vertical-align: top;">
                             <i class='fa-sharp fa-solid fa-check-circle fa-stack-1x' title="Alert sent"></i>
                         </span>` :
-                        `<span class="fa-stack fa-sm" style="width: 1.15em; height: 1.15em; vertical-align: top; opacity: 0.5;" title="Alert scheduled">
+                            `<span class="fa-stack fa-sm" style="width: 1.15em; height: 1.15em; vertical-align: top; opacity: 0.5;" title="Alert scheduled">
                             <i class="fa-duotone fa-clock-three fa-stack-1x text-dark" style="--fa-primary-color: #000000; --fa-secondary-color: #000000; --fa-secondary-opacity: 0.1"></i>
                             <i class="fa-regular fa-circle fa-stack-1x text-dark"></i>
                         </span>`;
-                    const deleteButton = sent ? "" :
-                        `<a class='deleteAlertButton' href='javascript:;' onclick='deleteAlert(${row.id});'><i class='fa-solid fa-xmark text-danger' title="Delete alert"></i></a>`;
+                        deleteButton = sent ? "" :
+                            `<a class='deleteAlertButton' href='javascript:;' onclick='deleteAlert(${row.id});'><i class='fa-solid fa-xmark text-danger' title="Delete alert"></i></a>`;
+                    }
                     const formattedDate = moment(row.sendTime * 1000).format('MM/DD/YYYY hh:mm A');
                     return `<span class="${color}">${icon} ${formattedDate} ${deleteButton}</span>`;
                 } else {

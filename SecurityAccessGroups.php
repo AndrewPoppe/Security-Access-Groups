@@ -163,9 +163,9 @@ $(function() {
     window.import_type = '<?= $_SESSION['SUR_imported'] ?>';
     window.import_errors = JSON.parse('<?= $_SESSION['SUR_bad_rights'] ?>');
     <?php
-                                                                                        unset($_SESSION['SUR_imported']);
-                                                                                        unset($_SESSION['SUR_bad_rights']);
-                                                                } ?>
+                unset($_SESSION['SUR_imported']);
+                unset($_SESSION['SUR_bad_rights']);
+            } ?>
 
     function createRightsTable(bad_rights) {
         return `<table class="table table-sm table-borderless table-hover w-50 mt-4 mx-auto" style="font-size:13px; cursor: default;"><tbody><tr><td>${bad_rights.join('</td></tr><tr><td>')}</td></tr></tbody></table>`;
@@ -190,7 +190,7 @@ $(function() {
                 title = "You cannot import those users.";
                 text =
                     `The following users included in the provided import file cannot have the following permissions granted to them:<br>
-                                                                                <table style="margin-top: 20px; width: 100%;"><thead style="border-bottom: 2px solid #666;"><tr><th>User</th><th>Permissions</th></tr></thead><tbody>`;
+                                                                                        <table style="margin-top: 20px; width: 100%;"><thead style="border-bottom: 2px solid #666;"><tr><th>User</th><th>Permissions</th></tr></thead><tbody>`;
                 const users = Object.keys(window.import_errors);
                 users.forEach((user) => {
                     text +=
@@ -201,7 +201,7 @@ $(function() {
                 title = "You cannot import those roles.";
                 text =
                     `The following roles have users assigned to them, and the following permissions cannot be granted for those users:<br>
-                                                                            <table style="margin-top: 20px; width: 100%;"><thead style="border-bottom: 2px solid #666;"><tr><th>Role</th><th>User</th><th>Permissions</th></tr></thead><tbody>`;
+                                                                                    <table style="margin-top: 20px; width: 100%;"><thead style="border-bottom: 2px solid #666;"><tr><th>Role</th><th>User</th><th>Permissions</th></tr></thead><tbody>`;
                 const roles = Object.keys(window.import_errors);
                 roles.forEach((role) => {
                     const users = Object.keys(window.import_errors[role]);
@@ -246,7 +246,7 @@ $(function() {
                     title = `You cannot grant those rights to the role<br>"${result.role}"`;
                     text =
                         `The following users are assigned to that role, and the following permissions cannot be granted to them:<br>
-                                                                                <table style="margin-top: 20px; width: 100%;"><thead style="border-bottom: 2px solid #666;"><tr><th>User</th><th>Permissions</th></tr></thead><tbody>`;
+                                                                                        <table style="margin-top: 20px; width: 100%;"><thead style="border-bottom: 2px solid #666;"><tr><th>User</th><th>Permissions</th></tr></thead><tbody>`;
                     users.forEach((user) => {
                         text +=
                             `<tr style="border-top: 1px solid #666;"><td>${user}</td><td>${result.bad_rights[user].join('<br>')}</td></tr>`;
@@ -1176,6 +1176,20 @@ $(function() {
         } catch ( \Throwable $e ) {
             $this->log('Error fetching user rights holders', [ "error" => $e->getMessage() ]);
         }
+    }
+
+    function updateLog($log_id, array $params)
+    {
+        $sql = "UPDATE redcap_external_modules_log_parameters SET value = ? WHERE log_id = ? AND name = ?";
+        foreach ( $params as $name => $value ) {
+            try {
+                $this->framework->query($sql, [ $value, $log_id, $name ]);
+            } catch ( \Throwable $e ) {
+                $this->framework->log("Error updating log parameter", [ "error" => $e->getMessage() ]);
+                return false;
+            }
+        }
+        return true;
     }
 
     function getRoleEditForm(array $rights, bool $newRole, $role_name = "", $role_id = "")
