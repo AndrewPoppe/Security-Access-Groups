@@ -62,10 +62,14 @@ if ( !$module->framework->getUser()->isSuperUser() ) {
     <div class="alertLogWrapper my-4 w-75">
         <table id="alertLogTable" class="border" style="">
             <thead>
+                <tr style="background-color: #D7D7D7 !important;">
+                    <th colspan="8" style="border-bottom: none;">Test</th>
+                </tr>
                 <tr>
-                    <th>id</th>
+                    <th>Alert ID</th>
                     <th>Send Time</th>
                     <th>Alert Type</th>
+                    <th>Reminder</th>
                     <th>View Alert</th>
                     <th>User(s)</th>
                     <th>Recipient</th>
@@ -119,7 +123,6 @@ function openAlertPreview(alert_id) {
         })
         .done(function(json) {
             const data = JSON.parse(json);
-            console.log(data);
             createAlertPreviewModal(data);
             Swal.close();
         })
@@ -136,8 +139,25 @@ function openAlertPreview(alert_id) {
 }
 
 function createAlertPreviewModal(data) {
-    console.log(data);
     $('#alertPreviewModal .modal-body').html(data.table);
+    let title = 'Alert Preview - ';
+    if (data.alertType === "users") {
+        $('#alertPreviewModal .modal-header')[0].classList = 'modal-header bg-primary text-light';
+        title += 'User Alert';
+    } else if (data.alertType === "userRightsHolders") {
+        $('#alertPreviewModal .modal-header')[0].classList = 'modal-header bg-warning text-body';
+        title += 'User Rights Holder Alert';
+    } else if (data.alertType === "expiration") {
+        $('#alertPreviewModal .modal-header')[0].classList = 'modal-header bg-danger text-light';
+        title += 'User Expiration Alert';
+    }
+    if (data.reminder) {
+        title += " (Reminder)";
+        $('#alertPreviewModal .modal-body')[0].classList = 'modal-body bg-reminder';
+    } else {
+        $('#alertPreviewModal .modal-body')[0].classList = 'modal-body';
+    }
+    $('#alertPreviewModalLabel').text(title);
     $('#alertPreviewModal').modal('show');
 }
 
@@ -192,7 +212,7 @@ $('#alertLogTable').DataTable({
     deferRender: true,
     columns: [{
             data: 'id',
-            visible: false
+            visible: true
         },
         {
             data: function(row, type, set, meta) {
@@ -222,7 +242,7 @@ $('#alertLogTable').DataTable({
                             `<span class="fa-stack fa-sm" style="width: 1.15em; height: 1.15em; vertical-align: top;">
                             <i class='fa-sharp fa-solid fa-check-circle fa-stack-1x' title="Alert sent"></i>
                         </span>` :
-                            `<span class="fa-stack fa-sm" style="width: 1.15em; height: 1.15em; vertical-align: top; opacity: 0.5;" title="Alert scheduled">
+                            `<span class="fa-stack fa-sm" style="width: 1.15em; height: 1.15em; vertical-align: top; opacity: 0.5;" title="Reminder scheduled">
                             <i class="fa-duotone fa-clock-three fa-stack-1x text-dark" style="--fa-primary-color: #000000; --fa-secondary-color: #000000; --fa-secondary-opacity: 0.1"></i>
                             <i class="fa-regular fa-circle fa-stack-1x text-dark"></i>
                         </span>`;
@@ -241,18 +261,33 @@ $('#alertLogTable').DataTable({
                 if (type === 'display') {
                     let result = '';
                     if (row.alertType === 'users') {
-                        result = 'User Alert';
+                        result =
+                            '<span class="badge-primary text-light badge-pill py-1 px-2">User</span>';
                     } else if (row.alertType === 'userRightsHolders') {
-                        result = 'User Rights Holder Alert';
+                        result =
+                            '<span class="badge-warning text-body badge-pill py-1 px-2">User Rights Holder</span>';
                     } else if (row.alertType === 'expiration') {
-                        result = 'Expiration Alert';
+                        result =
+                            '<span class="badge-danger text-light badge-pill py-1 px-2">Expiration</span>';
                     }
 
-                    return result + (row.reminder ? ' (Reminder)' : '');
+                    return result;
                 } else {
                     return row.alertType;
                 }
             },
+        },
+        {
+            data: function(row, type, set, meta) {
+                if (type === 'display') {
+                    return row.reminder ?
+                        '<span class="badge badge-pill bg-reminder border font-weight-normal">Reminder</span>' :
+                        '';
+                } else if (type === 'filter') {
+                    return row.reminder ? 'Reminder' : '';
+                }
+                return row.reminder;
+            }
         },
         {
             data: function(row, type, set, meta) {
@@ -283,6 +318,9 @@ $('#alertLogTable').DataTable({
             visible: false
         }
     ],
-    responsive: true
+    responsive: true,
+    order: [
+        [1, 'desc']
+    ],
 });
 </script>

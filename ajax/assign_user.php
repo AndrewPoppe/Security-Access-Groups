@@ -15,7 +15,10 @@ $data     = filter_input_array(INPUT_POST, FILTER_SANITIZE_ENCODED);
 $username = $data["username"];
 $role_id  = $data["role_id"];
 
-if ( $role_id == 0 ) {
+// We ignore expired users
+$userExpired = $module->isUserExpired($username, $module->getProjectId());
+
+if ( $role_id == 0 || $userExpired ) {
     require $scriptPath;
     exit;
 }

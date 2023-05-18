@@ -29,7 +29,15 @@ if ( in_array($submit_action, [ "add_user", "edit_user" ]) ) {
     $requested_rights  = $module->filterPermissions($data);
     $errors            = !empty($bad_rights);
 
-    if ( $errors === false ) {
+    // We ignore expired users, unless the request unexpires them
+    $userExpired        = $module->isUserExpired($user, $module->getProjectId());
+    $requestedExpiration = urldecode($data["expiration"]);
+    $requestedUnexpired = empty($requestedExpiration) || (strtotime($requestedExpiration) >= strtotime('today'));
+    if ( $userExpired && !$requestedUnexpired ) {
+        $ignore = true;
+    }
+
+    if ( $errors === false || $ignore === true ) {
         $module->log("Adding/Editing User", [ "user" => $user, "requested_rights" => json_encode($requested_rights) ]);
         $action_info = [
             "action"        => $submit_action,
