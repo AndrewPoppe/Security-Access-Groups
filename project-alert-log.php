@@ -60,19 +60,16 @@ if ( !$module->framework->getUser()->isSuperUser() ) {
             </ul>
         </div>
     </div>
-    <div class="alertLogWrapper my-4 mr-3 p-3 border bg-light" style="width: 1100px; display: none;">
+    <div class="alertLogWrapper my-4 mr-3 p-2 border bg-light" style="width: 1100px; display: none;">
         <table id="alertLogTable" class="border" width="100%">
             <thead>
                 <tr style="background-color: #D7D7D7 !important;">
                     <th class="font-weight-normal" colspan="8" style="border-bottom: none;">
                         <div class="container px-0">
                             <div class="row">
-                                <div class="col-2 pl-4 pt-2">
-                                    <h5>Alert Log</h5>
-                                </div>
-                                <div class="col-4" style="border-left: 1px solid #ccc">
+                                <div class="col-4" style="">
                                     <!-- <div class="row pl-4 pt-3"><span>Alert time controls</span></div> -->
-                                    <div class="row px-3 pt-3">
+                                    <div class="row px-3 pt-2">
                                         <div class="col pl-0 pr-1"><input id="mindatetime"
                                                 class="timePicker form-control form-control-sm input" type="text"
                                                 placeholder="Begin time">
@@ -94,7 +91,7 @@ if ( !$module->framework->getUser()->isSuperUser() ) {
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col px-4" style="border-left: 1px solid #ccc">
+                                <div class="col-4 px-4" style="border-left: 1px solid #ccc">
                                     <div class="row pt-2 pb-1">
                                         <select class="" id="alertTypeSelect" multiple="multiple">
                                             <option value="users">User</option>
@@ -109,12 +106,12 @@ if ( !$module->framework->getUser()->isSuperUser() ) {
                                         </select>
                                     </div>
                                 </div>
-                                <div class="col px-4" style="border-left: 1px solid #ccc">
-                                    <div class="row pt-2">
+                                <div class="col-4 px-4" style="border-left: 1px solid #ccc">
+                                    <div class="row pt-2 pb-1">
                                         <select class="form-control" id="usersSelect" multiple="multiple">
                                         </select>
                                     </div>
-                                    <div class="row pt-2">
+                                    <div class="row">
                                         <select class="form-control" id="recipientSelect" multiple="multiple">
                                         </select>
                                     </div>
@@ -273,6 +270,8 @@ if ( !$module->framework->getUser()->isSuperUser() ) {
     }
 
     $(document).ready(function () {
+
+        $('#sub-nav').removeClass('d-none');
 
         // Custom range filtering function
         $.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
@@ -472,7 +471,7 @@ if ( !$module->framework->getUser()->isSuperUser() ) {
                 const users = Array.from(new Set(usersAll.flat()));
                 const usersSelect = $('#usersSelect').select2({
                     minimumResultsForSearch: 20,
-                    placeholder: "Show all users",
+                    placeholder: "Filter users",
                     allowClear: false
                 });
                 users.forEach(user => usersSelect.append(new Option(user, user, false, false)));
@@ -483,7 +482,7 @@ if ( !$module->framework->getUser()->isSuperUser() ) {
                 const recipients = Array.from(new Set(recipientsAll.flat()));
                 const recipientSelect = $('#recipientSelect').select2({
                     minimumResultsForSearch: 20,
-                    placeholder: "Show all recipients",
+                    placeholder: "Filter recipients",
                     allowClear: false,
                     templateResult: function (recipient) {
                         return $(`<span>${recipient.text}</span>`);
@@ -503,7 +502,7 @@ if ( !$module->framework->getUser()->isSuperUser() ) {
 
                 const alertTypeSelect = $('#alertTypeSelect').select2({
                     minimumResultsForSearch: 20,
-                    placeholder: "Show all alert types",
+                    placeholder: "Filter alert types",
                     allowClear: false
                 });
                 alertTypeSelect.on('change', function () {
@@ -512,7 +511,7 @@ if ( !$module->framework->getUser()->isSuperUser() ) {
 
                 const notificationTypeSelect = $('#notificationTypeSelect').select2({
                     minimumResultsForSearch: 20,
-                    placeholder: "Show all notification types",
+                    placeholder: "Filter notification types",
                     allowClear: false
                 });
                 notificationTypeSelect.on('change', function () {

@@ -748,6 +748,9 @@ $Alerts = new Alerts($module);
     }
 
     $(document).ready(function() {
+
+        $('#sub-nav').removeClass('d-none');
+
         $('.dataPlaceholder').popover({
             placement: 'top',
             html: true,
