@@ -26,7 +26,24 @@ class TextReplacer
 
     public function replaceText()
     {
-        $replaced_text = \Piping::pipeSpecialTags($this->cleanerText, $this->module->getProjectId());
+        $replaced_text = \Piping::pipeSpecialTags(
+            $this->cleanerText,
+            $this->module->getProjectId(),
+            null,
+            null,
+            null,
+            $username = $this->data["sag_user"],
+            false,
+            null,
+            null,
+            false,
+            false,
+            false,
+            false,
+            null,
+            false,
+            false
+        );
         $replaced_text = $this->replacePlaceholders($replaced_text);
         return $replaced_text;
     }

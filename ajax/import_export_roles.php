@@ -4,7 +4,7 @@ namespace YaleREDCap\SecurityAccessGroups;
 
 /** @var SecurityAccessGroups $module */
 
-$scriptPath = $module->getSafePath('UserRights/import_export_roles.php', APP_PATH_DOCROOT);
+$scriptPath = $module->framework->getSafePath('UserRights/import_export_roles.php', APP_PATH_DOCROOT);
 
 if ( $_SERVER["REQUEST_METHOD"] !== "POST" || !isset($_POST['csv_content']) ) {
     require $scriptPath;
@@ -29,7 +29,9 @@ if ( isset($_POST['csv_content']) && $_POST['csv_content'] != '' ) {
             $role_rights       = $module->getRoleRights($role_id);
             $acceptable_rights = $module->getAcceptableRights($username);
             $these_bad_rights  = $module->checkProposedRights($acceptable_rights, $role_rights);
-            if ( !empty($these_bad_rights) ) {
+            // We ignore expired users
+            $userExpired = $module->isUserExpired($username, $module->getProjectId());
+            if ( !empty($these_bad_rights) && !$userExpired ) {
                 $bad_rights[$role_name] = $these_bad_rights;
             }
         }
@@ -70,7 +72,9 @@ if ( isset($_POST['csv_content']) && $_POST['csv_content'] != '' ) {
             foreach ( $usersInRole as $username ) {
                 $acceptable_rights = $module->getAcceptableRights($username);
                 $user_bad_rights   = $module->checkProposedRights($acceptable_rights, $this_role);
-                if ( !empty($user_bad_rights) ) {
+                // We ignore expired users
+                $userExpired = $module->isUserExpired($username, $module->getProjectId());
+                if ( !empty($user_bad_rights) && !$userExpired ) {
                     $these_bad_rights[$username] = $user_bad_rights;
                 }
             }

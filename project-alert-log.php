@@ -60,7 +60,7 @@ if ( !$module->framework->getUser()->isSuperUser() ) {
             </ul>
         </div>
     </div>
-    <div class="alertLogWrapper my-4 mr-3 p-2 border bg-light" style="width: 1100px; display: none;">
+    <div class="alertLogWrapper my-4 mr-3 card card-body bg-light" style="width: 1100px; display: none;">
         <table id="alertLogTable" class="border" width="100%">
             <thead>
                 <tr style="background-color: #D7D7D7 !important;">
@@ -354,20 +354,20 @@ if ( !$module->framework->getUser()->isSuperUser() ) {
                             const status = row.status ?? "error";
                             color = status === "error" ? "text-danger" : "text-success";
                             icon = status === "error" ?
-                                `<span class="fa-stack fa-sm" style="width: 1.15em; height: 1.15em; vertical-align: top;">
+                                `<span class="fa-stack fa-sm default-cursor" style="width: 1.15em; height: 1.15em; vertical-align: top;">
                             <i class='fa-solid fa-circle-exclamation fa-stack-1x' title="Error sending reminder"></i>
                         </span>` :
-                                `<span class="fa-stack fa-sm" style="width: 1.15em; height: 1.15em; vertical-align: top;">
+                                `<span class="fa-stack fa-sm default-cursor" style="width: 1.15em; height: 1.15em; vertical-align: top;">
                             <i class='fa-sharp fa-solid fa-check-circle fa-stack-1x' title="Reminder sent"></i>
                         </span>`;
                         } else {
                             const sent = moment.now() > (row.sendTime * 1000);
                             color = sent ? "text-success" : "text-secondary";
                             icon = sent ?
-                                `<span class="fa-stack fa-sm" style="width: 1.15em; height: 1.15em; vertical-align: top;">
+                                `<span class="fa-stack fa-sm default-cursor" style="width: 1.15em; height: 1.15em; vertical-align: top;">
                             <i class='fa-sharp fa-solid fa-check-circle fa-stack-1x' title="Alert sent"></i>
                         </span>` :
-                                `<span class="fa-stack fa-sm" style="width: 1.15em; height: 1.15em; vertical-align: top; opacity: 0.5;" title="Reminder scheduled">
+                                `<span class="fa-stack fa-sm default-cursor" style="width: 1.15em; height: 1.15em; vertical-align: top; opacity: 0.5;" title="Reminder scheduled">
                             <i class="fa-duotone fa-clock-three fa-stack-1x text-dark" style="--fa-primary-color: #000000; --fa-secondary-color: #000000; --fa-secondary-opacity: 0.1"></i>
                             <i class="fa-regular fa-circle fa-stack-1x text-dark"></i>
                         </span>`;
@@ -376,7 +376,7 @@ if ( !$module->framework->getUser()->isSuperUser() ) {
                         }
                         const formattedDate = moment(row.sendTime * 1000).format(
                             'MM/DD/YYYY hh:mm A');
-                        return `<span class="${color}">${icon} ${formattedDate} ${deleteButton}</span>`;
+                        return `<span class="${color} default-cursor">${icon} ${formattedDate} ${deleteButton}</span>`;
                     } else {
                         return row.sendTime;
                     }
@@ -389,13 +389,13 @@ if ( !$module->framework->getUser()->isSuperUser() ) {
                         let result = '';
                         if (row.alertType === 'users') {
                             result =
-                                '<span class="badge-primary text-light badge-pill py-1 px-2">User</span>';
+                                '<span class="badge-primary text-light badge-pill py-1 px-2 default-cursor">User</span>';
                         } else if (row.alertType === 'userRightsHolders') {
                             result =
-                                '<span class="badge-warning text-body badge-pill py-1 px-2">User Rights Holder</span>';
+                                '<span class="badge-warning text-body badge-pill py-1 px-2 default-cursor">User Rights Holder</span>';
                         } else if (row.alertType === 'expiration') {
                             result =
-                                '<span class="badge-danger text-light badge-pill py-1 px-2">Expiration</span>';
+                                '<span class="badge-danger text-light badge-pill py-1 px-2 default-cursor">Expiration</span>';
                         }
 
                         return result;
@@ -409,7 +409,7 @@ if ( !$module->framework->getUser()->isSuperUser() ) {
                 data: function (row, type, set, meta) {
                     if (type === 'display') {
                         return row.reminder ?
-                            '<span class="badge badge-pill bg-reminder border font-weight-normal">Reminder</span>' :
+                            '<span class="badge badge-pill bg-reminder border font-weight-normal default-cursor">Reminder</span>' :
                             '';
                     } else if (type === 'filter') {
                         return row.reminder ? 'Reminder' : '';

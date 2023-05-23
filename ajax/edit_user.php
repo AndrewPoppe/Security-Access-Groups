@@ -30,9 +30,9 @@ if ( in_array($submit_action, [ "add_user", "edit_user" ]) ) {
     $errors            = !empty($bad_rights);
 
     // We ignore expired users, unless the request unexpires them
-    $userExpired        = $module->isUserExpired($user, $module->getProjectId());
+    $userExpired         = $module->isUserExpired($user, $module->getProjectId());
     $requestedExpiration = urldecode($data["expiration"]);
-    $requestedUnexpired = empty($requestedExpiration) || (strtotime($requestedExpiration) >= strtotime('today'));
+    $requestedUnexpired  = empty($requestedExpiration) || (strtotime($requestedExpiration) >= strtotime('today'));
     if ( $userExpired && !$requestedUnexpired ) {
         $ignore = true;
     }
@@ -116,7 +116,11 @@ if ( $submit_action === "edit_role" ) {
     foreach ( $usersInRole as $username ) {
         $acceptable_rights = $module->getAcceptableRights($username);
         $these_bad_rights  = $module->checkProposedRights($acceptable_rights, $data);
-        if ( !empty($these_bad_rights) ) {
+
+        // We ignore expired users
+        $userExpired = $module->isUserExpired($username, $module->getProjectId());
+
+        if ( !empty($these_bad_rights) && !$userExpired ) {
             $bad_rights[$username] = $these_bad_rights;
         }
     }

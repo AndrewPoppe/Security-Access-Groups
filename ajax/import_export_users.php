@@ -37,7 +37,16 @@ if ( isset($_POST['csv_content']) && $_POST['csv_content'] != '' ) {
 
         $acceptable_rights = $module->getAcceptableRights($username);
         $these_bad_rights  = $module->checkProposedRights($acceptable_rights, $this_user);
-        if ( !empty($these_bad_rights) ) {
+
+        // We ignore expired users, unless the request unexpires them
+        $userExpired         = $module->isUserExpired($username, $module->framework->getProjectId());
+        $requestedExpiration = $this_user["expiration"];
+        $requestedUnexpired  = empty($requestedExpiration) || (strtotime($requestedExpiration) >= strtotime('today'));
+        if ( $userExpired && !$requestedUnexpired ) {
+            $ignore = true;
+        }
+
+        if ( !empty($these_bad_rights) && !$ignore ) {
             $bad_rights[$username] = $these_bad_rights;
         }
     }

@@ -106,7 +106,9 @@ class APIHandler
                 $role_rights       = $this->module->getRoleRights($role_id, $this->project_id);
                 $acceptable_rights = $this->module->getAcceptableRights($username);
                 $these_bad_rights  = $this->module->checkProposedRights($acceptable_rights, $role_rights);
-                if ( !empty($these_bad_rights) ) {
+                // We ignore expired users
+                $userExpired = $this->module->isUserExpired($username, $this->project_id);
+                if ( !empty($these_bad_rights) && !$userExpired ) {
                     $bad_rights[$role_name] = $these_bad_rights;
                 }
             }
@@ -144,7 +146,9 @@ class APIHandler
                 foreach ( $usersInRole as $username ) {
                     $acceptable_rights = $this->module->getAcceptableRights($username);
                     $user_bad_rights   = $this->module->checkProposedRights($acceptable_rights, $this_role);
-                    if ( !empty($user_bad_rights) ) {
+                    // We ignore expired users
+                    $userExpired = $this->module->isUserExpired($username, $this->project_id);
+                    if ( !empty($user_bad_rights) && !$userExpired ) {
                         $these_bad_rights[$username] = $user_bad_rights;
                     }
                 }
@@ -182,7 +186,16 @@ class APIHandler
 
                 $acceptable_rights = $this->module->getAcceptableRights($username);
                 $these_bad_rights  = $this->module->checkProposedRights($acceptable_rights, $this_user);
-                if ( !empty($these_bad_rights) ) {
+
+                // We ignore expired users, unless the request unexpires them
+                $userExpired         = $this->module->isUserExpired($username, $this->project_id);
+                $requestedExpiration = urldecode($this_user["expiration"]);
+                $requestedUnexpired  = empty($requestedExpiration) || (strtotime($requestedExpiration) >= strtotime('today'));
+                if ( $userExpired && !$requestedUnexpired ) {
+                    $ignore = true;
+                }
+
+                if ( !empty($these_bad_rights) && !$ignore ) {
                     $bad_rights[$username] = $these_bad_rights;
                 }
             }

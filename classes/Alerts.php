@@ -91,7 +91,7 @@ class Alerts
                                                     style="margin-left:3px;font-size:11px;padding:0 3px 1px;line-height:14px;"
                                                     onclick="smartVariableExplainPopup();setTimeout(function() {$('#smart_variable_explain_popup').parent().css('z-index', 1051);},300); return false;">[<i
                                                         class="fa-solid fa-bolt fa-xs" style="margin:0 1px;"></i>] Smart
-                                                    Variables</button>, but few will be applicable.</span></p>
+                                                    Variables</button></span></p>
                                     </div>
                                 </div>
                             </div>
@@ -166,7 +166,7 @@ class Alerts
                                                         style="margin-left:3px;font-size:11px;padding:0 3px 1px;line-height:14px;"
                                                         onclick="smartVariableExplainPopup();setTimeout(function() {$('#smart_variable_explain_popup').parent().css('z-index', 1051);},300); return false;">[<i
                                                             class="fa-solid fa-bolt fa-xs" style="margin:0 1px;"></i>]
-                                                        Smart Variables</button>, but few will be applicable.</span></p>
+                                                        Smart Variables</button></span></p>
                                         </div>
                                     </div>
                                 </div>
@@ -272,8 +272,8 @@ class Alerts
                                                             style="margin-left:3px;font-size:11px;padding:0 3px 1px;line-height:14px;"
                                                             onclick="smartVariableExplainPopup();setTimeout(function() {$('#smart_variable_explain_popup').parent().css('z-index', 1051);},300); return false;">[<i
                                                                 class="fa-solid fa-bolt fa-xs"
-                                                                style="margin:0 1px;"></i>] Smart Variables</button>,
-                                                        but few will be applicable.</span></p>
+                                                                style="margin:0 1px;"></i>] Smart
+                                                            Variables</button></span></p>
                                             </div>
                                         </div>
                                     </div>
@@ -357,7 +357,7 @@ class Alerts
                                                                 onclick="smartVariableExplainPopup();setTimeout(function() {$('#smart_variable_explain_popup').parent().css('z-index', 1051);},300); return false;">[<i
                                                                     class="fa-solid fa-bolt fa-xs"
                                                                     style="margin:0 1px;"></i>] Smart
-                                                                Variables</button>, but few will be applicable.</span>
+                                                                Variables</button></span>
                                                     </p>
                                                 </div>
                                             </div>
@@ -568,7 +568,7 @@ class Alerts
                                                         style="margin-left:3px;font-size:11px;padding:0px 3px 1px;line-height:14px;"
                                                         onclick="smartVariableExplainPopup();setTimeout(function() {$('#smart_variable_explain_popup').parent().css('z-index', 1051);},300); return false;">[<i
                                                             class="fa-solid fa-bolt fa-xs" style="margin:0 1px;"></i>]
-                                                        Smart Variables</button>, but few will be applicable.</span></p>
+                                                        Smart Variables</button></span></p>
                                         </div>
                                     </div>
                                 </div>
@@ -656,7 +656,7 @@ class Alerts
                                                         style="margin-left:3px;font-size:11px;padding:0px 3px 1px;line-height:14px;"
                                                         onclick="smartVariableExplainPopup();setTimeout(function() {$('#smart_variable_explain_popup').parent().css('z-index', 1051);},300); return false;">[<i
                                                             class="fa-solid fa-bolt fa-xs" style="margin:0 1px;"></i>]
-                                                        Smart Variables</button>, but few will be applicable.</span></p>
+                                                        Smart Variables</button></span></p>
                                         </div>
                                     </div>
                                 </div>

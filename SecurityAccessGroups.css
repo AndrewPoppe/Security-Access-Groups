@@ -533,7 +533,7 @@ table#alertLogTable tr.even {
 }
 
 table#alertLogTable tr.odd {
-    background-color: inherit !important;
+    background-color: white !important;
 }
 
 table#alertLogTable tbody tr:hover {
@@ -575,4 +575,8 @@ table#alertLogTable .select2-container--default.select2-container--focus .select
 table#alertLogTable .select2-container--default .select2-selection--multiple {
     border: 1px solid #ced4da;
     font-size: 14px;
+}
+
+.default-cursor {
+    cursor: default !important;
 }
