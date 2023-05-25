@@ -190,7 +190,7 @@ class SecurityAccessGroups extends AbstractExternalModule
                         title = "You cannot import those users.";
                         text =
                             `The following users included in the provided import file cannot have the following permissions granted to them:<br>
-                                                                                                                                                                <table style="margin-top: 20px; width: 100%;"><thead style="border-bottom: 2px solid #666;"><tr><th>User</th><th>Permissions</th></tr></thead><tbody>`;
+                                                                                                                                                                                        <table style="margin-top: 20px; width: 100%;"><thead style="border-bottom: 2px solid #666;"><tr><th>User</th><th>Permissions</th></tr></thead><tbody>`;
                         const users = Object.keys(window.import_errors);
                         users.forEach((user) => {
                             text +=
@@ -201,7 +201,7 @@ class SecurityAccessGroups extends AbstractExternalModule
                         title = "You cannot import those roles.";
                         text =
                             `The following roles have users assigned to them, and the following permissions cannot be granted for those users:<br>
-                                                                                                                                                            <table style="margin-top: 20px; width: 100%;"><thead style="border-bottom: 2px solid #666;"><tr><th>Role</th><th>User</th><th>Permissions</th></tr></thead><tbody>`;
+                                                                                                                                                                                    <table style="margin-top: 20px; width: 100%;"><thead style="border-bottom: 2px solid #666;"><tr><th>Role</th><th>User</th><th>Permissions</th></tr></thead><tbody>`;
                         const roles = Object.keys(window.import_errors);
                         roles.forEach((role) => {
                             const users = Object.keys(window.import_errors[role]);
@@ -246,7 +246,7 @@ class SecurityAccessGroups extends AbstractExternalModule
                             title = `You cannot grant those rights to the role<br>"${result.role}"`;
                             text =
                                 `The following users are assigned to that role, and the following permissions cannot be granted to them:<br>
-                                                                                                                                                                <table style="margin-top: 20px; width: 100%;"><thead style="border-bottom: 2px solid #666;"><tr><th>User</th><th>Permissions</th></tr></thead><tbody>`;
+                                                                                                                                                                                        <table style="margin-top: 20px; width: 100%;"><thead style="border-bottom: 2px solid #666;"><tr><th>User</th><th>Permissions</th></tr></thead><tbody>`;
                             users.forEach((user) => {
                                 text +=
                                     `<tr style="border-top: 1px solid #666;"><td>${user}</td><td>${result.bad_rights[user].join('<br>')}</td></tr>`;
@@ -997,6 +997,9 @@ class SecurityAccessGroups extends AbstractExternalModule
 
     function systemRoleExists($role_id)
     {
+        if ( empty($role_id) ) {
+            return false;
+        }
         foreach ( $this->getAllSystemRoles() as $role ) {
             if ( $role_id == $role["role_id"] ) {
                 return true;
@@ -1007,7 +1010,7 @@ class SecurityAccessGroups extends AbstractExternalModule
 
     function generateNewRoleId()
     {
-        $new_role_id = uniqid("role_");
+        $new_role_id = "role_" . substr(md5(uniqid()), 0, 13);
 
         if ( $this->systemRoleExists($new_role_id) ) {
             return $this->generateNewRoleId();
@@ -1023,8 +1026,8 @@ class SecurityAccessGroups extends AbstractExternalModule
             'design'                         => $lang['rights_135'],
             'user_rights'                    => $lang['app_05'],
             'data_access_groups'             => $lang['global_22'],
-            'data_entry'                     => $lang['rights_373'],
-            'data_export_tool'               => $lang['rights_428'],
+            'dataViewing'                    => $lang['rights_373'],
+            'dataExport'                     => $lang['rights_428'],
             'alerts'                         => $lang['global_154'],
             'reports'                        => $lang['rights_96'],
             'graphical'                      => $lang['report_builder_78'],
@@ -1046,6 +1049,7 @@ class SecurityAccessGroups extends AbstractExternalModule
             'realtime_webservice_mapping'    => "CDP/DDP" . " " . $lang['ws_19'],
             'realtime_webservice_adjudicate' => "CDP/DDP" . " " . $lang['ws_20'],
             'dts'                            => $lang['rights_132'],
+            'mycap_participants'             => $lang['rights_437'],
             'record_create'                  => $lang['rights_99'],
             'record_rename'                  => $lang['rights_100'],
             'record_delete'                  => $lang['rights_101']
