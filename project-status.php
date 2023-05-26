@@ -361,16 +361,18 @@ $Alerts = new Alerts($module);
 
         $.post("<?= $module->framework->getUrl('ajax/sendAlerts.php') ?>", emailFormContents)
             .done(response => {
-                console.log(response);
-                Swal.fire({
-                    html: response
+                const multiple = emailFormContents.users.length > 1;
+                Toast.fire({
+                    title: 'The alert' + (multiple ? "s were " : " was ") +
+                        'successfully sent.',
+                    icon: 'success'
                 });
             })
             .fail(error => {
-                console.error(error.responseText);
-            })
-            .always({
-
+                Toast.fire({
+                    title: 'There was an error sending the alert.',
+                    icon: 'error'
+                });
             });
     }
 
@@ -456,16 +458,18 @@ $Alerts = new Alerts($module);
 
         $.post("<?= $module->framework->getUrl('ajax/sendAlerts.php') ?>", emailFormContents)
             .done(response => {
-                console.log(response);
-                Swal.fire({
-                    html: response
+                const multiple = emailFormContents.recipients.length > 1;
+                Toast.fire({
+                    title: 'The alert' + (multiple ? "s were " : " was ") +
+                        'successfully sent.',
+                    icon: 'success'
                 });
             })
             .fail(error => {
-                console.error(error.responseText);
-            })
-            .always({
-
+                Toast.fire({
+                    title: 'There was an error sending the alert.',
+                    icon: 'error'
+                });
             });
     }
 
@@ -544,8 +548,6 @@ $Alerts = new Alerts($module);
         formContents.users = users;
         formContents.recipients = getUserRightsHolderAlertRecipients('userExpirationForm');
 
-        console.log(formContents);
-
         expireUsers().then(() => {
             if (!formContents.sendUserNotification && !formContents[
                     "sendNotification-userExpiration-UserRightsHolders"]) {
@@ -560,16 +562,17 @@ $Alerts = new Alerts($module);
             } else {
                 $.post("<?= $module->framework->getUrl('ajax/sendAlerts.php') ?>", formContents)
                     .done(response => {
-                        console.log(response);
-                        Swal.fire({
-                            html: response
+                        Toast.fire({
+                            title: 'The user' + (users.length > 1 ? "s were " : " was ") +
+                                'successfully expired.',
+                            icon: 'success'
                         });
                     })
                     .fail(error => {
-                        console.error(error.responseText);
-                    })
-                    .always({
-
+                        Toast.fire({
+                            title: 'There was an error.',
+                            icon: 'error'
+                        });
                     });
             }
         })
