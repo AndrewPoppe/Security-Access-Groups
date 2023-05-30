@@ -15,7 +15,7 @@ class TextReplacer
         $this->module      = $module;
         $this->text        = $text;
         $this->cleanerText = $this->cleanText($text);
-        $this->data        = $data;
+        $this->data        = $module->framework->escape($data);
     }
 
     private function cleanText(string $text) : string
