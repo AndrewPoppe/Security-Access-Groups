@@ -146,7 +146,7 @@ $Alerts = new Alerts($module);
                     $badRights      = $thisUsersRights["bad"];
                     $hasDiscrepancy = !empty($badRights);
                     $isExpired      = $thisUsersRights["expiration"] !== "never" && strtotime($thisUsersRights["expiration"]) < strtotime("today");
-                    $rowClass       = $hasDiscrepancy ? "table-danger" : "bg-light"; //"table-success";
+                    $rowClass       = $hasDiscrepancy ? "table-danger-light" : "table-success-light"; //"bg-light"; 
                     $rowClass       = $isExpired ? "text-secondary bg-light" : $rowClass; ?>
                 <tr data-user="<?= $user ?>" data-email="<?= $thisUsersRights["email"] ?>"
                     data-name="<?= $thisUsersRights["name"] ?>"
@@ -176,7 +176,7 @@ $Alerts = new Alerts($module);
                         <span class="text-secondary">None</span>
                         <?php } ?>
                     </td>
-                    <td class="align-middle text-center <?= $hasDiscrepancy ? "" : "table-success" ?>">
+                    <td class="align-middle text-center">
                         <?php
                             if ( $hasDiscrepancy ) { ?>
                         <a class="<?= $isExpired ? "text-secondary" : "text-primary" ?>"

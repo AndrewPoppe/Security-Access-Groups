@@ -434,6 +434,18 @@ button.editUsersButton:hover {
     border: 1px solid #ffdf7e !important;
 }
 
+.table-danger-light,
+.table-danger-light>td,
+.table-danger-light>th {
+    background-color: #f5c6cbaa;
+}
+
+.table-success-light,
+.table-success-light>td,
+.table-success-light>th {
+    background-color: #c3e6cb7f;
+}
+
 div.modal.userAlert label.col-form-label {
     font-weight: bold;
 }

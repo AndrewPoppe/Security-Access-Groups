@@ -136,42 +136,44 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
         </table>
     </div>
     <!-- Users Table -->
-    <table id='SUR-System-Table' class="compact cell-border border">
-        <thead>
-            <tr>
-                <th data-id="username" class="py-3">Username</th>
-                <th data-id="name" class="py-3">Name</th>
-                <th data-id="email" class="py-3">Email</th>
-                <th data-id="role" class="py-3">Role</th>
-                <th data-id="role_id" class="py-3">Role Id</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php foreach ( $users as $user ) {
-                    $thisUserRole = $module->getUserSystemRole($user["username"]); ?>
-            <tr data-user="<?= $user["username"] ?>">
-                <td>
-                    <?= $user["username"] ?>
-                </td>
-                <td>
-                    <?= $user["user_firstname"] . " " . $user["user_lastname"] ?>
-                </td>
-                <td><a href="mailto:<?= $user["user_email"] ?>"><?= $user["user_email"] ?></a></td>
-                <td data-role="<?= $thisUserRole ?>"><select class="roleSelect" disabled="true">
-                        <?php
-                                foreach ( $roles as $role ) {
-                                    echo "<option value='" . $role["role_id"] . "' " . ($role["role_id"] == $thisUserRole ? "selected" : "") . ">" . $role["role_name"] . "</option>";
-                                }
-                                ?>
-                    </select>
-                </td>
-                <td class="hidden_role_id">
-                    <?= \REDCap::escapeHtml($thisUserRole) ?>
-                </td>
-            </tr>
-            <?php } ?>
-        </tbody>
-    </table>
+    <div class="card card-body bg-light">
+        <table id='SUR-System-Table' class="compact cell-border border">
+            <thead>
+                <tr>
+                    <th data-id="username" class="py-3">Username</th>
+                    <th data-id="name" class="py-3">Name</th>
+                    <th data-id="email" class="py-3">Email</th>
+                    <th data-id="role" class="py-3">Role</th>
+                    <th data-id="role_id" class="py-3">Role Id</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ( $users as $user ) {
+                        $thisUserRole = $module->getUserSystemRole($user["username"]); ?>
+                <tr data-user="<?= $user["username"] ?>">
+                    <td>
+                        <?= $user["username"] ?>
+                    </td>
+                    <td>
+                        <?= $user["user_firstname"] . " " . $user["user_lastname"] ?>
+                    </td>
+                    <td><a href="mailto:<?= $user["user_email"] ?>"><?= $user["user_email"] ?></a></td>
+                    <td data-role="<?= $thisUserRole ?>"><select class="roleSelect" disabled="true">
+                            <?php
+                                    foreach ( $roles as $role ) {
+                                        echo "<option value='" . $role["role_id"] . "' " . ($role["role_id"] == $thisUserRole ? "selected" : "") . ">" . $role["role_name"] . "</option>";
+                                    }
+                                    ?>
+                        </select>
+                    </td>
+                    <td class="hidden_role_id">
+                        <?= \REDCap::escapeHtml($thisUserRole) ?>
+                    </td>
+                </tr>
+                <?php } ?>
+            </tbody>
+        </table>
+    </div>
 
     <script>
     var Toast = Swal.mixin({
@@ -985,7 +987,14 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                     $(response).modal('show');
                 })
                 .fail((error) => {
-                    console.error(error.responseText);
+                    const errorText = JSON.parse(error.responseText) ?? {};
+                    const message = errorText.error;
+                    Swal.fire({
+                        icon: 'error',
+                        title: "Error importing CSV",
+                        html: message,
+                        showConfirmButton: false
+                    });
                 });
         };
         reader.readAsText(file);
@@ -1085,13 +1094,11 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                         } else {
                             return row.role_name;
                         }
-                    },
-                    orderable: false
+                    }
                 },
                 {
                     className: 'role-id-column user-select-all',
-                    data: 'role_id',
-                    orderable: false
+                    data: 'role_id'
                 },
                 {
                     className: 'dt-center',
@@ -1101,8 +1108,7 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                         } else {
                             return row.permissions.design;
                         }
-                    },
-                    orderable: false
+                    }
                 },
                 {
                     className: 'dt-center',
@@ -1112,8 +1118,7 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                         } else {
                             return row.permissions.user_rights;
                         }
-                    },
-                    orderable: false
+                    }
                 },
                 {
                     className: 'dt-center',
@@ -1123,8 +1128,7 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                         } else {
                             return row.permissions.data_access_groups;
                         }
-                    },
-                    orderable: false
+                    }
                 },
                 {
                     className: 'dt-center',
@@ -1143,8 +1147,7 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                         } else {
                             return row.permissions.dataViewing;
                         }
-                    },
-                    orderable: false
+                    }
                 },
                 {
                     className: 'dt-center',
@@ -1163,8 +1166,7 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                         } else {
                             return row.permissions.dataExport;
                         }
-                    },
-                    orderable: false
+                    }
                 },
                 {
                     className: 'dt-center',
@@ -1174,8 +1176,7 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                         } else {
                             return row.permissions.alerts;
                         }
-                    },
-                    orderable: false
+                    }
                 },
                 {
                     className: 'dt-center',
@@ -1185,8 +1186,7 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                         } else {
                             return row.permissions.reports;
                         }
-                    },
-                    orderable: false
+                    }
                 },
                 {
                     className: 'dt-center',
@@ -1196,8 +1196,7 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                         } else {
                             return row.permissions.graphical;
                         }
-                    },
-                    orderable: false
+                    }
                 },
                 {
                     className: 'dt-center',
@@ -1207,8 +1206,7 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                         } else {
                             return row.permissions.participants;
                         }
-                    },
-                    orderable: false
+                    }
                 },
                 {
                     className: 'dt-center',
@@ -1218,8 +1216,7 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                         } else {
                             return row.permissions.calendar;
                         }
-                    },
-                    orderable: false
+                    }
                 },
                 {
                     className: 'dt-center',
@@ -1229,8 +1226,7 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                         } else {
                             return row.permissions.data_import_tool;
                         }
-                    },
-                    orderable: false
+                    }
                 },
                 {
                     className: 'dt-center',
@@ -1240,8 +1236,7 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                         } else {
                             return row.permissions.data_comparison_tool;
                         }
-                    },
-                    orderable: false
+                    }
                 },
                 {
                     className: 'dt-center',
@@ -1251,8 +1246,7 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                         } else {
                             return row.permissions.data_logging;
                         }
-                    },
-                    orderable: false
+                    }
                 },
                 {
                     className: 'dt-center',
@@ -1262,8 +1256,7 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                         } else {
                             return row.permissions.file_repository;
                         }
-                    },
-                    orderable: false
+                    }
                 },
                 {
                     className: 'dt-center',
@@ -1280,8 +1273,7 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                         } else {
                             return row.permissions.double_data;
                         }
-                    },
-                    orderable: false
+                    }
                 },
                 {
                     className: 'dt-center',
@@ -1291,8 +1283,7 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                         } else {
                             return row.permissions.lock_record_customize;
                         }
-                    },
-                    orderable: false
+                    }
                 },
                 {
                     className: 'dt-center',
@@ -1309,8 +1300,7 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                         } else {
                             return row.permissions.lock_record;
                         }
-                    },
-                    orderable: false
+                    }
                 },
                 {
                     className: 'dt-center',
@@ -1328,7 +1318,6 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                             return row.permissions.randomization;
                         }
                     },
-                    orderable: false,
                     name: 'randomization'
                 },
                 {
@@ -1339,8 +1328,7 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                         } else {
                             return row.permissions.data_quality_design;
                         }
-                    },
-                    orderable: false
+                    }
                 },
                 {
                     className: 'dt-center',
@@ -1350,8 +1338,7 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                         } else {
                             return row.permissions.data_quality_execute;
                         }
-                    },
-                    orderable: false
+                    }
                 },
                 {
                     className: 'dt-center',
@@ -1372,7 +1359,6 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                             return row.permissions.data_quality_resolution;
                         }
                     },
-                    orderable: false,
                     name: 'data_quality_resolution'
                 },
                 {
@@ -1388,7 +1374,6 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                             return row.permissions.api;
                         }
                     },
-                    orderable: false,
                     name: 'api'
                 },
                 {
@@ -1399,8 +1384,7 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                         } else {
                             return row.permissions.mobile_app;
                         }
-                    },
-                    orderable: false
+                    }
                 },
                 {
                     className: 'dt-center',
@@ -1410,8 +1394,7 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                         } else {
                             return row.permissions.realtime_webservice_mapping;
                         }
-                    },
-                    orderable: false
+                    }
                 },
                 {
                     className: 'dt-center',
@@ -1421,8 +1404,7 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                         } else {
                             return row.permissions.realtime_webservice_adjudicate;
                         }
-                    },
-                    orderable: false
+                    }
                 },
                 {
                     className: 'dt-center',
@@ -1432,8 +1414,7 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                         } else {
                             return row.permissions.dts;
                         }
-                    },
-                    orderable: false
+                    }
                 },
                 {
                     className: 'dt-center',
@@ -1443,8 +1424,7 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                         } else {
                             return row.permissions.mycap_participants;
                         }
-                    },
-                    orderable: false
+                    }
                 },
                 {
                     className: 'dt-center',
@@ -1454,8 +1434,7 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                         } else {
                             return row.permissions.record_create;
                         }
-                    },
-                    orderable: false
+                    }
                 },
                 {
                     className: 'dt-center',
@@ -1465,8 +1444,7 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                         } else {
                             return row.permissions.record_rename;
                         }
-                    },
-                    orderable: false
+                    }
                 },
                 {
                     className: 'dt-center',
@@ -1476,62 +1454,50 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                         } else {
                             return row.permissions.record_delete;
                         }
-                    },
-                    orderable: false
+                    }
                 },
                 {
                     data: 'permissions.random_setup',
-                    orderable: false,
                     visible: false
                 },
                 {
                     data: 'permissions.random_dashboard',
-                    orderable: false,
                     visible: false
                 },
                 {
                     data: 'permissions.random_perform',
-                    orderable: false,
                     visible: false
                 },
                 {
                     data: 'permissions.data_quality_resolution_view',
-                    orderable: false,
                     visible: false
                 },
                 {
                     data: 'permissions.data_quality_resolution_open',
-                    orderable: false,
                     visible: false
                 },
                 {
                     data: 'permissions.data_quality_resolution_respond',
-                    orderable: false,
                     visible: false
                 },
                 {
                     data: 'permissions.data_quality_resolution_close',
-                    orderable: false,
                     visible: false
                 },
                 {
                     data: 'permissions.api_export',
-                    orderable: false,
                     visible: false
                 },
                 {
                     data: 'permissions.api_import',
-                    orderable: false,
                     visible: false
                 },
                 {
                     data: 'permissions.mobile_app_download_data',
-                    orderable: false,
                     visible: false
                 },
                 {
                     data: 'permissions.lock_record_multiform',
-                    orderable: false,
                     visible: false
                 }
             ],
@@ -1540,7 +1506,8 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                 createdCell: function(td, cellData, rowData, row, col) {
                     $(td).data('value', cellData ?? 0);
                 },
-                name: 'export'
+                name: 'export',
+                orderable: false
             }]
         });
 
