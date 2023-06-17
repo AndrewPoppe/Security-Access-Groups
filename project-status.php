@@ -97,13 +97,13 @@ $Alerts = new Alerts($module);
                 <div class="form-check pl-4 mr-2">
                     <input class="form-check-input" type="checkbox" value="1" id="discrepantUsers" checked>
                     <label class="form-check-label" for="discrepantUsers">
-                        Users with discrepant rights
+                        Users with noncompliant rights
                     </label>
                 </div>
                 <div class="form-check pl-4 mr-2">
                     <input class="form-check-input" type="checkbox" value="1" id="nonDiscrepantUsers" checked>
                     <label class="form-check-label" for="nonDiscrepantUsers">
-                        Users without discrepant rights
+                        Users without noncompliant rights
                     </label>
                 </div>
             </div>
@@ -122,7 +122,7 @@ $Alerts = new Alerts($module);
     </div>
     <div class="container ml-0 pl-0">
         <!-- <table class="table table-bordered discrepancy-table"> -->
-        <table id="discrepancy-table" class="discrepancy-table row-border border hover">
+        <table id="discrepancy-table" class="discrepancy-table row-border border">
             <thead class="text-center" style="background-color:#ececec">
                 <tr>
                     <th style="vertical-align: middle !important;"><input style="display:block; margin: 0 auto;"
@@ -134,7 +134,7 @@ $Alerts = new Alerts($module);
                     <th>Email</th>
                     <th class="dt-head-center">Expiration</th>
                     <th class="dt-head-center">System Role</th>
-                    <th class="dt-head-center">Discrepant Rights</th>
+                    <th class="dt-head-center">Noncompliant Rights</th>
                     <th class="dt-head-center">Project Role</th>
                     <!-- <th class="dt-head-center">Alert</th>
                     <th class="dt-head-center">Reminder</th> -->
@@ -186,7 +186,7 @@ $Alerts = new Alerts($module);
                             <div class="modal-dialog modal-dialog-scrollable">
                                 <div class="modal-content">
                                     <div class="modal-header bg-dark text-light">
-                                        <h5 class="m-0">Discrepant Rights for
+                                        <h5 class="m-0">Noncompliant Rights for
                                             <?= $thisUsersRights["name"] . " (" . $user . ")" ?>
                                         </h5>
                                     </div>
