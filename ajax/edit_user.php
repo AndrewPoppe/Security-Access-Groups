@@ -67,29 +67,18 @@ if ( in_array($submit_action, [ "add_user", "edit_user" ]) ) {
                     } else {
                         \Logging::logEvent(
                             '',
-                            // SQL
                             "redcap_user_rights",
-                            // table
-                            "update", // event
+                            "update",
                             $action_info["user"],
-                            // record
                             $data_values,
-                            // display
                             $action,
-                            // descrip
                             "",
-                            // change_reason
                             "",
-                            // userid_override
                             "",
-                            // project_id_override
                             true,
-                            // useNOW
                             null,
-                            // event_id_override
                             null,
-                            // instance
-                            false // bulkProcessing
+                            false
                         );
                     }
                 }

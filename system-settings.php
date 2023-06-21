@@ -197,33 +197,32 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
     function toggleEditMode(event) {
         const button = $('button.editUsersButton');
         $('.roleSelect').attr('disabled', (_, attr) => !attr);
-        const editing = $(button).data('editing');
-        $(button).data('editing', !editing);
+        const editing = !$(button).data('editing');
+        $(button).data('editing', editing);
+        let style = 'none';
         if (editing) {
-            $(button).find('span').text('Edit Users');
-            $(button).addClass('btn-danger');
-            $(button).removeClass('btn-outline-danger');
-            $('.roleSelect').select2({
-                minimumResultsForSearch: 20,
-                templateSelection: function(selection) {
-                    return $(
-                        `<div class="d-flex justify-content-between"><strong>${selection.text}</strong>&nbsp;<span class="text-secondary" style="user-select:all; cursor: text;">${selection.id}</span></div>`
-                    );
-                }
-            });
-        } else {
             $(button).find('span').text('Stop Editing');
             $(button).addClass('btn-outline-danger');
             $(button).removeClass('btn-danger');
-            $('.roleSelect').select2({
-                minimumResultsForSearch: 20,
-                templateResult: function(option) {
-                    return $(
-                        `<span><strong>${option.text}</strong><br><span class="text-secondary">${option.id}</span></span>`
-                    );
-                }
-            });
+        } else {
+            $(button).find('span').text('Edit Users');
+            $(button).addClass('btn-danger');
+            $(button).removeClass('btn-outline-danger');
+            style = 'user-select:all; cursor: text; margin-left: 1px; margin-right: 1px;';
         }
+        $('.roleSelect').select2({
+            minimumResultsForSearch: 20,
+            templateSelection: function(selection) {
+                return $(
+                    `<div class="d-flex justify-content-between"><strong>${selection.text}</strong>&nbsp;<span class="text-secondary" style="${style}">${selection.id}</span></div>`
+                );
+            },
+            templateResult: function(option) {
+                return $(
+                    `<span><strong>${option.text}</strong><br><span class="text-secondary">${option.id}</span></span>`
+                );
+            }
+        });
     }
 
     function exportCsv() {
@@ -491,7 +490,7 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
             minimumResultsForSearch: 20,
             templateSelection: function(selection) {
                 return $(
-                    `<div class="d-flex justify-content-between"><strong>${selection.text}</strong>&nbsp;<span class="text-secondary" style="user-select:all; cursor: text;">${selection.id}</span></div>`
+                    `<div class="d-flex justify-content-between"><strong>${selection.text}</strong>&nbsp;<span class="text-secondary" style="user-select:all; cursor: text; margin-left: 1px; margin-right: 1px;">${selection.id}</span></div>`
                 );
             }
         });
