@@ -58,7 +58,7 @@ if ( in_array($submit_action, [ "add_user", "edit_user" ]) ) {
                     $data_values     = "user = '" . $action_info["user"] . "'\nchanges = " . $changes;
 
                     $logTable     = $module->getLogTable($action_info["project_id"]);
-                    $sql          = "SELECT log_event_id FROM $logTable WHERE project_id = ? AND user = ? AND page = 'ExternalModules/index.php' AND object_type = 'redcap_user_rights' AND pk = ? AND event IN ('INSERT','UPDATE') AND TIMESTAMPDIFF(YEAR,ts,NOW()) <= 1 ORDER BY ts DESC";
+                    $sql          = "SELECT log_event_id FROM $logTable WHERE project_id = ? AND user = ? AND page = 'ExternalModules/index.php' AND object_type = 'redcap_user_rights' AND pk = ? AND event IN ('INSERT','UPDATE') AND TIMESTAMPDIFF(SECOND,ts,NOW()) <= 10 ORDER BY ts DESC";
                     $params       = [ $action_info["project_id"], $module->getUser()->getUsername(), $action_info["user"] ];
                     $result       = $module->query($sql, $params);
                     $log_event_id = $result->fetch_assoc()["log_event_id"];
@@ -136,7 +136,7 @@ if ( $submit_action === "edit_role" ) {
                     $data_values     = "role = '" . $role_name . "'\nchanges = " . $changes;
 
                     $logTable     = $module->getLogTable($action_info["project_id"]);
-                    $sql          = "SELECT log_event_id FROM $logTable WHERE project_id = ? AND user = ? AND page = 'ExternalModules/index.php' AND object_type = 'redcap_user_rights' AND pk = ? AND event IN ('INSERT','UPDATE') AND TIMESTAMPDIFF(YEAR,ts,NOW()) <= 1 ORDER BY ts DESC";
+                    $sql          = "SELECT log_event_id FROM $logTable WHERE project_id = ? AND user = ? AND page = 'ExternalModules/index.php' AND object_type = 'redcap_user_rights' AND pk = ? AND event IN ('INSERT','UPDATE') AND TIMESTAMPDIFF(SECOND,ts,NOW()) <= 10 ORDER BY ts DESC";
                     $params       = [ $action_info["project_id"], $module->getUser()->getUsername(), $action_info["role"] ];
                     $result       = $module->query($sql, $params);
                     $log_event_id = $result->fetch_assoc()["log_event_id"];

@@ -15,6 +15,7 @@ if ( isset($_POST['csv_content']) && $_POST['csv_content'] != '' ) {
 
     $csv_content = filter_input(INPUT_POST, 'csv_content');
     $data        = csvToArray(removeBOMfromUTF8($csv_content));
+    $pid         = $module->framework->getProjectId();
 
     if ( $_GET['action'] == 'uploadMapping' ) {
         $bad_rights = [];
@@ -25,12 +26,12 @@ if ( isset($_POST['csv_content']) && $_POST['csv_content'] != '' ) {
                 continue;
             }
             $role_id           = $module->getRoleIdFromUniqueRoleName($uniqueRoleName);
-            $role_name         = \ExternalModules\ExternalModules::getRoleName($module->getProjectId(), $role_id);
+            $role_name         = \ExternalModules\ExternalModules::getRoleName($pid, $role_id);
             $role_rights       = $module->getRoleRights($role_id);
             $acceptable_rights = $module->getAcceptableRights($username);
             $these_bad_rights  = $module->checkProposedRights($acceptable_rights, $role_rights);
             // We ignore expired users
-            $userExpired = $module->isUserExpired($username, $module->getProjectId());
+            $userExpired = $module->isUserExpired($username, $pid);
             if ( !empty($these_bad_rights) && !$userExpired ) {
                 $bad_rights[$role_name] = $these_bad_rights;
             }
@@ -44,12 +45,16 @@ if ( isset($_POST['csv_content']) && $_POST['csv_content'] != '' ) {
         }
     } else {
 
-
-        $bad_rights = [];
+        $bad_rights         = [];
+        $all_current_rights = [];
+        $all_role_ids_orig  = array_keys(\UserRights::getRoles($pid));
         foreach ( $data as $key => $this_role ) {
-            $role_label  = $this_role["role_label"];
-            $role_id     = $module->getRoleIdFromUniqueRoleName($this_role["unique_role_name"]);
-            $usersInRole = $module->getUsersInRole($module->getProjectId(), $role_id);
+            $role_label = $this_role["role_label"];
+            $role_id    = $module->getRoleIdFromUniqueRoleName($this_role["unique_role_name"]);
+            if ( isset($role_id) ) {
+                $all_current_rights[$role_id] = $module->getRoleRightsRaw($role_id);
+            }
+            $usersInRole = $module->getUsersInRole($pid, $role_id);
             if ( isset($this_role['forms']) && $this_role['forms'] != '' ) {
                 foreach ( explode(",", $this_role['forms']) as $this_pair ) {
                     list( $this_form, $this_right )  = explode(":", $this_pair, 2);
@@ -73,7 +78,7 @@ if ( isset($_POST['csv_content']) && $_POST['csv_content'] != '' ) {
                 $acceptable_rights = $module->getAcceptableRights($username);
                 $user_bad_rights   = $module->checkProposedRights($acceptable_rights, $this_role);
                 // We ignore expired users
-                $userExpired = $module->isUserExpired($username, $module->getProjectId());
+                $userExpired = $module->isUserExpired($username, $pid);
                 if ( !empty($user_bad_rights) && !$userExpired ) {
                     $these_bad_rights[$username] = $user_bad_rights;
                 }
@@ -84,7 +89,76 @@ if ( isset($_POST['csv_content']) && $_POST['csv_content'] != '' ) {
         }
 
         if ( empty($bad_rights) ) {
-            require $scriptPath;
+            ob_start(function ($str) use ($all_current_rights, $module, $pid, $all_role_ids_orig) {
+                try {
+                    $imported    = $_SESSION["imported"] === "userroles";
+                    $error_count = sizeof($_SESSION["errors"]) ?? 0;
+                    $succeeded   = $imported && $error_count === 0;
+                    if ( $succeeded ) {
+                        $data_values      = "";
+                        $all_role_ids_new = array_keys(\UserRights::getRoles($pid));
+                        $logTable         = $module->getLogTable($pid);
+                        $redcap_user      = $module->getUser()->getUsername();
+                        foreach ( $all_role_ids_new as $role_id ) {
+                            $newRole     = !in_array($role_id, $all_role_ids_orig, true);
+                            $changedRole = in_array($role_id, array_keys($all_current_rights), true);
+                            if ( !$newRole && !$changedRole ) {
+                                continue;
+                            }
+                            $pk         = $role_id;
+                            $role_label = $module->getRoleLabel($role_id);
+
+                            if ( $newRole ) {
+                                $description      = 'Add role';
+                                $event            = 'INSERT';
+                                $current_rights   = [];
+                                $orig_data_values = "role = '" . $role_label . "'";
+                                $sql              = "SELECT log_event_id FROM $logTable WHERE project_id = ? AND user = ? AND page = 'ExternalModules/index.php' AND object_type = 'redcap_user_rights' AND pk IS NULL AND event = 'INSERT' AND data_values = ? AND TIMESTAMPDIFF(SECOND,ts,NOW()) <= 10 ORDER BY ts DESC";
+                                $params           = [ $pid, $redcap_user, $orig_data_values ];
+                            } else {
+                                $description    = "Edit role";
+                                $event          = "update";
+                                $current_rights = $all_current_rights[$role_id];
+                                $sql            = "SELECT log_event_id FROM $logTable WHERE project_id = ? AND user = ? AND page = 'ExternalModules/index.php' AND object_type = 'redcap_user_roles' AND pk = ? AND event = 'UPDATE' AND TIMESTAMPDIFF(SECOND,ts,NOW()) <= 10 ORDER BY ts DESC";
+                                $params         = [ $pid, $redcap_user, $pk ];
+                            }
+
+                            $updated_rights = $module->getRoleRightsRaw($role_id) ?? [];
+                            $changes        = json_encode(array_diff_assoc($updated_rights, $current_rights), JSON_PRETTY_PRINT);
+                            $changes        = $changes === "[]" ? "None" : $changes;
+                            $data_values    = "role = '$role_label'\nchanges = $changes\n\n";
+
+                            $result       = $module->framework->query($sql, $params);
+                            $log_event_id = $result->fetch_assoc()["log_event_id"];
+
+                            if ( !empty($log_event_id) ) {
+                                $module->framework->query("UPDATE $logTable SET data_values = ?, pk = ? WHERE log_event_id = ?", [ $data_values, $pk, $log_event_id ]);
+                            } else {
+                                \Logging::logEvent(
+                                    '',
+                                    "redcap_user_roles",
+                                    $event,
+                                    $pk,
+                                    $data_values,
+                                    $description,
+                                    "",
+                                    "",
+                                    "",
+                                    true,
+                                    null,
+                                    null,
+                                    false
+                                );
+                            }
+                        }
+                    }
+                } catch ( \Throwable $e ) {
+                    $module->log("Error logging user role edit (csv import)", [ "error" => $e->getMessage() ]);
+                }
+            });
+            $module->framework->log('User Rights Import: Importing roles', [ "roles" => json_encode($data) ]);
+            require_once $scriptPath;
+            ob_end_flush(); // End buffering and clean up
         } else {
             $_SESSION['SUR_imported']   = 'roles';
             $_SESSION['SUR_bad_rights'] = json_encode($bad_rights);

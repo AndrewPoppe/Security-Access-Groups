@@ -65,7 +65,7 @@ if ( isset($_POST['csv_content']) && $_POST['csv_content'] != '' ) {
                     $data_values = "";
                     $pid         = $module->framework->getProjectId();
                     $logTable    = $module->getLogTable($pid);
-                    $sql         = "SELECT log_event_id FROM $logTable WHERE project_id = ? AND user = ? AND page = 'ExternalModules/index.php' AND object_type = 'redcap_user_rights' AND pk = ? AND event IN ('INSERT','UPDATE') AND TIMESTAMPDIFF(YEAR,ts,NOW()) <= 1 ORDER BY ts DESC";
+                    $sql         = "SELECT log_event_id FROM $logTable WHERE project_id = ? AND user = ? AND page = 'ExternalModules/index.php' AND object_type = 'redcap_user_rights' AND pk = ? AND event IN ('INSERT','UPDATE') AND TIMESTAMPDIFF(SECOND,ts,NOW()) <= 10 ORDER BY ts DESC";
                     $redcap_user = $module->getUser()->getUsername();
                     foreach ( $all_current_rights as $username => $current_rights ) {
                         $updated_rights = $module->getCurrentRights($username, $pid) ?? [];
@@ -102,9 +102,11 @@ if ( isset($_POST['csv_content']) && $_POST['csv_content'] != '' ) {
                 $module->log("Error logging user edit (csv import)", [ "error" => $e->getMessage() ]);
             }
         });
+        $module->framework->log('User Rights Import: Importing users', [ "users" => json_encode($data) ]);
         require_once $scriptPath;
         ob_end_flush(); // End buffering and clean up
     } else {
+        $module->framework->log('User Rights Import: Bad rights found', [ "bad rights" => json_encode($bad_rights) ]);
         $_SESSION['SUR_imported']   = 'users';
         $_SESSION['SUR_bad_rights'] = json_encode($bad_rights);
         redirect(APP_PATH_WEBROOT . 'UserRights/index.php?pid=' . PROJECT_ID);

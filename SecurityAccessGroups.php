@@ -773,6 +773,9 @@ class SecurityAccessGroups extends AbstractExternalModule
 
     function getUsersInRole($project_id, $role_id)
     {
+        if ( empty($role_id) ) {
+            return [];
+        }
         $sql    = "select * from redcap_user_rights where project_id = ? and role_id = ?";
         $result = $this->query($sql, [ $project_id, $role_id ]);
         $users  = [];
@@ -780,6 +783,14 @@ class SecurityAccessGroups extends AbstractExternalModule
             $users[] = $row["username"];
         }
         return $users;
+    }
+
+    function getRoleLabel($role_id)
+    {
+        $sql    = "SELECT role_name FROM redcap_user_roles WHERE role_id = ?";
+        $result = $this->query($sql, [ $role_id ]);
+        $row    = $result->fetch_assoc();
+        return $row["role_name"];
     }
 
     function getRoleRightsRaw($role_id)
