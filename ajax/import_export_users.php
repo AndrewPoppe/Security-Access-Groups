@@ -37,7 +37,7 @@ if ( isset($_POST['csv_content']) && $_POST['csv_content'] != '' ) {
         }, ARRAY_FILTER_USE_BOTH);
 
         $acceptable_rights = $module->getAcceptableRights($username);
-        $current_rights    = $module->getCurrentRights($username, $module->framework->getProjectId());
+        $current_rights    = $module->getCurrentRights($username, $module->framework->getProjectId()) ?? [];
         $requested_rights  = $this_user;
         $these_bad_rights  = $module->checkProposedRights($acceptable_rights, $requested_rights);
 
