@@ -23,7 +23,7 @@ $module->log('Requested to expire users', [ "users" => json_encode($users) ]);
 
 $error            = false;
 $bad_users        = [];
-$project          = $module->getProject();
+$project          = $module->framework->getProject();
 $projectUsers     = $project->getUsers();
 $projectUsernames = array_map(function ($user) {
     return $user->getUsername();

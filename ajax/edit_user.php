@@ -57,7 +57,7 @@ if ( in_array($submit_action, [ "add_user", "edit_user" ]) ) {
                     $changes         = json_encode(array_diff_assoc($updated_rights, $previous_rights), JSON_PRETTY_PRINT);
                     $data_values     = "user = '" . $action_info["user"] . "'\nchanges = " . $changes;
 
-                    $logTable     = $module->getLogTable($action_info["project_id"]);
+                    $logTable     = $module->framework->getProject($action_info["project_id"])->getLogTable();
                     $sql          = "SELECT log_event_id FROM $logTable WHERE project_id = ? AND user = ? AND page = 'ExternalModules/index.php' AND object_type = 'redcap_user_rights' AND pk = ? AND event IN ('INSERT','UPDATE') AND TIMESTAMPDIFF(SECOND,ts,NOW()) <= 10 ORDER BY ts DESC";
                     $params       = [ $action_info["project_id"], $module->getUser()->getUsername(), $action_info["user"] ];
                     $result       = $module->query($sql, $params);
@@ -135,7 +135,7 @@ if ( $submit_action === "edit_role" ) {
                     $changes         = json_encode(array_diff_assoc($updated_rights, $previous_rights), JSON_PRETTY_PRINT);
                     $data_values     = "role = '" . $role_name . "'\nchanges = " . $changes;
 
-                    $logTable     = $module->getLogTable($action_info["project_id"]);
+                    $logTable     = $module->framework->getProject($action_info["project_id"])->getLogTable();
                     $sql          = "SELECT log_event_id FROM $logTable WHERE project_id = ? AND user = ? AND page = 'ExternalModules/index.php' AND object_type = 'redcap_user_rights' AND pk = ? AND event IN ('INSERT','UPDATE') AND TIMESTAMPDIFF(SECOND,ts,NOW()) <= 10 ORDER BY ts DESC";
                     $params       = [ $action_info["project_id"], $module->getUser()->getUsername(), $action_info["role"] ];
                     $result       = $module->query($sql, $params);
@@ -145,29 +145,17 @@ if ( $submit_action === "edit_role" ) {
                     } else {
                         \Logging::logEvent(
                             '',
-                            // SQL
                             "redcap_user_roles",
-                            // table
-                            "update", // event
-                            $action_info["role"],
-                            // record
+                            "update", $action_info["role"],
                             $data_values,
-                            // display
                             $action,
-                            // descrip
                             "",
-                            // change_reason
                             "",
-                            // userid_override
                             "",
-                            // project_id_override
                             true,
-                            // useNOW
                             null,
-                            // event_id_override
                             null,
-                            // instance
-                            false // bulkProcessing
+                            false
                         );
                     }
                 }

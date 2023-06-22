@@ -57,8 +57,8 @@ class SecurityAccessGroups extends AbstractExternalModule
                 $this->exitAfterHook();
                 return;
             } else {
-                [ $action, $project_id, $user, $changes ] = $API->getApiRequestInfo();
-                $this->logApi($action, $project_id, $user, $changes);
+                [ $action, $project_id, $user, $original_rights ] = $API->getApiRequestInfo();
+                $this->logApi($action, $project_id, $user, $original_rights);
             }
             return;
         }
@@ -465,13 +465,57 @@ class SecurityAccessGroups extends AbstractExternalModule
         }
     }
 
-    function logApi(string $action, $project_id, $user, array $changes)
+    function logApi(string $action, $project_id, $user, array $original_rights)
     {
-        ob_start(function ($str) use ($action, $project_id, $user, $changes) {
+        ob_start(function ($str) use ($action, $project_id, $user, $original_rights) {
 
             if ( strpos($str, '{"error":') === 0 ) {
                 $this->log('api_failed');
             } else {
+
+                if ( $action === "user" ) {
+                    foreach ( $original_rights as $these_original_rights ) {
+                        $username  = $these_original_rights["username"];
+                        $oldRights = $these_original_rights["rights"] ?? [];
+                        $this->log('ok', [ 'username2' => $username, 'oldRights' => json_encode($oldRights) ]);
+                        $newUser     = empty($oldRights);
+                        $newRights   = $this->getCurrentRights($username, $project_id);
+                        $changes     = json_encode(array_diff_assoc($newRights, $oldRights), JSON_PRETTY_PRINT);
+                        $changes     = $changes === "[]" ? "None" : $changes;
+                        $data_values = "user = '" . $username . "'\nchanges = " . $changes;
+                        if ( $newUser ) {
+                            $event       = "INSERT";
+                            $description = "Add user";
+                        } else {
+                            $event       = "UPDATE";
+                            $description = "Edit user";
+                        }
+                        $logTable     = $this->framework->getProject($project_id)->getLogTable();
+                        $sql          = "SELECT log_event_id FROM $logTable WHERE project_id = ? AND user = ? AND page = 'api/index.php' AND object_type = 'redcap_user_rights' AND pk = ? AND event = ? AND TIMESTAMPDIFF(SECOND,ts,NOW()) <= 10 ORDER BY ts DESC";
+                        $params       = [ $project_id, $user, $username, $event ];
+                        $result       = $this->framework->query($sql, $params);
+                        $log_event_id = $result->fetch_assoc()["log_event_id"];
+                        if ( !empty($log_event_id) ) {
+                            $this->query("UPDATE $logTable SET data_values = ? WHERE log_event_id = ?", [ $data_values, $log_event_id ]);
+                        } else {
+                            \Logging::logEvent(
+                                '',
+                                'redcap_user_rights',
+                                $event,
+                                $username,
+                                $data_values,
+                                $description,
+                                "",
+                                "",
+                                "",
+                                true,
+                                null,
+                                null,
+                                false
+                            );
+                        }
+                    }
+                }
 
                 // TODO: GET THIS LOGGED
                 $this->log('api_thing2', [

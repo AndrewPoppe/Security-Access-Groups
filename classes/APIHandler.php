@@ -8,6 +8,7 @@ class APIHandler
     private $post;
     private $token;
     private $data;
+    private $original_rights = [];
     private $bad_rights = [];
     private $requestHandled = false;
     private $project_id;
@@ -46,7 +47,7 @@ class APIHandler
 
     public function shouldProcess()
     {
-        $rights           = $this->getUserRightsFromToken($this->post["token"]) ?? [];
+        $rights           = $this->getUserRightsFromToken() ?? [];
         $this->project_id = $rights["project_id"];
         $this->user       = $rights["username"];
 
@@ -197,6 +198,12 @@ class APIHandler
 
                 if ( !empty($these_bad_rights) && !$ignore ) {
                     $bad_rights[$username] = $these_bad_rights;
+                } else {
+                    $this->original_rights[] = [
+                        "username" => $username,
+                        "rights"   => $this->module->getCurrentRights($username, $this->project_id)
+                    ];
+                    $this->module->framework->log('orig', [ 'rights' => json_encode($this->original_rights, JSON_PRETTY_PRINT) ]);
                 }
             }
             $this->bad_rights = $bad_rights;
@@ -207,7 +214,6 @@ class APIHandler
 
     function getApiRequestInfo()
     {
-
-        return [ $this->action, $this->project_id, $this->user, $this->data ];
+        return [ $this->action, $this->project_id, $this->user, $this->original_rights ];
     }
 }

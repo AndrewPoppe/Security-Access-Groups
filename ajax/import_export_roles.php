@@ -97,7 +97,7 @@ if ( isset($_POST['csv_content']) && $_POST['csv_content'] != '' ) {
                     if ( $succeeded ) {
                         $data_values      = "";
                         $all_role_ids_new = array_keys(\UserRights::getRoles($pid));
-                        $logTable         = $module->getLogTable($pid);
+                        $logTable         = $module->framework->getProject($pid)->getLogTable();
                         $redcap_user      = $module->getUser()->getUsername();
                         foreach ( $all_role_ids_new as $role_id ) {
                             $newRole     = !in_array($role_id, $all_role_ids_orig, true);
