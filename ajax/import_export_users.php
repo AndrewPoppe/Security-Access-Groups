@@ -18,6 +18,9 @@ if ( isset($_POST['csv_content']) && $_POST['csv_content'] != '' ) {
     $all_current_rights = [];
     foreach ( $data as $key => $this_user ) {
         $username = $this_user['username'];
+        $sag_id   = $module->getUserSystemRole($username);
+        $sag      = $module->getSystemRoleRightsById($sag_id);
+
         if ( isset($this_user['forms']) && $this_user['forms'] != '' ) {
             foreach ( explode(",", $this_user['forms']) as $this_pair ) {
                 list( $this_form, $this_right )  = explode(":", $this_pair, 2);
@@ -51,7 +54,10 @@ if ( isset($_POST['csv_content']) && $_POST['csv_content'] != '' ) {
         $ignore              = $userExpired && !$requestedUnexpired;
 
         if ( !empty($these_bad_rights) && !$ignore ) {
-            $bad_rights[$username] = $these_bad_rights;
+            $bad_rights[$username] = [
+                "SAG"    => $sag["role_name"],
+                "rights" => $these_bad_rights
+            ];
         }
     }
 
