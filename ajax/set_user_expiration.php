@@ -20,13 +20,13 @@ $data       = filter_input_array(INPUT_POST);
 $username   = $data["username"];
 $expiration = $data["expiration"];
 
-$module->log('thing', [ "exp" => $expiration, "exps" => strtotime($expiration), "now" => strtotime('today') ]);
-
 if ( !empty($expiration) && strtotime($expiration) < strtotime('today') ) {
     require_once $scriptPath;
     exit;
 }
 
+$sag_id            = $module->getUserSystemRole($username);
+$sag               = $module->getSystemRoleRightsById($sag_id);
 $acceptable_rights = $module->getAcceptableRights($username);
 $current_rights    = $module->getCurrentRights($username, $module->getProjectId());
 $current_rights    = $module->getCurrentRightsFormatted($username, $module->getProjectId());
@@ -37,5 +37,5 @@ if ( $errors === false ) {
     require_once $scriptPath;
     exit;
 } else {
-    echo json_encode([ "error" => true, "bad_rights" => [ "$username" => $bad_rights ] ]);
+    echo json_encode([ "error" => true, "bad_rights" => [ "$username" => [ "SAG" => $sag["role_name"], "rights" => $bad_rights ] ] ]);
 }

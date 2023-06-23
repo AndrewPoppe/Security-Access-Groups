@@ -24,6 +24,8 @@ if ( in_array($submit_action, [ "delete_user", "add_role", "delete_role", "copy_
 
 if ( in_array($submit_action, [ "add_user", "edit_user" ]) ) {
     $acceptable_rights = $module->getAcceptableRights($user);
+    $sag_id            = $module->getUserSystemRole($user);
+    $sag               = $module->getSystemRoleRightsById($sag_id);
     $bad_rights        = $module->checkProposedRights($acceptable_rights, $data);
     $current_rights    = $module->getCurrentRights($user, $pid);
     $requested_rights  = $module->filterPermissions($data);
@@ -90,7 +92,7 @@ if ( in_array($submit_action, [ "add_user", "edit_user" ]) ) {
         require_once $scriptPath;
         ob_end_flush(); // End buffering and clean up
     } else {
-        echo json_encode([ "error" => true, "bad_rights" => [ "$user" => $bad_rights ] ]);
+        echo json_encode([ "error" => true, "bad_rights" => [ "$user" => [ "SAG" => $sag["role_name"], "rights" => $bad_rights ] ] ]);
     }
     exit;
 }
