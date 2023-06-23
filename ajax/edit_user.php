@@ -107,12 +107,17 @@ if ( $submit_action === "edit_role" ) {
     foreach ( $usersInRole as $username ) {
         $acceptable_rights = $module->getAcceptableRights($username);
         $these_bad_rights  = $module->checkProposedRights($acceptable_rights, $data);
+        $sag_id            = $module->getUserSystemRole($username);
+        $sag               = $module->getSystemRoleRightsById($sag_id);
 
         // We ignore expired users
         $userExpired = $module->isUserExpired($username, $module->getProjectId());
 
         if ( !empty($these_bad_rights) && !$userExpired ) {
-            $bad_rights[$username] = $these_bad_rights;
+            $bad_rights[$username] = [
+                "SAG"    => $sag["role_name"],
+                "rights" => $these_bad_rights
+            ];
         }
     }
     if ( empty($bad_rights) ) {
