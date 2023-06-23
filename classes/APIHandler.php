@@ -156,6 +156,7 @@ class APIHandler
                 if ( !empty($these_bad_rights) ) {
                     $bad_rights[$role_label] = $these_bad_rights;
                 }
+                $this->original_rights = \UserRights::getRoles($this->project_id);
             }
             $this->bad_rights = $bad_rights;
         } catch ( \Throwable $e ) {
