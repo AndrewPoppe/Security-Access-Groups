@@ -197,16 +197,14 @@ $(function() {
             } else if (window.import_type == "roles") {
                 title = "You cannot import those roles.";
                 text =
-                    `The following roles have users assigned to them, and the following permissions cannot be granted for those users:<br><table style="margin-top: 20px; width: 100%;"><thead style="border-bottom: 2px solid #666;"><tr><th>Role</th><th>User</th><th>Permissions</th></tr></thead><tbody>`;
+                    `The following roles have users assigned to them, and the following permissions cannot be granted for those users due to their current SAG assignment:<br><table style="margin-top: 20px; width: 100%; table-layout: fixed;"><thead style="border-bottom: 2px solid #666;"><tr><th>User Role</th><th>User</th><th>SAG</th><th COLSPAN=2>Permissions</th></tr></thead><tbody style="border-bottom: 1px solid black;">`;
                 const roles = Object.keys(window.import_errors);
                 roles.forEach((role) => {
                     const users = Object.keys(window.import_errors[role]);
-                    text +=
-                        `<tr style="border-top: 1px solid #666;"><td ROWSPAN="${users.length}">${role}</td>`;
                     users.forEach((user, index) => {
                         const theseRights = window.import_errors[role][user];
-                        text += (index > 1) ? "<tr style='border-top: 1px solid red;'>" : "";
-                        text += `<td>${user}</td><td>${theseRights.join('<br>')}</td></tr>`;
+                        text +=
+                            `<tr style='border-top: 1px solid black;'><td><strong>${role}</strong></td><td><strong>${user}</strong></td><td>${theseRights.SAG}</td><td COLSPAN=2>${theseRights.rights.join('<br>')}</td></tr>`;
                     });
                 })
                 text += `</tbody></table>`;
@@ -215,7 +213,7 @@ $(function() {
                 icon: 'error',
                 title: title,
                 html: text,
-                width: '750px'
+                width: '900px'
             });
         }
     }

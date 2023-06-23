@@ -21,6 +21,8 @@ if ( isset($_POST['csv_content']) && $_POST['csv_content'] != '' ) {
         $bad_rights = [];
         foreach ( $data as $key => $this_assignment ) {
             $username       = $this_assignment["username"];
+            $sag_id         = $module->getUserSystemRole($username);
+            $sag            = $module->getSystemRoleRightsById($sag_id);
             $uniqueRoleName = $this_assignment["unique_role_name"];
             if ( $uniqueRoleName == '' ) {
                 continue;
@@ -125,12 +127,17 @@ if ( isset($_POST['csv_content']) && $_POST['csv_content'] != '' ) {
 
             $these_bad_rights = [];
             foreach ( $usersInRole as $username ) {
+                $sag_id            = $module->getUserSystemRole($username);
+                $sag               = $module->getSystemRoleRightsById($sag_id);
                 $acceptable_rights = $module->getAcceptableRights($username);
                 $user_bad_rights   = $module->checkProposedRights($acceptable_rights, $this_role);
                 // We ignore expired users
                 $userExpired = $module->isUserExpired($username, $pid);
                 if ( !empty($user_bad_rights) && !$userExpired ) {
-                    $these_bad_rights[$username] = $user_bad_rights;
+                    $these_bad_rights[$username] = [
+                        "SAG"    => $sag["role_name"],
+                        "rights" => $user_bad_rights
+                    ];
                 }
             }
             if ( !empty($these_bad_rights) ) {
