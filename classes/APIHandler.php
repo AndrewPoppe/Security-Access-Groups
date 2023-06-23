@@ -113,7 +113,8 @@ class APIHandler
                     $bad_rights[$role_name] = $these_bad_rights;
                 }
             }
-            $this->bad_rights = $bad_rights;
+            $this->bad_rights      = $bad_rights;
+            $this->original_rights = $this->data;
         } catch ( \Throwable $e ) {
             $this->module->log('Error Processing API User Role Mapping Import', [ "error" => $e->getMessage() ]);
         }
