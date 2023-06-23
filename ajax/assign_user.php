@@ -14,6 +14,9 @@ if ( $_SERVER["REQUEST_METHOD"] !== "POST" ) {
 $data     = filter_input_array(INPUT_POST, FILTER_SANITIZE_ENCODED);
 $username = $data["username"];
 $role_id  = $data["role_id"];
+$sag_id   = $module->getUserSystemRole($username);
+$sag      = $module->getSystemRoleRightsById($sag_id);
+
 
 // We don't care if the user is being removed from a role.
 if ( $role_id == 0 ) {
@@ -23,6 +26,7 @@ if ( $role_id == 0 ) {
 
 $role_label       = $module->getRoleLabel($role_id);
 $unique_role_name = $module->getUniqueRoleNameFromRoleId($role_id);
+$role_name        = $module->getRoleLabel($role_id);
 $project_id       = $module->framework->getProjectId();
 
 $role_rights       = $module->getRoleRights($role_id);
@@ -82,6 +86,6 @@ if ( $errors === false || $userExpired ) {
     require_once $scriptPath;
     ob_end_flush(); // End buffering and clean up
 } else {
-    echo json_encode([ "error" => true, "bad_rights" => [ "$username" => $bad_rights ], "role" => $role_name ]);
+    echo json_encode([ "error" => true, "bad_rights" => [ "$username" => [ "SAG" => $sag["role_name"], "rights" => $bad_rights ] ], "role" => $role_name ]);
 }
 exit;
