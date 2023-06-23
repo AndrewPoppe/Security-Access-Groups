@@ -37,7 +37,57 @@ if ( isset($_POST['csv_content']) && $_POST['csv_content'] != '' ) {
             }
         }
         if ( empty($bad_rights) ) {
-            require $scriptPath;
+            ob_start(function ($str) use ($module, $pid, $data) {
+                try {
+                    $imported    = $_SESSION["imported"] === "userroleMapping";
+                    $error_count = sizeof($_SESSION["errors"]) ?? 0;
+                    $succeeded   = $imported && $error_count === 0;
+                    if ( $succeeded ) {
+                        $data_values = "";
+                        $logTable    = $module->framework->getProject($pid)->getLogTable();
+                        $redcap_user = $module->getUser()->getUsername();
+                        foreach ( $data as $this_assignment ) {
+                            $username         = $this_assignment["username"];
+                            $unique_role_name = $this_assignment["unique_role_name"];
+                            $unique_role_name = $unique_role_name == '' ? 'None' : $unique_role_name;
+                            $role_id          = $module->getRoleIdFromUniqueRoleName($unique_role_name);
+                            $role_label       = $module->getRoleLabel($role_id) ?? 'None';
+                            $data_values      = "user = '" . $username . "'\nrole = '" . $role_label . "'\nunique_role_name = '" . $unique_role_name . "'";
+
+                            $sql    = "SELECT log_event_id FROM $logTable WHERE project_id = ? AND user = ? AND page = 'ExternalModules/index.php' AND object_type = 'redcap_user_rights' AND pk = ? AND event = 'INSERT' AND TIMESTAMPDIFF(SECOND,ts,NOW()) <= 10 ORDER BY ts DESC";
+                            $params = [ $pid, $redcap_user, $username ];
+
+                            $result       = $module->framework->query($sql, $params);
+                            $log_event_id = $result->fetch_assoc()["log_event_id"];
+
+                            if ( !empty($log_event_id) ) {
+                                $module->framework->query("UPDATE $logTable SET data_values = ? WHERE log_event_id = ?", [ $data_values, $log_event_id ]);
+                            } else {
+                                \Logging::logEvent(
+                                    '',
+                                    "redcap_user_rights",
+                                    "INSERT",
+                                    $username,
+                                    $data_values,
+                                    "Assign user to role",
+                                    "",
+                                    "",
+                                    "",
+                                    true,
+                                    null,
+                                    null,
+                                    false
+                                );
+                            }
+                        }
+                    }
+                } catch ( \Throwable $e ) {
+                    $module->log("Error logging user role assignment (csv import)", [ "error" => $e->getMessage() ]);
+                }
+            });
+            $module->framework->log('User Rights Import: Importing role assignments', [ "roles" => json_encode($data) ]);
+            require_once $scriptPath;
+            ob_end_flush(); // End buffering and clean up
         } else {
             $_SESSION['SUR_imported']   = 'roleassignments';
             $_SESSION['SUR_bad_rights'] = json_encode($bad_rights);
