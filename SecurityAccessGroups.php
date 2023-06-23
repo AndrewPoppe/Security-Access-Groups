@@ -208,6 +208,20 @@ $(function() {
                     });
                 })
                 text += `</tbody></table>`;
+            } else if (window.import_type == "roleassignments") {
+                title = "You cannot assign those users to those roles.";
+                text =
+                    `The following permissions cannot be granted for the following users due to their current SAG assignment:<br><table style="margin-top: 20px; width: 100%; table-layout: fixed;"><thead style="border-bottom: 2px solid #666;"><tr><th>User Role</th><th>User</th><th>SAG</th><th COLSPAN=2>Permissions</th></tr></thead><tbody style="border-bottom: 1px solid black;">`;
+                const roles = Object.keys(window.import_errors);
+                roles.forEach((role) => {
+                    const users = Object.keys(window.import_errors[role]);
+                    users.forEach((user, index) => {
+                        const theseRights = window.import_errors[role][user];
+                        text +=
+                            `<tr style='border-top: 1px solid black;'><td><strong>${role}</strong></td><td><strong>${user}</strong></td><td>${theseRights.SAG}</td><td COLSPAN=2>${theseRights.rights.join('<br>')}</td></tr>`;
+                    });
+                })
+                text += `</tbody></table>`;
             }
             Swal.fire({
                 icon: 'error',
@@ -290,13 +304,10 @@ $(function() {
                         if (!result.error || !result.bad_rights) {
                             return;
                         }
-                        let title = "You can't do that.";
-                        let text = "";
                         let users = Object.keys(result.bad_rights);
-
-                        title =
+                        const title =
                             `You cannot assign user "${username}" to user role "${result.role}"`;
-                        text =
+                        const text =
                             `The user is currently assigned to the SAG: "<strong>${result.bad_rights[users[0]].SAG}</strong>"<br>The following permissions allowed in user role "${result.role}" cannot be granted to users in that SAG:${createRightsTable(result.bad_rights[users[0]].rights)}`;
 
                         Swal.fire({

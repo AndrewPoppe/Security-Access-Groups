@@ -35,7 +35,10 @@ if ( isset($_POST['csv_content']) && $_POST['csv_content'] != '' ) {
             // We ignore expired users
             $userExpired = $module->isUserExpired($username, $pid);
             if ( !empty($these_bad_rights) && !$userExpired ) {
-                $bad_rights[$role_name] = $these_bad_rights;
+                $bad_rights[$role_name][$username] = [
+                    "SAG"    => $sag["role_name"],
+                    "rights" => $these_bad_rights
+                ];
             }
         }
         if ( empty($bad_rights) ) {
