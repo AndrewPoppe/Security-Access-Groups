@@ -19,7 +19,12 @@ $users = array_map(function ($value) {
     return htmlspecialchars($value);
 }, $users);
 
-$module->log('Requested to expire users', [ "users" => json_encode($users) ]);
+$delayDays = filter_input(INPUT_POST, 'delayDays', FILTER_VALIDATE_INT) ?? 0;
+
+$module->log('Requested to expire users', [
+    "users"     => json_encode($users),
+    "delayDays" => $delayDays
+]);
 
 $error            = false;
 $bad_users        = [];
@@ -47,7 +52,7 @@ if ( $error ) {
 // Expire users
 $currentUser = $module->getUser()->getUsername();
 try {
-    $expiration = date('Y-m-d', strtotime("-1 days"));
+    $expiration = date('Y-m-d', strtotime(($delayDays - 1) . " days"));
     $logTable   = $project->getLogTable();
     foreach ( $users as $user ) {
         $project->setRights($user, [ "expiration" => $expiration ]);
