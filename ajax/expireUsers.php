@@ -60,30 +60,18 @@ try {
         $data_values = "user = $user\nexpiration date = $expiration";
         \Logging::logEvent(
             '',
-            // SQL
             "redcap_user_rights",
-            // table
             "UPDATE",
-            // event
             $user,
-            // record
             $data_values,
-            // display
             'Edit user expiration',
-            // descrip
             "",
-            // change_reason
             "",
-            // userid_override
             "",
-            // project_id_override
             true,
-            // useNOW
             null,
-            // event_id_override
             null,
-            // instance
-            false // bulkProcessing
+            false
         );
     }
 } catch ( \Throwable $e ) {

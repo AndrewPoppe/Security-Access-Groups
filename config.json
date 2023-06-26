@@ -28,7 +28,7 @@
         },
         {
             "key": "user-reminder-email-descriptive",
-            "name": "<div style='border: 1px solid #ff000020; background-color: #ff000014;' class='p-2'><strong>User Reminder Alert Settings</strong></div><div class='bg-primary text-light p-2'><p>These settings control the default text present in reminder email alerts to users whose rights are not in compliance in a project. The alerts will not send if the rights are brought into compliance prior to the alert's send time.</p><div>",
+            "name": "<div class='bg-primary text-light p-2'><strong>User Reminder Alert Settings</strong></div><div style='border: 1px solid #ff000020; background-color: #ff000014;' class='p-2'><p>These settings control the default text present in reminder email alerts to users whose rights are not in compliance in a project. The alerts will not send if the rights are brought into compliance prior to the alert's send time.</p><div>",
             "type": "descriptive"
         },
         {
@@ -58,7 +58,7 @@
         },
         {
             "key": "user-rights-holders-reminder-email-descriptive",
-            "name": "<div style='border: 1px solid #ff000020; background-color: #ff000014;' class='p-2'><strong>User Rights Holder Reminder Alert Email Settings</strong></div><div class='bg-warning text-body p-2'><p>These settings control the default text present in reminder email alerts to users with user rights permissions in projects with users whose rights are not in compliance</p></div>",
+            "name": "<div class='bg-warning text-body p-2'><strong>User Rights Holder Reminder Alert Email Settings</strong></div><div style='border: 1px solid #ff000020; background-color: #ff000014;' class='p-2'><p>These settings control the default text present in reminder email alerts to users with user rights permissions in projects with users whose rights are not in compliance</p></div>",
             "type": "descriptive"
         },
         {
@@ -69,6 +69,31 @@
         {
             "key": "user-rights-holders-reminder-email-body-template",
             "name": "<span style='border: 1px solid #ff000020; background-color: #ff000014;' class='p-2'><strong>User Rights Holders Reminder Alert Email Default Body</strong>",
+            "type": "rich-text"
+        },
+        {
+            "key": "user-expiration-email-descriptive",
+            "name": "<div class='bg-danger text-light p-2'><strong>User Expiration Alert Email Settings</strong><p>These settings control the default text present in email alerts to users and user rights holders upon user expiration. The text can be modified in the project prior to sending the alerts. These settings act only as handy templates.</p></div>",
+            "type": "descriptive"
+        },
+        {
+            "key": "user-expiration-email-subject-template",
+            "name": "<span style='border: 1px solid #7abaff; background-color: #b8daff;' class='p-2'><strong>User Expiration Alert Email Default Subject</strong>",
+            "type": "text"
+        },
+        {
+            "key": "user-expiration-email-body-template",
+            "name": "<span style='border: 1px solid #7abaff; background-color: #b8daff;' class='p-2'><strong>User Expiration Alert Email Default Body</strong>",
+            "type": "rich-text"
+        },
+        {
+            "key": "user-expiration-user-rights-holders-reminder-email-subject-template",
+            "name": "<span style='border: 1px solid #ffdf7e; background-color: #ffeeba;' class='p-2'><strong>User Rights Holders Reminder Alert Email Default Subject</strong>",
+            "type": "text"
+        },
+        {
+            "key": "user-expiration-user-rights-holders-reminder-email-body-template",
+            "name": "<span style='border: 1px solid #ffdf7e; background-color: #ffeeba;' class='p-2'><strong>User Rights Holders Reminder Alert Email Default Body</strong>",
             "type": "rich-text"
         }
     ],

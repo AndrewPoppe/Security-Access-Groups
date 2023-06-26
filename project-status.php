@@ -307,7 +307,25 @@ $Alerts = new Alerts($module);
             tableRows += `<tr><td><strong>${user.name}</strong> (${user.username}) - ${user.email}</td></tr>`;
         })
         $('#userExpirationTable tbody').html(tableRows);
+        populateDefaultExpireUsersModal();
         $('#userExpirationModal').modal('show');
+    }
+
+    function populateDefaultExpireUsersModal() {
+        const userEmailBodyTemplate = `<?= $module->getSystemSetting('user-expiration-email-body-template') ?? "" ?>`;
+        tinymce.get('emailBody-userExpiration').setContent(userEmailBodyTemplate);
+
+        const userEmailSubjectTemplate =
+            `<?= $module->getSystemSetting('user-expiration-email-subject-template') ?? "" ?>`;
+        $('#emailSubject-userExpiration').val(userEmailSubjectTemplate);
+
+        const userRightsHolderEmailBodyTemplate =
+            `<?= $module->getSystemSetting('user-expiration-user-rights-holders-reminder-email-body-template') ?? "" ?>`;
+        tinymce.get('emailBody-userExpiration-UserRightsHolders').setContent(userRightsHolderEmailBodyTemplate);
+
+        const userRightsHolderEmailSubjectTemplate =
+            `<?= $module->getSystemSetting('user-expiration-user-rights-holders-reminder-email-subject-template') ?? "" ?>`;
+        $('#emailSubject-userExpiration-UserRightsHolders').val(userRightsHolderEmailSubjectTemplate);
     }
 
     function getSelectedUsers() {
