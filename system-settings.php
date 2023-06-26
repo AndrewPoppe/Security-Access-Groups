@@ -190,8 +190,8 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
 
     function toggleEditMode(event) {
         const button = $('button.editUsersButton');
-        $('.roleSelect').attr('disabled', (_, attr) => !attr);
         const editing = !$(button).data('editing');
+        $('.roleSelect').attr('disabled', !editing);
         $(button).data('editing', editing);
         let style = 'none';
         if (editing) {
