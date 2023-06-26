@@ -12,19 +12,13 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
     src="https://cdn.datatables.net/v/dt/dt-1.13.4/b-2.3.6/b-html5-2.3.6/fc-4.2.2/rr-1.3.3/sr-1.2.2/datatables.min.js">
 </script>
 
-<!-- <link href="<?= $module->framework->getUrl('assets/fontawesome/css/fontawesome.min.css') ?>" rel="stylesheet" />
-<link href="<?= $module->framework->getUrl('assets/fontawesome/css/regular.min.css') ?>" rel="stylesheet" />
-<link href="<?= $module->framework->getUrl('assets/fontawesome/css/sharp-regular.min.css') ?>" rel="stylesheet" />
-<link href="<?= $module->framework->getUrl('assets/fontawesome/css/sharp-solid.min.css') ?>" rel="stylesheet" />
-<link href="<?= $module->framework->getUrl('assets/fontawesome/css/solid.min.css') ?>" rel="stylesheet" />
-<link href="<?= $module->framework->getUrl('assets/fontawesome/css/custom-icons.min.css') ?>" rel="stylesheet" /> -->
-
 <script defer src="<?= $module->framework->getUrl('assets/fontawesome/js/regular.min.js') ?>"></script>
 <script defer src="<?= $module->framework->getUrl('assets/fontawesome/js/sharp-regular.min.js') ?>"></script>
 <script defer src="<?= $module->framework->getUrl('assets/fontawesome/js/sharp-solid.min.js') ?>"></script>
 <script defer src="<?= $module->framework->getUrl('assets/fontawesome/js/solid.min.js') ?>"></script>
 <script defer src="<?= $module->framework->getUrl('assets/fontawesome/js/custom-icons.min.js') ?>"></script>
 <script defer src="<?= $module->framework->getUrl('assets/fontawesome/js/fontawesome.min.js') ?>"></script>
+
 
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
@@ -1060,7 +1054,8 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
             scrollCollapse: true,
             rowReorder: {
                 dataSrc: 'index',
-                snapX: 0
+                snapX: 0,
+                selector: '.dt-rowReorder-grab'
             },
             initComplete: function() {
                 $('#roleTableWrapper').show();
@@ -1086,10 +1081,10 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                     visible: false
                 },
                 {
-                    className: 'dt-rowReorder-grab',
+                    className: '',
                     data: function(row, type, set, meta) {
                         if (type === 'display') {
-                            return `<a class="SUR_roleLink text-primary" onclick="editRole('${row.role_id}')">${row.role_name}</a>`;
+                            return `<div style="display: flex; align-items: center; white-space: nowrap;"><i class="fa-regular  fa-grip-lines mr-2 dt-rowReorder-grab text-secondary"></i><a class="SUR_roleLink text-primary" onclick="editRole('${row.role_id}')">${row.role_name}</a></div>`;
                         } else {
                             return row.role_name;
                         }

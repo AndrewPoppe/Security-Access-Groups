@@ -150,6 +150,9 @@ body:not(.dt-rowReorder-noOverflow) td.dt-rowReorder-grab {
     cursor: grab;
 }
 
+body:not(.dt-rowReorder-noOverflow) .dt-rowReorder-grab {
+    cursor: grab;
+}
 
 div.dt-rowReorder-float-parent {
     cursor: grabbing !important;
