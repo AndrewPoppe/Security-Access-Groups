@@ -643,7 +643,7 @@ $(function() {
         }
     }
 
-    function getAllUserInfo() : ?array
+    function getAllUserInfo($includeSystemRole = false) : ?array
     {
         $sql = "SELECT username
         , user_email
@@ -661,13 +661,19 @@ $(function() {
         , user_suspended_time
         , user_expiration
         , user_sponsor
-        , allow_create_db
-        FROM redcap_user_information";
+        , allow_create_db";
+        if ( $includeSystemRole ) {
+            $sql .= ", em.value as system_role";
+        }
+        $sql .= " FROM redcap_user_information u";
+        if ( $includeSystemRole ) {
+            $sql .= " LEFT JOIN redcap_external_module_settings em ON em.key = concat(u.username,'-role')";
+        }
         try {
             $result   = $this->framework->query($sql, []);
             $userinfo = [];
             while ( $row = $result->fetch_assoc() ) {
-                $userinfo[$row['username']] = $row;
+                $userinfo[] = $row;
             }
             return $userinfo;
         } catch ( \Throwable $e ) {
@@ -966,8 +972,7 @@ $(function() {
     function getUserSystemRole($username)
     {
         $setting = $username . "-role";
-        //$this->removeSystemSetting($setting);
-        $role = $this->getSystemSetting($setting);
+        $role    = $this->getSystemSetting($setting);
         if ( empty($role) || !$this->systemRoleExists($role) ) {
             $role = $this->defaultRoleId;
             $this->setUserSystemRole($username, $role);

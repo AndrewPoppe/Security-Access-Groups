@@ -53,10 +53,7 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
     <div class="clear"></div>
 
     <?php if ( $tab == "userlist" ) {
-
-        $users = $module->getAllUserInfo();
         $roles = $module->getAllSystemRoles();
-
         ?>
 
     <p style='margin:20px 0;max-width:1000px;'>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc velit
@@ -68,7 +65,7 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
         quam blandit, vel faucibus turpis convallis. </p>
 
 
-    <!-- Modal -->
+    <!-- Modals -->
     <div class="hidden">
         <div id="infoContainer" class="modal-body p-4 text-center" style="font-size:x-large;">
             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc velit metus, venenatis in congue sed, ultrices
@@ -80,10 +77,39 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
             faucibus turpis convallis.
         </div>
     </div>
+    <div id="loading" class="modal">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-body p-4 text-center">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="sr-only">Loading...</span>
+                    </div>
+                    <div class="mt-2">Loading...</div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Table Controls -->
     <div class="hidden">
-        <div class="toolbar_orig">
+        <input type="file" accept="text/csv" class="form-control-file" id="importUsersFile">
+        <table id="templateTable">
+            <thead>
+                <tr>
+                    <th>username</th>
+                    <th>role_id</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ( $roles as $index => $role ) {
+                        echo "<tr><td>example_user_" . (intval($index) + 1) . "</td><td>" . \REDCap::escapeHtml($role["role_id"]) . "</td></tr>";
+                    } ?>
+            </tbody>
+        </table>
+    </div>
+    <!-- Users Table -->
+    <div class="card card-body bg-light">
+        <div class="toolbar2 d-flex flex-row justify-content-between mb-2">
             <div class="d-flex">
                 <button class="btn btn-danger btn-xs mr-1 editUsersButton" style="width: 8em;" data-editing="false"
                     onclick="toggleEditMode(event);">
@@ -114,23 +140,6 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
 
             </div>
         </div>
-        <input type="file" accept="text/csv" class="form-control-file" id="importUsersFile">
-        <table id="templateTable">
-            <thead>
-                <tr>
-                    <th>username</th>
-                    <th>role_id</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach ( $roles as $index => $role ) {
-                        echo "<tr><td>example_user_" . (intval($index) + 1) . "</td><td>" . \REDCap::escapeHtml($role["role_id"]) . "</td></tr>";
-                    } ?>
-            </tbody>
-        </table>
-    </div>
-    <!-- Users Table -->
-    <div class="card card-body bg-light">
         <table id='SUR-System-Table' class="compact cell-border border">
             <thead>
                 <tr>
@@ -142,34 +151,17 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                 </tr>
             </thead>
             <tbody>
-                <?php foreach ( $users as $user ) {
-                        $thisUserRole = $module->getUserSystemRole($user["username"]); ?>
-                <tr data-user="<?= $user["username"] ?>">
-                    <td>
-                        <?= $user["username"] ?>
-                    </td>
-                    <td>
-                        <?= $user["user_firstname"] . " " . $user["user_lastname"] ?>
-                    </td>
-                    <td><a href="mailto:<?= $user["user_email"] ?>"><?= $user["user_email"] ?></a></td>
-                    <td data-role="<?= $thisUserRole ?>"><select class="roleSelect" disabled="true">
-                            <?php
-                                    foreach ( $roles as $role ) {
-                                        echo "<option value='" . $role["role_id"] . "' " . ($role["role_id"] == $thisUserRole ? "selected" : "") . ">" . $role["role_name"] . "</option>";
-                                    }
-                                    ?>
-                        </select>
-                    </td>
-                    <td class="hidden_role_id">
-                        <?= \REDCap::escapeHtml($thisUserRole) ?>
-                    </td>
-                </tr>
-                <?php } ?>
             </tbody>
         </table>
     </div>
 
     <script>
+    window.system_roles = {
+        <?php foreach ( $roles as $role ) {
+                    echo "'" . $role["role_id"] . "': '" . $role["role_name"] . "',";
+                } ?>
+    };
+
     var Toast = Swal.mixin({
         toast: true,
         position: 'middle',
@@ -238,33 +230,41 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                     s += separator;
                 }
                 s += boundary ?
-                    boundary + ('' + a[i]).replace(reBoundary, escapeChar + boundary) + boundary :
+                    boundary + ('' + a[i]).replace(reBoundary, escapeChar + boundary) +
+                    boundary :
                     a[i];
             }
             return s;
         };
 
         const dt = $('#SUR-System-Table').DataTable();
-        const search = dt.search();
-        const data = dt.search('').draw().buttons.exportData({
+        const allData = dt.rows().data();
+        const data = dt.buttons.exportData({
             format: {
                 header: function(html, col, node) {
                     return $(node).data('id');
                 },
                 body: function(html, row, col, node) {
-                    if (col === 4) {
-                        return $('#SUR-System-Table select').eq(row).val();
+                    if (col === 0) {
+                        return allData[row]["username"];
+                    } else if (col === 1) {
+                        return allData[row]["user_firstname"] + " " + allData[row][
+                            "user_lastname"
+                        ];
+                    } else if (col === 2) {
+                        return allData[row]["user_email"];
                     } else if (col === 3) {
-                        return $('#SUR-System-Table select').eq(row).find('option:selected').text();
-                    } else if (col === 2 || col === 0) {
-                        return $(html).text();
-                    } else {
-                        return html;
+                        return window.system_roles[allData[row]["system_role"]];
+                    } else if (col === 4) {
+                        return allData[row]["system_role"];
                     }
                 }
+            },
+            exportOptions: {
+                page: 'all',
+                search: 'none'
             }
         });
-        dt.search(search).draw();
 
         const header = join(data.header) + newLine;
         const footer = data.footer ? newLine + join(data.footer) : '';
@@ -283,6 +283,7 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
             }),
             filename,
             true);
+        $('#loading').modal('hide');
     }
 
     function importCsv() {
@@ -300,6 +301,9 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
             return;
         }
 
+        Swal.fire('Loading...');
+        Swal.showLoading();
+
         const reader = new FileReader();
         reader.onload = (e) => {
             window.csv_file_contents = e.target.result;
@@ -307,9 +311,11 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                     data: window.csv_file_contents
                 })
                 .done((response) => {
+                    Swal.close();
                     $(response).modal('show');
                 })
                 .fail((error) => {
+                    Swal.close();
                     try {
                         console.error(JSON.parse(error.responseText).error);
                         const response = JSON.parse(error.responseText);
@@ -427,96 +433,189 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
             true);
     }
 
+    function saveSystemRole(selectNode) {
+        const select = $(selectNode);
+        const tr = $(selectNode).closest('tr');
+        const user = tr.data('user');
+        const newRole = select.val();
+
+        const url = '<?= $module->framework->getUrl("ajax/setUserRole.php") ?>';
+        let color = "#66ff99";
+        const dt = $('#SUR-System-Table').DataTable();
+        $.post(url, {
+                "username": user,
+                "role": newRole
+            })
+            .done(function(response) {
+                select.closest('td').data('role', newRole);
+                select.closest('td').attr('data-role', newRole);
+                const rowIndex = dt.row(select.closest('tr')).index();
+                dt.cell(rowIndex, 4).data(newRole);
+                //dt.rows().invalidate().draw();
+            })
+            .fail(function() {
+                color = "#ff3300";
+                select.val(select.closest('td').data('role')).select2();
+            })
+            .always(function() {
+                $(tr).find('td').effect('highlight', {
+                    color: color
+                }, 2000);
+            });
+    }
+
+    function handleSelects() {
+        const button = $('button.editUsersButton');
+        const editing = $(button).data('editing');
+        console.log(editing);
+        const style = editing ? 'user-select:all; cursor: text; margin-left: 1px; margin-right: 1px;' : 'none';
+
+        $('.roleSelect').select2({
+            minimumResultsForSearch: 20,
+            templateSelection: function(selection) {
+                return $(
+                    `<div class="d-flex justify-content-between"><strong>${selection.text}</strong>&nbsp;<span class="text-secondary" style="${style}">${selection.id}</span></div>`
+                );
+            },
+            templateResult: function(option) {
+                return $(
+                    `<span><strong>${option.text}</strong><br><span class="text-secondary">${option.id}</span></span>`
+                );
+            }
+        });
+        $('.roleSelect').attr('disabled', !editing);
+        // $('.roleSelect').on('change', function() {
+        //     const select = $(this);
+        //     const tr = $(this).closest('tr');
+        //     const user = tr.data('user');
+        //     const newRole = select.val();
+
+        //     console.log(select, tr, user, newRole);
+
+        //     const url = '<?= $module->framework->getUrl("ajax/setUserRole.php") ?>';
+        //     let color = "#66ff99";
+        //     const dt = $('#usersTable').DataTable();
+        //     $.post(url, {
+        //             "username": user,
+        //             "role": newRole
+        //         })
+        //         .done(function(response) {
+        //             select.closest('td').data('role', newRole);
+        //             select.closest('td').attr('data-role', newRole);
+        //             const rowIndex = dt.row(select.closest('tr')).index();
+        //             dt.cell(rowIndex, 4).data(newRole);
+        //             dt.rows().invalidate().draw();
+        //         })
+        //         .fail(function() {
+        //             color = "#ff3300";
+        //             select.val(select.closest('td').data('role')).select2();
+        //         })
+        //         .always(function() {
+        //             $(tr).find('td').effect('highlight', {
+        //                 color: color
+        //             }, 2000);
+        //         });
+        // });
+    }
+
     $(document).ready(function() {
         const importFileElement = document.getElementById("importUsersFile");
         importFileElement.addEventListener("change", handleFiles, false);
         let dt;
         dt = $('#SUR-System-Table').DataTable({
-            paging: false,
-            info: false,
-            columnDefs: [{
-                targets: [0],
-                width: '25%',
-                data: function(row, type, val, meta) {
-                    if (type === 'set') {
-                        row.username = val;
-                    } else if (type === 'display') {
-                        return `<a class="user-link" href="${app_path_webroot_full}${app_path_webroot}ControlCenter/view_users.php?username=${row.username}" target="_blank" rel="noopener noreferrer">${row.username}</a>`;
+            ajax: {
+                url: '<?= $module->framework->getUrl("ajax/users.php") ?>',
+                type: 'POST'
+            },
+            drawCallback: function(settings) {
+                handleSelects();
+            },
+            deferRender: true,
+            paging: true,
+            pageLength: 10,
+            info: true,
+            columns: [{
+                    title: 'Username',
+                    data: function(row, type, set, meta) {
+                        if (type === 'display') {
+                            return `<a class="user-link" href="${app_path_webroot_full}${app_path_webroot}ControlCenter/view_users.php?username=${row.username}" target="_blank" rel="noopener noreferrer">${row.username}</a>`;
+                        } else {
+                            return row.username;
+                        }
+                    },
+                }, {
+                    title: 'Name',
+                    data: function(row, type, set, meta) {
+                        return row.user_firstname + ' ' + row.user_lastname;
                     }
-                    return row.username;
+                }, {
+                    title: 'Email',
+                    data: function(row, type, set, meta) {
+                        if (type === 'display') {
+                            return `<a href="mailto:${row.user_email}">${row.user_email}</a>`;
+                        } else {
+                            return row.user_email;
+                        }
+                    }
+                }, {
+                    title: 'Role',
+                    data: function(row, type, set, meta) {
+                        if (type === 'filter') {
+                            return row.system_role + ' ' + window.system_roles[row.system_role];
+                        } else if (type === 'sort') {
+                            return window.system_roles[row.system_role];
+                        } else {
+                            let result =
+                                `<select class="roleSelect" disabled="true" onchange="saveSystemRole(this)">`;
+                            for (let system_role_id in system_roles) {
+                                const system_role_label = system_roles[system_role_id];
+                                const selected = system_role_id == row.system_role ?
+                                    "selected" : "";
+                                result +=
+                                    `<option value='${system_role_id}' ${selected}>${system_role_label}</option>`;
+                            }
+                            result += `</select>`;
+                            return result;
+                        }
+                    }
+                },
+                {
+                    title: 'Hidden Role',
+                    data: 'system_role'
                 }
-            }, {
-                targets: [1, 2],
+            ],
+            createdRow: function(row, data, dataIndex) {
+                $(row).attr('data-user', data.username);
+            },
+            columnDefs: [{
+                targets: [0, 1, 2],
                 width: '25%'
             }, {
-                targets: [4],
-                visible: false
-            }, {
                 targets: [3],
-                data: function(row, type, val, meta) {
-                    if (type === 'set') {
-                        row.role = val;
-                    } else if (type === 'filter') {
-                        return $(`tr[data-user="${$(row['username']).text()}"]`).find(
-                            ':selected').text();
-                    } else if (type === 'sort') {
-                        return $(`tr[data-user="${$(row['username']).text()}"]`).find(
-                            ':selected').text();
-                    }
-                    return row.role;
+                createdCell: function(td, cellData, rowData, row, col) {
+                    $(td).attr('data-role', rowData.system_role);
+                }
+            }, {
+                targets: [4],
+                visible: false,
+                createdCell: function(td, cellData, rowData, row, col) {
+                    $(td).addClass('hidden_role_id');
                 }
             }],
-            dom: '<"toolbar2 d-flex flex-row justify-content-between mb-2"f>t',
+            dom: 'lftip',
             initComplete: function() {
-                $('.toolbar2').prepend($('.toolbar_orig').html());
-                $('.toolbar_orig').remove();
                 $('div.dataTables_filter input').addClass('form-control');
                 setTimeout(() => {
                     $(this).DataTable().columns.adjust().draw();
                 }, 0);
+                handleSelects();
             },
             language: {
                 search: "_INPUT_",
                 searchPlaceholder: "Search Users..."
             }
         });
-        $('.roleSelect').select2({
-            minimumResultsForSearch: 20,
-            templateSelection: function(selection) {
-                return $(
-                    `<div class="d-flex justify-content-between"><strong>${selection.text}</strong>&nbsp;<span class="text-secondary" style="user-select:all; cursor: text; margin-left: 1px; margin-right: 1px;">${selection.id}</span></div>`
-                );
-            }
-        });
-        $('.roleSelect').change(function() {
-            const select = $(this);
-            const tr = $(this).closest('tr');
-            const user = tr.data('user');
-            const newRole = select.val();
 
-            const url = '<?= $module->framework->getUrl("ajax/setUserRole.php") ?>';
-            let color = "#66ff99";
-            $.post(url, {
-                    "username": user,
-                    "role": newRole
-                })
-                .done(function(response) {
-                    select.closest('td').data('role', newRole);
-                    select.closest('td').attr('data-role', newRole);
-                    const rowIndex = dt.row(select.closest('tr')).index();
-                    dt.cell(rowIndex, 4).data(newRole);
-                    dt.rows().invalidate().draw();
-                })
-                .fail(function() {
-                    color = "#ff3300";
-                    select.val(select.closest('td').data('role')).select2();
-                })
-                .always(function() {
-                    $(tr).find('td').effect('highlight', {
-                        color: color
-                    }, 2000);
-                });
-        });
     });
     </script>
     <?php
@@ -1084,7 +1183,7 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                     className: '',
                     data: function(row, type, set, meta) {
                         if (type === 'display') {
-                            return `<div style="display: flex; align-items: center; white-space: nowrap;"><i class="fa-regular  fa-grip-lines mr-2 dt-rowReorder-grab text-secondary"></i><a class="SUR_roleLink text-primary" onclick="editRole('${row.role_id}')">${row.role_name}</a></div>`;
+                            return `<div style="display: flex; align-items: center; white-space: nowrap;"><i class="fa-solid  fa-grip-dots-vertical mr-2 dt-rowReorder-grab text-secondary"></i><a class="SUR_roleLink text-primary" onclick="editRole('${row.role_id}')">${row.role_name}</a></div>`;
                         } else {
                             return row.role_name;
                         }
