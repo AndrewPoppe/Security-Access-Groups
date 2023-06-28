@@ -597,9 +597,14 @@ table#alertLogTable .select2-container--default .select2-selection--multiple {
 }
 
 div#discrepancy-table_wrapper div.dataTables_scroll {
-    border: 1px solid rgba(0, 0, 0, 0.15) !important;
+    border: 1px solid rgba(0, 0, 0, 0.3) !important;
 }
 
 div#discrepancy-table_wrapper div.dataTables_scrollBody {
     border: none !important;
+}
+
+tr.selected>* {
+    box-shadow: none !important;
+    color: inherit !important;
 }
