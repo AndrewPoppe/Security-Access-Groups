@@ -14,24 +14,17 @@ $Alerts        = new Alerts($module);
 $project_id    = $module->framework->getProjectId();
 $adminUsername = $module->framework->getUser()->getUsername();
 ?>
-<link
-    href="https://cdn.datatables.net/v/dt/dt-1.13.4/b-2.3.6/b-html5-2.3.6/fc-4.2.2/rr-1.3.3/sl-1.6.2/sr-1.2.2/datatables.min.css"
-    rel="stylesheet" />
-
-<script
-    src="https://cdn.datatables.net/v/dt/dt-1.13.4/b-2.3.6/b-html5-2.3.6/fc-4.2.2/rr-1.3.3/sl-1.6.2/sr-1.2.2/datatables.min.js">
-</script>
-
+<link href="<?= $module->framework->getUrl('lib/DataTables/datatables.min.css') ?>" rel="stylesheet" />
+<script src="<?= $module->framework->getUrl('lib/DataTables/datatables.min.js') ?>"></script>
 
 <script defer src="<?= $module->framework->getUrl('assets/fontawesome/js/regular.min.js') ?>"></script>
 <script defer src="<?= $module->framework->getUrl('assets/fontawesome/js/sharp-regular.min.js') ?>"></script>
-<script defer src="<?= $module->framework->getUrl('assets/fontawesome/js/sharp-solid.min.js') ?>"></script>
 <script defer src="<?= $module->framework->getUrl('assets/fontawesome/js/solid.min.js') ?>"></script>
 <script defer src="<?= $module->framework->getUrl('assets/fontawesome/js/custom-icons.min.js') ?>"></script>
 <script defer src="<?= $module->framework->getUrl('assets/fontawesome/js/fontawesome.min.js') ?>"></script>
 
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.10/dist/clipboard.min.js"></script>
+<script src="<?= $module->framework->getUrl('lib/SweetAlert/sweetalert2.all.min.js') ?>"></script>
+<script src="<?= $module->framework->getUrl('lib/Clipboard/clipboard.min.js') ?>"></script>
 <link rel='stylesheet' type='text/css' href='<?= $module->framework->getUrl('SecurityAccessGroups.css') ?>' />
 
 <!-- Modal -->
@@ -49,7 +42,7 @@ $adminUsername = $module->framework->getUser()->getUsername();
 
 <div class="SUR-Container">
     <div class="projhdr">
-        <i class='fa-solid fa-users-between-lines'></i>&nbsp;<span>Security Access Groups</span>
+        <i class='fa-regular fa-users-between-lines'></i>&nbsp;<span>Security Access Groups</span>
     </div>
     <div class="clearfix">
         <div id="sub-nav" class="d-none d-sm-block mr-4 mb-0 ml-0">
@@ -116,9 +109,9 @@ $adminUsername = $module->framework->getUser()->getUsername();
                 disabled><i class="fa-kit fa-sharp-regular-envelope-circle-exclamation"></i> Email User Rights
                 Holders</button>
             <button type="button" class="btn btn-xs btn-danger action" onclick="openExpireUsersModal();" disabled><i
-                    class="fa-solid fa-user-xmark fa-fw"></i> Expire User(s)</button>
+                    class="fa-regular fa-user-xmark fa-fw"></i> Expire User(s)</button>
             <div class="btn-group" role="group">
-                <i class="fa-solid fa-circle-info fa-lg align-self-center text-info" style="cursor:pointer;"
+                <i class="fa-regular fa-circle-info fa-lg align-self-center text-info" style="cursor:pointer;"
                     onclick="Swal.fire({html: $('#infoContainer').html(), icon: 'info', showConfirmButton: false});"></i>
             </div>
         </div>
@@ -148,6 +141,7 @@ $adminUsername = $module->framework->getUser()->getUsername();
     <?php $Alerts->getUserExpirationModal($project_id, $adminUsername); ?>
     <?php $Alerts->getEmailPreviewModal(); ?>
     <script>
+    console.time('dt');
     var Toast = Swal.mixin({
         toast: true,
         position: 'middle',
@@ -698,7 +692,7 @@ $adminUsername = $module->framework->getUser()->getUsername();
     }
 
     $(document).ready(function() {
-
+        console.timeLog('dt', 'document ready');
         $('#sub-nav').removeClass('d-none');
 
         $('.dataPlaceholder').popover({
@@ -772,17 +766,20 @@ $adminUsername = $module->framework->getUser()->getUsername();
             }
         }
 
-        $(document).on('preInit.dt', function(e, settings) {});
+        $(document).on('preInit.dt', function(e, settings) {
+            console.timeLog('dt', 'dt start')
+        });
         const dt = $('table.discrepancy-table').DataTable({
             ajax: {
                 url: '<?= $module->framework->getUrl("ajax/projectUsers.php") ?>',
-                type: 'POST',
+                type: 'GET',
                 dataSrc: function(json) {
+                    console.timeLog('dt', 'ajax loaded')
                     return json.data;
                 }
             },
             deferRender: true,
-            processing: true,
+            //processing: true,
             sort: false,
             filter: true,
             paging: true,
@@ -810,6 +807,7 @@ $adminUsername = $module->framework->getUser()->getUsername();
                 }
                 handleDisplayUsersButton(allChecked);
                 delete(data.checkboxStatus);
+                console.timeLog('dt', 'state loaded')
                 return data;
             },
             columns: [{
@@ -926,7 +924,7 @@ $adminUsername = $module->framework->getUser()->getUsername();
                 $(row).attr('data-user', data.username);
                 $(row).attr('data-email', data.email);
                 $(row).attr('data-name', data.name);
-                $(row).attr('data-rights', JSON.stringify(data.bad));
+                //$(row).attr('data-rights', JSON.stringify(data.bad));
                 $(row).addClass(rowClass);
             },
             drawCallback: function(settings) {
@@ -943,12 +941,12 @@ $adminUsername = $module->framework->getUser()->getUsername();
             },
             columnDefs: [{
                 targets: [4, 5, 6, 7],
-                createdCell: function(td, cellData, rowData, row, col) {
+                createdCell: function(td) {
                     $(td).addClass('align-middle text-center');
                 }
             }, {
                 targets: '_all',
-                createdCell: function(td, cellData, rowData, row, col) {
+                createdCell: function(td) {
                     $(td).addClass('align-middle');
                 }
             }],
@@ -961,6 +959,7 @@ $adminUsername = $module->framework->getUser()->getUsername();
                 $('table.discrepancy-table').addClass('table');
                 $('#table-container').show();
                 $('#discrepancy-table').DataTable().columns.adjust().draw();
+                console.timeLog('dt', 'dt init complete')
             },
             language: {
                 search: "_INPUT_",

@@ -15,14 +15,12 @@ if ( !$module->framework->getUser()->isSuperUser() ) {
 // }
 
 ?>
-<link
-    href="https://cdn.datatables.net/v/dt/dt-1.13.4/b-2.3.6/b-html5-2.3.6/fc-4.2.2/fh-3.3.2/r-2.4.1/rr-1.3.3/sr-1.2.2/datatables.min.css"
-    rel="stylesheet" />
-<script
-    src="https://cdn.datatables.net/v/dt/dt-1.13.4/b-2.3.6/b-html5-2.3.6/fc-4.2.2/fh-3.3.2/r-2.4.1/rr-1.3.3/sr-1.2.2/datatables.min.js">
-</script>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<link href="<?= $module->framework->getUrl('lib/DataTables/datatables.min.css') ?>" rel="stylesheet" />
+<script src="<?= $module->framework->getUrl('lib/DataTables/datatables.min.js') ?>"></script>
+
+<link href="<?= $module->framework->getUrl('lib/Flatpickr/flatpickr.min.css') ?>" rel="stylesheet" />
+<script src="<?= $module->framework->getUrl('lib/Flatpickr/flatpickr.min.js') ?>"></script>
+
 <script defer src="<?= $module->framework->getUrl('assets/fontawesome/js/regular.min.js') ?>"></script>
 <script defer src="<?= $module->framework->getUrl('assets/fontawesome/js/sharp-regular.min.js') ?>"></script>
 <script defer src="<?= $module->framework->getUrl('assets/fontawesome/js/sharp-solid.min.js') ?>"></script>
@@ -31,8 +29,8 @@ if ( !$module->framework->getUser()->isSuperUser() ) {
 <script defer src="<?= $module->framework->getUrl('assets/fontawesome/js/custom-icons.min.js') ?>"></script>
 <script defer src="<?= $module->framework->getUrl('assets/fontawesome/js/fontawesome.min.js') ?>"></script>
 
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.10/dist/clipboard.min.js"></script>
+<script src="<?= $module->framework->getUrl('lib/SweetAlert/sweetalert2.all.min.js') ?>"></script>
+<script src="<?= $module->framework->getUrl('lib/Clipboard/clipboard.min.js') ?>"></script>
 <link rel='stylesheet' type='text/css' href='<?= $module->framework->getUrl('SecurityAccessGroups.css') ?>' />
 
 
@@ -152,62 +150,62 @@ if ( !$module->framework->getUser()->isSuperUser() ) {
 </div>
 
 <script>
-var Toast = Swal.mixin({
-    toast: true,
-    position: 'middle',
-    iconColor: 'white',
-    customClass: {
-        popup: 'colored-toast'
-    },
-    showConfirmButton: false,
-    timer: 1500,
-    timerProgressBar: true
-});
+    var Toast = Swal.mixin({
+        toast: true,
+        position: 'middle',
+        iconColor: 'white',
+        customClass: {
+            popup: 'colored-toast'
+        },
+        showConfirmButton: false,
+        timer: 1500,
+        timerProgressBar: true
+    });
 
-function openAlertPreview(alert_id) {
-    $.post('<?= $module->framework->getUrl('ajax/alert-preview.php') ?>', {
+    function openAlertPreview(alert_id) {
+        $.post('<?= $module->framework->getUrl('ajax/alert-preview.php') ?>', {
             alert_id: alert_id
         })
-        .done(function(json) {
-            const data = JSON.parse(json);
-            createAlertPreviewModal(data);
-            Swal.close();
-        })
-        .fail(function(data) {
-            Swal.close();
-            Swal.fire({
-                title: 'There was an error loading the alert preview.',
-                html: data.responseText,
-                icon: 'error'
+            .done(function (json) {
+                const data = JSON.parse(json);
+                createAlertPreviewModal(data);
+                Swal.close();
             })
-        });
-}
-
-function createAlertPreviewModal(data) {
-    $('#alertPreviewModal .modal-body').html(data.table);
-    let title = 'Alert Preview - ';
-    if (data.alertType === "users") {
-        $('#alertPreviewModal .modal-header')[0].classList = 'modal-header bg-primary text-light';
-        title += 'User Alert';
-    } else if (data.alertType === "userRightsHolders") {
-        $('#alertPreviewModal .modal-header')[0].classList = 'modal-header bg-warning text-body';
-        title += 'User Rights Holder Alert';
-    } else if (data.alertType === "expiration") {
-        $('#alertPreviewModal .modal-header')[0].classList = 'modal-header bg-danger text-light';
-        title += 'User Expiration Alert';
+            .fail(function (data) {
+                Swal.close();
+                Swal.fire({
+                    title: 'There was an error loading the alert preview.',
+                    html: data.responseText,
+                    icon: 'error'
+                })
+            });
     }
-    if (data.reminder) {
-        title += " (Reminder)";
-        $('#alertPreviewModal .modal-body')[0].classList = 'modal-body bg-reminder';
-    } else {
-        $('#alertPreviewModal .modal-body')[0].classList = 'modal-body';
-    }
-    $('#alertPreviewModalLabel').text(title);
-    $('#alertPreviewModal').modal('show');
-}
 
-function deleteAlert(alert_id) {
-    Swal.fire({
+    function createAlertPreviewModal(data) {
+        $('#alertPreviewModal .modal-body').html(data.table);
+        let title = 'Alert Preview - ';
+        if (data.alertType === "users") {
+            $('#alertPreviewModal .modal-header')[0].classList = 'modal-header bg-primary text-light';
+            title += 'User Alert';
+        } else if (data.alertType === "userRightsHolders") {
+            $('#alertPreviewModal .modal-header')[0].classList = 'modal-header bg-warning text-body';
+            title += 'User Rights Holder Alert';
+        } else if (data.alertType === "expiration") {
+            $('#alertPreviewModal .modal-header')[0].classList = 'modal-header bg-danger text-light';
+            title += 'User Expiration Alert';
+        }
+        if (data.reminder) {
+            title += " (Reminder)";
+            $('#alertPreviewModal .modal-body')[0].classList = 'modal-body bg-reminder';
+        } else {
+            $('#alertPreviewModal .modal-body')[0].classList = 'modal-body';
+        }
+        $('#alertPreviewModalLabel').text(title);
+        $('#alertPreviewModal').modal('show');
+    }
+
+    function deleteAlert(alert_id) {
+        Swal.fire({
             title: 'Are you sure?',
             text: "You are about to delete this alert. This action cannot be undone.",
             icon: 'warning',
@@ -219,128 +217,128 @@ function deleteAlert(alert_id) {
             },
             buttonsStyling: false
         })
-        .then((result) => {
-            if (result.isConfirmed) {
-                $.post('<?= $module->framework->getUrl('ajax/delete-alert.php') ?>', {
+            .then((result) => {
+                if (result.isConfirmed) {
+                    $.post('<?= $module->framework->getUrl('ajax/delete-alert.php') ?>', {
                         alert_id: alert_id
                     })
-                    .done(function(json) {
-                        const data = JSON.parse(json);
-                        console.log(data);
-                        if (data) {
-                            Toast.fire({
-                                icon: 'success',
-                                title: 'Alert deleted successfully.'
-                            });
-                            $('#alertLogTable').DataTable().ajax.reload();
-                        } else {
+                        .done(function (json) {
+                            const data = JSON.parse(json);
+                            console.log(data);
+                            if (data) {
+                                Toast.fire({
+                                    icon: 'success',
+                                    title: 'Alert deleted successfully.'
+                                });
+                                $('#alertLogTable').DataTable().ajax.reload();
+                            } else {
+                                Swal.fire({
+                                    title: 'There was an error deleting the alert.',
+                                    html: data.message,
+                                    icon: 'error'
+                                })
+                            }
+                        })
+                        .fail(function (data) {
                             Swal.fire({
                                 title: 'There was an error deleting the alert.',
-                                html: data.message,
+                                html: data.responseText,
                                 icon: 'error'
                             })
-                        }
-                    })
-                    .fail(function(data) {
-                        Swal.fire({
-                            title: 'There was an error deleting the alert.',
-                            html: data.responseText,
-                            icon: 'error'
-                        })
-                    });
+                        });
+                }
+            });
+    }
+
+    function showPastAlerts() {
+        document.querySelector('#mindatetime')._flatpickr.clear();
+        document.querySelector('#maxdatetime')._flatpickr.setDate(new Date(), true);
+    }
+
+    function showFutureAlerts() {
+        document.querySelector('#maxdatetime')._flatpickr.clear();
+        document.querySelector('#mindatetime')._flatpickr.setDate(new Date(), true);
+    }
+
+    // Custom user function
+    function searchUsers() {
+        const users = $('#usersSelect').val() || [];
+        const dt = $('#alertLogTable').DataTable();
+        dt.columns(5).search(users.join('|'), true).draw();
+    }
+
+    $(document).ready(function () {
+
+        $('#sub-nav').removeClass('d-none');
+
+        // Custom range filtering function
+        $.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
+
+            // Dates
+            const minDateTimeEl = document.querySelector('#mindatetime')._flatpickr;
+            const maxDateTimeEl = document.querySelector('#maxdatetime')._flatpickr;
+
+            if (typeof minDateTimeEl === 'undefined' || typeof maxDateTimeEl === 'undefined') {
+                return true;
             }
+
+            const minDateTime = minDateTimeEl.selectedDates[0]?.getTime() / 1000;
+            const maxDateTime = maxDateTimeEl.selectedDates[0]?.getTime() / 1000;
+            const sendDateTime = parseFloat(data[1]) || 0; // use data for the send time column
+
+            if (
+                (isNaN(minDateTime) && isNaN(maxDateTime)) ||
+                (isNaN(minDateTime) && sendDateTime <= maxDateTime) ||
+                (minDateTime <= sendDateTime && isNaN(maxDateTime)) ||
+                (minDateTime <= sendDateTime && sendDateTime <= maxDateTime)
+            ) {
+                return true;
+            }
+
+            return false;
         });
-}
 
-function showPastAlerts() {
-    document.querySelector('#mindatetime')._flatpickr.clear();
-    document.querySelector('#maxdatetime')._flatpickr.setDate(new Date(), true);
-}
+        // Custom alert type function
+        $.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
+            const alertTypes = $('#alertTypeSelect').val() || [];
+            if (alertTypes.length === 0) {
+                return true;
+            }
+            const thisAlertType = data[2];
+            return alertTypes.includes(thisAlertType);
+        });
 
-function showFutureAlerts() {
-    document.querySelector('#maxdatetime')._flatpickr.clear();
-    document.querySelector('#mindatetime')._flatpickr.setDate(new Date(), true);
-}
+        // Custom notification type function
+        $.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
+            const notificationTypes = $('#notificationTypeSelect').val() || [];
+            if (notificationTypes.length === 0) {
+                return true;
+            }
+            const thisNotificationType = String(data[3] === "Reminder");
+            return notificationTypes.includes(thisNotificationType);
+        });
 
-// Custom user function
-function searchUsers() {
-    const users = $('#usersSelect').val() || [];
-    const dt = $('#alertLogTable').DataTable();
-    dt.columns(5).search(users.join('|'), true).draw();
-}
+        // Custom recipient function
+        $.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
+            const recipients = $('#recipientSelect').val() || [];
+            if (recipients.length === 0) {
+                return true;
+            }
+            const thisRecipient = String(data[6]);
+            console.log(recipients, thisRecipient)
+            return recipients.map(recipient => $(`<span>${recipient}</span>`).text()).includes(
+                thisRecipient);
+        });
 
-$(document).ready(function() {
-
-    $('#sub-nav').removeClass('d-none');
-
-    // Custom range filtering function
-    $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
-
-        // Dates
-        const minDateTimeEl = document.querySelector('#mindatetime')._flatpickr;
-        const maxDateTimeEl = document.querySelector('#maxdatetime')._flatpickr;
-
-        if (typeof minDateTimeEl === 'undefined' || typeof maxDateTimeEl === 'undefined') {
-            return true;
-        }
-
-        const minDateTime = minDateTimeEl.selectedDates[0]?.getTime() / 1000;
-        const maxDateTime = maxDateTimeEl.selectedDates[0]?.getTime() / 1000;
-        const sendDateTime = parseFloat(data[1]) || 0; // use data for the send time column
-
-        if (
-            (isNaN(minDateTime) && isNaN(maxDateTime)) ||
-            (isNaN(minDateTime) && sendDateTime <= maxDateTime) ||
-            (minDateTime <= sendDateTime && isNaN(maxDateTime)) ||
-            (minDateTime <= sendDateTime && sendDateTime <= maxDateTime)
-        ) {
-            return true;
-        }
-
-        return false;
-    });
-
-    // Custom alert type function
-    $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
-        const alertTypes = $('#alertTypeSelect').val() || [];
-        if (alertTypes.length === 0) {
-            return true;
-        }
-        const thisAlertType = data[2];
-        return alertTypes.includes(thisAlertType);
-    });
-
-    // Custom notification type function
-    $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
-        const notificationTypes = $('#notificationTypeSelect').val() || [];
-        if (notificationTypes.length === 0) {
-            return true;
-        }
-        const thisNotificationType = String(data[3] === "Reminder");
-        return notificationTypes.includes(thisNotificationType);
-    });
-
-    // Custom recipient function
-    $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
-        const recipients = $('#recipientSelect').val() || [];
-        if (recipients.length === 0) {
-            return true;
-        }
-        const thisRecipient = String(data[6]);
-        console.log(recipients, thisRecipient)
-        return recipients.map(recipient => $(`<span>${recipient}</span>`).text()).includes(
-            thisRecipient);
-    });
-
-    $('#alertLogTable').DataTable({
-        ajax: "<?= $module->framework->getUrl('ajax/alerts.php') ?>",
-        deferRender: true,
-        columns: [{
+        $('#alertLogTable').DataTable({
+            ajax: "<?= $module->framework->getUrl('ajax/alerts.php') ?>",
+            deferRender: true,
+            columns: [{
                 data: 'id',
                 visible: true
             },
             {
-                data: function(row, type, set, meta) {
+                data: function (row, type, set, meta) {
                     if (type === 'display') {
 
                         console.log(row);
@@ -384,7 +382,7 @@ $(document).ready(function() {
             },
             {
                 className: 'dt-center',
-                data: function(row, type, set, meta) {
+                data: function (row, type, set, meta) {
                     if (type === 'display') {
                         let result = '';
                         if (row.alertType === 'users') {
@@ -406,7 +404,7 @@ $(document).ready(function() {
             },
             {
                 className: 'dt-center',
-                data: function(row, type, set, meta) {
+                data: function (row, type, set, meta) {
                     if (type === 'display') {
                         return row.reminder ?
                             '<span class="badge badge-pill bg-reminder border font-weight-normal default-cursor">Reminder</span>' :
@@ -419,12 +417,12 @@ $(document).ready(function() {
             },
             {
                 className: 'dt-center',
-                data: function(row, type, set, meta) {
+                data: function (row, type, set, meta) {
                     return `<button class='btn btn-xs btn-outline-info' onclick='openAlertPreview("${row.id}");'><i class="fa-solid fa-envelope"></i> View</button>`;
                 }
             },
             {
-                data: function(row, type, set, meta) {
+                data: function (row, type, set, meta) {
                     const users = row['users'];
                     if (type === 'display') {
                         let result = [];
@@ -448,85 +446,85 @@ $(document).ready(function() {
                 data: 'status',
                 visible: false
             }
-        ],
-        responsive: false,
-        order: [
-            [1, 'desc']
-        ],
-        initComplete: function() {
-            $('.timePicker').flatpickr({
-                enableTime: true,
-                dateFormat: "U",
-                altInput: true,
-                altFormat: "m/d/Y G:i K",
-                onChange: function(selectedDates, dateStr, instance) {
-                    const dt = $('#alertLogTable').DataTable();
+            ],
+            responsive: false,
+            order: [
+                [1, 'desc']
+            ],
+            initComplete: function () {
+                $('.timePicker').flatpickr({
+                    enableTime: true,
+                    dateFormat: "U",
+                    altInput: true,
+                    altFormat: "m/d/Y G:i K",
+                    onChange: function (selectedDates, dateStr, instance) {
+                        const dt = $('#alertLogTable').DataTable();
+                        dt.draw();
+                    },
+                });
+
+
+                const dt = $('#alertLogTable').DataTable();
+                const usersAll = dt.column(5).data().toArray();
+                const users = Array.from(new Set(usersAll.flat()));
+                const usersSelect = $('#usersSelect').select2({
+                    minimumResultsForSearch: 20,
+                    placeholder: "Filter users",
+                    allowClear: false
+                });
+                users.forEach(user => usersSelect.append(new Option(user, user, false, false)));
+                usersSelect.trigger('change');
+                usersSelect.on('change', searchUsers);
+
+                const recipientsAll = dt.column(6).data().toArray();
+                const recipients = Array.from(new Set(recipientsAll.flat()));
+                const recipientSelect = $('#recipientSelect').select2({
+                    minimumResultsForSearch: 20,
+                    placeholder: "Filter recipients",
+                    allowClear: false,
+                    templateResult: function (recipient) {
+                        return $(`<span>${recipient.text}</span>`);
+                    },
+                    templateSelection: function (recipient) {
+                        return $(
+                            `<span>${recipient.text.match('\<strong\>(.*)\<\/strong\>')[1]}</span>`
+                        );
+                    }
+                });
+                recipients.forEach(recipient => recipientSelect.append(new Option(recipient, recipient,
+                    false, false)));
+                recipientSelect.trigger('change');
+                recipientSelect.on('change', function () {
                     dt.draw();
-                },
-            });
+                });
 
+                const alertTypeSelect = $('#alertTypeSelect').select2({
+                    minimumResultsForSearch: 20,
+                    placeholder: "Filter alert types",
+                    allowClear: false
+                });
+                alertTypeSelect.on('change', function () {
+                    dt.draw();
+                });
 
-            const dt = $('#alertLogTable').DataTable();
-            const usersAll = dt.column(5).data().toArray();
-            const users = Array.from(new Set(usersAll.flat()));
-            const usersSelect = $('#usersSelect').select2({
-                minimumResultsForSearch: 20,
-                placeholder: "Filter users",
-                allowClear: false
-            });
-            users.forEach(user => usersSelect.append(new Option(user, user, false, false)));
-            usersSelect.trigger('change');
-            usersSelect.on('change', searchUsers);
+                const notificationTypeSelect = $('#notificationTypeSelect').select2({
+                    minimumResultsForSearch: 20,
+                    placeholder: "Filter notification types",
+                    allowClear: false
+                });
+                notificationTypeSelect.on('change', function () {
+                    dt.draw();
+                });
 
-            const recipientsAll = dt.column(6).data().toArray();
-            const recipients = Array.from(new Set(recipientsAll.flat()));
-            const recipientSelect = $('#recipientSelect').select2({
-                minimumResultsForSearch: 20,
-                placeholder: "Filter recipients",
-                allowClear: false,
-                templateResult: function(recipient) {
-                    return $(`<span>${recipient.text}</span>`);
-                },
-                templateSelection: function(recipient) {
-                    return $(
-                        `<span>${recipient.text.match('\<strong\>(.*)\<\/strong\>')[1]}</span>`
-                    );
-                }
-            });
-            recipients.forEach(recipient => recipientSelect.append(new Option(recipient, recipient,
-                false, false)));
-            recipientSelect.trigger('change');
-            recipientSelect.on('change', function() {
-                dt.draw();
-            });
-
-            const alertTypeSelect = $('#alertTypeSelect').select2({
-                minimumResultsForSearch: 20,
-                placeholder: "Filter alert types",
-                allowClear: false
-            });
-            alertTypeSelect.on('change', function() {
-                dt.draw();
-            });
-
-            const notificationTypeSelect = $('#notificationTypeSelect').select2({
-                minimumResultsForSearch: 20,
-                placeholder: "Filter notification types",
-                allowClear: false
-            });
-            notificationTypeSelect.on('change', function() {
-                dt.draw();
-            });
-
-            $('.alertLogWrapper').show();
-            $('table#alertLogTable select').val(null).trigger('change');
-            dt.columns.adjust();
-        },
-        language: {
-            search: "_INPUT_",
-            searchPlaceholder: "Search Alerts...",
-            zeroRecords: "No alerts found."
-        }
+                $('.alertLogWrapper').show();
+                $('table#alertLogTable select').val(null).trigger('change');
+                dt.columns.adjust();
+            },
+            language: {
+                search: "_INPUT_",
+                searchPlaceholder: "Search Alerts...",
+                zeroRecords: "No alerts found."
+            }
+        });
     });
-});
 </script>
