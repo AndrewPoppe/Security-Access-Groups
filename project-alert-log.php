@@ -418,7 +418,11 @@ if ( !$module->framework->getUser()->isSuperUser() ) {
             {
                 className: 'dt-center',
                 data: function (row, type, set, meta) {
-                    return `<button class='btn btn-xs btn-outline-info' onclick='openAlertPreview("${row.id}");'><i class="fa-solid fa-envelope"></i> View</button>`;
+                    if (type === 'filter') {
+                        return row.subject + ' ' + row.body;
+                    } else {
+                        return `<button class='btn btn-xs btn-outline-info' onclick='openAlertPreview("${row.id}");'><i class="fa-solid fa-envelope"></i> View</button>`;
+                    }
                 }
             },
             {
