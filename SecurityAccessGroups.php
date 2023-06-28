@@ -64,7 +64,7 @@ class SecurityAccessGroups extends AbstractExternalModule
         }
 
         try {
-            $username = $this->framework->getUser()->getUsername();
+            $username = $this->framework->getUser()->getUsername() ?? "";
         } catch ( \Throwable $e ) {
             $this->framework->log('Error', [ "error" => $e->getMessage() ]);
         }
@@ -423,31 +423,59 @@ $(function() {
         return $current_rights;
     }
 
+
+    function getBasicProjectUsers($project_id)
+    {
+        $sql = "select rights.username, 
+        info.user_firstname, 
+        info.user_lastname, 
+        user_email, 
+        expiration, 
+        rights.role_id, 
+        roles.unique_role_name,
+        roles.role_name,
+        em.value as system_role 
+        from redcap_user_rights rights
+        left join redcap_user_roles roles
+        on rights.role_id = roles.role_id
+        left join redcap_user_information info
+        on rights.username = info.username
+        LEFT JOIN redcap_external_module_settings em ON em.key = concat(rights.username,'-role')
+        where rights.project_id = ?";
+        try {
+            $result = $this->framework->query($sql, [ $project_id ]);
+            $users  = [];
+            while ( $row = $result->fetch_assoc() ) {
+                $users[] = $row;
+            }
+            return $users;
+        } catch ( \Throwable $e ) {
+            $this->framework->log("Error getting project users", [ "error" => $e->getMessage() ]);
+            return [];
+        }
+    }
     function getUsersWithBadRights($project_id)
     {
-        $project    = $this->framework->getProject($project_id);
-        $users      = $project->getUsers();
+        $users      = $this->getBasicProjectUsers($project_id);
+        $roles      = $this->getAllSystemRoles(true);
         $bad_rights = [];
         foreach ( $users as $user ) {
-            $allRights             = $user->getRights($project_id);
-            $expiration            = $allRights["expiration"];
-            $username              = $user->getUsername();
-            $userInfo              = $this->getUserInfo($username);
-            $acceptable_rights     = $this->getAcceptableRights($username);
+            $expiration            = $user["expiration"];
+            $isExpired             = $expiration != "" && strtotime($expiration) < strtotime("today");
+            $username              = $user["username"];
+            $acceptable_rights     = $roles[$user["system_role"]]["permissions"];
             $current_rights        = $this->getCurrentRightsFormatted($username, $project_id);
             $bad                   = $this->checkProposedRights($acceptable_rights, $current_rights);
-            $systemRole            = $this->getUserSystemRole($username);
-            $systemRoleRights      = $this->getSystemRoleRightsById($systemRole);
-            $systemRoleName        = $systemRoleRights["role_name"];
-            $projectRole           = $allRights["role_id"];
-            $projectRoleUniqueName = $allRights["unique_role_name"];
-            $projectRoleName       = $this->getProjectRoleName($projectRole);
-            $bad_rights[$username] = [
+            $systemRoleName        = $roles[$user["system_role"]]["role_name"];
+            $projectRoleUniqueName = $user["unique_role_name"];
+            $projectRoleName       = $user["role_name"];
+            $bad_rights[]          = [
                 "username"          => $username,
-                "name"              => $userInfo["user_firstname"] . " " . $userInfo["user_lastname"],
-                "email"             => $user->getEmail(),
+                "name"              => $user["user_firstname"] . " " . $user["user_lastname"],
+                "email"             => $user["user_email"],
                 "expiration"        => $expiration == "" ? "never" : $expiration,
-                "system_role"       => $systemRole,
+                "isExpired"         => $isExpired,
+                "system_role"       => $user["system_role"],
                 "system_role_name"  => $systemRoleName,
                 "project_role"      => $projectRoleUniqueName,
                 "project_role_name" => $projectRoleName,
@@ -1097,7 +1125,7 @@ $(function() {
         }
     }
 
-    function getAllSystemRoles()
+    function getAllSystemRoles($parsePermissions = false)
     {
         $sql    = "SELECT MAX(log_id) AS 'log_id' WHERE message = 'role' AND (project_id IS NULL OR project_id IS NOT NULL) GROUP BY role_id";
         $result = $this->framework->queryLogs($sql, []);
@@ -1106,7 +1134,13 @@ $(function() {
             $logId   = $row["log_id"];
             $sql2    = "SELECT role_id, role_name, permissions WHERE (project_id IS NULL OR project_id IS NOT NULL) AND log_id = ?";
             $result2 = $this->framework->queryLogs($sql2, [ $logId ]);
-            $roles[] = $result2->fetch_assoc();
+            $role    = $result2->fetch_assoc();
+            if ( $parsePermissions ) {
+                $role['permissions']     = json_decode($role['permissions'], true);
+                $roles[$role["role_id"]] = $role;
+            } else {
+                $roles[] = $role;
+            }
         }
         return $roles;
     }
@@ -1353,7 +1387,7 @@ $(function() {
             $result = $this->framework->query($sql, [ $project_id ]);
             $users  = [];
             while ( $row = $result->fetch_assoc() ) {
-                $users[] = $row;
+                $users[] = $this->framework->escape($row);
             }
             return $users;
         } catch ( \Throwable $e ) {

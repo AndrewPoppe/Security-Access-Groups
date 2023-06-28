@@ -10,6 +10,4 @@ if ( !$module->framework->getUser()->isSuperUser() ) {
 
 $users = $module->getAllUserInfo(true);
 
-$module->framework->log('ok', [ 'data' => json_encode($users) ]);
-
 echo json_encode([ "data" => $users ]);

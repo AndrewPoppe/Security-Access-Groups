@@ -4,16 +4,24 @@ namespace YaleREDCap\SecurityAccessGroups;
 
 /** @var SecurityAccessGroups $module */
 
+if ( !$module->framework->getUser()->isSuperUser() ) {
+    http_response_code(401);
+    exit;
+}
+
 require_once "classes/Alerts.php";
-$Alerts = new Alerts($module);
-
-// TODO: Remove this
-//$module->removeLogs("message = 'user alert reminder sent' AND (project_id IS NULL OR project_id IS NOT NULL)", []);
-
+$Alerts        = new Alerts($module);
+$project_id    = $module->framework->getProjectId();
+$adminUsername = $module->framework->getUser()->getUsername();
 ?>
-<link href="https://cdn.datatables.net/v/dt/dt-1.13.3/b-2.3.5/b-html5-2.3.5/fc-4.2.1/datatables.min.css"
+<link
+    href="https://cdn.datatables.net/v/dt/dt-1.13.4/b-2.3.6/b-html5-2.3.6/fc-4.2.2/rr-1.3.3/sl-1.6.2/sr-1.2.2/datatables.min.css"
     rel="stylesheet" />
-<script src="https://cdn.datatables.net/v/dt/dt-1.13.3/b-2.3.5/b-html5-2.3.5/fc-4.2.1/datatables.min.js"></script>
+
+<script
+    src="https://cdn.datatables.net/v/dt/dt-1.13.4/b-2.3.6/b-html5-2.3.6/fc-4.2.2/rr-1.3.3/sl-1.6.2/sr-1.2.2/datatables.min.js">
+</script>
+
 
 <script defer src="<?= $module->framework->getUrl('assets/fontawesome/js/regular.min.js') ?>"></script>
 <script defer src="<?= $module->framework->getUrl('assets/fontawesome/js/sharp-regular.min.js') ?>"></script>
@@ -43,13 +51,6 @@ $Alerts = new Alerts($module);
     <div class="projhdr">
         <i class='fa-solid fa-users-between-lines'></i>&nbsp;<span>Security Access Groups</span>
     </div>
-
-    <?php
-    $project_id       = $module->framework->getProjectId();
-    $adminUsername    = $module->framework->getUser()->getUsername();
-    $discrepantRights = $module->getUsersWithBadRights($project_id);
-    ?>
-
     <div class="clearfix">
         <div id="sub-nav" class="d-none d-sm-block mr-4 mb-0 ml-0">
             <ul>
@@ -74,165 +75,73 @@ $Alerts = new Alerts($module);
         <p style="font-size:large;">Check User Rights</p>
         <p>Current users in the ...</p>
     </div>
-    <div class="buttonContainer mb-2">
-        <div class="btn-group">
-            <button id="displayUsersButton" type="button" class="btn btn-xs btn-outline-secondary dropdown-toggle"
-                data-toggle="dropdown" aria-expanded="false">
-                <i class="fa-sharp fa-regular fa-eye"></i> Display Users
-            </button>
-            <div class="dropdown-menu" id="userFilter">
-                <div class="form-check pl-4 mr-2">
-                    <input class="form-check-input" type="checkbox" value="1" id="expiredUsers" checked>
-                    <label class="form-check-label" for="expiredUsers">
-                        Expired users
-                    </label>
-                </div>
-                <div class="form-check pl-4 mr-2">
-                    <input class="form-check-input" type="checkbox" value="1" id="nonExpiredUsers" checked>
-                    <label class="form-check-label" for="nonExpiredUsers">
-                        Non-Expired users
-                    </label>
-                </div>
-                <div class="dropdown-divider"></div>
-                <div class="form-check pl-4 mr-2">
-                    <input class="form-check-input" type="checkbox" value="1" id="discrepantUsers" checked>
-                    <label class="form-check-label" for="discrepantUsers">
-                        Users with noncompliant rights
-                    </label>
-                </div>
-                <div class="form-check pl-4 mr-2">
-                    <input class="form-check-input" type="checkbox" value="1" id="nonDiscrepantUsers" checked>
-                    <label class="form-check-label" for="nonDiscrepantUsers">
-                        Users without noncompliant rights
-                    </label>
+    <div class="container my-4 mx-0 card card-body bg-light" style="width: 1100px;">
+        <div class="buttonContainer mb-2">
+            <div class="btn-group">
+                <button id="displayUsersButton" type="button" class="btn btn-xs btn-outline-secondary dropdown-toggle"
+                    data-toggle="dropdown" aria-expanded="false">
+                    <i class="fa-sharp fa-regular fa-eye"></i> Display Users
+                </button>
+                <div class="dropdown-menu" id="userFilter">
+                    <div class="form-check pl-4 mr-2">
+                        <input class="form-check-input" type="checkbox" value="1" id="expiredUsers" checked>
+                        <label class="form-check-label" for="expiredUsers">
+                            Expired users
+                        </label>
+                    </div>
+                    <div class="form-check pl-4 mr-2">
+                        <input class="form-check-input" type="checkbox" value="1" id="nonExpiredUsers" checked>
+                        <label class="form-check-label" for="nonExpiredUsers">
+                            Non-Expired users
+                        </label>
+                    </div>
+                    <div class="dropdown-divider"></div>
+                    <div class="form-check pl-4 mr-2">
+                        <input class="form-check-input" type="checkbox" value="1" id="discrepantUsers" checked>
+                        <label class="form-check-label" for="discrepantUsers">
+                            Users with noncompliant rights
+                        </label>
+                    </div>
+                    <div class="form-check pl-4 mr-2">
+                        <input class="form-check-input" type="checkbox" value="1" id="nonDiscrepantUsers" checked>
+                        <label class="form-check-label" for="nonDiscrepantUsers">
+                            Users without noncompliant rights
+                        </label>
+                    </div>
                 </div>
             </div>
+            <button type="button" class="btn btn-xs btn-primary action" onclick="openEmailUsersModal();" disabled><i
+                    class="fa-sharp fa-regular fa-envelope"></i> Email User(s)</button>
+            <button type="button" class="btn btn-xs btn-warning action" onclick="openEmailUserRightsHoldersModal();"
+                disabled><i class="fa-kit fa-sharp-regular-envelope-circle-exclamation"></i> Email User Rights
+                Holders</button>
+            <button type="button" class="btn btn-xs btn-danger action" onclick="openExpireUsersModal();" disabled><i
+                    class="fa-solid fa-user-xmark fa-fw"></i> Expire User(s)</button>
+            <div class="btn-group" role="group">
+                <i class="fa-solid fa-circle-info fa-lg align-self-center text-info" style="cursor:pointer;"
+                    onclick="Swal.fire({html: $('#infoContainer').html(), icon: 'info', showConfirmButton: false});"></i>
+            </div>
         </div>
-        <button type="button" class="btn btn-xs btn-primary action" onclick="openEmailUsersModal();" disabled><i
-                class="fa-sharp fa-regular fa-envelope"></i> Email User(s)</button>
-        <button type="button" class="btn btn-xs btn-warning action" onclick="openEmailUserRightsHoldersModal();"
-            disabled><i class="fa-kit fa-sharp-regular-envelope-circle-exclamation"></i> Email User Rights
-            Holders</button>
-        <button type="button" class="btn btn-xs btn-danger action" onclick="openExpireUsersModal();" disabled><i
-                class="fa-solid fa-user-xmark fa-fw"></i> Expire User(s)</button>
-        <div class="btn-group" role="group">
-            <i class="fa-solid fa-circle-info fa-lg align-self-center text-info" style="cursor:pointer;"
-                onclick="Swal.fire({html: $('#infoContainer').html(), icon: 'info', showConfirmButton: false});"></i>
+        <div id="table-container" class="container mx-0 px-0" style="background-color: #fafafa;">
+            <table id="discrepancy-table" class="discrepancy-table row-border bg-white">
+                <thead class="text-center" style="background-color:#ececec">
+                    <tr>
+                        <th style="vertical-align: middle !important;"><input style="display:block; margin: 0 auto;"
+                                type="checkbox" onchange="handleCheckboxes(this);"></input>
+                        </th>
+                        <th>Username</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th class="dt-head-center">Expiration</th>
+                        <th class="dt-head-center">System Role</th>
+                        <th class="dt-head-center">Noncompliant Rights</th>
+                        <th class="dt-head-center">Project Role</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
         </div>
-    </div>
-    <div id="table-container" class="container ml-0 pl-0" style="display: none;">
-        <!-- <table class="table table-bordered discrepancy-table"> -->
-        <table id="discrepancy-table" class="discrepancy-table row-border border">
-            <thead class="text-center" style="background-color:#ececec">
-                <tr>
-                    <th style="vertical-align: middle !important;"><input style="display:block; margin: 0 auto;"
-                            type="checkbox"
-                            onchange="$('.user-selector input').prop('checked', $(this).prop('checked')).trigger('change');"></input>
-                    </th>
-                    <th>Username</th>
-                    <th>Name</th>
-                    <th>Email</th>
-                    <th class="dt-head-center">Expiration</th>
-                    <th class="dt-head-center">System Role</th>
-                    <th class="dt-head-center">Noncompliant Rights</th>
-                    <th class="dt-head-center">Project Role</th>
-                    <!-- <th class="dt-head-center">Alert</th>
-                    <th class="dt-head-center">Reminder</th> -->
-                </tr>
-            </thead>
-            <tbody>
-                <?php //foreach ( [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 ] as $i ) {
-                foreach ( $discrepantRights as $user => $thisUsersRights ) {
-                    $badRights      = $thisUsersRights["bad"];
-                    $hasDiscrepancy = !empty($badRights);
-                    $isExpired      = $thisUsersRights["expiration"] !== "never" && strtotime($thisUsersRights["expiration"]) < strtotime("today");
-                    $rowClass       = $hasDiscrepancy ? "table-danger-light" : "table-success-light"; //"bg-light"; 
-                    $rowClass       = $isExpired ? "text-secondary bg-light" : $rowClass; ?>
-                <tr data-user="<?= $user ?>" data-email="<?= $thisUsersRights["email"] ?>"
-                    data-name="<?= $thisUsersRights["name"] ?>"
-                    data-rights="<?= htmlspecialchars(json_encode($badRights)) ?>" class="<?= $rowClass ?>">
-                    <td style="vertical-align: middle !important;" class="align-middle user-selector">
-                        <?= '<div data-discrepant="' . $hasDiscrepancy . '" data-expired="' . $isExpired . '">' . ($hasDiscrepancy ? '<input style="display:block; margin: 0 auto;" type="checkbox" onchange="window.handleActionButtons()"></input>' : '') . '</div>' ?>
-                    </td>
-                    <td class="align-middle">
-                        <?= $isExpired ? $user : "<strong>$user</strong>" ?>
-                    </td>
-                    <td class="align-middle">
-                        <?= $thisUsersRights["name"] ?>
-                    </td>
-                    <td class="align-middle">
-                        <?= $thisUsersRights["email"] ?>
-                    </td>
-                    <td class="align-middle text-center">
-                        <?= $thisUsersRights["expiration"] ?>
-                    </td>
-                    <td class="align-middle text-center">
-                        <?php if ( $thisUsersRights["system_role"] ) { ?>
-                        <strong>
-                            <?= $thisUsersRights["system_role_name"] ?>
-                        </strong> <span>(<span class="user-select-all">
-                                <?= $thisUsersRights["system_role"] ?>
-                            </span>)</span>
-                        <?php } else { ?>
-                        <span class="text-secondary">None</span>
-                        <?php } ?>
-                    </td>
-                    <td class="align-middle text-center">
-                        <?php
-                            if ( $hasDiscrepancy ) { ?>
-                        <a class="<?= $isExpired ? "text-secondary" : "text-primary" ?>"
-                            style="text-decoration: underline; cursor: pointer;" data-toggle="modal"
-                            data-target="#modal-<?= $user ?>"><?= sizeof($badRights) . (sizeof($badRights) > 1 ? " Rights" : " Right") ?></a>
-                        <div class="modal fade" id="modal-<?= $user ?>" tabindex="-1" aria-hidden="true">
-                            <div class="modal-dialog modal-dialog-scrollable">
-                                <div class="modal-content">
-                                    <div class="modal-header bg-dark text-light">
-                                        <h5 class="m-0">Noncompliant Rights for
-                                            <?= $thisUsersRights["name"] . " (" . $user . ")" ?>
-                                        </h5>
-                                    </div>
-                                    <div class="modal-body">
-                                        <div class="d-flex justify-content-center">
-                                            <table class="table table-sm table-hover table-borderless mb-0">
-                                                <tbody>
-                                                    <?php foreach ( $badRights as $right ) {
-                                                                echo "<tr style='cursor: default;'><td><span>$right</span></td></tr>";
-                                                            } ?>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <?php
-                            } else {
-                                echo "<i class='fa-sharp fa-check mr-1 text-success'></i>None";
-                            }
-                            ?>
-                    </td>
-                    <td class="align-middle text-center">
-                        <?php if ( $thisUsersRights["project_role"] ) { ?>
-                        <strong>
-                            <?= $thisUsersRights["project_role_name"] ?>
-                        </strong> <span>(<span class="user-select-all">
-                                <?= $thisUsersRights["project_role"] ?>
-                            </span>)</span>
-                        <?php } else { ?>
-                        <span class="text-secondary">None</span>
-                        <?php } ?>
-                    </td>
-                    <!-- <td class="align-middle text-center">
-                        <?= $Alerts->getUserEmailSentFormatted($project_id, $user); ?>
-                    </td>
-                    <td class="align-middle text-center">
-                        <?= $Alerts->getUserReminderStatusFormatted($project_id, $user); ?>
-                    </td> -->
-                </tr>
-                <?php }
-                //} ?>
-            </tbody>
-        </table>
     </div>
     <?php $Alerts->getUserEmailModal($project_id, $adminUsername); ?>
     <?php $Alerts->getUserRightsHoldersEmailModal($project_id, $adminUsername); ?>
@@ -250,6 +159,15 @@ $Alerts = new Alerts($module);
         timer: 1500,
         timerProgressBar: true
     });
+
+    function handleCheckboxes(el) {
+        const dt = $('#discrepancy-table').DataTable();
+        const checked = $(el).prop('checked');
+        dt.rows(function(idx, data, node) {
+            return data.bad.length > 0
+        }).select(checked);
+        $('.user-selector input').prop('checked', checked).trigger('change');
+    }
 
     function openEmailUsersModal() {
         document.querySelector('#emailUsersModal form').reset();
@@ -329,16 +247,25 @@ $Alerts = new Alerts($module);
     }
 
     function getSelectedUsers() {
-        return $('.user-selector').toArray().map((el) => {
-            if ($(el).find('input').is(':checked')) {
-                const row = $(el).closest('tr');
-                return {
-                    username: $(row).data('user'),
-                    name: $(row).data('name'),
-                    email: $(row).data('email')
-                };
-            }
-        }).filter((el) => el);
+        return $('#discrepancy-table').DataTable().rows({
+            selected: true
+        }).data().toArray().map((el) => {
+            return {
+                username: el.username,
+                name: el.name,
+                email: el.email
+            };
+        });
+        // return $('.user-selector').toArray().map((el) => {
+        //     if ($(el).find('input').is(':checked')) {
+        //         const row = $(el).closest('tr');
+        //         return {
+        //             username: $(row).data('user'),
+        //             name: $(row).data('name'),
+        //             email: $(row).data('email')
+        //         };
+        //     }
+        // }).filter((el) => el);
     }
 
     async function expireUsers() {
@@ -449,17 +376,16 @@ $Alerts = new Alerts($module);
     }
 
     function getAlertUserInfo() {
-        const users = [];
-        $('.user-selector input:checked').each((i, el) => {
-            const row = $(el).closest('tr');
-            users[i] = {
-                'sag_user': $(row).data('user'),
-                'sag_user_fullname': $(row).data('name'),
-                'sag_user_email': $(row).data('email'),
-                'sag_user_rights': $(row).data('rights')
-            }
+        return $('#discrepancy-table').DataTable().rows({
+            selected: true
+        }).data().toArray().map((el) => {
+            return {
+                'sag_user': el.username,
+                'sag_user_fullname': el.name,
+                'sag_user_email': el.email,
+                'sag_user_rights': el.bad
+            };
         });
-        return users;
     }
 
 
@@ -799,6 +725,7 @@ $Alerts = new Alerts($module);
             }, 1000);
             e.clearSelection();
         });
+
         tinymce.init({
             entity_encoding: "raw",
             default_link_target: '_blank',
@@ -836,18 +763,30 @@ $Alerts = new Alerts($module);
         }
 
         window.handleActionButtons = function() {
-            if ($('.user-selector input').is(':checked')) {
+            if ($('#discrepancy-table').DataTable().rows({
+                    selected: true
+                }).count() > 0) {
                 $('.buttonContainer button.action').prop('disabled', false);
             } else {
                 $('.buttonContainer button.action').prop('disabled', true);
             }
         }
 
+        $(document).on('preInit.dt', function(e, settings) {});
         const dt = $('table.discrepancy-table').DataTable({
+            ajax: {
+                url: '<?= $module->framework->getUrl("ajax/projectUsers.php") ?>',
+                type: 'POST',
+                dataSrc: function(json) {
+                    return json.data;
+                }
+            },
+            deferRender: true,
+            processing: true,
             sort: false,
-            //filter: false,
-            paging: false,
-            info: false,
+            filter: true,
+            paging: true,
+            info: true,
             scrollY: '75vh',
             scrollCollapse: true,
             stateSave: true,
@@ -873,28 +812,160 @@ $Alerts = new Alerts($module);
                 delete(data.checkboxStatus);
                 return data;
             },
-            dom: "t",
+            columns: [{
+                    data: function(row, type, set, meta) {
+                        if (type === 'set' || type === 'type') {
+                            const hasDiscrepancy = row.bad.length > 0;
+                            row.inputVal =
+                                `<div data-discrepant="${hasDiscrepancy}" data-expired="${row.isExpired}">${hasDiscrepancy ? '<input style="display:block; margin: 0 auto;" type="checkbox" onchange="window.handleActionButtons()"></input>' : ""}</div>`;
+                            row.expired = row.isExpired ? 'expired' : 'current';
+                            row.discrepant = hasDiscrepancy ? 'discrepant' :
+                                'compliant';
+                            return row.inputVal;
+                        } else if (type === 'display') {
+                            return row.inputVal;
+                        } else if (type === 'filter') {
+                            return [row.expired, row.discrepant].join(' ');
+                        }
+                        return row.inputVal;
+                    },
+                    createdCell: function(td, cellData, rowData, row, col) {
+                        $(td).css('vertical-align', 'middle !important;');
+                        $(td).addClass('user-selector');
+                    }
+                }, {
+                    title: 'Username',
+                    data: function(row, type, set, meta) {
+                        if (type === 'display') {
+                            return !row.isExpired ? `<strong>${row.username}</strong>` :
+                                row.username;
+                        } else {
+                            return row.username;
+                        }
+                    },
+                }, {
+                    title: 'Name',
+                    data: 'name'
+                },
+                {
+                    title: 'Email',
+                    data: function(row, type, set, meta) {
+                        if (type === 'display') {
+                            return `<a href="mailto:${row.email}">${row.email}</a>`;
+                        } else {
+                            return row.email;
+                        }
+                    }
+                },
+                {
+                    title: 'Expiration',
+                    data: 'expiration'
+                },
+                {
+                    title: 'System Role',
+                    data: function(row, type, set, meta) {
+                        if (row.system_role) {
+                            return `<strong>${row.system_role_name}</strong> <span>(<span class="user-select-all">${row.system_role}</span>)</span>`;
+                        } else {
+                            return `<span class="text-secondary">None</span>`;
+                        }
+                    }
+                },
+                {
+                    title: 'Noncompliant Rights',
+                    data: function(row, type, set, meta) {
+                        const hasDiscrepancy = row.bad.length > 0;
+                        if (hasDiscrepancy) {
+                            let rows = '';
+                            for (rightI in row.bad) {
+                                const right = row.bad[rightI];
+                                rows +=
+                                    `<tr style='cursor: default;'><td><span>${right}</span></td></tr>`;
+                            }
+                            return `<a class="${row.isExpired ? "text-secondary" : "text-primary"}" 
+                            style="text-decoration: underline; cursor: pointer;" 
+                            data-toggle="modal"
+                            data-target="#modal-${row.username}">${row.bad.length} ${row.bad.length > 1 ? " Rights" : " Right"}</a>
+                            <div class="modal fade" id="modal-${row.username}" tabindex="-1" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-scrollable">
+                                    <div class="modal-content">
+                                        <div class="modal-header bg-dark text-light">
+                                            <h5 class="m-0">Noncompliant Rights for ${row.name} (${row.username})</h5>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="d-flex justify-content-center">
+                                                <table class="table table-sm table-hover table-borderless mb-0">
+                                                    <tbody>
+                                                        ${rows}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>`;
+                        } else {
+                            return "<i class='fa-sharp fa-check mr-1 text-success'></i>None";
+                        }
+                    }
+                },
+                {
+                    title: 'Project Role',
+                    data: function(row, type, set, meta) {
+                        if (row.project_role) {
+                            return `<strong>${row.project_role_name}</strong> <span>(<span class="user-select-all">${row.project_role}</span>)</span>`;
+                        } else {
+                            return `<span class="text-secondary">None</span>`;
+                        }
+                    }
+                }
+            ],
+            createdRow: function(row, data, dataIndex) {
+                let rowClass = data.bad.length > 0 ? 'table-danger-light' : 'table-success-light';
+                rowClass = data.isExpired ? 'text-secondary bg-light' : rowClass;
+                $(row).attr('data-user', data.username);
+                $(row).attr('data-email', data.email);
+                $(row).attr('data-name', data.name);
+                $(row).attr('data-rights', JSON.stringify(data.bad));
+                $(row).addClass(rowClass);
+            },
+            drawCallback: function(settings) {
+                const api = this.api();
+                api.rows({
+                    page: 'current'
+                }).every(function(rowIdx, tableLoop, rowLoop) {
+                    const data = this.data();
+                    const row = api.row(rowIdx);
+                    const rowNode = row.node();
+                    const checkbox = $(rowNode).find('input[type="checkbox"]');
+                    checkbox.prop('checked', row.selected());
+                });
+            },
+            columnDefs: [{
+                targets: [4, 5, 6, 7],
+                createdCell: function(td, cellData, rowData, row, col) {
+                    $(td).addClass('align-middle text-center');
+                }
+            }, {
+                targets: '_all',
+                createdCell: function(td, cellData, rowData, row, col) {
+                    $(td).addClass('align-middle');
+                }
+            }],
+            select: {
+                style: 'multi',
+                selector: 'td:first-child input[type="checkbox"]'
+            },
+            dom: "lftip",
             initComplete: function() {
                 $('table.discrepancy-table').addClass('table');
                 $('#table-container').show();
                 $('#discrepancy-table').DataTable().columns.adjust().draw();
             },
-            columnDefs: [{
-                targets: [0],
-                data: function(row, type, val, meta) {
-                    if (type === 'set') {
-                        row.expired = $(val).data('expired') ? 'expired' : 'current';
-                        row.discrepant = $(val).data('discrepant') ? 'discrepant' :
-                            'compliant';
-                        row.inputVal = val;
-                    } else if (type === 'display') {
-                        return row.inputVal;
-                    } else if (type === 'filter') {
-                        return [row.expired, row.discrepant].join(' ');
-                    }
-                    return row.inputVal;
-                }
-            }]
+            language: {
+                search: "_INPUT_",
+                searchPlaceholder: "Search Users..."
+            }
         });
 
         $('#userFilter label').click(function(e) {

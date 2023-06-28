@@ -503,11 +503,11 @@ table.table.is-invalid td.user-rights-holder-selector input {
     box-shadow: 0 0 0 0.1rem rgba(255, 0, 0, .25) !important;
 }
 
-div#discrepancy-table_wrapper div.dataTables_scrollHead {
+/* div#discrepancy-table_wrapper div.dataTables_scrollHead {
     border-bottom: 1px solid rgba(0, 0, 0, 0.3) !important;
-}
+} */
 
-div#discrepancy-table_wrapper div.dataTables_scrollHead th {
+/* div#discrepancy-table_wrapper div.dataTables_scrollHead th {
     border-bottom: none !important;
 }
 
@@ -533,7 +533,7 @@ div#discrepancy-table_wrapper table.border {
 
 div#discrepancy-table_wrapper {
     border: 1px solid rgba(0, 0, 0, 0.3) !important;
-}
+} */
 
 div#discrepancy-table_wrapper div.dataTables_scrollHead {
     background-color: #ececec
@@ -594,4 +594,12 @@ table#alertLogTable .select2-container--default .select2-selection--multiple {
 
 .default-cursor {
     cursor: default !important;
+}
+
+div#discrepancy-table_wrapper div.dataTables_scroll {
+    border: 1px solid rgba(0, 0, 0, 0.15) !important;
+}
+
+div#discrepancy-table_wrapper div.dataTables_scrollBody {
+    border: none !important;
 }
