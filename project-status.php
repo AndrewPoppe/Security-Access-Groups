@@ -17,11 +17,11 @@ $adminUsername = $module->framework->getUser()->getUsername();
 <link href="<?= $module->framework->getUrl('lib/DataTables/datatables.min.css') ?>" rel="stylesheet" />
 <script src="<?= $module->framework->getUrl('lib/DataTables/datatables.min.js') ?>"></script>
 
-<script defer src="<?= $module->framework->getUrl('assets/fontawesome/js/regular.min.js') ?>"></script>
-<script defer src="<?= $module->framework->getUrl('assets/fontawesome/js/sharp-regular.min.js') ?>"></script>
-<script defer src="<?= $module->framework->getUrl('assets/fontawesome/js/solid.min.js') ?>"></script>
-<script defer src="<?= $module->framework->getUrl('assets/fontawesome/js/custom-icons.min.js') ?>"></script>
-<script defer src="<?= $module->framework->getUrl('assets/fontawesome/js/fontawesome.min.js') ?>"></script>
+<script src="<?= $module->framework->getUrl('assets/fontawesome/js/regular.min.js') ?>"></script>
+<script src="<?= $module->framework->getUrl('assets/fontawesome/js/sharp-regular.min.js') ?>"></script>
+<script src="<?= $module->framework->getUrl('assets/fontawesome/js/solid.min.js') ?>"></script>
+<script src="<?= $module->framework->getUrl('assets/fontawesome/js/custom-icons.min.js') ?>"></script>
+<script src="<?= $module->framework->getUrl('assets/fontawesome/js/fontawesome.min.js') ?>"></script>
 
 <script src="<?= $module->framework->getUrl('lib/SweetAlert/sweetalert2.all.min.js') ?>"></script>
 <script src="<?= $module->framework->getUrl('lib/Clipboard/clipboard.min.js') ?>"></script>
@@ -141,7 +141,7 @@ $adminUsername = $module->framework->getUser()->getUsername();
     <?php $Alerts->getUserExpirationModal($project_id, $adminUsername); ?>
     <?php $Alerts->getEmailPreviewModal(); ?>
     <script>
-    console.time('dt');
+    //console.time('dt');
     var Toast = Swal.mixin({
         toast: true,
         position: 'middle',
@@ -729,10 +729,7 @@ $adminUsername = $module->framework->getUser()->getUsername();
         });
     }
 
-    $(document).ready(function() {
-        console.timeLog('dt', 'document ready');
-        $('#sub-nav').removeClass('d-none');
-
+    function initClipboard() {
         $('.dataPlaceholder').popover({
             placement: 'top',
             html: true,
@@ -757,18 +754,25 @@ $adminUsername = $module->framework->getUser()->getUsername();
             }, 1000);
             e.clearSelection();
         });
+    }
+
+    $(document).ready(function() {
+        //console.timeLog('dt', 'document ready');
+        $('#sub-nav').removeClass('d-none');
+
+
 
 
 
         $(document).on('preInit.dt', function(e, settings) {
             $('#containerCard').show();
-            console.timeLog('dt', 'dt start')
+            //console.timeLog('dt', 'dt start')
         });
         $(document).on('preXhr.dt', function(e, settings, json) {
-            console.timeLog('dt', 'ajax start')
+            //console.timeLog('dt', 'ajax start')
         });
         $(document).on('xhr.dt', function(e, settings, json) {
-            console.timeLog('dt', 'ajax end')
+            //console.timeLog('dt', 'ajax end')
         });
 
         const dt = $('table.discrepancy-table').DataTable({
@@ -776,9 +780,13 @@ $adminUsername = $module->framework->getUser()->getUsername();
                 url: '<?= $module->framework->getUrl("ajax/projectUsers.php") ?>',
                 type: 'POST',
                 dataSrc: function(json) {
-                    console.timeLog('dt', 'ajax loaded')
+                    //console.timeLog('dt', 'ajax loaded')
                     return json.data;
                 }
+            },
+            select: {
+                style: 'multi',
+                selector: 'td:first-child input[type="checkbox"]'
             },
             deferRender: true,
             sort: false,
@@ -808,7 +816,7 @@ $adminUsername = $module->framework->getUser()->getUsername();
                 }
                 handleDisplayUsersButton(allChecked);
                 delete(data.checkboxStatus);
-                console.timeLog('dt', 'state loaded')
+                //console.timeLog('dt', 'state loaded')
                 return data;
             },
             columns: [{
@@ -950,17 +958,15 @@ $adminUsername = $module->framework->getUser()->getUsername();
                     $(td).addClass('align-middle');
                 }
             }],
-            select: {
-                style: 'multi',
-                selector: 'td:first-child input[type="checkbox"]'
-            },
             dom: "lftip",
             initComplete: function() {
                 $('table.discrepancy-table').addClass('table');
+                //console.timeLog('dt', 'dt pre-redraw');
                 this.api().columns.adjust().draw();
-                console.timeLog('dt', 'dt init complete')
+                //console.timeLog('dt', 'dt init complete');
                 initTinyMCE();
-                console.timeEnd('dt');
+                initClipboard();
+                //console.timeEnd('dt');
             },
             lengthMenu: [
                 [10, 25, 50, 100, -1],
