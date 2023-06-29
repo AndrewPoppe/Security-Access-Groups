@@ -141,7 +141,7 @@ $adminUsername = $module->framework->getUser()->getUsername();
     <?php $Alerts->getUserExpirationModal($project_id, $adminUsername); ?>
     <?php $Alerts->getEmailPreviewModal(); ?>
     <script>
-    //console.time('dt');
+    console.time('dt');
     var Toast = Swal.mixin({
         toast: true,
         position: 'middle',
@@ -757,7 +757,7 @@ $adminUsername = $module->framework->getUser()->getUsername();
     }
 
     $(document).ready(function() {
-        //console.timeLog('dt', 'document ready');
+        console.timeLog('dt', 'document ready');
         $('#sub-nav').removeClass('d-none');
 
 
@@ -769,20 +769,16 @@ $adminUsername = $module->framework->getUser()->getUsername();
             //console.timeLog('dt', 'dt start')
         });
         $(document).on('preXhr.dt', function(e, settings, json) {
-            //console.timeLog('dt', 'ajax start')
+            console.timeLog('dt', 'ajax start')
         });
         $(document).on('xhr.dt', function(e, settings, json) {
-            //console.timeLog('dt', 'ajax end')
+            console.timeLog('dt', 'ajax end')
         });
 
         const dt = $('table.discrepancy-table').DataTable({
             ajax: {
                 url: '<?= $module->framework->getUrl("ajax/projectUsers.php") ?>',
-                type: 'POST',
-                dataSrc: function(json) {
-                    //console.timeLog('dt', 'ajax loaded')
-                    return json.data;
-                }
+                type: 'POST'
             },
             select: {
                 style: 'multi',
@@ -963,10 +959,10 @@ $adminUsername = $module->framework->getUser()->getUsername();
                 $('table.discrepancy-table').addClass('table');
                 //console.timeLog('dt', 'dt pre-redraw');
                 this.api().columns.adjust().draw();
-                //console.timeLog('dt', 'dt init complete');
+                console.timeLog('dt', 'dt init complete');
                 initTinyMCE();
                 initClipboard();
-                //console.timeEnd('dt');
+                console.timeEnd('dt');
             },
             lengthMenu: [
                 [10, 25, 50, 100, -1],
