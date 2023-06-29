@@ -224,7 +224,6 @@ function deleteAlert(alert_id) {
                     })
                     .done(function(json) {
                         const data = JSON.parse(json);
-                        console.log(data);
                         if (data) {
                             Toast.fire({
                                 icon: 'success',
@@ -325,7 +324,6 @@ $(document).ready(function() {
             return true;
         }
         const thisRecipient = String(data[6]);
-        console.log(recipients, thisRecipient)
         return recipients.map(recipient => $(`<span>${recipient}</span>`).text()).includes(
             thisRecipient);
     });
@@ -340,9 +338,6 @@ $(document).ready(function() {
             {
                 data: function(row, type, set, meta) {
                     if (type === 'display') {
-
-                        console.log(row);
-
                         let color = "";
                         let icon = "";
                         let sent = false;

@@ -691,6 +691,54 @@ $adminUsername = $module->framework->getUser()->getUsername();
         });
     }
 
+    function handleDisplayUsersButton(allUsersVisible) {
+        if (allUsersVisible) {
+            $('#displayUsersButton').addClass('btn-outline-secondary').removeClass('btn-secondary');
+        } else {
+            $('#displayUsersButton').addClass('btn-secondary').removeClass('btn-outline-secondary');
+        }
+    }
+
+    window.handleActionButtons = function() {
+        if ($('#discrepancy-table').DataTable().rows({
+                selected: true
+            }).count() > 0) {
+            $('.buttonContainer button.action').prop('disabled', false);
+        } else {
+            $('.buttonContainer button.action').prop('disabled', true);
+        }
+    }
+
+    function initTinyMCE() {
+        tinymce.init({
+            entity_encoding: "raw",
+            default_link_target: '_blank',
+            selector: ".richtext",
+            height: 350,
+            branding: false,
+            statusbar: true,
+            menubar: true,
+            elementpath: false,
+            plugins: [
+                'paste autolink lists link searchreplace code fullscreen table directionality hr'
+            ],
+            toolbar1: 'formatselect | hr | bold italic underline link | fontsizeselect | alignleft aligncenter alignright alignjustify | undo redo',
+            toolbar2: 'bullist numlist | outdent indent | table tableprops tablecellprops | forecolor backcolor | searchreplace code removeformat | fullscreen',
+            contextmenu: "copy paste | link inserttable | cell row column deletetable",
+            content_css: "<?= $module->framework->getUrl('SecurityAccessGroups.css') ?>",
+            relative_urls: false,
+            convert_urls: false,
+            convert_fonts_to_spans: true,
+            extended_valid_elements: 'i[class]',
+            paste_word_valid_elements: "b,strong,i,em,h1,h2,u,p,ol,ul,li,a[href],span,color,font-size,font-color,font-family,mark,table,tr,td",
+            paste_retain_style_properties: "all",
+            paste_postprocess: function(plugin, args) {
+                args.node.innerHTML = cleanHTML(args.node.innerHTML);
+            },
+            remove_linebreaks: true
+        });
+    }
+
     $(document).ready(function() {
         console.timeLog('dt', 'document ready');
         $('#sub-nav').removeClass('d-none');
@@ -720,51 +768,7 @@ $adminUsername = $module->framework->getUser()->getUsername();
             e.clearSelection();
         });
 
-        tinymce.init({
-            entity_encoding: "raw",
-            default_link_target: '_blank',
-            selector: ".richtext",
-            height: 350,
-            branding: false,
-            statusbar: true,
-            menubar: true,
-            elementpath: false,
-            plugins: [
-                'paste autolink lists link searchreplace code fullscreen table directionality hr'
-            ],
-            toolbar1: 'formatselect | hr | bold italic underline link | fontsizeselect | alignleft aligncenter alignright alignjustify | undo redo',
-            toolbar2: 'bullist numlist | outdent indent | table tableprops tablecellprops | forecolor backcolor | searchreplace code removeformat | fullscreen',
-            contextmenu: "copy paste | link inserttable | cell row column deletetable",
-            content_css: "<?= $module->framework->getUrl('SecurityAccessGroups.css') ?>",
-            relative_urls: false,
-            convert_urls: false,
-            convert_fonts_to_spans: true,
-            extended_valid_elements: 'i[class]',
-            paste_word_valid_elements: "b,strong,i,em,h1,h2,u,p,ol,ul,li,a[href],span,color,font-size,font-color,font-family,mark,table,tr,td",
-            paste_retain_style_properties: "all",
-            paste_postprocess: function(plugin, args) {
-                args.node.innerHTML = cleanHTML(args.node.innerHTML);
-            },
-            remove_linebreaks: true
-        });
 
-        function handleDisplayUsersButton(allUsersVisible) {
-            if (allUsersVisible) {
-                $('#displayUsersButton').addClass('btn-outline-secondary').removeClass('btn-secondary');
-            } else {
-                $('#displayUsersButton').addClass('btn-secondary').removeClass('btn-outline-secondary');
-            }
-        }
-
-        window.handleActionButtons = function() {
-            if ($('#discrepancy-table').DataTable().rows({
-                    selected: true
-                }).count() > 0) {
-                $('.buttonContainer button.action').prop('disabled', false);
-            } else {
-                $('.buttonContainer button.action').prop('disabled', true);
-            }
-        }
 
         $(document).on('preInit.dt', function(e, settings) {
             $('#containerCard').show();
@@ -887,28 +891,28 @@ $adminUsername = $module->framework->getUser()->getUsername();
                                 rows +=
                                     `<tr style='cursor: default;'><td><span>${right}</span></td></tr>`;
                             }
-                            return `<a class="${row.isExpired ? "text-secondary" : "text-primary"}" 
-                            style="text-decoration: underline; cursor: pointer;" 
-                            data-toggle="modal"
-                            data-target="#modal-${row.username}">${row.bad.length} ${row.bad.length > 1 ? " Rights" : " Right"}</a>
-                            <div class="modal fade" id="modal-${row.username}" tabindex="-1" aria-hidden="true">
-                                <div class="modal-dialog modal-dialog-scrollable">
-                                    <div class="modal-content">
-                                        <div class="modal-header bg-dark text-light">
-                                            <h5 class="m-0">Noncompliant Rights for ${row.name} (${row.username})</h5>
-                                        </div>
-                                        <div class="modal-body">
-                                            <div class="d-flex justify-content-center">
-                                                <table class="table table-sm table-hover table-borderless mb-0">
-                                                    <tbody>
-                                                        ${rows}
-                                                    </tbody>
-                                                </table>
+                            return `<a class="${row.isExpired ? "text-secondary" : "text-primary"}"
+                                    style="text-decoration: underline; cursor: pointer;"
+                                    data-toggle="modal"
+                                    data-target="#modal-${row.username}">${row.bad.length} ${row.bad.length > 1 ? " Rights" : " Right"}</a>
+                                    <div class="modal fade" id="modal-${row.username}" tabindex="-1" aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-scrollable">
+                                            <div class="modal-content">
+                                                <div class="modal-header bg-dark text-light">
+                                                    <h5 class="m-0">Noncompliant Rights for ${row.name} (${row.username})</h5>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <div class="d-flex justify-content-center">
+                                                        <table class="table table-sm table-hover table-borderless mb-0">
+                                                            <tbody>
+                                                                ${rows}
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                </div>
-                            </div>`;
+                                    </div>`;
                         } else {
                             return "<i class='fa-sharp fa-check mr-1 text-success'></i>None";
                         }
@@ -963,8 +967,10 @@ $adminUsername = $module->framework->getUser()->getUsername();
             dom: "lftip",
             initComplete: function() {
                 $('table.discrepancy-table').addClass('table');
-                $('#discrepancy-table').DataTable().columns.adjust().draw();
+                this.api().columns.adjust().draw();
                 console.timeLog('dt', 'dt init complete')
+                initTinyMCE();
+                console.timeEnd('dt');
             },
             lengthMenu: [
                 [10, 25, 50, 100, -1],
@@ -1012,7 +1018,8 @@ $adminUsername = $module->framework->getUser()->getUsername();
             const discrepant = discrepantChecked ? 'discrepant' : undefined;
             const nonDiscrepant = nonDiscrepantChecked ? 'compliant' : undefined;
             if (discrepantChecked || nonDiscrepantChecked) {
-                searchTerm += '(' + [discrepant, nonDiscrepant].filter(el => el).join('|') + ') ';
+                searchTerm += '(' + [discrepant, nonDiscrepant].filter(el => el).join('|') +
+                    ') ';
             } else {
                 searchTerm += 'none';
             }
