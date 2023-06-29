@@ -250,16 +250,6 @@ $adminUsername = $module->framework->getUser()->getUsername();
                 email: el.email
             };
         });
-        // return $('.user-selector').toArray().map((el) => {
-        //     if ($(el).find('input').is(':checked')) {
-        //         const row = $(el).closest('tr');
-        //         return {
-        //             username: $(row).data('user'),
-        //             name: $(row).data('name'),
-        //             email: $(row).data('email')
-        //         };
-        //     }
-        // }).filter((el) => el);
     }
 
     async function expireUsers() {

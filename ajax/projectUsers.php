@@ -8,6 +8,6 @@ if ( !$module->framework->getUser()->isSuperUser() ) {
 }
 
 $project_id       = $module->framework->getProjectId();
-$discrepantRights = $module->getUsersWithBadRights($project_id);
+$discrepantRights = $module->getUsersWithBadRights2($project_id);
 $result           = json_encode([ "data" => $discrepantRights ]);
 echo $result;
