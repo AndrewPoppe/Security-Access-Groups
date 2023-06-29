@@ -13,6 +13,14 @@ require_once "classes/Alerts.php";
 $Alerts        = new Alerts($module);
 $project_id    = $module->framework->getProjectId();
 $adminUsername = $module->framework->getUser()->getUsername();
+
+
+$start    = microtime(true);
+$num      = $module->getUsersWithBadRights2($project_id);
+$end      = microtime(true);
+$duration = $end - $start;
+var_dump($duration);
+
 ?>
 <link href="<?= $module->framework->getUrl('lib/DataTables/datatables.min.css') ?>" rel="stylesheet" />
 <script src="<?= $module->framework->getUrl('lib/DataTables/datatables.min.js') ?>"></script>
