@@ -141,138 +141,138 @@ $adminUsername = $module->framework->getUser()->getUsername();
     <?php $Alerts->getUserExpirationModal($project_id, $adminUsername); ?>
     <?php $Alerts->getEmailPreviewModal(); ?>
     <script>
-        console.time('dt');
-        var Toast = Swal.mixin({
-            toast: true,
-            position: 'middle',
-            iconColor: 'white',
-            customClass: {
-                popup: 'colored-toast'
-            },
-            showConfirmButton: false,
-            timer: 1500,
-            timerProgressBar: true
+    console.time('dt');
+    var Toast = Swal.mixin({
+        toast: true,
+        position: 'middle',
+        iconColor: 'white',
+        customClass: {
+            popup: 'colored-toast'
+        },
+        showConfirmButton: false,
+        timer: 1500,
+        timerProgressBar: true
+    });
+
+    function handleCheckboxes(el) {
+        const dt = $('#discrepancy-table').DataTable();
+        const checked = $(el).prop('checked');
+        dt.rows(function(idx, data, node) {
+            return data.bad.length > 0
+        }).select(checked);
+        $('.user-selector input').prop('checked', checked).trigger('change');
+    }
+
+    function openEmailUsersModal() {
+        document.querySelector('#emailUsersModal form').reset();
+        $('.collapse').collapse('hide');
+        populateDefaultEmailUserModal();
+        $('#emailUsersModal').modal('show');
+    }
+
+    function populateDefaultEmailUserModal() {
+        const emailBodyTemplate = `<?= $module->getSystemSetting('user-email-body-template') ?? "" ?>`;
+        tinymce.get('emailBody').setContent(emailBodyTemplate);
+
+        const emailSubjectTemplate = `<?= $module->getSystemSetting('user-email-subject-template') ?? "" ?>`;
+        $('#emailSubject').val(emailSubjectTemplate);
+
+        const reminderBodyTemplate = `<?= $module->getSystemSetting('user-reminder-email-body-template') ?? "" ?>`;
+        tinymce.get('reminderBody').setContent(reminderBodyTemplate);
+
+        const reminderSubjectTemplate =
+            `<?= $module->getSystemSetting('user-reminder-email-subject-template') ?? "" ?>`;
+        $('#reminderSubject').val(reminderSubjectTemplate);
+    }
+
+    function openEmailUserRightsHoldersModal() {
+        document.querySelector('#emailUserRightsHoldersModal form').reset();
+        $('.collapse').collapse('hide');
+        populateDefaultEmailUserRightsHoldersModal();
+        $('#emailUserRightsHoldersModal').modal('show');
+    }
+
+    function populateDefaultEmailUserRightsHoldersModal() {
+        const emailBodyTemplate = `<?= $module->getSystemSetting('user-rights-holders-email-body-template') ?? "" ?>`;
+        tinymce.get('emailBody-UserRightsHolders').setContent(emailBodyTemplate);
+
+        const emailSubjectTemplate =
+            `<?= $module->getSystemSetting('user-rights-holders-email-subject-template') ?? "" ?>`;
+        $('#emailSubject-UserRightsHolders').val(emailSubjectTemplate);
+
+        const reminderBodyTemplate =
+            `<?= $module->getSystemSetting('user-rights-holders-reminder-email-body-template') ?? "" ?>`;
+        tinymce.get('reminderBody-UserRightsHolders').setContent(reminderBodyTemplate);
+
+        const reminderSubjectTemplate =
+            `<?= $module->getSystemSetting('user-rights-holders-reminder-email-subject-template') ?? "" ?>`;
+        $('#reminderSubject-UserRightsHolders').val(reminderSubjectTemplate);
+    }
+
+    function openExpireUsersModal() {
+        document.querySelector('#userExpirationModal form').reset();
+        $('#userNotificationInfo').collapse('hide');
+        userExpirationUserRightsHoldersToggle(false);
+        const usersToExpire = getSelectedUsers();
+        let tableRows = "";
+        usersToExpire.forEach(user => {
+            tableRows += `<tr><td><strong>${user.name}</strong> (${user.username}) - ${user.email}</td></tr>`;
+        })
+        $('#userExpirationTable tbody').html(tableRows);
+        populateDefaultExpireUsersModal();
+        $('#userExpirationModal').modal('show');
+    }
+
+    function populateDefaultExpireUsersModal() {
+        const userEmailBodyTemplate = `<?= $module->getSystemSetting('user-expiration-email-body-template') ?? "" ?>`;
+        tinymce.get('emailBody-userExpiration').setContent(userEmailBodyTemplate);
+
+        const userEmailSubjectTemplate =
+            `<?= $module->getSystemSetting('user-expiration-email-subject-template') ?? "" ?>`;
+        $('#emailSubject-userExpiration').val(userEmailSubjectTemplate);
+
+        const userRightsHolderEmailBodyTemplate =
+            `<?= $module->getSystemSetting('user-expiration-user-rights-holders-reminder-email-body-template') ?? "" ?>`;
+        tinymce.get('emailBody-userExpiration-UserRightsHolders').setContent(userRightsHolderEmailBodyTemplate);
+
+        const userRightsHolderEmailSubjectTemplate =
+            `<?= $module->getSystemSetting('user-expiration-user-rights-holders-reminder-email-subject-template') ?? "" ?>`;
+        $('#emailSubject-userExpiration-UserRightsHolders').val(userRightsHolderEmailSubjectTemplate);
+    }
+
+    function getSelectedUsers() {
+        return $('#discrepancy-table').DataTable().rows({
+            selected: true
+        }).data().toArray().map((el) => {
+            return {
+                username: el.username,
+                name: el.name,
+                email: el.email
+            };
         });
+        // return $('.user-selector').toArray().map((el) => {
+        //     if ($(el).find('input').is(':checked')) {
+        //         const row = $(el).closest('tr');
+        //         return {
+        //             username: $(row).data('user'),
+        //             name: $(row).data('name'),
+        //             email: $(row).data('email')
+        //         };
+        //     }
+        // }).filter((el) => el);
+    }
 
-        function handleCheckboxes(el) {
-            const dt = $('#discrepancy-table').DataTable();
-            const checked = $(el).prop('checked');
-            dt.rows(function (idx, data, node) {
-                return data.bad.length > 0
-            }).select(checked);
-            $('.user-selector input').prop('checked', checked).trigger('change');
-        }
+    async function expireUsers() {
+        const users = getSelectedUsers();
 
-        function openEmailUsersModal() {
-            document.querySelector('#emailUsersModal form').reset();
-            $('.collapse').collapse('hide');
-            populateDefaultEmailUserModal();
-            $('#emailUsersModal').modal('show');
-        }
-
-        function populateDefaultEmailUserModal() {
-            const emailBodyTemplate = `<?= $module->getSystemSetting('user-email-body-template') ?? "" ?>`;
-            tinymce.get('emailBody').setContent(emailBodyTemplate);
-
-            const emailSubjectTemplate = `<?= $module->getSystemSetting('user-email-subject-template') ?? "" ?>`;
-            $('#emailSubject').val(emailSubjectTemplate);
-
-            const reminderBodyTemplate = `<?= $module->getSystemSetting('user-reminder-email-body-template') ?? "" ?>`;
-            tinymce.get('reminderBody').setContent(reminderBodyTemplate);
-
-            const reminderSubjectTemplate =
-                `<?= $module->getSystemSetting('user-reminder-email-subject-template') ?? "" ?>`;
-            $('#reminderSubject').val(reminderSubjectTemplate);
-        }
-
-        function openEmailUserRightsHoldersModal() {
-            document.querySelector('#emailUserRightsHoldersModal form').reset();
-            $('.collapse').collapse('hide');
-            populateDefaultEmailUserRightsHoldersModal();
-            $('#emailUserRightsHoldersModal').modal('show');
-        }
-
-        function populateDefaultEmailUserRightsHoldersModal() {
-            const emailBodyTemplate = `<?= $module->getSystemSetting('user-rights-holders-email-body-template') ?? "" ?>`;
-            tinymce.get('emailBody-UserRightsHolders').setContent(emailBodyTemplate);
-
-            const emailSubjectTemplate =
-                `<?= $module->getSystemSetting('user-rights-holders-email-subject-template') ?? "" ?>`;
-            $('#emailSubject-UserRightsHolders').val(emailSubjectTemplate);
-
-            const reminderBodyTemplate =
-                `<?= $module->getSystemSetting('user-rights-holders-reminder-email-body-template') ?? "" ?>`;
-            tinymce.get('reminderBody-UserRightsHolders').setContent(reminderBodyTemplate);
-
-            const reminderSubjectTemplate =
-                `<?= $module->getSystemSetting('user-rights-holders-reminder-email-subject-template') ?? "" ?>`;
-            $('#reminderSubject-UserRightsHolders').val(reminderSubjectTemplate);
-        }
-
-        function openExpireUsersModal() {
-            document.querySelector('#userExpirationModal form').reset();
-            $('#userNotificationInfo').collapse('hide');
-            userExpirationUserRightsHoldersToggle(false);
-            const usersToExpire = getSelectedUsers();
-            let tableRows = "";
-            usersToExpire.forEach(user => {
-                tableRows += `<tr><td><strong>${user.name}</strong> (${user.username}) - ${user.email}</td></tr>`;
-            })
-            $('#userExpirationTable tbody').html(tableRows);
-            populateDefaultExpireUsersModal();
-            $('#userExpirationModal').modal('show');
-        }
-
-        function populateDefaultExpireUsersModal() {
-            const userEmailBodyTemplate = `<?= $module->getSystemSetting('user-expiration-email-body-template') ?? "" ?>`;
-            tinymce.get('emailBody-userExpiration').setContent(userEmailBodyTemplate);
-
-            const userEmailSubjectTemplate =
-                `<?= $module->getSystemSetting('user-expiration-email-subject-template') ?? "" ?>`;
-            $('#emailSubject-userExpiration').val(userEmailSubjectTemplate);
-
-            const userRightsHolderEmailBodyTemplate =
-                `<?= $module->getSystemSetting('user-expiration-user-rights-holders-reminder-email-body-template') ?? "" ?>`;
-            tinymce.get('emailBody-userExpiration-UserRightsHolders').setContent(userRightsHolderEmailBodyTemplate);
-
-            const userRightsHolderEmailSubjectTemplate =
-                `<?= $module->getSystemSetting('user-expiration-user-rights-holders-reminder-email-subject-template') ?? "" ?>`;
-            $('#emailSubject-userExpiration-UserRightsHolders').val(userRightsHolderEmailSubjectTemplate);
-        }
-
-        function getSelectedUsers() {
-            return $('#discrepancy-table').DataTable().rows({
-                selected: true
-            }).data().toArray().map((el) => {
-                return {
-                    username: el.username,
-                    name: el.name,
-                    email: el.email
-                };
-            });
-            // return $('.user-selector').toArray().map((el) => {
-            //     if ($(el).find('input').is(':checked')) {
-            //         const row = $(el).closest('tr');
-            //         return {
-            //             username: $(row).data('user'),
-            //             name: $(row).data('name'),
-            //             email: $(row).data('email')
-            //         };
-            //     }
-            // }).filter((el) => el);
-        }
-
-        async function expireUsers() {
-            const users = getSelectedUsers();
-
-            console.log(users);
-            await $.post("<?= $module->framework->getUrl('ajax/expireUsers.php') ?>", {
+        console.log(users);
+        await $.post("<?= $module->framework->getUrl('ajax/expireUsers.php') ?>", {
                 users: users.map(userRow => userRow["username"]),
                 delayDays: $('#delayDays-expiration').val(),
             })
-                .fail(function (error) {
-                    console.error(error.responseText);
-                    Swal.fire({
+            .fail(function(error) {
+                console.error(error.responseText);
+                Swal.fire({
                         title: 'Error',
                         html: error.responseText,
                         icon: 'error',
@@ -281,544 +281,544 @@ $adminUsername = $module->framework->getUser()->getUsername();
                         },
                         buttonsStyling: false
                     })
-                        .then(function () {
-                            window.location.reload();
-                        });
-                });
-            return true;
-        }
-
-        function sendEmailAlerts() {
-            if (!validateEmailForm()) {
-                return;
-            }
-
-            let emailFormContents = $('#emailUsersForm').serializeObject();
-            emailFormContents.emailBody = tinymce.get('emailBody').getContent();
-            emailFormContents.reminderBody = tinymce.get('reminderBody').getContent();
-            emailFormContents.alertType = 'users';
-            emailFormContents.users = getAlertUserInfo();
-
-            console.log(emailFormContents);
-
-            $.post("<?= $module->framework->getUrl('ajax/sendAlerts.php') ?>", emailFormContents)
-                .done(response => {
-                    const multiple = emailFormContents.users.length > 1;
-                    Toast.fire({
-                        title: 'The alert' + (multiple ? "s were " : " was ") +
-                            'successfully sent.',
-                        icon: 'success'
+                    .then(function() {
+                        window.location.reload();
                     });
-                })
-                .fail(error => {
-                    Toast.fire({
-                        title: 'There was an error sending the alert.',
-                        icon: 'error'
-                    });
-                });
-        }
-
-        // TODO: We're going to validate form contents server-side eventually, so this is temporary
-        function validateEmailForm() {
-            let valid = true;
-            if ($('#emailSubject').val().trim() == "") {
-                $('#emailSubject').addClass('is-invalid');
-                valid = false;
-            } else {
-                $('#emailSubject').removeClass('is-invalid');
-            }
-            let emailBody = tinymce.get('emailBody').getContent({
-                format: 'text'
-            }).trim();
-            if (emailBody == '') {
-                $('#emailBody').siblings('label').addClass('is-invalid');
-                $('#emailBody').parent().addClass('is-invalid');
-                valid = false;
-            } else {
-                $('#emailBody').siblings('label').removeClass('is-invalid');
-                $('#emailBody').parent().removeClass('is-invalid');
-            }
-
-            if ($('#sendReminder').is(':checked')) {
-                if ($('#reminderSubject').val().trim() == "") {
-                    $('#reminderSubject').addClass('is-invalid');
-                    valid = false;
-                } else {
-                    $('#reminderSubject').removeClass('is-invalid');
-                }
-
-                let delayDays = $('input[name="delayDays"]').val().trim();
-                if (delayDays == "" || !isInteger(delayDays) || delayDays < 1) {
-                    $('input[name="delayDays"]').addClass('is-invalid');
-                    valid = false;
-                } else {
-                    $('input[name="delayDays"]').removeClass('is-invalid');
-                }
-                let reminderBody = tinymce.get('reminderBody').getContent({
-                    format: 'text'
-                }).trim();
-                if (reminderBody == '') {
-                    $('#reminderBody').siblings('label').addClass('is-invalid');
-                    $('#reminderBody').parent().addClass('is-invalid');
-                    valid = false;
-                } else {
-                    $('#reminderBody').siblings('label').removeClass('is-invalid');
-                    $('#reminderBody').parent().removeClass('is-invalid');
-                }
-            }
-            return valid;
-        }
-
-        function getAlertUserInfo() {
-            return $('#discrepancy-table').DataTable().rows({
-                selected: true
-            }).data().toArray().map((el) => {
-                return {
-                    'sag_user': el.username,
-                    'sag_user_fullname': el.name,
-                    'sag_user_email': el.email,
-                    'sag_user_rights': el.bad
-                };
             });
+        return true;
+    }
+
+    function sendEmailAlerts() {
+        if (!validateEmailForm()) {
+            return;
         }
 
+        let emailFormContents = $('#emailUsersForm').serializeObject();
+        emailFormContents.emailBody = tinymce.get('emailBody').getContent();
+        emailFormContents.reminderBody = tinymce.get('reminderBody').getContent();
+        emailFormContents.alertType = 'users';
+        emailFormContents.users = getAlertUserInfo();
 
-        function sendEmailAlerts_UserRightsHolders() {
-            if (!validateEmailForm_UserRightsHolders()) {
-                return;
-            }
+        console.log(emailFormContents);
 
-            let emailFormContents = $('#emailUserRightsHoldersForm').serializeObject();
-            emailFormContents.emailBody = tinymce.get('emailBody-UserRightsHolders').getContent();
-            emailFormContents.reminderBody = tinymce.get('reminderBody-UserRightsHolders').getContent();
-            emailFormContents.alertType = 'userRightsHolders';
-            emailFormContents.users = getAlertUserInfo();
-            emailFormContents.recipients = getUserRightsHolderAlertRecipients('emailUserRightsHoldersForm');
-
-            console.log(emailFormContents);
-
-            $.post("<?= $module->framework->getUrl('ajax/sendAlerts.php') ?>", emailFormContents)
-                .done(response => {
-                    const multiple = emailFormContents.recipients.length > 1;
-                    Toast.fire({
-                        title: 'The alert' + (multiple ? "s were " : " was ") +
-                            'successfully sent.',
-                        icon: 'success'
-                    });
-                })
-                .fail(error => {
-                    Toast.fire({
-                        title: 'There was an error sending the alert.',
-                        icon: 'error'
-                    });
+        $.post("<?= $module->framework->getUrl('ajax/sendAlerts.php') ?>", emailFormContents)
+            .done(response => {
+                const multiple = emailFormContents.users.length > 1;
+                Toast.fire({
+                    title: 'The alert' + (multiple ? "s were " : " was ") +
+                        'successfully sent.',
+                    icon: 'success'
                 });
+            })
+            .fail(error => {
+                Toast.fire({
+                    title: 'There was an error sending the alert.',
+                    icon: 'error'
+                });
+            });
+    }
+
+    // TODO: We're going to validate form contents server-side eventually, so this is temporary
+    function validateEmailForm() {
+        let valid = true;
+        if ($('#emailSubject').val().trim() == "") {
+            $('#emailSubject').addClass('is-invalid');
+            valid = false;
+        } else {
+            $('#emailSubject').removeClass('is-invalid');
+        }
+        let emailBody = tinymce.get('emailBody').getContent({
+            format: 'text'
+        }).trim();
+        if (emailBody == '') {
+            $('#emailBody').siblings('label').addClass('is-invalid');
+            $('#emailBody').parent().addClass('is-invalid');
+            valid = false;
+        } else {
+            $('#emailBody').siblings('label').removeClass('is-invalid');
+            $('#emailBody').parent().removeClass('is-invalid');
         }
 
-        // TODO: We're going to validate form contents server-side eventually, so this is temporary
-        function validateEmailForm_UserRightsHolders() {
-            let valid = true;
-            if ($('#emailSubject-UserRightsHolders').val().trim() == "") {
-                $('#emailSubject-UserRightsHolders').addClass('is-invalid');
+        if ($('#sendReminder').is(':checked')) {
+            if ($('#reminderSubject').val().trim() == "") {
+                $('#reminderSubject').addClass('is-invalid');
                 valid = false;
             } else {
-                $('#emailSubject-UserRightsHolders').removeClass('is-invalid');
+                $('#reminderSubject').removeClass('is-invalid');
             }
-            let emailBody = tinymce.get('emailBody-UserRightsHolders').getContent({
+
+            let delayDays = $('input[name="delayDays"]').val().trim();
+            if (delayDays == "" || !isInteger(delayDays) || delayDays < 1) {
+                $('input[name="delayDays"]').addClass('is-invalid');
+                valid = false;
+            } else {
+                $('input[name="delayDays"]').removeClass('is-invalid');
+            }
+            let reminderBody = tinymce.get('reminderBody').getContent({
                 format: 'text'
             }).trim();
-            if (emailBody == '') {
-                $('#emailBody-UserRightsHolders').siblings('label').addClass('is-invalid');
-                $('#emailBody-UserRightsHolders').parent().addClass('is-invalid');
+            if (reminderBody == '') {
+                $('#reminderBody').siblings('label').addClass('is-invalid');
+                $('#reminderBody').parent().addClass('is-invalid');
                 valid = false;
             } else {
-                $('#emailBody-UserRightsHolders').siblings('label').removeClass('is-invalid');
-                $('#emailBody-UserRightsHolders').parent().removeClass('is-invalid');
+                $('#reminderBody').siblings('label').removeClass('is-invalid');
+                $('#reminderBody').parent().removeClass('is-invalid');
             }
+        }
+        return valid;
+    }
 
-            if ($('#sendReminder-UserRightsHolders').is(':checked')) {
-                if ($('#reminderSubject-UserRightsHolders').val().trim() == "") {
-                    $('#reminderSubject-UserRightsHolders').addClass('is-invalid');
-                    valid = false;
-                } else {
-                    $('#reminderSubject-UserRightsHolders').removeClass('is-invalid');
-                }
+    function getAlertUserInfo() {
+        return $('#discrepancy-table').DataTable().rows({
+            selected: true
+        }).data().toArray().map((el) => {
+            return {
+                'sag_user': el.username,
+                'sag_user_fullname': el.name,
+                'sag_user_email': el.email,
+                'sag_user_rights': el.bad
+            };
+        });
+    }
 
-                let delayDays = $('input[name="delayDays-UserRightsHolders"]').val().trim();
-                if (delayDays == "" || !isInteger(delayDays) || delayDays < 1) {
-                    $('input[name="delayDays-UserRightsHolders"]').addClass('is-invalid');
-                    valid = false;
-                } else {
-                    $('input[name="delayDays-UserRightsHolders"]').removeClass('is-invalid');
-                }
-                let reminderBody = tinymce.get('reminderBody-UserRightsHolders').getContent({
-                    format: 'text'
-                }).trim();
-                if (reminderBody == '') {
-                    $('#reminderBody-UserRightsHolders').siblings('label').addClass('is-invalid');
-                    $('#reminderBody-UserRightsHolders').parent().addClass('is-invalid');
-                    valid = false;
-                } else {
-                    $('#reminderBody-UserRightsHolders').siblings('label').removeClass('is-invalid');
-                    $('#reminderBody-UserRightsHolders').parent().removeClass('is-invalid');
-                }
-            }
 
-            const anyChecked = $('#recipientTable_UserRightsHolders .user-rights-holder-selector input').toArray().some(
-                el => $(el).is(':checked'));
-            if (!anyChecked) {
-                $('#recipientTable_UserRightsHolders').addClass('is-invalid');
-                valid = false;
-            } else {
-
-                $('#recipientTable_UserRightsHolders').removeClass('is-invalid');
-            }
-
-            return valid;
+    function sendEmailAlerts_UserRightsHolders() {
+        if (!validateEmailForm_UserRightsHolders()) {
+            return;
         }
 
-        function expireUsersAndSendAlerts() {
-            if (!validateEmailForm_UserExpiration()) {
-                return;
-            }
-            const users = getAlertUserInfo();
-            let formContents = $('#userExpirationForm').serializeObject();
-            formContents.usersEmailBody = tinymce.get('emailBody-userExpiration').getContent();
-            formContents.userRightsHoldersEmailBody = tinymce.get('emailBody-userExpiration-UserRightsHolders')
-                .getContent();
-            formContents.alertType = 'expiration';
-            formContents.users = users;
-            formContents.recipients = getUserRightsHolderAlertRecipients('userExpirationForm');
+        let emailFormContents = $('#emailUserRightsHoldersForm').serializeObject();
+        emailFormContents.emailBody = tinymce.get('emailBody-UserRightsHolders').getContent();
+        emailFormContents.reminderBody = tinymce.get('reminderBody-UserRightsHolders').getContent();
+        emailFormContents.alertType = 'userRightsHolders';
+        emailFormContents.users = getAlertUserInfo();
+        emailFormContents.recipients = getUserRightsHolderAlertRecipients('emailUserRightsHoldersForm');
 
-            expireUsers().then(() => {
-                if (!formContents.sendUserNotification && !formContents[
+        console.log(emailFormContents);
+
+        $.post("<?= $module->framework->getUrl('ajax/sendAlerts.php') ?>", emailFormContents)
+            .done(response => {
+                const multiple = emailFormContents.recipients.length > 1;
+                Toast.fire({
+                    title: 'The alert' + (multiple ? "s were " : " was ") +
+                        'successfully sent.',
+                    icon: 'success'
+                });
+            })
+            .fail(error => {
+                Toast.fire({
+                    title: 'There was an error sending the alert.',
+                    icon: 'error'
+                });
+            });
+    }
+
+    // TODO: We're going to validate form contents server-side eventually, so this is temporary
+    function validateEmailForm_UserRightsHolders() {
+        let valid = true;
+        if ($('#emailSubject-UserRightsHolders').val().trim() == "") {
+            $('#emailSubject-UserRightsHolders').addClass('is-invalid');
+            valid = false;
+        } else {
+            $('#emailSubject-UserRightsHolders').removeClass('is-invalid');
+        }
+        let emailBody = tinymce.get('emailBody-UserRightsHolders').getContent({
+            format: 'text'
+        }).trim();
+        if (emailBody == '') {
+            $('#emailBody-UserRightsHolders').siblings('label').addClass('is-invalid');
+            $('#emailBody-UserRightsHolders').parent().addClass('is-invalid');
+            valid = false;
+        } else {
+            $('#emailBody-UserRightsHolders').siblings('label').removeClass('is-invalid');
+            $('#emailBody-UserRightsHolders').parent().removeClass('is-invalid');
+        }
+
+        if ($('#sendReminder-UserRightsHolders').is(':checked')) {
+            if ($('#reminderSubject-UserRightsHolders').val().trim() == "") {
+                $('#reminderSubject-UserRightsHolders').addClass('is-invalid');
+                valid = false;
+            } else {
+                $('#reminderSubject-UserRightsHolders').removeClass('is-invalid');
+            }
+
+            let delayDays = $('input[name="delayDays-UserRightsHolders"]').val().trim();
+            if (delayDays == "" || !isInteger(delayDays) || delayDays < 1) {
+                $('input[name="delayDays-UserRightsHolders"]').addClass('is-invalid');
+                valid = false;
+            } else {
+                $('input[name="delayDays-UserRightsHolders"]').removeClass('is-invalid');
+            }
+            let reminderBody = tinymce.get('reminderBody-UserRightsHolders').getContent({
+                format: 'text'
+            }).trim();
+            if (reminderBody == '') {
+                $('#reminderBody-UserRightsHolders').siblings('label').addClass('is-invalid');
+                $('#reminderBody-UserRightsHolders').parent().addClass('is-invalid');
+                valid = false;
+            } else {
+                $('#reminderBody-UserRightsHolders').siblings('label').removeClass('is-invalid');
+                $('#reminderBody-UserRightsHolders').parent().removeClass('is-invalid');
+            }
+        }
+
+        const anyChecked = $('#recipientTable_UserRightsHolders .user-rights-holder-selector input').toArray().some(
+            el => $(el).is(':checked'));
+        if (!anyChecked) {
+            $('#recipientTable_UserRightsHolders').addClass('is-invalid');
+            valid = false;
+        } else {
+
+            $('#recipientTable_UserRightsHolders').removeClass('is-invalid');
+        }
+
+        return valid;
+    }
+
+    function expireUsersAndSendAlerts() {
+        if (!validateEmailForm_UserExpiration()) {
+            return;
+        }
+        const users = getAlertUserInfo();
+        let formContents = $('#userExpirationForm').serializeObject();
+        formContents.usersEmailBody = tinymce.get('emailBody-userExpiration').getContent();
+        formContents.userRightsHoldersEmailBody = tinymce.get('emailBody-userExpiration-UserRightsHolders')
+            .getContent();
+        formContents.alertType = 'expiration';
+        formContents.users = users;
+        formContents.recipients = getUserRightsHolderAlertRecipients('userExpirationForm');
+
+        expireUsers().then(() => {
+            if (!formContents.sendUserNotification && !formContents[
                     "sendNotification-userExpiration-UserRightsHolders"]) {
-                    Toast.fire({
+                Toast.fire({
                         title: 'The user' + (users.length > 1 ? "s were " : " was ") +
                             'successfully expired.',
                         icon: 'success'
                     })
-                        .then(function () {
-                            window.location.reload();
+                    .then(function() {
+                        window.location.reload();
+                    });
+            } else {
+                $.post("<?= $module->framework->getUrl('ajax/sendAlerts.php') ?>", formContents)
+                    .done(response => {
+                        Toast.fire({
+                            title: 'The user' + (users.length > 1 ? "s were " : " was ") +
+                                'successfully expired.',
+                            icon: 'success'
                         });
-                } else {
-                    $.post("<?= $module->framework->getUrl('ajax/sendAlerts.php') ?>", formContents)
-                        .done(response => {
-                            Toast.fire({
-                                title: 'The user' + (users.length > 1 ? "s were " : " was ") +
-                                    'successfully expired.',
-                                icon: 'success'
-                            });
-                        })
-                        .fail(error => {
-                            Toast.fire({
-                                title: 'There was an error.',
-                                icon: 'error'
-                            });
+                    })
+                    .fail(error => {
+                        Toast.fire({
+                            title: 'There was an error.',
+                            icon: 'error'
                         });
-                }
-            })
+                    });
+            }
+        })
+    }
+
+    // TODO: We're going to validate form contents server-side eventually, so this is temporary
+    function validateEmailForm_UserExpiration() {
+        let valid = true;
+        let delayDays = $('#delayDays-expiration').val().trim();
+        if (delayDays == "" || !isInteger(delayDays) || delayDays < 0) {
+            $('#delayDays-expiration').addClass('is-invalid');
+            valid = false;
+        } else {
+            $('#delayDays-expiration').removeClass('is-invalid');
         }
 
-        // TODO: We're going to validate form contents server-side eventually, so this is temporary
-        function validateEmailForm_UserExpiration() {
-            let valid = true;
-            let delayDays = $('#delayDays-expiration').val().trim();
-            if (delayDays == "" || !isInteger(delayDays) || delayDays < 0) {
-                $('#delayDays-expiration').addClass('is-invalid');
+        if ($('#sendUserNotification').is(':checked')) {
+            let userEmailSubject = $('#emailSubject-userExpiration').val().trim();
+            if (userEmailSubject == '') {
+                $('#emailSubject-userExpiration').addClass('is-invalid');
                 valid = false;
             } else {
-                $('#delayDays-expiration').removeClass('is-invalid');
+                $('#emailSubject-userExpiration').removeClass('is-invalid');
             }
 
-            if ($('#sendUserNotification').is(':checked')) {
-                let userEmailSubject = $('#emailSubject-userExpiration').val().trim();
-                if (userEmailSubject == '') {
-                    $('#emailSubject-userExpiration').addClass('is-invalid');
-                    valid = false;
-                } else {
-                    $('#emailSubject-userExpiration').removeClass('is-invalid');
-                }
+            let userEmailBody = tinymce.get('emailBody-userExpiration').getContent({
+                format: 'text'
+            }).trim();
+            if (userEmailBody == '') {
+                $('#emailBody-userExpiration').siblings('label').addClass('is-invalid');
+                $('#emailBody-userExpiration').parent().addClass('is-invalid');
+                valid = false;
+            } else {
+                $('#emailBody-userExpiration').siblings('label').removeClass('is-invalid');
+                $('#emailBody-userExpiration').parent().removeClass('is-invalid');
+            }
+        }
 
-                let userEmailBody = tinymce.get('emailBody-userExpiration').getContent({
-                    format: 'text'
-                }).trim();
-                if (userEmailBody == '') {
-                    $('#emailBody-userExpiration').siblings('label').addClass('is-invalid');
-                    $('#emailBody-userExpiration').parent().addClass('is-invalid');
-                    valid = false;
-                } else {
-                    $('#emailBody-userExpiration').siblings('label').removeClass('is-invalid');
-                    $('#emailBody-userExpiration').parent().removeClass('is-invalid');
-                }
+        if ($('#sendNotification-userExpiration-UserRightsHolders').is(':checked')) {
+            let userRightsHolderEmailSubject = $('#emailSubject-userExpiration-UserRightsHolders').val().trim();
+            if (userRightsHolderEmailSubject == '') {
+                $('#emailSubject-userExpiration-UserRightsHolders').addClass('is-invalid');
+                valid = false;
+            } else {
+                $('#emailSubject-userExpiration-UserRightsHolders').removeClass('is-invalid');
             }
 
-            if ($('#sendNotification-userExpiration-UserRightsHolders').is(':checked')) {
-                let userRightsHolderEmailSubject = $('#emailSubject-userExpiration-UserRightsHolders').val().trim();
-                if (userRightsHolderEmailSubject == '') {
-                    $('#emailSubject-userExpiration-UserRightsHolders').addClass('is-invalid');
-                    valid = false;
-                } else {
-                    $('#emailSubject-userExpiration-UserRightsHolders').removeClass('is-invalid');
-                }
-
-                let userRightsHolderEmailBody = tinymce.get('emailBody-userExpiration-UserRightsHolders').getContent({
-                    format: 'text'
-                }).trim();
-                if (userRightsHolderEmailBody == '') {
-                    $('#emailBody-userExpiration-UserRightsHolders').siblings('label').addClass('is-invalid');
-                    $('#emailBody-userExpiration-UserRightsHolders').parent().addClass('is-invalid');
-                    valid = false;
-                } else {
-                    $('#emailBody-userExpiration-UserRightsHolders').siblings('label').removeClass('is-invalid');
-                    $('#emailBody-userExpiration-UserRightsHolders').parent().removeClass('is-invalid');
-                }
-
-                const anyChecked = $('#recipientTable_userExpiration_UserRightsHolders .user-rights-holder-selector input')
-                    .toArray().some(el => $(el).is(':checked'));
-                if (!anyChecked) {
-                    $('#recipientTable_userExpiration_UserRightsHolders').addClass('is-invalid');
-                    valid = false;
-                } else {
-
-                    $('#recipientTable_userExpiration_UserRightsHolders').removeClass('is-invalid');
-                }
+            let userRightsHolderEmailBody = tinymce.get('emailBody-userExpiration-UserRightsHolders').getContent({
+                format: 'text'
+            }).trim();
+            if (userRightsHolderEmailBody == '') {
+                $('#emailBody-userExpiration-UserRightsHolders').siblings('label').addClass('is-invalid');
+                $('#emailBody-userExpiration-UserRightsHolders').parent().addClass('is-invalid');
+                valid = false;
+            } else {
+                $('#emailBody-userExpiration-UserRightsHolders').siblings('label').removeClass('is-invalid');
+                $('#emailBody-userExpiration-UserRightsHolders').parent().removeClass('is-invalid');
             }
 
-            return valid;
+            const anyChecked = $('#recipientTable_userExpiration_UserRightsHolders .user-rights-holder-selector input')
+                .toArray().some(el => $(el).is(':checked'));
+            if (!anyChecked) {
+                $('#recipientTable_userExpiration_UserRightsHolders').addClass('is-invalid');
+                valid = false;
+            } else {
+
+                $('#recipientTable_userExpiration_UserRightsHolders').removeClass('is-invalid');
+            }
         }
 
-        function getUserRightsHolderAlertRecipients(form_id) {
-            return $(`#${form_id} .user-rights-holder-selector input:checked`).toArray().map(el => $(el).closest('tr').data(
-                'user'));
-        }
+        return valid;
+    }
 
-        async function previewEmail($emailContainer) {
-            const id = $emailContainer.find('textarea.emailBody').prop('id');
-            const content = tinymce.get(id).getContent();
-            const replacedContent = await replaceKeywordsPreview(content);
-            $('#emailPreview div.modal-body').html(replacedContent);
-            $emailContainer.closest('.modal').css('z-index', 1039);
-            $('#emailPreview').modal('show');
-            $('#emailPreview').on('hidden.bs.modal', function (event) {
-                $emailContainer.closest('.modal').css('z-index', 1050);
-            });
-        }
+    function getUserRightsHolderAlertRecipients(form_id) {
+        return $(`#${form_id} .user-rights-holder-selector input:checked`).toArray().map(el => $(el).closest('tr').data(
+            'user'));
+    }
 
-        async function replaceKeywordsPreview(text) {
-            const data = {
-                'sag_user': 'robin123',
-                'sag_user_fullname': 'Robin Jones',
-                'sag_user_email': 'robin.jones@email.com',
-                'sag_user_rights': ['Project Design and Setup', 'User Rights', 'Create Records']
-            };
+    async function previewEmail($emailContainer) {
+        const id = $emailContainer.find('textarea.emailBody').prop('id');
+        const content = tinymce.get(id).getContent();
+        const replacedContent = await replaceKeywordsPreview(content);
+        $('#emailPreview div.modal-body').html(replacedContent);
+        $emailContainer.closest('.modal').css('z-index', 1039);
+        $('#emailPreview').modal('show');
+        $('#emailPreview').on('hidden.bs.modal', function(event) {
+            $emailContainer.closest('.modal').css('z-index', 1050);
+        });
+    }
 
-            return $.post('<?= $module->framework->getUrl('ajax/replaceSmartVariables.php') ?>', {
-                text: text,
-                data: data
-            });
-        }
+    async function replaceKeywordsPreview(text) {
+        const data = {
+            'sag_user': 'robin123',
+            'sag_user_fullname': 'Robin Jones',
+            'sag_user_email': 'robin.jones@email.com',
+            'sag_user_rights': ['Project Design and Setup', 'User Rights', 'Create Records']
+        };
 
-        async function previewEmailUserRightsHolders($emailContainer) {
-            const id = $emailContainer.find('textarea.emailBody').prop('id');
-            const content = tinymce.get(id).getContent();
-            console.log(content);
-            const replacedContent = await replaceKeywordsPreviewUserRightsHolders(content);
-            console.log(replacedContent);
-            $('#emailPreview div.modal-body').html(replacedContent);
-            $emailContainer.closest('.modal').css('z-index', 1039);
-            $('#emailPreview').modal('show');
-            $('#emailPreview').on('hidden.bs.modal', function (event) {
-                $emailContainer.closest('.modal').css('z-index', 1050);
-            });
-        }
+        return $.post('<?= $module->framework->getUrl('ajax/replaceSmartVariables.php') ?>', {
+            text: text,
+            data: data
+        });
+    }
 
-        async function replaceKeywordsPreviewUserRightsHolders(text) {
+    async function previewEmailUserRightsHolders($emailContainer) {
+        const id = $emailContainer.find('textarea.emailBody').prop('id');
+        const content = tinymce.get(id).getContent();
+        console.log(content);
+        const replacedContent = await replaceKeywordsPreviewUserRightsHolders(content);
+        console.log(replacedContent);
+        $('#emailPreview div.modal-body').html(replacedContent);
+        $emailContainer.closest('.modal').css('z-index', 1039);
+        $('#emailPreview').modal('show');
+        $('#emailPreview').on('hidden.bs.modal', function(event) {
+            $emailContainer.closest('.modal').css('z-index', 1050);
+        });
+    }
 
-            const data = {
-                "sag_users": [
-                    'robin123',
-                    'alex456',
-                    'drew789'
-                ],
-                "sag_fullnames": [
-                    'Robin Jones',
-                    'Alex Thomas',
-                    'Drew Jackson'
-                ],
-                "sag_emails": [
-                    'robin.jones@email.com',
-                    'alex.thomas@email.com',
-                    'drew.jackson@email.com'
-                ],
-                "sag_rights": [
-                    ['Project Design and Setup', 'User Rights', 'Create Records'],
-                    ['Logging', 'Reports & Report Builder'],
-                    ['Data Export - Full Data Set', 'Data Viewing - View & Edit', 'Data Access Groups',
-                        'Stats & Charts', 'Survey Distribution Tools', 'File Repository'
-                    ]
+    async function replaceKeywordsPreviewUserRightsHolders(text) {
+
+        const data = {
+            "sag_users": [
+                'robin123',
+                'alex456',
+                'drew789'
+            ],
+            "sag_fullnames": [
+                'Robin Jones',
+                'Alex Thomas',
+                'Drew Jackson'
+            ],
+            "sag_emails": [
+                'robin.jones@email.com',
+                'alex.thomas@email.com',
+                'drew.jackson@email.com'
+            ],
+            "sag_rights": [
+                ['Project Design and Setup', 'User Rights', 'Create Records'],
+                ['Logging', 'Reports & Report Builder'],
+                ['Data Export - Full Data Set', 'Data Viewing - View & Edit', 'Data Access Groups',
+                    'Stats & Charts', 'Survey Distribution Tools', 'File Repository'
                 ]
-            };
+            ]
+        };
 
-            return $.post('<?= $module->framework->getUrl('ajax/replaceSmartVariables.php') ?>', {
-                text: text,
-                data: data
-            });
-        }
+        return $.post('<?= $module->framework->getUrl('ajax/replaceSmartVariables.php') ?>', {
+            text: text,
+            data: data
+        });
+    }
 
-        async function previewEmailUserExpiration($emailContainer) {
-            const id = $emailContainer.find('textarea.emailBody').prop('id');
-            const content = tinymce.get(id).getContent();
-            const replacedContent = await replaceKeywordsPreviewUserExpiration(content);
-            $('#emailPreview div.modal-body').html(replacedContent);
-            $emailContainer.closest('.modal').css('z-index', 1039);
-            $('#emailPreview').modal('show');
-            $('#emailPreview').on('hidden.bs.modal', function (event) {
-                $emailContainer.closest('.modal').css('z-index', 1050);
-            });
-        }
+    async function previewEmailUserExpiration($emailContainer) {
+        const id = $emailContainer.find('textarea.emailBody').prop('id');
+        const content = tinymce.get(id).getContent();
+        const replacedContent = await replaceKeywordsPreviewUserExpiration(content);
+        $('#emailPreview div.modal-body').html(replacedContent);
+        $emailContainer.closest('.modal').css('z-index', 1039);
+        $('#emailPreview').modal('show');
+        $('#emailPreview').on('hidden.bs.modal', function(event) {
+            $emailContainer.closest('.modal').css('z-index', 1050);
+        });
+    }
 
-        async function replaceKeywordsPreviewUserExpiration(text) {
-            const data = {
-                'sag_user': 'robin123',
-                'sag_user_fullname': 'Robin Jones',
-                'sag_user_email': 'robin.jones@email.com',
-                'sag_user_rights': ['Project Design and Setup', 'User Rights', 'Create Records']
-            };
+    async function replaceKeywordsPreviewUserExpiration(text) {
+        const data = {
+            'sag_user': 'robin123',
+            'sag_user_fullname': 'Robin Jones',
+            'sag_user_email': 'robin.jones@email.com',
+            'sag_user_rights': ['Project Design and Setup', 'User Rights', 'Create Records']
+        };
 
-            return $.post('<?= $module->framework->getUrl('ajax/replaceSmartVariables.php') ?>', {
-                text: text,
-                data: data
-            });
-        }
+        return $.post('<?= $module->framework->getUrl('ajax/replaceSmartVariables.php') ?>', {
+            text: text,
+            data: data
+        });
+    }
 
-        $(document).ready(function () {
-            console.timeLog('dt', 'document ready');
-            $('#sub-nav').removeClass('d-none');
+    $(document).ready(function() {
+        console.timeLog('dt', 'document ready');
+        $('#sub-nav').removeClass('d-none');
 
-            $('.dataPlaceholder').popover({
-                placement: 'top',
-                html: true,
-                content: '<span class="text-danger">Copied!</span>',
-                show: function () {
-                    $(this).fadeIn();
-                },
-                hide: function () {
-                    $(this).fadeOut();
-                }
-            });
-
-            const clipboard = new ClipboardJS('.dataPlaceholder', {
-                text: function (trigger) {
-                    return $(trigger).text();
-                }
-            });
-            clipboard.on('success', function (e) {
-                $(e.trigger).popover('show');
-                setTimeout(function () {
-                    $(e.trigger).popover('hide');
-                }, 1000);
-                e.clearSelection();
-            });
-
-            tinymce.init({
-                entity_encoding: "raw",
-                default_link_target: '_blank',
-                selector: ".richtext",
-                height: 350,
-                branding: false,
-                statusbar: true,
-                menubar: true,
-                elementpath: false,
-                plugins: [
-                    'paste autolink lists link searchreplace code fullscreen table directionality hr'
-                ],
-                toolbar1: 'formatselect | hr | bold italic underline link | fontsizeselect | alignleft aligncenter alignright alignjustify | undo redo',
-                toolbar2: 'bullist numlist | outdent indent | table tableprops tablecellprops | forecolor backcolor | searchreplace code removeformat | fullscreen',
-                contextmenu: "copy paste | link inserttable | cell row column deletetable",
-                content_css: "<?= $module->framework->getUrl('SecurityAccessGroups.css') ?>",
-                relative_urls: false,
-                convert_urls: false,
-                convert_fonts_to_spans: true,
-                extended_valid_elements: 'i[class]',
-                paste_word_valid_elements: "b,strong,i,em,h1,h2,u,p,ol,ul,li,a[href],span,color,font-size,font-color,font-family,mark,table,tr,td",
-                paste_retain_style_properties: "all",
-                paste_postprocess: function (plugin, args) {
-                    args.node.innerHTML = cleanHTML(args.node.innerHTML);
-                },
-                remove_linebreaks: true
-            });
-
-            function handleDisplayUsersButton(allUsersVisible) {
-                if (allUsersVisible) {
-                    $('#displayUsersButton').addClass('btn-outline-secondary').removeClass('btn-secondary');
-                } else {
-                    $('#displayUsersButton').addClass('btn-secondary').removeClass('btn-outline-secondary');
-                }
+        $('.dataPlaceholder').popover({
+            placement: 'top',
+            html: true,
+            content: '<span class="text-danger">Copied!</span>',
+            show: function() {
+                $(this).fadeIn();
+            },
+            hide: function() {
+                $(this).fadeOut();
             }
+        });
 
-            window.handleActionButtons = function () {
-                if ($('#discrepancy-table').DataTable().rows({
+        const clipboard = new ClipboardJS('.dataPlaceholder', {
+            text: function(trigger) {
+                return $(trigger).text();
+            }
+        });
+        clipboard.on('success', function(e) {
+            $(e.trigger).popover('show');
+            setTimeout(function() {
+                $(e.trigger).popover('hide');
+            }, 1000);
+            e.clearSelection();
+        });
+
+        tinymce.init({
+            entity_encoding: "raw",
+            default_link_target: '_blank',
+            selector: ".richtext",
+            height: 350,
+            branding: false,
+            statusbar: true,
+            menubar: true,
+            elementpath: false,
+            plugins: [
+                'paste autolink lists link searchreplace code fullscreen table directionality hr'
+            ],
+            toolbar1: 'formatselect | hr | bold italic underline link | fontsizeselect | alignleft aligncenter alignright alignjustify | undo redo',
+            toolbar2: 'bullist numlist | outdent indent | table tableprops tablecellprops | forecolor backcolor | searchreplace code removeformat | fullscreen',
+            contextmenu: "copy paste | link inserttable | cell row column deletetable",
+            content_css: "<?= $module->framework->getUrl('SecurityAccessGroups.css') ?>",
+            relative_urls: false,
+            convert_urls: false,
+            convert_fonts_to_spans: true,
+            extended_valid_elements: 'i[class]',
+            paste_word_valid_elements: "b,strong,i,em,h1,h2,u,p,ol,ul,li,a[href],span,color,font-size,font-color,font-family,mark,table,tr,td",
+            paste_retain_style_properties: "all",
+            paste_postprocess: function(plugin, args) {
+                args.node.innerHTML = cleanHTML(args.node.innerHTML);
+            },
+            remove_linebreaks: true
+        });
+
+        function handleDisplayUsersButton(allUsersVisible) {
+            if (allUsersVisible) {
+                $('#displayUsersButton').addClass('btn-outline-secondary').removeClass('btn-secondary');
+            } else {
+                $('#displayUsersButton').addClass('btn-secondary').removeClass('btn-outline-secondary');
+            }
+        }
+
+        window.handleActionButtons = function() {
+            if ($('#discrepancy-table').DataTable().rows({
                     selected: true
                 }).count() > 0) {
-                    $('.buttonContainer button.action').prop('disabled', false);
-                } else {
-                    $('.buttonContainer button.action').prop('disabled', true);
-                }
+                $('.buttonContainer button.action').prop('disabled', false);
+            } else {
+                $('.buttonContainer button.action').prop('disabled', true);
             }
+        }
 
-            $(document).on('preInit.dt', function (e, settings) {
-                $('#containerCard').show();
-                console.timeLog('dt', 'dt start')
-            });
-            $(document).on('preXhr.dt', function (e, settings, json) {
-                console.timeLog('dt', 'ajax start')
-            });
-            $(document).on('xhr.dt', function (e, settings, json) {
-                console.timeLog('dt', 'ajax end')
-            });
+        $(document).on('preInit.dt', function(e, settings) {
+            $('#containerCard').show();
+            console.timeLog('dt', 'dt start')
+        });
+        $(document).on('preXhr.dt', function(e, settings, json) {
+            console.timeLog('dt', 'ajax start')
+        });
+        $(document).on('xhr.dt', function(e, settings, json) {
+            console.timeLog('dt', 'ajax end')
+        });
 
-            const dt = $('table.discrepancy-table').DataTable({
-                ajax: {
-                    url: '<?= $module->framework->getUrl("ajax/projectUsers.php") ?>',
-                    type: 'POST',
-                    dataSrc: function (json) {
-                        console.timeLog('dt', 'ajax loaded')
-                        return json.data;
-                    }
-                },
-                deferRender: true,
-                sort: false,
-                filter: true,
-                paging: true,
-                info: true,
-                scrollY: '75vh',
-                scrollCollapse: true,
-                stateSave: true,
-                stateDuration: 60 * 60 * 24 * 365,
-                stateSaveCallback: function (settings, data) {
-                    let checkboxStatus = {};
-                    $('#userFilter input').toArray().forEach(el => checkboxStatus[el.id] = el.checked);
-                    data.checkboxStatus = checkboxStatus;
-                    localStorage.setItem('DataTables_' + settings.sInstance, JSON.stringify(data))
-                },
-                stateLoadCallback: function (settings) {
-                    const dataString = localStorage.getItem('DataTables_' + settings.sInstance);
-                    if (!dataString) return settings;
-                    const data = JSON.parse(dataString);
-                    if (!data.checkboxStatus) return settings;
-                    let allChecked = true;
-                    for (let id in data.checkboxStatus) {
-                        const thisChecked = data.checkboxStatus[id];
-                        allChecked = allChecked && thisChecked;
-                        document.getElementById(id).checked = thisChecked;
-                    }
-                    handleDisplayUsersButton(allChecked);
-                    delete (data.checkboxStatus);
-                    console.timeLog('dt', 'state loaded')
-                    return data;
-                },
-                columns: [{
-                    data: function (row, type, set, meta) {
+        const dt = $('table.discrepancy-table').DataTable({
+            ajax: {
+                url: '<?= $module->framework->getUrl("ajax/projectUsers.php") ?>',
+                type: 'POST',
+                dataSrc: function(json) {
+                    console.timeLog('dt', 'ajax loaded')
+                    return json.data;
+                }
+            },
+            deferRender: true,
+            sort: false,
+            filter: true,
+            paging: true,
+            info: true,
+            scrollY: '75vh',
+            scrollCollapse: true,
+            stateSave: true,
+            stateDuration: 60 * 60 * 24 * 365,
+            stateSaveCallback: function(settings, data) {
+                let checkboxStatus = {};
+                $('#userFilter input').toArray().forEach(el => checkboxStatus[el.id] = el.checked);
+                data.checkboxStatus = checkboxStatus;
+                localStorage.setItem('DataTables_' + settings.sInstance, JSON.stringify(data))
+            },
+            stateLoadCallback: function(settings) {
+                const dataString = localStorage.getItem('DataTables_' + settings.sInstance);
+                if (!dataString) return settings;
+                const data = JSON.parse(dataString);
+                if (!data.checkboxStatus) return settings;
+                let allChecked = true;
+                for (let id in data.checkboxStatus) {
+                    const thisChecked = data.checkboxStatus[id];
+                    allChecked = allChecked && thisChecked;
+                    document.getElementById(id).checked = thisChecked;
+                }
+                handleDisplayUsersButton(allChecked);
+                delete(data.checkboxStatus);
+                console.timeLog('dt', 'state loaded')
+                return data;
+            },
+            columns: [{
+                    data: function(row, type, set, meta) {
                         if (type === 'set' || type === 'type') {
                             const hasDiscrepancy = row.bad.length > 0;
                             row.inputVal =
@@ -834,13 +834,13 @@ $adminUsername = $module->framework->getUser()->getUsername();
                         }
                         return row.inputVal;
                     },
-                    createdCell: function (td, cellData, rowData, row, col) {
+                    createdCell: function(td, cellData, rowData, row, col) {
                         $(td).css('vertical-align', 'middle !important;');
                         $(td).addClass('user-selector');
                     }
                 }, {
                     title: 'Username',
-                    data: function (row, type, set, meta) {
+                    data: function(row, type, set, meta) {
                         if (type === 'display') {
                             return !row.isExpired ? `<strong>${row.username}</strong>` :
                                 row.username;
@@ -854,7 +854,7 @@ $adminUsername = $module->framework->getUser()->getUsername();
                 },
                 {
                     title: 'Email',
-                    data: function (row, type, set, meta) {
+                    data: function(row, type, set, meta) {
                         if (type === 'display') {
                             return `<a href="mailto:${row.email}">${row.email}</a>`;
                         } else {
@@ -868,7 +868,7 @@ $adminUsername = $module->framework->getUser()->getUsername();
                 },
                 {
                     title: 'System Role',
-                    data: function (row, type, set, meta) {
+                    data: function(row, type, set, meta) {
                         if (row.system_role) {
                             return `<strong>${row.system_role_name}</strong> <span>(<span class="user-select-all">${row.system_role}</span>)</span>`;
                         } else {
@@ -878,7 +878,7 @@ $adminUsername = $module->framework->getUser()->getUsername();
                 },
                 {
                     title: 'Noncompliant Rights',
-                    data: function (row, type, set, meta) {
+                    data: function(row, type, set, meta) {
                         const hasDiscrepancy = row.bad.length > 0;
                         if (hasDiscrepancy) {
                             let rows = '';
@@ -916,7 +916,7 @@ $adminUsername = $module->framework->getUser()->getUsername();
                 },
                 {
                     title: 'Project Role',
-                    data: function (row, type, set, meta) {
+                    data: function(row, type, set, meta) {
                         if (row.project_role) {
                             return `<strong>${row.project_role_name}</strong> <span>(<span class="user-select-all">${row.project_role}</span>)</span>`;
                         } else {
@@ -924,87 +924,105 @@ $adminUsername = $module->framework->getUser()->getUsername();
                         }
                     }
                 }
-                ],
-                createdRow: function (row, data, dataIndex) {
-                    let rowClass = data.bad.length > 0 ? 'table-danger-light' : 'table-success-light';
-                    rowClass = data.isExpired ? 'text-secondary bg-light' : rowClass;
-                    $(row).attr('data-user', data.username);
-                    $(row).attr('data-email', data.email);
-                    $(row).attr('data-name', data.name);
-                    $(row).addClass(rowClass);
-                },
-                drawCallback: function (settings) {
-                    const api = this.api();
-                    api.rows({
-                        page: 'current'
-                    }).every(function (rowIdx, tableLoop, rowLoop) {
-                        const data = this.data();
-                        const row = api.row(rowIdx);
-                        const rowNode = row.node();
-                        const checkbox = $(rowNode).find('input[type="checkbox"]');
-                        checkbox.prop('checked', row.selected());
-                    });
-                },
-                columnDefs: [{
-                    targets: [4, 5, 6, 7],
-                    createdCell: function (td) {
-                        $(td).addClass('align-middle text-center');
-                    }
-                }, {
-                    targets: '_all',
-                    createdCell: function (td) {
-                        $(td).addClass('align-middle');
-                    }
-                }],
+            ],
+            createdRow: function(row, data, dataIndex) {
+                let rowClass = data.bad.length > 0 ? 'table-danger-light' : 'table-success-light';
+                rowClass = data.isExpired ? 'text-secondary bg-light' : rowClass;
+                $(row).attr('data-user', data.username);
+                $(row).attr('data-email', data.email);
+                $(row).attr('data-name', data.name);
+                $(row).addClass(rowClass);
+            },
+            drawCallback: function(settings) {
+                const api = this.api();
+                api.rows({
+                    page: 'current'
+                }).every(function(rowIdx, tableLoop, rowLoop) {
+                    const data = this.data();
+                    const row = api.row(rowIdx);
+                    const rowNode = row.node();
+                    const checkbox = $(rowNode).find('input[type="checkbox"]');
+                    checkbox.prop('checked', row.selected());
+                });
+            },
+            columnDefs: [{
+                targets: [4, 5, 6, 7],
+                createdCell: function(td) {
+                    $(td).addClass('align-middle text-center');
+                }
+            }, {
+                targets: '_all',
+                createdCell: function(td) {
+                    $(td).addClass('align-middle');
+                }
+            }],
+            select: {
+                style: 'multi',
+                selector: 'td:first-child input[type="checkbox"]'
+            },
+            dom: "lftip",
+            initComplete: function() {
+                $('table.discrepancy-table').addClass('table');
+                $('#discrepancy-table').DataTable().columns.adjust().draw();
+                console.timeLog('dt', 'dt init complete')
+            },
+            lengthMenu: [
+                [10, 25, 50, 100, -1],
+                [10, 25, 50, 100, "All"]
+            ],
+            language: {
+                search: "_INPUT_",
+                searchPlaceholder: "Search Users...",
+                infoFiltered: " - filtered from _MAX_ total users",
+                emptyTable: "No users found in this project",
+                info: "Showing _START_ to _END_ of _TOTAL_ users",
+                infoEmpty: "Showing 0 to 0 of 0 users",
+                lengthMenu: "Show _MENU_ users",
+                loadingRecords: "Loading...",
+                zeroRecords: "No matching users found",
                 select: {
-                    style: 'multi',
-                    selector: 'td:first-child input[type="checkbox"]'
-                },
-                dom: "lftip",
-                initComplete: function () {
-                    $('table.discrepancy-table').addClass('table');
-                    $('#discrepancy-table').DataTable().columns.adjust().draw();
-                    console.timeLog('dt', 'dt init complete')
-                },
-                language: {
-                    search: "_INPUT_",
-                    searchPlaceholder: "Search Users..."
+                    rows: {
+                        _: '%d users selected',
+                        0: '',
+                        1: 'One user selected'
+                    }
                 }
-            });
-
-            $('#userFilter label').click(function (e) {
-                e.stopPropagation()
-            });
-            $('#userFilter input').change(function (e) {
-                let searchTerm = "";
-                // Expired/Current
-                const expiredChecked = $('#expiredUsers').is(':checked');
-                const nonExpiredChecked = $('#nonExpiredUsers').is(':checked');
-                const expired = expiredChecked ? 'expired' : undefined;
-                const nonExpired = nonExpiredChecked ? 'current' : undefined;
-                if (expiredChecked || nonExpiredChecked) {
-                    searchTerm += '(' + [expired, nonExpired].filter(el => el).join('|') + ') ';
-                } else {
-                    searchTerm += 'none ';
-                }
-
-                // Discrepant/Compliant
-                const discrepantChecked = $('#discrepantUsers').is(':checked');
-                const nonDiscrepantChecked = $('#nonDiscrepantUsers').is(':checked');
-                const discrepant = discrepantChecked ? 'discrepant' : undefined;
-                const nonDiscrepant = nonDiscrepantChecked ? 'compliant' : undefined;
-                if (discrepantChecked || nonDiscrepantChecked) {
-                    searchTerm += '(' + [discrepant, nonDiscrepant].filter(el => el).join('|') + ') ';
-                } else {
-                    searchTerm += 'none';
-                }
-
-                const allChecked = expiredChecked && nonExpiredChecked && discrepantChecked &&
-                    nonDiscrepantChecked;
-                handleDisplayUsersButton(allChecked);
-                dt.columns(0).search(searchTerm, true).draw();
-                window.handleActionButtons();
-            });
+            }
         });
+
+        $('#userFilter label').click(function(e) {
+            e.stopPropagation()
+        });
+        $('#userFilter input').change(function(e) {
+            let searchTerm = "";
+            // Expired/Current
+            const expiredChecked = $('#expiredUsers').is(':checked');
+            const nonExpiredChecked = $('#nonExpiredUsers').is(':checked');
+            const expired = expiredChecked ? 'expired' : undefined;
+            const nonExpired = nonExpiredChecked ? 'current' : undefined;
+            if (expiredChecked || nonExpiredChecked) {
+                searchTerm += '(' + [expired, nonExpired].filter(el => el).join('|') + ') ';
+            } else {
+                searchTerm += 'none ';
+            }
+
+            // Discrepant/Compliant
+            const discrepantChecked = $('#discrepantUsers').is(':checked');
+            const nonDiscrepantChecked = $('#nonDiscrepantUsers').is(':checked');
+            const discrepant = discrepantChecked ? 'discrepant' : undefined;
+            const nonDiscrepant = nonDiscrepantChecked ? 'compliant' : undefined;
+            if (discrepantChecked || nonDiscrepantChecked) {
+                searchTerm += '(' + [discrepant, nonDiscrepant].filter(el => el).join('|') + ') ';
+            } else {
+                searchTerm += 'none';
+            }
+
+            const allChecked = expiredChecked && nonExpiredChecked && discrepantChecked &&
+                nonDiscrepantChecked;
+            handleDisplayUsersButton(allChecked);
+            dt.columns(0).search(searchTerm, true).draw();
+            window.handleActionButtons();
+        });
+    });
     </script>
 </div>
