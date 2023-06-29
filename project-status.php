@@ -42,7 +42,7 @@ $adminUsername = $module->framework->getUser()->getUsername();
 
 <div class="SUR-Container">
     <div class="projhdr">
-        <i class='fa-regular fa-users-between-lines'></i>&nbsp;<span>Security Access Groups</span>
+        <i class='fa-solid fa-users-between-lines'></i>&nbsp;<span>Security Access Groups</span>
     </div>
     <div class="clearfix">
         <div id="sub-nav" class="d-none d-sm-block mr-4 mb-0 ml-0">
