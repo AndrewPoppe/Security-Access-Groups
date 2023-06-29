@@ -15,11 +15,18 @@ $project_id    = $module->framework->getProjectId();
 $adminUsername = $module->framework->getUser()->getUsername();
 
 
-$start    = microtime(true);
-$num      = $module->getUsersWithBadRights2($project_id);
-$end      = microtime(true);
-$duration = $end - $start;
+$start     = microtime(true);
+$num       = $module->getUsersWithBadRights2($project_id);
+$end       = microtime(true);
+$duration  = $end - $start;
+$start2    = microtime(true);
+$num2      = $module->query('SELECT COUNT(username) FROM redcap_user_rights WHERE project_id = ?', [ $project_id ]);
+$num3      = $num2->fetch_assoc()["COUNT(username)"];
+$end2      = microtime(true);
+$duration2 = $end2 - $start2;
 var_dump($duration);
+var_dump($duration2);
+var_dump($num3);
 
 ?>
 <link href="<?= $module->framework->getUrl('lib/DataTables/datatables.min.css') ?>" rel="stylesheet" />
