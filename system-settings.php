@@ -154,8 +154,8 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
     <script>
     window.system_roles = {
         <?php foreach ( $roles as $role ) {
-                echo "'" . $role["role_id"] . "': '" . $role["role_name"] . "',";
-            } ?>
+                    echo "'" . $role["role_id"] . "': '" . $role["role_name"] . "',";
+                } ?>
     };
 
     var Toast = Swal.mixin({
@@ -522,8 +522,9 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                         }
                     }
                 }, {
-                    title: 'Role',
+                    title: 'Security Access Group',
                     data: function(row, type, set, meta) {
+                        console.log(row, type, set, meta);
                         if (type === 'filter') {
                             return row.system_role + ' ' + window.system_roles[row.system_role];
                         } else if (type === 'sort') {
