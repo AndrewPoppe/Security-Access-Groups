@@ -14,6 +14,13 @@ $Alerts        = new Alerts($module);
 $project_id    = $module->framework->getProjectId();
 $adminUsername = $module->framework->getUser()->getUsername();
 
+$usersResult   = $module->framework->query('SELECT COUNT(username) FROM redcap_user_rights WHERE project_id = ?', [ $project_id ]);
+$usersCount    = $usersResult->fetch_assoc()["COUNT(username)"];
+$userThreshold = 200;
+if ( $usersCount <= $userThreshold ) {
+    $userData = json_encode($module->getUsersWithBadRights2($project_id));
+}
+
 ?>
 <link href="<?= $module->framework->getUrl('lib/DataTables/datatables.min.css') ?>" rel="stylesheet" />
 <script src="<?= $module->framework->getUrl('lib/DataTables/datatables.min.js') ?>"></script>
@@ -142,6 +149,17 @@ $adminUsername = $module->framework->getUser()->getUsername();
     <?php $Alerts->getUserExpirationModal($project_id, $adminUsername); ?>
     <?php $Alerts->getEmailPreviewModal(); ?>
     <script>
+    console.log(performance.now());
+    const usersCount = <?= $usersCount ?>;
+    const doAjax = usersCount > <?= $userThreshold ?>;
+    const config = doAjax ? {
+        ajax: {
+            url: '<?= $module->framework->getUrl("ajax/projectUsers.php") ?>',
+            type: 'POST'
+        },
+    } : {
+        data: JSON.parse('<?= $userData ?>')
+    };
     console.time('dt');
     var Toast = Swal.mixin({
         toast: true,
@@ -761,10 +779,6 @@ $adminUsername = $module->framework->getUser()->getUsername();
         console.timeLog('dt', 'document ready');
         $('#sub-nav').removeClass('d-none');
 
-
-
-
-
         $(document).on('preInit.dt', function(e, settings) {
             $('#containerCard').show();
             //console.timeLog('dt', 'dt start')
@@ -776,11 +790,8 @@ $adminUsername = $module->framework->getUser()->getUsername();
             console.timeLog('dt', 'ajax end')
         });
 
-        const dt = $('table.discrepancy-table').DataTable({
-            ajax: {
-                url: '<?= $module->framework->getUrl("ajax/projectUsers.php") ?>',
-                type: 'POST'
-            },
+        const dt = $('table.discrepancy-table').DataTable(Object.assign(config, {
+
             select: {
                 style: 'multi',
                 selector: 'td:first-child input[type="checkbox"]'
@@ -796,7 +807,8 @@ $adminUsername = $module->framework->getUser()->getUsername();
             stateDuration: 60 * 60 * 24 * 365,
             stateSaveCallback: function(settings, data) {
                 let checkboxStatus = {};
-                $('#userFilter input').toArray().forEach(el => checkboxStatus[el.id] = el.checked);
+                $('#userFilter input').toArray().forEach(el => checkboxStatus[el.id] = el
+                    .checked);
                 data.checkboxStatus = checkboxStatus;
                 localStorage.setItem('DataTables_' + settings.sInstance, JSON.stringify(data))
             },
@@ -818,17 +830,13 @@ $adminUsername = $module->framework->getUser()->getUsername();
             },
             columns: [{
                     data: function(row, type, set, meta) {
-                        if (type === 'set' || type === 'type') {
-                            const hasDiscrepancy = row.bad.length > 0;
-                            row.inputVal =
-                                `<div data-discrepant="${hasDiscrepancy}" data-expired="${row.isExpired}">${hasDiscrepancy ? '<input style="display:block; margin: 0 auto;" type="checkbox" onchange="window.handleActionButtons()"></input>' : ""}</div>`;
-                            row.expired = row.isExpired ? 'expired' : 'current';
-                            row.discrepant = hasDiscrepancy ? 'discrepant' :
-                                'compliant';
-                            return row.inputVal;
-                        } else if (type === 'display') {
-                            return row.inputVal;
-                        } else if (type === 'filter') {
+                        const hasDiscrepancy = row.bad.length > 0;
+                        row.expired = row.isExpired ? 'expired' : 'current';
+                        row.discrepant = hasDiscrepancy ? 'discrepant' :
+                            'compliant';
+                        row.inputVal =
+                            `<div data-discrepant="${hasDiscrepancy}" data-expired="${row.isExpired}">${hasDiscrepancy ? '<input style="display:block; margin: 0 auto;" type="checkbox" onchange="window.handleActionButtons()"></input>' : ""}</div>`;
+                        if (type === 'filter') {
                             return [row.expired, row.discrepant].join(' ');
                         }
                         return row.inputVal;
@@ -925,7 +933,8 @@ $adminUsername = $module->framework->getUser()->getUsername();
                 }
             ],
             createdRow: function(row, data, dataIndex) {
-                let rowClass = data.bad.length > 0 ? 'table-danger-light' : 'table-success-light';
+                let rowClass = data.bad.length > 0 ? 'table-danger-light' :
+                    'table-success-light';
                 rowClass = data.isExpired ? 'text-secondary bg-light' : rowClass;
                 $(row).attr('data-user', data.username);
                 $(row).attr('data-email', data.email);
@@ -964,6 +973,7 @@ $adminUsername = $module->framework->getUser()->getUsername();
                 initTinyMCE();
                 initClipboard();
                 console.timeEnd('dt');
+                console.log(performance.now());
             },
             lengthMenu: [
                 [10, 25, 50, 100, -1],
@@ -987,7 +997,7 @@ $adminUsername = $module->framework->getUser()->getUsername();
                     }
                 }
             }
-        });
+        }));
 
         $('#userFilter label').click(function(e) {
             e.stopPropagation()
