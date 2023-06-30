@@ -16,7 +16,7 @@ $adminUsername = $module->framework->getUser()->getUsername();
 
 $usersResult   = $module->framework->query('SELECT COUNT(username) FROM redcap_user_rights WHERE project_id = ?', [ $project_id ]);
 $usersCount    = $usersResult->fetch_assoc()["COUNT(username)"];
-$userThreshold = 200;
+$userThreshold = 5000;
 if ( $usersCount <= $userThreshold ) {
     $userData = json_encode($module->getUsersWithBadRights2($project_id));
 }
