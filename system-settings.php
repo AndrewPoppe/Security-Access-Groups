@@ -524,7 +524,9 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                 }, {
                     title: 'Security Access Group',
                     data: function(row, type, set, meta) {
-                        console.log(row, type, set, meta);
+                        if (row.system_role === null) {
+                            return '';
+                        }
                         if (type === 'filter') {
                             return row.system_role + ' ' + window.system_roles[row.system_role];
                         } else if (type === 'sort') {
