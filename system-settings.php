@@ -49,9 +49,7 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
     <div class="clear"></div>
 
     <?php if ( $tab == "userlist" ) {
-        $roles    = $module->getAllSystemRoles();
-        // $users    = $module->getAllUserInfo(true);
-        // $userJson = json_encode($users);
+        $roles = $module->getAllSystemRoles();
         ?>
 
     <p style='margin:20px 0;max-width:1000px;'>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc velit
@@ -286,7 +284,6 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
 
     function importCsv() {
         $('#importUsersFile').click();
-        console.log('import');
     }
 
     function handleFiles() {
@@ -465,7 +462,6 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
     function handleSelects() {
         const button = $('button.editUsersButton');
         const editing = $(button).data('editing');
-        console.log(editing);
         const style = editing ? 'user-select:all; cursor: text; margin-left: 1px; margin-right: 1px;' : 'none';
 
         $('.roleSelect').select2({
@@ -492,7 +488,6 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                 url: '<?= $module->framework->getUrl("ajax/users.php") ?>',
                 type: 'POST'
             },
-            // data: JSON.parse('<?= $userJson ?>'),
             drawCallback: function(settings) {
                 handleSelects();
             },
@@ -859,7 +854,6 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
 
     function editRole(role_id, role_name) {
         const url = "<?= $module->framework->getUrl("ajax/editSystemRole.php?newRole=false") ?>";
-        console.log(url, role_id, role_name);
         openRoleEditor(url, role_id, role_name);
     }
 
@@ -989,7 +983,6 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
         const data = $('#roleTable').DataTable().buttons.exportData({
             format: {
                 body: function(html, row, col, node) {
-                    console.log(html, row, col, node);
                     if (col === 0) {
                         return;
                     } else if (col === 1) {
@@ -1037,7 +1030,6 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
 
     function importCsv() {
         $('#importRolesFile').click();
-        console.log('import');
     }
 
     function handleFiles() {
@@ -1112,7 +1104,6 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
     }
 
     $(document).ready(function() {
-        console.log('<?= $module->framework->getUrl("ajax/roles.php") ?>');
         const importFileElement = document.getElementById("importRolesFile");
         importFileElement.addEventListener("change", handleFiles, false);
 
