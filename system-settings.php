@@ -50,8 +50,8 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
 
     <?php if ( $tab == "userlist" ) {
         $roles    = $module->getAllSystemRoles();
-        $users    = $module->getAllUserInfo(true);
-        $userJson = json_encode($users);
+        // $users    = $module->getAllUserInfo(true);
+        // $userJson = json_encode($users);
         ?>
 
     <p style='margin:20px 0;max-width:1000px;'>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc velit
@@ -488,11 +488,11 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
         const importFileElement = document.getElementById("importUsersFile");
         importFileElement.addEventListener("change", handleFiles, false);
         const dt = $('#SUR-System-Table').DataTable({
-            // ajax: {
-            //     url: '<?= $module->framework->getUrl("ajax/users.php") ?>',
-            //     type: 'POST'
-            // },
-            data: JSON.parse('<?= $userJson ?>'),
+            ajax: {
+                url: '<?= $module->framework->getUrl("ajax/users.php") ?>',
+                type: 'POST'
+            },
+            // data: JSON.parse('<?= $userJson ?>'),
             drawCallback: function(settings) {
                 handleSelects();
             },
