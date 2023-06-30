@@ -15,8 +15,8 @@ use ExternalModules\Framework;
 class SecurityAccessGroups extends AbstractExternalModule
 {
 
-    private string $defaultRoleId = "role_Default";
-    private string $defaultRoleName = "Default Role";
+    public string $defaultRoleId = "role_Default";
+    public string $defaultRoleName = "Default Role";
     private array $defaultRights = [];
 
 
