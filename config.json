@@ -107,6 +107,13 @@
                 "show-header-and-footer": true
             },
             {
+                "key": "project-status2",
+                "name": "Security Access Groups2",
+                "icon": "fa-solid  fa-users-between-lines",
+                "url": "project-status2.php",
+                "show-header-and-footer": true
+            },
+            {
                 "key": "project-alert-log",
                 "url": "project-alert-log.php",
                 "show-header-and-footer": true
