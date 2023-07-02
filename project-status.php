@@ -9,8 +9,6 @@ if ( !$module->framework->getUser()->isSuperUser() ) {
     exit;
 }
 
-require_once "classes/Alerts.php";
-$Alerts        = new Alerts($module);
 $project_id    = $module->framework->getProjectId();
 $adminUsername = $module->framework->getUser()->getUsername();
 
@@ -22,19 +20,22 @@ if ( $usersCount <= $userThreshold ) {
 }
 
 ?>
-<link href="<?= $module->framework->getUrl('lib/DataTables/datatables.min.css') ?>" rel="stylesheet" />
+<link href="https://cdn.datatables.net/v/dt/dt-1.13.4/b-2.3.6/b-html5-2.3.6/sl-1.6.2/sr-1.2.2/datatables.min.css"
+    rel="stylesheet" />
+
+<script src="https://cdn.datatables.net/v/dt/dt-1.13.4/b-2.3.6/b-html5-2.3.6/sl-1.6.2/sr-1.2.2/datatables.min.js">
+</script>
+
 <link rel='stylesheet' type='text/css' href='<?= $module->framework->getUrl('SecurityAccessGroups.css') ?>' />
 
-<script src="<?= $module->framework->getUrl('lib/DataTables/datatables.min.js') ?>"></script>
 <script defer src="<?= $module->framework->getUrl('assets/fontawesome/js/regular.min.js') ?>"></script>
 <script defer src="<?= $module->framework->getUrl('assets/fontawesome/js/sharp-regular.min.js') ?>"></script>
 <script defer src="<?= $module->framework->getUrl('assets/fontawesome/js/solid.min.js') ?>"></script>
 <script defer src="<?= $module->framework->getUrl('assets/fontawesome/js/custom-icons.min.js') ?>"></script>
 <script defer src="<?= $module->framework->getUrl('assets/fontawesome/js/fontawesome.min.js') ?>"></script>
-<script defer src="<?= $module->framework->getUrl('lib/SweetAlert/sweetalert2.all.min.js') ?>"></script>
-<script defer src="<?= $module->framework->getUrl('lib/Clipboard/clipboard.min.js') ?>"></script>
 
-<!-- <script src="<?= $module->framework->getUrl('lib/bundle.js') ?>"></script> -->
+<script defer src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/clipboard@2.0.11/dist/clipboard.min.js"></script>
 
 
 <!-- Modal -->
@@ -146,12 +147,17 @@ if ( $usersCount <= $userThreshold ) {
             </table>
         </div>
     </div>
-    <?php $Alerts->getUserEmailModal($project_id, $adminUsername); ?>
-    <?php $Alerts->getUserRightsHoldersEmailModal($project_id, $adminUsername); ?>
-    <?php $Alerts->getUserExpirationModal($project_id, $adminUsername); ?>
-    <?php $Alerts->getEmailPreviewModal(); ?>
+    <?php
+    require_once "classes/Alerts.php";
+    $Alerts = new Alerts($module);
+    $Alerts->getUserEmailModal($project_id, $adminUsername);
+    $Alerts->getUserRightsHoldersEmailModal($project_id, $adminUsername);
+    $Alerts->getUserExpirationModal($project_id, $adminUsername);
+    $Alerts->getEmailPreviewModal();
+    ?>
     <script>
         console.log(performance.now());
+        console.time('dt');
         const usersCount = <?= $usersCount ?>;
         const doAjax = usersCount > <?= $userThreshold ?>;
         const config = doAjax ? {
@@ -162,7 +168,6 @@ if ( $usersCount <= $userThreshold ) {
         } : {
             data: JSON.parse('<?= $userData ?>')
         };
-        console.time('dt');
         var Toast = Swal.mixin({
             toast: true,
             position: 'middle',
@@ -275,8 +280,6 @@ if ( $usersCount <= $userThreshold ) {
 
         async function expireUsers() {
             const users = getSelectedUsers();
-
-            console.log(users);
             await $.post("<?= $module->framework->getUrl('ajax/expireUsers.php') ?>", {
                 users: users.map(userRow => userRow["username"]),
                 delayDays: $('#delayDays-expiration').val(),
@@ -309,8 +312,6 @@ if ( $usersCount <= $userThreshold ) {
             emailFormContents.reminderBody = tinymce.get('reminderBody').getContent();
             emailFormContents.alertType = 'users';
             emailFormContents.users = getAlertUserInfo();
-
-            console.log(emailFormContents);
 
             $.post("<?= $module->framework->getUrl('ajax/sendAlerts.php') ?>", emailFormContents)
                 .done(response => {
@@ -405,8 +406,6 @@ if ( $usersCount <= $userThreshold ) {
             emailFormContents.alertType = 'userRightsHolders';
             emailFormContents.users = getAlertUserInfo();
             emailFormContents.recipients = getUserRightsHolderAlertRecipients('emailUserRightsHoldersForm');
-
-            console.log(emailFormContents);
 
             $.post("<?= $module->framework->getUrl('ajax/sendAlerts.php') ?>", emailFormContents)
                 .done(response => {
@@ -632,9 +631,7 @@ if ( $usersCount <= $userThreshold ) {
         async function previewEmailUserRightsHolders($emailContainer) {
             const id = $emailContainer.find('textarea.emailBody').prop('id');
             const content = tinymce.get(id).getContent();
-            console.log(content);
             const replacedContent = await replaceKeywordsPreviewUserRightsHolders(content);
-            console.log(replacedContent);
             $('#emailPreview div.modal-body').html(replacedContent);
             $emailContainer.closest('.modal').css('z-index', 1039);
             $('#emailPreview').modal('show');
@@ -783,7 +780,6 @@ if ( $usersCount <= $userThreshold ) {
 
             $(document).on('preInit.dt', function (e, settings) {
                 $('#containerCard').show();
-                //console.timeLog('dt', 'dt start')
             });
             $(document).on('preXhr.dt', function (e, settings, json) {
                 console.timeLog('dt', 'ajax start')
@@ -827,7 +823,6 @@ if ( $usersCount <= $userThreshold ) {
                     }
                     handleDisplayUsersButton(allChecked);
                     delete (data.checkboxStatus);
-                    //console.timeLog('dt', 'state loaded')
                     return data;
                 },
                 columns: [{
@@ -969,7 +964,6 @@ if ( $usersCount <= $userThreshold ) {
                 dom: "lftip",
                 initComplete: function () {
                     $('table.discrepancy-table').addClass('table');
-                    //console.timeLog('dt', 'dt pre-redraw');
                     this.api().columns.adjust().draw();
                     console.timeLog('dt', 'dt init complete');
                     initTinyMCE();

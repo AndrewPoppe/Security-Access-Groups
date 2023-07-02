@@ -8,18 +8,16 @@ if ( !$module->framework->getUser()->isSuperUser() ) {
     exit;
 }
 
-// $Alerts = new Alerts($module);
-// $alerts = $Alerts->getAlerts();
-// foreach ( $alerts as $alert ) {
-//     $Alerts->deleteAlert($alert['id']);
-// }
-
 ?>
-<link href="<?= $module->framework->getUrl('lib/DataTables/datatables.min.css') ?>" rel="stylesheet" />
-<script src="<?= $module->framework->getUrl('lib/DataTables/datatables.min.js') ?>"></script>
+<link href="https://cdn.datatables.net/v/dt/dt-1.13.4/datatables.min.css" rel="stylesheet" />
+<script src="https://cdn.datatables.net/v/dt/dt-1.13.4/datatables.min.js"></script>
 
-<link href="<?= $module->framework->getUrl('lib/Flatpickr/flatpickr.min.css') ?>" rel="stylesheet" />
-<script src="<?= $module->framework->getUrl('lib/Flatpickr/flatpickr.min.js') ?>"></script>
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" as="style"
+    onload="this.onload=null;this.rel='stylesheet'">
+<noscript>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+</noscript>
+<script defer src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
 <script defer src="<?= $module->framework->getUrl('assets/fontawesome/js/regular.min.js') ?>"></script>
 <script defer src="<?= $module->framework->getUrl('assets/fontawesome/js/sharp-regular.min.js') ?>"></script>
@@ -29,8 +27,7 @@ if ( !$module->framework->getUser()->isSuperUser() ) {
 <script defer src="<?= $module->framework->getUrl('assets/fontawesome/js/custom-icons.min.js') ?>"></script>
 <script defer src="<?= $module->framework->getUrl('assets/fontawesome/js/fontawesome.min.js') ?>"></script>
 
-<script src="<?= $module->framework->getUrl('lib/SweetAlert/sweetalert2.all.min.js') ?>"></script>
-<script src="<?= $module->framework->getUrl('lib/Clipboard/clipboard.min.js') ?>"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <link rel='stylesheet' type='text/css' href='<?= $module->framework->getUrl('SecurityAccessGroups.css') ?>' />
 
 
@@ -150,6 +147,8 @@ if ( !$module->framework->getUser()->isSuperUser() ) {
 </div>
 
 <script>
+console.log(performance.now());
+console.time('dt');
 var Toast = Swal.mixin({
     toast: true,
     position: 'middle',
@@ -267,8 +266,17 @@ function searchUsers() {
 }
 
 $(document).ready(function() {
+    console.timeLog('dt', 'document ready');
 
     $('#sub-nav').removeClass('d-none');
+
+
+    $(document).on('preXhr.dt', function(e, settings, json) {
+        console.timeLog('dt', 'ajax start')
+    });
+    $(document).on('xhr.dt', function(e, settings, json) {
+        console.timeLog('dt', 'ajax end')
+    });
 
     // Custom range filtering function
     $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
@@ -451,6 +459,7 @@ $(document).ready(function() {
             [1, 'desc']
         ],
         initComplete: function() {
+            console.timeLog('dt', 'dt init complete');
             $('.timePicker').flatpickr({
                 enableTime: true,
                 dateFormat: "U",
@@ -463,7 +472,7 @@ $(document).ready(function() {
             });
 
 
-            const dt = $('#alertLogTable').DataTable();
+            const dt = this.api();
             const usersAll = dt.column(5).data().toArray();
             const users = Array.from(new Set(usersAll.flat()));
             const usersSelect = $('#usersSelect').select2({
@@ -518,6 +527,8 @@ $(document).ready(function() {
             $('.alertLogWrapper').show();
             $('table#alertLogTable select').val(null).trigger('change');
             dt.columns.adjust();
+            console.timeEnd('dt');
+            console.log(performance.now());
         },
         lengthMenu: [
             [10, 25, 50, 100, -1],
