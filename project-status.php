@@ -24,16 +24,16 @@ if ( $usersCount <= $userThreshold ) {
 ?>
 <link href="<?= $module->framework->getUrl('lib/DataTables/datatables.min.css') ?>" rel="stylesheet" />
 <link rel='stylesheet' type='text/css' href='<?= $module->framework->getUrl('SecurityAccessGroups.css') ?>' />
-<script src="<?= $module->framework->getUrl('lib/DataTables/datatables.min.js') ?>"></script>
 
+<script src="<?= $module->framework->getUrl('lib/DataTables/datatables.min.js') ?>"></script>
 <script defer src="<?= $module->framework->getUrl('assets/fontawesome/js/regular.min.js') ?>"></script>
 <script defer src="<?= $module->framework->getUrl('assets/fontawesome/js/sharp-regular.min.js') ?>"></script>
 <script defer src="<?= $module->framework->getUrl('assets/fontawesome/js/solid.min.js') ?>"></script>
 <script defer src="<?= $module->framework->getUrl('assets/fontawesome/js/custom-icons.min.js') ?>"></script>
 <script defer src="<?= $module->framework->getUrl('assets/fontawesome/js/fontawesome.min.js') ?>"></script>
-
 <script defer src="<?= $module->framework->getUrl('lib/SweetAlert/sweetalert2.all.min.js') ?>"></script>
 <script defer src="<?= $module->framework->getUrl('lib/Clipboard/clipboard.min.js') ?>"></script>
+
 <!-- <script src="<?= $module->framework->getUrl('lib/bundle.js') ?>"></script> -->
 
 
