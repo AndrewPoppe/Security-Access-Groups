@@ -494,13 +494,13 @@ $(function() {
         $all_current_rights = $this->getAllCurrentRights($project_id);
         $bad_rights         = [];
         foreach ( $users as $user ) {
-            $expiration            = $user["expiration"];
-            $isExpired             = $expiration != "" && strtotime($expiration) < strtotime("today");
-            $username              = $user["username"];
-            $system_role           = $user["system_role"] ?? $this->defaultRoleId;
-            $system_role           = in_array($system_role, $roles, true) ? $this->defaultRoleId : $system_role;
-            $acceptable_rights     = $roles[$system_role]["permissions"];
-            $current_rights        = $all_current_rights[$username];
+            $expiration        = $user["expiration"];
+            $isExpired         = $expiration != "" && strtotime($expiration) < strtotime("today");
+            $username          = $user["username"];
+            $system_role       = $user["system_role"] ?? $this->defaultRoleId;
+            $system_role       = array_key_exists($system_role, $roles) ? $system_role : $this->defaultRoleId;
+            $acceptable_rights = $roles[$system_role]["permissions"];
+            $current_rights    = $all_current_rights[$username];
             $bad                   = $this->checkProposedRights2($acceptable_rights, $current_rights);
             $systemRoleName        = $roles[$system_role]["role_name"];
             $projectRoleUniqueName = $user["unique_role_name"];
