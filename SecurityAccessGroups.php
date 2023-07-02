@@ -497,7 +497,8 @@ $(function() {
             $expiration            = $user["expiration"];
             $isExpired             = $expiration != "" && strtotime($expiration) < strtotime("today");
             $username              = $user["username"];
-            $acceptable_rights     = $roles[$user["system_role"]]["permissions"];
+            $system_role           = $user["system_role"] ?? $this->defaultRoleId;
+            $acceptable_rights     = $roles[$system_role]["permissions"];
             $current_rights        = $all_current_rights[$username];
             $bad                   = $this->checkProposedRights2($acceptable_rights, $current_rights);
             $systemRoleName        = $roles[$user["system_role"]]["role_name"];
@@ -509,7 +510,7 @@ $(function() {
                 "email"             => $user["user_email"],
                 "expiration"        => $expiration == "" ? "never" : $expiration,
                 "isExpired"         => $isExpired,
-                "system_role"       => $user["system_role"],
+                "system_role"       => $system_role,
                 "system_role_name"  => $systemRoleName,
                 "project_role"      => $projectRoleUniqueName,
                 "project_role_name" => $projectRoleName,
