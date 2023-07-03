@@ -943,6 +943,31 @@ function userExpirationUserRightsHoldersToggle(checked) {
         return $reminders_to_send;
     }
 
+    private function getRawAlerts($project_id)
+    {
+        $sql    = "SELECT log_id,
+        timestamp,
+        message 'Type',
+        user,
+        users,
+        alertType 'Alert Type',
+        recipient,
+        recipientAddress,
+        reminderDate,
+        fromEmail,
+        emailBody,
+        emailSubject,
+        sentTimestamp,
+        status  WHERE message IN ('ALERT', 'REMINDER') AND project_id = ?";
+        $params = [ $project_id ];
+        $result = $this->module->framework->queryLogs($sql, $params);
+        $alerts = [];
+        while ( $row = $result->fetch_assoc() ) {
+            $alerts[] = $row;
+        }
+        return $alerts;
+    }
+
     /**
      * Grab array of all alerts and reminders in the project, sent and scheduled
      * 
@@ -954,37 +979,28 @@ function userExpirationUserRightsHoldersToggle(checked) {
         if ( empty($project_id) ) {
             $project_id = $this->module->framework->getProjectId();
         }
-        $sql    = "SELECT log_id, timestamp, message 'Type', user, users, alertType 'Alert Type', recipient, recipientAddress, reminderDate, fromEmail, emailBody, emailSubject, sentTimestamp, status  WHERE message IN ('ALERT', 'REMINDER') AND project_id = ?";
-        $params = [ $project_id ];
-        $result = $this->module->framework->queryLogs($sql, $params);
-        $alerts = [];
-        while ( $row = $result->fetch_assoc() ) {
-            $thisAlert = [];
-            $users     = [];
-            if ( isset($row["users"]) ) {
-                $usersArray = json_decode($row["users"], true);
-                foreach ( $usersArray as $key => $user ) {
-                    $users[] = \REDCap::escapeHtml($user["sag_user"]);
-                }
-            } else {
-                $user  = json_decode($row["user"], true);
-                $users = [ \REDCap::escapeHtml($user["sag_user"]) ];
+        $rawAlerts = $this->getRawAlerts($project_id);
+        $alerts    = [];
+        foreach ( $rawAlerts as $row ) {
+            $thisAlert  = [];
+            $users      = [];
+            $usersArray = isset($row["users"]) ?
+                json_decode($row["users"], true) :
+                [ json_decode($row["user"], true) ];
+            foreach ( $usersArray as $user ) {
+                $users[] = \REDCap::escapeHtml($user["sag_user"]);
             }
 
-            $recipients = "";
-            if ( isset($row["recipients"]) ) {
-                $recipientsArray = json_decode($row["recipients"], true);
-                foreach ( $recipientsArray as $key => $recipient ) {
-                    if ( $key !== array_key_first($recipientsArray) ) {
-                        $recipients .= "<br>";
-                    }
-                    $thisRecipient      = \REDCap::escapeHtml($recipient);
-                    $thisRecipientEmail = $this->module->framework->getUser($thisRecipient)->getEmail();
-                    $recipients .= "<strong>" . $thisRecipient . "</strong> (" . $thisRecipientEmail . ")";
-                }
-            } else {
-                $thisRecipient      = \REDCap::escapeHtml($row["recipient"]);
-                $thisRecipientEmail = \REDCap::escapeHtml($row["recipientAddress"]) ?? $this->module->framework->getUser($thisRecipient)->getEmail();
+            $recipients      = "";
+            $recipientsArray = isset($row["recipients"]) ?
+                json_decode($row["recipients"], true) :
+                [ $row["recipient"] ];
+            foreach ( $recipientsArray as $key => $recipient ) {
+                $recipients .= $key = array_key_first($recipientsArray) ?
+                    "" :
+                    "<br>";
+                $thisRecipient      = \REDCap::escapeHtml($recipient);
+                $thisRecipientEmail = $this->module->framework->getUser($thisRecipient)->getEmail();
                 $recipients .= "<strong>" . $thisRecipient . "</strong> (" . $thisRecipientEmail . ")";
             }
 
