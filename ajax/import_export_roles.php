@@ -63,9 +63,9 @@ if ( isset($_POST['csv_content']) && $_POST['csv_content'] != '' ) {
                             $params = [ $pid, $redcap_user, $username ];
 
                             $result       = $module->framework->query($sql, $params);
-                            $log_event_id = $result->fetch_assoc()["log_event_id"];
+                            $log_event_id = intval($result->fetch_assoc()["log_event_id"]);
 
-                            if ( !empty($log_event_id) ) {
+                            if ( $log_event_id != 0 ) {
                                 $module->framework->query("UPDATE $logTable SET data_values = ? WHERE log_event_id = ?", [ $data_values, $log_event_id ]);
                             } else {
                                 \Logging::logEvent(
@@ -189,9 +189,9 @@ if ( isset($_POST['csv_content']) && $_POST['csv_content'] != '' ) {
                             $data_values    = "role = '$role_label'\nchanges = $changes\n\n";
 
                             $result       = $module->framework->query($sql, $params);
-                            $log_event_id = $result->fetch_assoc()["log_event_id"];
+                            $log_event_id = intval($result->fetch_assoc()["log_event_id"]);
 
-                            if ( !empty($log_event_id) ) {
+                            if ( $log_event_id != 0 ) {
                                 $module->framework->query("UPDATE $logTable SET data_values = ?, pk = ? WHERE log_event_id = ?", [ $data_values, $pk, $log_event_id ]);
                             } else {
                                 \Logging::logEvent(

@@ -142,7 +142,7 @@ class SecurityAccessGroups extends AbstractExternalModule
             $result      = $this->framework->query($query, []);
             $project_ids = [];
             while ( $row = $result->fetch_assoc() ) {
-                $project_ids[] = $row["project_id"];
+                $project_ids[] = intval($row["project_id"]);
             }
             return $project_ids;
         } catch ( \Exception $e ) {
@@ -446,7 +446,7 @@ $(function() {
             $result = $this->framework->query($sql, [ $project_id ]);
             $users  = [];
             while ( $row = $result->fetch_assoc() ) {
-                $users[] = $row;
+                $users[] = $this->framework->escape($row);
             }
             return $users;
         } catch ( \Throwable $e ) {
@@ -494,13 +494,13 @@ $(function() {
         $all_current_rights = $this->getAllCurrentRights($project_id);
         $bad_rights         = [];
         foreach ( $users as $user ) {
-            $expiration        = $user["expiration"];
-            $isExpired         = $expiration != "" && strtotime($expiration) < strtotime("today");
-            $username          = $user["username"];
-            $system_role       = $user["system_role"] ?? $this->defaultRoleId;
-            $system_role       = array_key_exists($system_role, $roles) ? $system_role : $this->defaultRoleId;
-            $acceptable_rights = $roles[$system_role]["permissions"];
-            $current_rights    = $all_current_rights[$username];
+            $expiration            = $user["expiration"];
+            $isExpired             = $expiration != "" && strtotime($expiration) < strtotime("today");
+            $username              = $user["username"];
+            $system_role           = $user["system_role"] ?? $this->defaultRoleId;
+            $system_role           = array_key_exists($system_role, $roles) ? $system_role : $this->defaultRoleId;
+            $acceptable_rights     = $roles[$system_role]["permissions"];
+            $current_rights        = $all_current_rights[$username];
             $bad                   = $this->checkProposedRights2($acceptable_rights, $current_rights);
             $systemRoleName        = $roles[$system_role]["role_name"];
             $projectRoleUniqueName = $user["unique_role_name"];
@@ -532,7 +532,7 @@ $(function() {
             $sql    = "SELECT role_name FROM redcap_user_roles WHERE role_id = ?";
             $params = [ $projectRole ];
             $result = $this->framework->query($sql, $params);
-            return $result->fetch_assoc()["role_name"];
+            return $this->framework->escape($result->fetch_assoc()["role_name"]);
         } catch ( \Throwable $e ) {
             $this->framework->log("Error fetching project role name", [ "error" => $e->getMessage() ]);
             return null;
@@ -568,8 +568,8 @@ $(function() {
                     $sql          = "SELECT log_event_id FROM $logTable WHERE project_id = ? AND user = ? AND page = 'api/index.php' AND object_type = 'redcap_user_rights' AND pk = ? AND event = ? AND TIMESTAMPDIFF(SECOND,ts,NOW()) <= 10 ORDER BY ts DESC";
                     $params       = [ $project_id, $user, $username, $event ];
                     $result       = $this->framework->query($sql, $params);
-                    $log_event_id = $result->fetch_assoc()["log_event_id"];
-                    if ( !empty($log_event_id) ) {
+                    $log_event_id = intval($result->fetch_assoc()["log_event_id"]);
+                    if ( $log_event_id != 0 ) {
                         $this->framework->query("UPDATE $logTable SET data_values = ? WHERE log_event_id = ?", [ $data_values, $log_event_id ]);
                     } else {
                         \Logging::logEvent(
@@ -616,8 +616,8 @@ $(function() {
                     }
 
                     $result       = $this->framework->query($sql, $params);
-                    $log_event_id = $result->fetch_assoc()["log_event_id"];
-                    if ( !empty($log_event_id) ) {
+                    $log_event_id = intval($result->fetch_assoc()["log_event_id"]);
+                    if ( $log_event_id != 0 ) {
                         $this->framework->query("UPDATE $logTable SET data_values = ? WHERE log_event_id = ?", [ $data_values, $log_event_id ]);
                     } else {
                         \Logging::logEvent(
@@ -648,11 +648,11 @@ $(function() {
                     $sql          = "SELECT log_event_id FROM $logTable WHERE project_id = ? AND user = ? AND page = 'api/index.php' AND object_type = 'redcap_user_rights' AND pk = ? AND event = 'INSERT' AND TIMESTAMPDIFF(SECOND,ts,NOW()) <= 10 ORDER BY ts DESC";
                     $params       = [ $project_id, $user, $username ];
                     $result       = $this->framework->query($sql, $params);
-                    $log_event_id = $result->fetch_assoc()["log_event_id"];
+                    $log_event_id = intval($result->fetch_assoc()["log_event_id"]);
 
                     $data_values = "user = '" . $username . "'\nrole = '" . $role_label . "'\nunique_role_name = '" . $unique_role_name . "'";
 
-                    if ( !empty($log_event_id) ) {
+                    if ( $log_event_id != 0 ) {
                         $this->framework->query("UPDATE $logTable SET data_values = ? WHERE log_event_id = ?", [ $data_values, $log_event_id ]);
                     } else {
                         \Logging::logEvent(
@@ -701,7 +701,7 @@ $(function() {
         WHERE username = ?";
         try {
             $result = $this->framework->query($sql, [ $username ]);
-            return $result->fetch_assoc();
+            return $this->framework->escape($result->fetch_assoc());
         } catch ( \Throwable $e ) {
             $this->log("Error getting user info", [ "username" => $username, "error" => $e->getMessage(), "user" => $this->getUser()->getUsername() ]);
         }
@@ -737,7 +737,7 @@ $(function() {
             $result   = $this->framework->query($sql, []);
             $userinfo = [];
             while ( $row = $result->fetch_assoc() ) {
-                $userinfo[] = $row;
+                $userinfo[] = $this->framework->escape($row);
             }
             return $userinfo;
         } catch ( \Throwable $e ) {
@@ -752,7 +752,7 @@ $(function() {
         $rights = [];
         while ( $row = $result->fetch_assoc() ) {
             if ( !in_array($row["Field"], [ "project_id", "username", "expiration", "role_id", "group_id", "api_token", "data_access_group" ], true) ) {
-                $rights[$row["Field"]] = $row["Field"];
+                $rights[$row["Field"]] = $this->framework->escape($row["Field"]);
             }
         }
 
@@ -1041,7 +1041,7 @@ $(function() {
         $sql    = "SELECT role_id FROM redcap_user_roles WHERE unique_role_name = ?";
         $result = $this->framework->query($sql, [ $uniqueRoleName ]);
         $row    = $result->fetch_assoc();
-        return $row["role_id"];
+        return $this->framework->escape($row["role_id"]);
     }
 
     function getUniqueRoleNameFromRoleId($role_id)
@@ -1049,7 +1049,7 @@ $(function() {
         $sql    = "SELECT unique_role_name FROM redcap_user_roles WHERE role_id = ?";
         $result = $this->framework->query($sql, [ $role_id ]);
         $row    = $result->fetch_assoc();
-        return $row["unique_role_name"];
+        return $this->framework->escape($row["unique_role_name"]);
     }
 
     function getUsersInRole($project_id, $role_id)
@@ -1063,7 +1063,7 @@ $(function() {
         while ( $row = $result->fetch_assoc() ) {
             $users[] = $row["username"];
         }
-        return $users;
+        return $this->framework->escape($users);
     }
 
     function getRoleLabel($role_id)
@@ -1071,14 +1071,14 @@ $(function() {
         $sql    = "SELECT role_name FROM redcap_user_roles WHERE role_id = ?";
         $result = $this->framework->query($sql, [ $role_id ]);
         $row    = $result->fetch_assoc();
-        return $row["role_name"];
+        return $this->framework->escape($row["role_name"]);
     }
 
     function getRoleRightsRaw($role_id)
     {
         $sql    = "SELECT * FROM redcap_user_roles WHERE role_id = ?";
         $result = $this->framework->query($sql, [ $role_id ]);
-        return $result->fetch_assoc();
+        return $this->framework->escape($result->fetch_assoc());
     }
 
     function getRoleRights($role_id, $pid = null)
@@ -1194,8 +1194,8 @@ $(function() {
             $permissions_converted = $this->convertPermissions($permissions);
             $sql1                  = "SELECT log_id WHERE message = 'role' AND role_id = ? AND project_id IS NULL";
             $result1               = $this->framework->queryLogs($sql1, [ $role_id ]);
-            $log_id                = $result1->fetch_assoc()["log_id"];
-            if ( empty($log_id) ) {
+            $log_id                = intval($result1->fetch_assoc()["log_id"]);
+            if ( $log_id != 0 ) {
                 throw new \Exception('No role found with the specified id');
             }
             $params = [ "role_name" => $role_name, "permissions" => $permissions_converted ];
@@ -1253,7 +1253,7 @@ $(function() {
                 $roles[] = $role;
             }
         }
-        return $roles;
+        return $this->framework->escape($roles);
     }
 
     function setDefaultSystemRole()
@@ -1284,7 +1284,7 @@ $(function() {
                 $rights = $this->setDefaultSystemRole();
             }
         }
-        return $rights;
+        return $this->framework->escape($rights);
     }
 
     function systemRoleExists($role_id)
@@ -1479,7 +1479,7 @@ $(function() {
             $rights  = $result2->fetch_assoc();
         }
         unset($rights["api_token"], $rights["expiration"]);
-        return $rights;
+        return $this->framework->escape($rights);
     }
 
     function getAllCurrentRights($project_id)
@@ -1518,28 +1518,26 @@ $(function() {
             unset($row["external_module_config"]);
             $rights[$row["username"]] = $row;
         }
-        return $rights;
+        return $this->framework->escape($rights);
     }
 
     function getUserRightsHolders($project_id)
     {
         try {
-            $sql    = <<<EOF
-            SELECT rights.username username, 
+            $sql    = 'SELECT rights.username username, 
             CONCAT(info.user_firstname, " ", info.user_lastname) fullname, 
             info.user_email email
             from redcap_user_rights rights
             left join redcap_user_information info
             on rights.username = info.username
             where project_id = ?
-            and user_rights = 1
-            EOF;
+            and user_rights = 1';
             $result = $this->framework->query($sql, [ $project_id ]);
             $users  = [];
             while ( $row = $result->fetch_assoc() ) {
-                $users[] = $this->framework->escape($row);
+                $users[] = $row;
             }
-            return $users;
+            return $this->framework->escape($users);
         } catch ( \Throwable $e ) {
             $this->log('Error fetching user rights holders', [ "error" => $e->getMessage() ]);
         }

@@ -24,5 +24,5 @@ if ( !$alert ) {
     exit;
 }
 
-echo json_encode($Alerts->deleteAlert($alert_id));
+echo json_encode($module->escape($Alerts->deleteAlert($alert_id)));
 exit;

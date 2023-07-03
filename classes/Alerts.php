@@ -832,116 +832,14 @@ function userExpirationUserRightsHoldersToggle(checked) {
         if ( !empty($universalEmail) ) {
             $emails[] = $universalEmail;
         }
-        return $emails;
+        return $this->module->framework->escape($emails);
     }
 
     private function getUniversalEmailAddress()
     {
         $sql    = "SELECT value FROM redcap_config WHERE field_name = 'from_email'";
         $result = $this->module->query($sql, []);
-        return $result->fetch_assoc()["value"];
-    }
-
-    /**
-     * @param mixed $project_id - optionally restrict to just this project's alerts
-     * 
-     * @return array log_id's of all alerts (sent and otherwise)
-     */
-    public function getAllReminderIds($project_id = null) : array
-    {
-        $sql     = "SELECT log_id WHERE message = 'REMINDER'" . (is_null($project_id) ? "and (project_id is null or project_id is not null)" : " and project_id = ?");
-        $params  = is_null($project_id) ? [] : [ $project_id ];
-        $result  = $this->module->queryLogs($sql, $params);
-        $log_ids = [];
-        while ( $row = $result->fetch_assoc() ) {
-            $log_ids[] = $row['log_id'];
-        }
-        return $log_ids;
-    }
-
-    /**
-     * @param mixed $project_id
-     * @param string $username
-     * 
-     * @return string formatted string suitable to populate a table cell
-     */
-    public function getUserEmailSentFormatted($project_id, string $username) : string
-    {
-        $sentEmail = $this->getUserEmailSent($project_id, $username);
-
-        if ( is_null($sentEmail) ) {
-            return "";
-        }
-
-        // TODO: if multiple exist, display all of them, not just most recent
-
-        return "<div title='Sent " . \REDCap::escapeHtml($sentEmail['timestamp']) . "'><i class='fa-solid fa-envelope-circle-check text-success'></i></div>";
-    }
-
-    /**
-     * @param mixed $project_id
-     * @param string $username
-     * 
-     * @return array|null array with log_id and timestamp for most recent email alert sent. returns null if no alert found
-     */
-    private function getUserEmailSent($project_id, string $username) : ?array
-    {
-        $sql    = "SELECT log_id, timestamp WHERE message = 'ALERT' AND project_id = ? AND (user LIKE ? OR users LIKE ?) ORDER BY timestamp desc";
-        $params = [ $project_id, '%"sag_user":"' . $username . '"%', '%"sag_user":"' . $username . '"%' ];
-        $result = $this->module->queryLogs($sql, $params);
-        return $result->fetch_assoc();
-    }
-
-    public function getUserReminderStatusFormatted($project_id, string $username) : string
-    {
-
-        $status = $this->getUserReminderStatus($project_id, $username);
-        $icon   = '';
-        if ( empty($status) ) {
-            return "";
-        }
-        if ( $status["sent"] ) {
-            $icon .= '<i class="fa-solid fa-envelope-circle-check text-success" title="' . $status["sent"] . ' reminders sent"></i>';
-        }
-        if ( $status["set"] ) {
-            $icon .= '<i class="fa-regular fa-envelope text-secondary" title="' . $status["set"] . ' reminders scheduled"></i>';
-        }
-        return "<div>" . $icon . "</div>";
-    }
-
-    private function getUserReminderStatus($project_id, string $username)
-    {
-        $emailSent = $this->getUserEmailSent($project_id, $username);
-        if ( empty($emailSent) ) {
-            return;
-        }
-
-        $sql_reminder_set  = "SELECT log_id, timestamp, reminderDate WHERE message = 'REMINDER' AND project_id = ? AND (user LIKE ? OR users LIKE ?) AND status = 'scheduled' ORDER BY timestamp desc";
-        $sql_reminder_sent = "SELECT log_id, timestamp WHERE message = 'REMINDER' AND project_id = ? AND (user LIKE ? OR users LIKE ?) AND status = 'sent' ORDER BY timestamp desc";
-        $params            = [ $project_id, '%"sag_user":"' . $username . '"%', '%"sag_user":"' . $username . '"%' ];
-
-        $result_reminder_set = $this->module->queryLogs($sql_reminder_set, $params);
-        $reminders_set       = [];
-        while ( $row = $result_reminder_set->fetch_assoc() ) {
-            $reminders_set[] = $row;
-        }
-
-        $result_reminder_sent = $this->module->queryLogs($sql_reminder_sent, $params);
-        $reminders_sent       = [];
-        while ( $row = $result_reminder_sent->fetch_assoc() ) {
-            $reminders_sent[] = $row;
-        }
-
-        // TODO: Figure out cancellation
-
-        $result = [];
-        if ( !empty($reminders_sent) ) {
-            $result['sent'] = sizeof($reminders_sent);
-        }
-        if ( !empty($reminders_set) ) {
-            $result['set'] = sizeof($reminders_set);
-        }
-        return $result;
+        return $this->module->framework->escape($result->fetch_assoc()["value"]);
     }
 
     public function sendUserReminders($project_id)
@@ -976,13 +874,13 @@ function userExpirationUserRightsHoldersToggle(checked) {
             }
             foreach ( $users as $user ) {
                 $thisAlert                    = [];
-                $thisAlert["to"]              = $user["sag_user_email"];
-                $thisAlert["from"]            = $row["fromEmail"];
-                $thisAlert["displayFromName"] = $row["displayFromName"];
-                $thisAlert["subject"]         = $row["emailSubject"];
-                $thisAlert["body"]            = $row["emailBody"];
-                $thisAlert["alert_log_id"]    = $row["alert_log_id"];
-                $thisAlert["reminder_log_id"] = $row["log_id"];
+                $thisAlert["to"]              = \REDCap::escapeHtml($user["sag_user_email"]);
+                $thisAlert["from"]            = \REDCap::escapeHtml($row["fromEmail"]);
+                $thisAlert["displayFromName"] = \REDCap::escapeHtml($row["displayFromName"]);
+                $thisAlert["subject"]         = \REDCap::filterHtml($row["emailSubject"]);
+                $thisAlert["body"]            = \REDCap::filterHtml($row["emailBody"]);
+                $thisAlert["alert_log_id"]    = intval($row["alert_log_id"]);
+                $thisAlert["reminder_log_id"] = intval($row["log_id"]);
                 $reminders_to_send[]          = $thisAlert;
             }
         }
@@ -1014,7 +912,7 @@ function userExpirationUserRightsHoldersToggle(checked) {
                 }
             } else {
                 $user  = json_decode($row["user"], true);
-                $users = [\REDCap::escapeHtml($user["sag_user"])];
+                $users = [ \REDCap::escapeHtml($user["sag_user"]) ];
             }
 
             $recipients = "";
@@ -1042,6 +940,7 @@ function userExpirationUserRightsHoldersToggle(checked) {
                 $thisAlert["sendTime"] = $row["sentTimestamp"] > 0 ? $row["sentTimestamp"] : $row["reminderDate"];
                 $thisAlert["reminder"] = true;
             }
+            $thisAlert["sendTime"]   = \REDCap::escapeHtml($thisAlert["sendTime"]);
             $thisAlert["alertType"]  = \REDCap::escapeHtml($row["Alert Type"]);
             $thisAlert["users"]      = $users;
             $thisAlert["recipients"] = $recipients;
@@ -1075,10 +974,10 @@ function userExpirationUserRightsHoldersToggle(checked) {
     private function getAlertTable(array $alert)
     {
         $table = "<table class='table bg-white' style='border:1px solid #dee2e6'>";
-        $table .= "<tr><th>From:</th><td>" . $alert['from'] . "</td></tr>";
-        $table .= "<tr><th>To:</th><td>" . $alert['to'] . "</td></tr>";
-        $table .= "<tr><th>Subject:</th><td>" . $alert['subject'] . "</td></tr>";
-        $table .= "<tr><th>Message:</th><td>" . $alert['body'] . "</td></tr>";
+        $table .= "<tr><th>From:</th><td>" . \REDCap::filterHtml($alert['from']) . "</td></tr>";
+        $table .= "<tr><th>To:</th><td>" . \REDCap::filterHtml($alert['to']) . "</td></tr>";
+        $table .= "<tr><th>Subject:</th><td>" . \REDCap::filterHtml($alert['subject']) . "</td></tr>";
+        $table .= "<tr><th>Message:</th><td>" . \REDCap::filterHtml($alert['body']) . "</td></tr>";
         $table .= "</table>";
         return $table;
     }

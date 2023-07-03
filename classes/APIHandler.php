@@ -85,7 +85,7 @@ class APIHandler
         } catch ( \Throwable $e ) {
             $this->module->log('Error getting user rights from API token', [ "error" => $e->getMessage() ]);
         } finally {
-            return $rights;
+            return $this->module->framework->escape($rights);
         }
     }
 

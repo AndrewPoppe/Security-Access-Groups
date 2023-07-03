@@ -63,8 +63,8 @@ if ( in_array($submit_action, [ "add_user", "edit_user" ]) ) {
                     $sql          = "SELECT log_event_id FROM $logTable WHERE project_id = ? AND user = ? AND page = 'ExternalModules/index.php' AND object_type = 'redcap_user_rights' AND pk = ? AND event IN ('INSERT','UPDATE') AND TIMESTAMPDIFF(SECOND,ts,NOW()) <= 10 ORDER BY ts DESC";
                     $params       = [ $action_info["project_id"], $module->getUser()->getUsername(), $action_info["user"] ];
                     $result       = $module->query($sql, $params);
-                    $log_event_id = $result->fetch_assoc()["log_event_id"];
-                    if ( !empty($log_event_id) ) {
+                    $log_event_id = intval($result->fetch_assoc()["log_event_id"]);
+                    if ( $log_event_id != 0 ) {
                         $module->query("UPDATE $logTable SET data_values = ? WHERE log_event_id = ?", [ $data_values, $log_event_id ]);
                     } else {
                         \Logging::logEvent(
@@ -146,8 +146,8 @@ if ( $submit_action === "edit_role" ) {
                     $sql          = "SELECT log_event_id FROM $logTable WHERE project_id = ? AND user = ? AND page = 'ExternalModules/index.php' AND object_type = 'redcap_user_rights' AND pk = ? AND event IN ('INSERT','UPDATE') AND TIMESTAMPDIFF(SECOND,ts,NOW()) <= 10 ORDER BY ts DESC";
                     $params       = [ $action_info["project_id"], $module->getUser()->getUsername(), $action_info["role"] ];
                     $result       = $module->query($sql, $params);
-                    $log_event_id = $result->fetch_assoc()["log_event_id"];
-                    if ( !empty($log_event_id) ) {
+                    $log_event_id = intval($result->fetch_assoc()["log_event_id"]);
+                    if ( $log_event_id != 0 ) {
                         $module->query("UPDATE $logTable SET data_values = ? WHERE log_event_id = ?", [ $data_values, $log_event_id ]);
                     } else {
                         \Logging::logEvent(

@@ -57,9 +57,9 @@ if ( $errors === false || $userExpired ) {
                 $sql          = "SELECT log_event_id FROM $logTable WHERE project_id = ? AND user = ? AND page = 'ExternalModules/index.php' AND object_type = 'redcap_user_rights' AND pk = ? AND event IN ('INSERT','UPDATE') AND description = 'Assign user to role' AND TIMESTAMPDIFF(SECOND,ts,NOW()) <= 10 ORDER BY ts DESC";
                 $params       = [ $info["project_id"], $module->framework->getUser()->getUsername(), $info["username"] ];
                 $result       = $module->query($sql, $params);
-                $log_event_id = $result->fetch_assoc()["log_event_id"];
-                if ( !empty($log_event_id) ) {
-                    $module->query("UPDATE $logTable SET data_values = ? WHERE log_event_id = ?", [ $data_values, $log_event_id ]);
+                $log_event_id = intval($result->fetch_assoc()["log_event_id"]);
+                if ( $log_event_id != 0 ) {
+                    $module->query("UPDATE $logTable SET data_values = ? WHERE log_event_id = ?", [ $module->framework->escape($data_values), $log_event_id ]);
                 } else {
                     \Logging::logEvent(
                         '',
@@ -86,6 +86,6 @@ if ( $errors === false || $userExpired ) {
     require_once $scriptPath;
     ob_end_flush(); // End buffering and clean up
 } else {
-    echo json_encode([ "error" => true, "bad_rights" => [ "$username" => [ "SAG" => $sag["role_name"], "rights" => $bad_rights ] ], "role" => $role_name ]);
+    echo json_encode($module->framework->escape([ "error" => true, "bad_rights" => [ "$username" => [ "SAG" => $sag["role_name"], "rights" => $bad_rights ] ], "role" => $role_name ]));
 }
 exit;

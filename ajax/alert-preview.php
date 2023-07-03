@@ -24,5 +24,5 @@ if ( !$alert ) {
     exit;
 }
 
-echo json_encode($alert);
+echo json_encode(($alert));
 exit;
