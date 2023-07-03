@@ -56,7 +56,7 @@ if ( !$module->framework->getUser()->isSuperUser() ) {
         </div>
     </div>
     <div class="alertLogWrapper my-4 mr-3 card card-body bg-light" style="width: 1100px; display: none;">
-        <table aria-label="alert log table" id="alertLogTable" class="border" style="width=100%;">
+        <table aria-label="alert log table" id="alertLogTable" class="border" style="width:100%;">
             <thead>
                 <tr style="background-color: #D7D7D7 !important;">
                     <th class="font-weight-normal" scope="col" colspan="8" style="border-bottom: none;">
@@ -265,77 +265,77 @@ function searchUsers() {
 }
 
 $(document).ready(function() {
-console.timeLog('dt', 'document ready');
+    console.timeLog('dt', 'document ready');
 
-$('#sub-nav').removeClass('d-none');
+    $('#sub-nav').removeClass('d-none');
 
 
-$(document).on('preXhr.dt', function(e, settings, json) {
-    console.timeLog('dt', 'ajax start')
-});
-$(document).on('xhr.dt', function(e, settings, json) {
-    console.timeLog('dt', 'ajax end')
-});
+    $(document).on('preXhr.dt', function(e, settings, json) {
+        console.timeLog('dt', 'ajax start')
+    });
+    $(document).on('xhr.dt', function(e, settings, json) {
+        console.timeLog('dt', 'ajax end')
+    });
 
-// Custom range filtering function
-$.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
+    // Custom range filtering function
+    $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
 
-    // Dates
-    const minDateTimeEl = document.querySelector('#mindatetime')._flatpickr;
-    const maxDateTimeEl = document.querySelector('#maxdatetime')._flatpickr;
+        // Dates
+        const minDateTimeEl = document.querySelector('#mindatetime')._flatpickr;
+        const maxDateTimeEl = document.querySelector('#maxdatetime')._flatpickr;
 
-    if (typeof minDateTimeEl === 'undefined' || typeof maxDateTimeEl === 'undefined') {
-        return true;
-    }
+        if (typeof minDateTimeEl === 'undefined' || typeof maxDateTimeEl === 'undefined') {
+            return true;
+        }
 
-    const minDateTime = minDateTimeEl.selectedDates[0]?.getTime() / 1000;
-    const maxDateTime = maxDateTimeEl.selectedDates[0]?.getTime() / 1000;
-    const sendDateTime = parseFloat(data[1]) || 0; // use data for the send time column
+        const minDateTime = minDateTimeEl.selectedDates[0]?.getTime() / 1000;
+        const maxDateTime = maxDateTimeEl.selectedDates[0]?.getTime() / 1000;
+        const sendDateTime = parseFloat(data[1]) || 0; // use data for the send time column
 
-    if (
-        (isNaN(minDateTime) && isNaN(maxDateTime)) ||
-        (isNaN(minDateTime) && sendDateTime <= maxDateTime) ||
-        (minDateTime <= sendDateTime && isNaN(maxDateTime)) ||
-        (minDateTime <= sendDateTime && sendDateTime <= maxDateTime)
-    ) {
-        return true;
-    }
+        if (
+            (isNaN(minDateTime) && isNaN(maxDateTime)) ||
+            (isNaN(minDateTime) && sendDateTime <= maxDateTime) ||
+            (minDateTime <= sendDateTime && isNaN(maxDateTime)) ||
+            (minDateTime <= sendDateTime && sendDateTime <= maxDateTime)
+        ) {
+            return true;
+        }
 
-    return false;
-});
+        return false;
+    });
 
-// Custom alert type function
-$.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
-    const alertTypes = $('#alertTypeSelect').val() || [];
-    if (alertTypes.length === 0) {
-        return true;
-    }
-    const thisAlertType = data[2];
-    return alertTypes.includes(thisAlertType);
-});
+    // Custom alert type function
+    $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
+        const alertTypes = $('#alertTypeSelect').val() || [];
+        if (alertTypes.length === 0) {
+            return true;
+        }
+        const thisAlertType = data[2];
+        return alertTypes.includes(thisAlertType);
+    });
 
-// Custom notification type function
-$.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
-    const notificationTypes = $('#notificationTypeSelect').val() || [];
-    if (notificationTypes.length === 0) {
-        return true;
-    }
-    const thisNotificationType = String(data[3] === "Reminder");
-    return notificationTypes.includes(thisNotificationType);
-});
+    // Custom notification type function
+    $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
+        const notificationTypes = $('#notificationTypeSelect').val() || [];
+        if (notificationTypes.length === 0) {
+            return true;
+        }
+        const thisNotificationType = String(data[3] === "Reminder");
+        return notificationTypes.includes(thisNotificationType);
+    });
 
-// Custom recipient function
-$.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
-    const recipients = $('#recipientSelect').val() || [];
-    if (recipients.length === 0) {
-        return true;
-    }
-    const thisRecipient = String(data[6]);
-    return recipients.map(recipient => $(`<span>${recipient}</span>`).text()).includes(
-        thisRecipient);
-});
+    // Custom recipient function
+    $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
+        const recipients = $('#recipientSelect').val() || [];
+        if (recipients.length === 0) {
+            return true;
+        }
+        const thisRecipient = String(data[6]);
+        return recipients.map(recipient => $(`<span>${recipient}</span>`).text()).includes(
+            thisRecipient);
+    });
 
-$('#alertLogTable').DataTable({
+    $('#alertLogTable').DataTable({
         ajax: {
             url: "<?= $module->framework->getUrl('ajax/alerts.php') ?>",
             type: 'POST'
@@ -357,16 +357,14 @@ $('#alertLogTable').DataTable({
                             const status = row.status ?? "error";
                             color = status === "error" ? "text-danger" : "text-success";
                             icon = status === "error" ?
-                                `<span class="fa-stack fa-sm default-cursor" 
-                                style="width: 1.15em; height: 1.15em; vertical-align: top;">
-                            <i class='fa-solid fa-circle-exclamation fa-stack-1x' 
-                            title="Error sending reminder"></i>
-                        </span>` :
-                                `<span class="fa-stack fa-sm default-cursor" 
-                                style="width: 1.15em; height: 1.15em; vertical-align: top;">
-                            <i class='fa-sharp fa-solid fa-check-circle fa-stack-1x' 
-                            title="Reminder sent"></i>
-                        </span>`;
+                                `<span class="fa-stack fa-sm default-cursor" ` +
+                                `style="width: 1.15em; height: 1.15em; vertical-align: top;">` +
+                                `<i class='fa-solid fa-circle-exclamation fa-stack-1x' ` +
+                                `title="Error sending reminder"></i></span>` :
+                                `<span class="fa-stack fa-sm default-cursor" ` +
+                                `style="width: 1.15em; height: 1.15em; vertical-align: top;">` +
+                                `<i class='fa-sharp fa-solid fa-check-circle fa-stack-1x' ` +
+                                `title="Reminder sent"></i></span>`;
                         } else {
                             const sent = moment.now() > (row.sendTime * 1000);
                             color = sent ? "text-success" : "text-secondary";
@@ -374,21 +372,20 @@ $('#alertLogTable').DataTable({
                                 '--fa-secondary-color: #000000;' +
                                 '--fa-secondary-opacity: 0.1';
                             icon = sent ?
-                                `<span class="fa-stack fa-sm default-cursor" 
-                                style="width: 1.15em; height: 1.15em; vertical-align: top;">
-                            <i class='fa-sharp fa-solid fa-check-circle fa-stack-1x' title="Alert sent"></i>
-                        </span>` :
-                                `<span class="fa-stack fa-sm default-cursor" 
-                                style="width: 1.15em; height: 1.15em; vertical-align: top; opacity: 0.5;" 
-                                title="Reminder scheduled">
-                            <i class="fa-duotone fa-clock-three fa-stack-1x text-dark" 
-                            style="${style}"></i>
-                            <i class="fa-regular fa-circle fa-stack-1x text-dark"></i>
-                        </span>`;
+                                `<span class="fa-stack fa-sm default-cursor" ` +
+                                `style="width: 1.15em; height: 1.15em; vertical-align: top;">` +
+                                `<i class='fa-sharp fa-solid fa-check-circle fa-stack-1x' title="Alert sent"></i>` +
+                                `</span>` :
+                                `<span class="fa-stack fa-sm default-cursor" ` +
+                                `style="width: 1.15em; height: 1.15em; vertical-align: top; opacity: 0.5;" ` +
+                                `title="Reminder scheduled">` +
+                                `<i class="fa-duotone fa-clock-three fa-stack-1x text-dark" ` +
+                                `style="${style}"></i>` +
+                                `<i class="fa-regular fa-circle fa-stack-1x text-dark"></i></span>`;
                             deleteButton = sent ? "" :
-                                `<a class='deleteAlertButton' href='javascript:;' 
-                                onclick='deleteAlert(${row.id});'>
-                                <i class='fa-solid fa-xmark text-danger' title="Delete alert"></i></a>`;
+                                `<a class='deleteAlertButton' href='javascript:;' ` +
+                                `onclick='deleteAlert(${row.id});'>` +
+                                `<i class='fa-solid fa-xmark text-danger' title="Delete alert"></i></a>`;
                         }
                         const formattedDate = moment(row.sendTime * 1000).format(
                             'MM/DD/YYYY hh:mm A');
@@ -405,19 +402,16 @@ $('#alertLogTable').DataTable({
                         let result = '';
                         if (row.alertType === 'users') {
                             result =
-                                `<span class="badge-primary text-light badge-pill py-1 px-2 default-cursor">
-                                User
-                                </span>`;
+                                `<span class="badge-primary text-light badge-pill py-1 px-2 default-cursor">` +
+                                `User</span>`;
                         } else if (row.alertType === 'userRightsHolders') {
                             result =
-                                `<span class="badge-warning text-body badge-pill py-1 px-2 default-cursor">
-                                User Rights Holder
-                                </span>`;
+                                `<span class="badge-warning text-body badge-pill py-1 px-2 default-cursor">` +
+                                `User Rights Holder</span>`;
                         } else if (row.alertType === 'expiration') {
                             result =
-                                `<span class="badge-danger text-light badge-pill py-1 px-2 default-cursor">
-                                Expiration
-                                </span>`;
+                                `<span class="badge-danger text-light badge-pill py-1 px-2 default-cursor">` +
+                                `Expiration</span>`;
                         }
 
                         return result;
@@ -431,9 +425,8 @@ $('#alertLogTable').DataTable({
                 data: function(row, type, set, meta) {
                     if (type === 'display') {
                         return row.reminder ?
-                            `<span class="badge badge-pill bg-reminder border font-weight-normal default-cursor">
-                            Reminder
-                            </span>` :
+                            `<span class="badge badge-pill bg-reminder border font-weight-normal default-cursor">` +
+                            `Reminder</span>` :
                             '';
                     } else if (type === 'filter') {
                         return row.reminder ? 'Reminder' : '';
@@ -447,9 +440,9 @@ $('#alertLogTable').DataTable({
                     if (type === 'filter') {
                         return row.subject + ' ' + row.body;
                     } else {
-                        return `<button class='btn btn-xs btn-outline-info' 
-                        onclick='openAlertPreview("${row.id}");'>
-                        <i class="fa-solid fa-envelope"></i> View</button>`;
+                        return `<button class='btn btn-xs btn-outline-info' ` +
+                            `onclick='openAlertPreview("${row.id}");'>` +
+                            `<i class="fa-solid fa-envelope"></i> View</button>`;
                     }
                 }
             },
@@ -458,119 +451,119 @@ $('#alertLogTable').DataTable({
                     const users = row['users'];
                     if (type === 'display') {
                         let result = [];
-                        const root = `${app_path_webroot_full + app_path_webroot + 'ControlCenter`;
+                        const root = app_path_webroot_full + app_path_webroot + 'ControlCenter';
                         for (let user of users) {
                             result.push(
-                                `<strong><a rel="noreferrer noopener" target="_blank" 
-                                href="${root}/view_users.php?username=${user}">${user}</a></strong>`
+                                `<strong><a rel="noreferrer noopener" target="_blank" ` +
+                                `href="${root}/view_users.php?username=${user}">${user}</a></strong>`
+                            );
+                        }
+                        return result.join('<br>');
+                    } else if (type === 'filter') {
+                        return users.join('&&&&&');
+                    } else {
+                        return users;
+                    }
+                },
+            }, {
+                data: 'recipients',
+            }, {
+                data: 'status',
+                visible: false
+            }
+        ],
+        responsive: false,
+        order: [
+            [1, 'desc']
+        ],
+        initComplete: function() {
+            console.timeLog('dt', 'dt init complete');
+            $('.timePicker').flatpickr({
+                enableTime: true,
+                dateFormat: "U",
+                altInput: true,
+                altFormat: "m/d/Y G:i K",
+                onChange: function(selectedDates, dateStr, instance) {
+                    const dt = $('#alertLogTable').DataTable();
+                    dt.draw();
+                },
+            });
+
+
+            const dt = this.api();
+            const usersAll = dt.column(5).data().toArray();
+            const users = Array.from(new Set(usersAll.flat()));
+            const usersSelect = $('#usersSelect').select2({
+                minimumResultsForSearch: 20,
+                placeholder: "Filter users",
+                allowClear: false
+            });
+            users.forEach(user => usersSelect.append(new Option(user, user, false, false)));
+            usersSelect.trigger('change');
+            usersSelect.on('change', searchUsers);
+
+            const recipientsAll = dt.column(6).data().toArray();
+            const recipients = Array.from(new Set(recipientsAll.flat()));
+            const recipientSelect = $('#recipientSelect').select2({
+                minimumResultsForSearch: 20,
+                placeholder: "Filter recipients",
+                allowClear: false,
+                templateResult: function(recipient) {
+                    return $(`<span>${recipient.text}</span>`);
+                },
+                templateSelection: function(recipient) {
+                    return $(
+                        `<span>${recipient.text.match('\<strong\>(.*)\<\/strong\>')[1]}</span>`
                     );
                 }
-                return result.join('<br>');
-            }
-            else if (type === 'filter') {
-                return users.join('&&&&&');
-            } else {
-                return users;
-            }
-        },
-    }, {
-        data: 'recipients',
-    }, {
-        data: 'status',
-        visible: false
-    }],
-    responsive: false,
-    order: [
-        [1, 'desc']
-    ],
-    initComplete: function() {
-        console.timeLog('dt', 'dt init complete');
-        $('.timePicker').flatpickr({
-            enableTime: true,
-            dateFormat: "U",
-            altInput: true,
-            altFormat: "m/d/Y G:i K",
-            onChange: function(selectedDates, dateStr, instance) {
-                const dt = $('#alertLogTable').DataTable();
+            });
+            recipients.forEach(recipient => recipientSelect.append(new Option(recipient, recipient,
+                false, false)));
+            recipientSelect.trigger('change');
+            recipientSelect.on('change', function() {
                 dt.draw();
-            },
-        });
+            });
 
+            const alertTypeSelect = $('#alertTypeSelect').select2({
+                minimumResultsForSearch: 20,
+                placeholder: "Filter alert types",
+                allowClear: false
+            });
+            alertTypeSelect.on('change', function() {
+                dt.draw();
+            });
 
-        const dt = this.api();
-        const usersAll = dt.column(5).data().toArray();
-        const users = Array.from(new Set(usersAll.flat()));
-        const usersSelect = $('#usersSelect').select2({
-            minimumResultsForSearch: 20,
-            placeholder: "Filter users",
-            allowClear: false
-        });
-        users.forEach(user => usersSelect.append(new Option(user, user, false, false)));
-        usersSelect.trigger('change');
-        usersSelect.on('change', searchUsers);
+            const notificationTypeSelect = $('#notificationTypeSelect').select2({
+                minimumResultsForSearch: 20,
+                placeholder: "Filter notification types",
+                allowClear: false
+            });
+            notificationTypeSelect.on('change', function() {
+                dt.draw();
+            });
 
-        const recipientsAll = dt.column(6).data().toArray();
-        const recipients = Array.from(new Set(recipientsAll.flat()));
-        const recipientSelect = $('#recipientSelect').select2({
-            minimumResultsForSearch: 20,
-            placeholder: "Filter recipients",
-            allowClear: false,
-            templateResult: function(recipient) {
-                return $(`<span>${recipient.text}</span>`);
-            },
-            templateSelection: function(recipient) {
-                return $(
-                    `<span>${recipient.text.match('\<strong\>(.*)\<\/strong\>')[1]}</span>`
-                );
-            }
-        });
-        recipients.forEach(recipient => recipientSelect.append(new Option(recipient, recipient,
-            false, false)));
-        recipientSelect.trigger('change');
-        recipientSelect.on('change', function() {
-            dt.draw();
-        });
-
-        const alertTypeSelect = $('#alertTypeSelect').select2({
-            minimumResultsForSearch: 20,
-            placeholder: "Filter alert types",
-            allowClear: false
-        });
-        alertTypeSelect.on('change', function() {
-            dt.draw();
-        });
-
-        const notificationTypeSelect = $('#notificationTypeSelect').select2({
-            minimumResultsForSearch: 20,
-            placeholder: "Filter notification types",
-            allowClear: false
-        });
-        notificationTypeSelect.on('change', function() {
-            dt.draw();
-        });
-
-        $('.alertLogWrapper').show();
-        $('table#alertLogTable select').val(null).trigger('change');
-        dt.columns.adjust();
-        console.timeEnd('dt');
-        console.log(performance.now());
-    },
-    lengthMenu: [
-        [10, 25, 50, 100, -1],
-        [10, 25, 50, 100, "All"]
-    ],
-    language: {
-        search: "_INPUT_",
-        searchPlaceholder: "Search Alerts...",
-        search: "_INPUT_",
-        infoFiltered: " - filtered from _MAX_ total alerts",
-        emptyTable: "No alerts found in this project",
-        info: "Showing _START_ to _END_ of _TOTAL_ alerts",
-        infoEmpty: "Showing 0 to 0 of 0 alerts",
-        lengthMenu: "Show _MENU_ alerts",
-        loadingRecords: "Loading...",
-        zeroRecords: "No matching alerts found"
-    }
-});
+            $('.alertLogWrapper').show();
+            $('table#alertLogTable select').val(null).trigger('change');
+            dt.columns.adjust();
+            console.timeEnd('dt');
+            console.log(performance.now());
+        },
+        lengthMenu: [
+            [10, 25, 50, 100, -1],
+            [10, 25, 50, 100, "All"]
+        ],
+        language: {
+            search: "_INPUT_",
+            searchPlaceholder: "Search Alerts...",
+            search: "_INPUT_",
+            infoFiltered: " - filtered from _MAX_ total alerts",
+            emptyTable: "No alerts found in this project",
+            info: "Showing _START_ to _END_ of _TOTAL_ alerts",
+            infoEmpty: "Showing 0 to 0 of 0 alerts",
+            lengthMenu: "Show _MENU_ alerts",
+            loadingRecords: "Loading...",
+            zeroRecords: "No matching alerts found"
+        }
+    });
 });
 </script>

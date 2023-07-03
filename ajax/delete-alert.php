@@ -4,6 +4,8 @@ namespace YaleREDCap\SecurityAccessGroups;
 
 /** @var SecurityAccessGroups $module */
 
+require_once $module->framework->getSafePath('classes/Alerts.php');
+
 if ( !$module->framework->getUser()->isSuperUser() ) {
     http_response_code(401);
     exit;
