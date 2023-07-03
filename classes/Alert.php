@@ -23,17 +23,20 @@ class Alert
         $this->module->framework->log('Sending alerts', [
             "alertType"                                         => $alertType,
             "displayFromName"                                   => $this->getDisplayFromName(),
-            "displayFromName-userExpiration-UserRightsHolders"  => $this->getDisplayFromNameUserExpirationUserRightsHolders(),
+            "displayFromName-userExpiration-UserRightsHolders"  =>
+            $this->getDisplayFromNameUserExpirationUserRightsHolders(),
             "fromEmail"                                         => $this->getFromEmail(),
             "fromEmail-userExpiration-UserRightsHolders"        => $this->getFromEmailUserExpirationUserRightsHolders(),
             "emailSubject"                                      => $this->getEmailSubject(),
-            "emailSubject-userExpiration-UserRightsHolders"     => $this->getEmailSubjectUserExpirationUserRightsHolders(),
+            "emailSubject-userExpiration-UserRightsHolders"     =>
+            $this->getEmailSubjectUserExpirationUserRightsHolders(),
             "emailBody"                                         => $this->getEmailBody(),
             "usersEmailBody"                                    => $this->getUsersEmailBody(),
             "userRightsHoldersEmailBody"                        => $this->getUserRightsHoldersEmailBody(),
             "sendReminder"                                      => $this->getSendReminder(),
             "sendUserNotification"                              => $this->getSendUserNotification(),
-            "sendNotification-userExpiration-UserRightsHolders" => $this->getSendNotificationUserExpirationUserRightsHolders(),
+            "sendNotification-userExpiration-UserRightsHolders" =>
+            $this->getSendNotificationUserExpirationUserRightsHolders(),
             "delayDays"                                         => $this->getDelayDays(),
             "delayDays-expiration"                              => $this->getDelayDaysExpiration(),
             "recipients"                                        => json_encode($this->getRecipients()),
@@ -44,9 +47,9 @@ class Alert
 
         if ( $alertType === "users" ) {
             $this->sendUsersAlertsAndScheduleReminders();
-        } else if ( $alertType === "userRightsHolders" ) {
+        } elseif ( $alertType === "userRightsHolders" ) {
             $this->sendUserRightsHoldersAlertsAndScheduleReminders();
-        } else if ( $alertType === "expiration" ) {
+        } elseif ( $alertType === "expiration" ) {
             $this->sendUserExpirationAlertsAndScheduleReminders();
         }
     }
@@ -61,7 +64,7 @@ class Alert
                 $subjectReplacer = new TextReplacer($this->module, $this->getEmailSubject(), $user);
                 $subject         = $subjectReplacer->replaceText();
 
-                $email_success = \REDCap::email(
+                $emailSuccess = \REDCap::email(
                     $user['sag_user_email'],
                     $this->getFromEmail(),
                     $subject,
@@ -71,11 +74,11 @@ class Alert
                     $this->getDisplayFromName()
                 );
 
-                if ( !$email_success ) {
-                    throw (new \Exception("Error sending email to " . $user['sag_user_email']));
+                if ( !$emailSuccess ) {
+                    throw new \Exception("Error sending email to " . $user['sag_user_email']);
                 }
 
-                $alert_log_id = $this->module->framework->log('ALERT', [
+                $alertLogId = $this->module->framework->log('ALERT', [
                     "user"             => json_encode($user),
                     "recipient"        => $user['sag_user'],
                     "recipientAddress" => $user['sag_user_email'],
@@ -88,9 +91,17 @@ class Alert
                 ]);
 
                 if ( $this->getSendReminder() ) {
-                    $reminderSubjectReplacer = new TextReplacer($this->module, $this->getReminderSubject(), $user);
+                    $reminderSubjectReplacer = new TextReplacer(
+                        $this->module,
+                        $this->getReminderSubject(),
+                        $user
+                    );
                     $reminderSubject         = $reminderSubjectReplacer->replaceText();
-                    $reminderBodyReplacer    = new TextReplacer($this->module, $this->getReminderBody(), $user);
+                    $reminderBodyReplacer    = new TextReplacer(
+                        $this->module,
+                        $this->getReminderBody(),
+                        $user
+                    );
                     $reminderBody            = $reminderBodyReplacer->replaceText();
                     $reminderDate            = strtotime("+" . $this->getDelayDays() . " days");
 
@@ -104,14 +115,17 @@ class Alert
                         "emailSubject"     => $reminderSubject,
                         "emailBody"        => $reminderBody,
                         "reminderDate"     => $reminderDate,
-                        "alert_log_id"     => $alert_log_id,
+                        "alert_log_id"     => $alertLogId,
                         "status"           => "scheduled",
                         "sentTimestamp"    => -1
                     ]);
                 }
             }
         } catch ( \Throwable $e ) {
-            $this->module->framework->log("Error sending users alert", [ 'error' => $e->getMessage() ]);
+            $this->module->framework->log(
+                "Error sending users alert",
+                [ 'error' => $e->getMessage() ]
+            );
         }
     }
 
@@ -123,14 +137,22 @@ class Alert
             foreach ( $recipients as $recipient ) {
                 $recipientEmail = $this->module->framework->getUser($recipient)->getEmail();
 
-                $bodyReplacer    = new TextReplacer($this->module, $this->getEmailBody(), $userData);
+                $bodyReplacer    = new TextReplacer(
+                    $this->module,
+                    $this->getEmailBody(),
+                    $userData
+                );
                 $body            = $bodyReplacer->replaceText();
-                $subjectReplacer = new TextReplacer($this->module, $this->getEmailSubject(), $userData);
+                $subjectReplacer = new TextReplacer(
+                    $this->module,
+                    $this->getEmailSubject(),
+                    $userData
+                );
                 $subject         = $subjectReplacer->replaceText();
 
 
 
-                $email_success = \REDCap::email(
+                $emailSuccess = \REDCap::email(
                     $recipientEmail,
                     $this->getFromEmail(),
                     $subject,
@@ -140,11 +162,11 @@ class Alert
                     $this->getDisplayFromName()
                 );
 
-                if ( !$email_success ) {
-                    throw (new \Exception("Error sending email to " . $recipientEmail));
+                if ( !$emailSuccess ) {
+                    throw new \Exception("Error sending email to " . $recipientEmail);
                 }
 
-                $alert_log_id = $this->module->framework->log('ALERT', [
+                $alertLogId = $this->module->framework->log('ALERT', [
                     "recipient"        => $recipient,
                     "recipientAddress" => $recipientEmail,
                     "users"            => json_encode($this->getUsers()),
@@ -157,11 +179,21 @@ class Alert
                 ]);
 
                 if ( $this->getSendReminder() ) {
-                    $reminderSubjectReplacer = new TextReplacer($this->module, $this->getReminderSubject(), $userData);
+                    $reminderSubjectReplacer = new TextReplacer(
+                        $this->module,
+                        $this->getReminderSubject(),
+                        $userData
+                    );
                     $reminderSubject         = $reminderSubjectReplacer->replaceText();
-                    $reminderBodyReplacer    = new TextReplacer($this->module, $this->getReminderBody(), $userData);
+                    $reminderBodyReplacer    = new TextReplacer(
+                        $this->module,
+                        $this->getReminderBody(),
+                        $userData
+                    );
                     $reminderBody            = $reminderBodyReplacer->replaceText();
-                    $reminderDate            = strtotime("+" . $this->getDelayDaysUserRightsHolders() . " days");
+                    $reminderDate            = strtotime(
+                        "+" . $this->getDelayDaysUserRightsHolders() . " days"
+                    );
 
                     $this->module->framework->log('REMINDER', [
                         "recipient"        => $recipient,
@@ -173,14 +205,17 @@ class Alert
                         "emailSubject"     => $reminderSubject,
                         "emailBody"        => $reminderBody,
                         "reminderDate"     => $reminderDate,
-                        "alert_log_id"     => $alert_log_id,
+                        "alert_log_id"     => $alertLogId,
                         "status"           => "scheduled",
                         "sentTimestamp"    => -1
                     ]);
                 }
             }
         } catch ( \Throwable $e ) {
-            $this->module->framework->log("Error sending user rights holder alert", [ 'error' => $e->getMessage() ]);
+            $this->module->framework->log(
+                "Error sending user rights holder alert",
+                [ 'error' => $e->getMessage() ]
+            );
         }
     }
 
@@ -201,13 +236,21 @@ class Alert
             $users = $this->getUsers();
             foreach ( $users as $user ) {
                 $user['sag_expiration_date'] = $this->getSagExpirationDate();
-                $bodyReplacer                = new TextReplacer($this->module, $this->getUsersEmailBody(), $user);
+                $bodyReplacer                = new TextReplacer(
+                    $this->module,
+                    $this->getUsersEmailBody(),
+                    $user
+                );
                 $body                        = $bodyReplacer->replaceText();
                 $this->module->log('body', [ 'body' => $body ]);
-                $subjectReplacer = new TextReplacer($this->module, $this->getEmailSubject(), $user);
+                $subjectReplacer = new TextReplacer(
+                    $this->module,
+                    $this->getEmailSubject(),
+                    $user
+                );
                 $subject         = $subjectReplacer->replaceText();
 
-                $email_success = \REDCap::email(
+                $emailSuccess = \REDCap::email(
                     $user['sag_user_email'],
                     $this->getFromEmail(),
                     $subject,
@@ -217,8 +260,8 @@ class Alert
                     $this->getDisplayFromName()
                 );
 
-                if ( !$email_success ) {
-                    throw (new \Exception("Error sending expiration email to " . $user['sag_user_email']));
+                if ( !$emailSuccess ) {
+                    throw new \Exception("Error sending expiration email to " . $user['sag_user_email']);
                 }
 
                 $this->module->framework->log('ALERT', [
@@ -236,7 +279,10 @@ class Alert
 
             }
         } catch ( \Throwable $e ) {
-            $this->module->framework->log("Error sending expiration users alert", [ 'error' => $e->getMessage() ]);
+            $this->module->framework->log(
+                "Error sending expiration users alert",
+                [ 'error' => $e->getMessage() ]
+            );
         }
 
     }
@@ -250,12 +296,20 @@ class Alert
             foreach ( $recipients as $recipient ) {
                 $recipientEmail = $this->module->framework->getUser($recipient)->getEmail();
 
-                $bodyReplacer    = new TextReplacer($this->module, $this->getUserRightsHoldersEmailBody(), $userData);
+                $bodyReplacer    = new TextReplacer(
+                    $this->module,
+                    $this->getUserRightsHoldersEmailBody(),
+                    $userData
+                );
                 $body            = $bodyReplacer->replaceText();
-                $subjectReplacer = new TextReplacer($this->module, $this->getEmailSubjectUserExpirationUserRightsHolders(), $userData);
+                $subjectReplacer = new TextReplacer(
+                    $this->module,
+                    $this->getEmailSubjectUserExpirationUserRightsHolders(),
+                    $userData
+                );
                 $subject         = $subjectReplacer->replaceText();
 
-                $email_success = \REDCap::email(
+                $emailSuccess = \REDCap::email(
                     $recipientEmail,
                     $this->getFromEmailUserExpirationUserRightsHolders(),
                     $subject,
@@ -265,8 +319,8 @@ class Alert
                     $this->getDisplayFromNameUserExpirationUserRightsHolders()
                 );
 
-                if ( !$email_success ) {
-                    throw (new \Exception("Error sending expiration email to " . $recipientEmail));
+                if ( !$emailSuccess ) {
+                    throw new \Exception("Error sending expiration email to " . $recipientEmail);
                 }
 
                 $this->module->framework->log('ALERT', [
@@ -283,7 +337,10 @@ class Alert
                 ]);
             }
         } catch ( \Throwable $e ) {
-            $this->module->framework->log("Error sending user expiration alert to user rights holder", [ 'error' => $e->getMessage() ]);
+            $this->module->framework->log(
+                "Error sending user expiration alert to user rights holder",
+                [ 'error' => $e->getMessage() ]
+            );
         }
     }
 
