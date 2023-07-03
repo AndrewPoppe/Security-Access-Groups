@@ -236,7 +236,6 @@ table.roleTable tbody td:last-child:not(.dtfc-fixed-left) {
     border: none;
     padding: 0;
     opacity: 1;
-    border: none;
     box-shadow: none;
 }
 
