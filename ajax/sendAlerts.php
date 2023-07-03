@@ -3,8 +3,7 @@
 namespace YaleREDCap\SecurityAccessGroups;
 
 /** @var SecurityAccessGroups $module */
-
-require_once $module->framework->getSafePath("classes/Alert.php");
+use YaleREDCap\SecurityAccessGroups\Alert;
 
 if ( $_SERVER["REQUEST_METHOD"] !== "POST" ) {
     http_response_code(405);

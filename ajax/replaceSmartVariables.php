@@ -4,8 +4,6 @@ namespace YaleREDCap\SecurityAccessGroups;
 
 /** @var SecurityAccessGroups $module */
 
-require_once $module->framework->getSafePath("classes/TextReplacer.php");
-
 use YaleREDCap\SecurityAccessGroups\TextReplacer;
 
 if ( $_SERVER["REQUEST_METHOD"] !== "POST" ) {

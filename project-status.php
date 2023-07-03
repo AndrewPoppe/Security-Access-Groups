@@ -4,6 +4,8 @@ namespace YaleREDCap\SecurityAccessGroups;
 
 /** @var SecurityAccessGroups $module */
 
+use YaleREDCap\SecurityAccessGroups\Alerts;
+
 if ( !$module->framework->getUser()->isSuperUser() ) {
     http_response_code(401);
     exit;
@@ -1027,7 +1029,6 @@ if ( !$module->framework->getUser()->isSuperUser() ) {
     </script>
 </div>
 <?php
-require_once "classes/Alerts.php";
 $Alerts = new Alerts($module);
 $Alerts->getUserEmailModal($project_id, $adminUsername);
 $Alerts->getUserRightsHoldersEmailModal($project_id, $adminUsername);

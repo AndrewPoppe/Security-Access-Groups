@@ -2,9 +2,8 @@
 
 namespace YaleREDCap\SecurityAccessGroups;
 
-require_once "classes/APIHandler.php";
-require_once "classes/Alerts.php";
-
+use YaleREDCap\SecurityAccessGroups\APIHandler;
+use YaleREDCap\SecurityAccessGroups\Alerts;
 use ExternalModules\AbstractExternalModule;
 use ExternalModules\Framework;
 
