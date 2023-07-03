@@ -1174,9 +1174,12 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                     className: '',
                     data: function(row, type, set, meta) {
                         if (type === 'display') {
+                            const iclass =
+                                "fa-solid  fa-grip-dots-vertical mr-2 dt-rowReorder-grab text-secondary";
+                            const aclass = "SUR_roleLink text-primary";
                             return `<div style="display: flex; align-items: center; white-space: nowrap;">` +
-                                `<i class="fa-solid  fa-grip-dots-vertical mr-2 dt-rowReorder-grab text-secondary"></i>` +
-                                `<a class="SUR_roleLink text-primary" onclick="editRole('${row.role_id}')">${row.role_name}</a>` +
+                                `<i class="${iclass}"></i>` +
+                                `<a class="${aclass}" onclick="editRole('${row.role_id}')">${row.role_name}</a>` +
                                 `</div>`;
                         } else {
                             return row.role_name;
