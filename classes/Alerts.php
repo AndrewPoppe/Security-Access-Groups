@@ -79,12 +79,19 @@ class Alerts
                                 </div>
                                 <div class="form-group row mb-0" style="font-size: small;">
                                     <div class="col ml-2">
-                                        <span><strong>You can use the following placeholders to insert information into
-                                                your email subject and body:</strong></span>
                                         <table>
-                                            <?php foreach ( $this->getPlaceholdersUsers() as $placeholder => $description ) {
-                                                        echo "<tr><td><code class='dataPlaceholder'>[$placeholder]</code></td><td>$description</td></tr>";
-                                                    } ?>
+                                            <thead>
+                                                <tr>
+                                                    <th colspan=2><span><strong>You can use the following placeholders
+                                                                to insert information into
+                                                                your email subject and body:</strong></span></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <?php foreach ( $this->getPlaceholdersUsers() as $placeholder => $description ) {
+                                                            echo "<tr><td><code class='dataPlaceholder'>[$placeholder]</code></td><td>$description</td></tr>";
+                                                        } ?>
+                                            </tbody>
                                         </table>
                                         <p><span>You can also use <button
                                                     class="btn btn-xs btn-rcgreen btn-rcgreen-light"
@@ -154,12 +161,20 @@ class Alerts
                                     </div>
                                     <div class="form-group row" style="font-size: small;">
                                         <div class="col ml-2">
-                                            <span><strong>You can use the following placeholders to insert information
-                                                    into your email subject and body:</strong></span>
                                             <table>
-                                                <?php foreach ( $this->getPlaceholdersUsers() as $placeholder => $description ) {
-                                                            echo "<tr><td><code class='dataPlaceholder'>[$placeholder]</code></td><td>$description</td></tr>";
-                                                        } ?>
+                                                <thead>
+                                                    <tr>
+                                                        <th colspan=2><span><strong>You can use the following
+                                                                    placeholders
+                                                                    to insert information into
+                                                                    your email subject and body:</strong></span></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <?php foreach ( $this->getPlaceholdersUsers() as $placeholder => $description ) {
+                                                                echo "<tr><td><code class='dataPlaceholder'>[$placeholder]</code></td><td>$description</td></tr>";
+                                                            } ?>
+                                                </tbody>
                                             </table>
                                             <p><span>You can also use <button
                                                         class="btn btn-xs btn-rcgreen btn-rcgreen-light"
@@ -260,12 +275,21 @@ class Alerts
                                         </div>
                                         <div class="form-group row" style="font-size: small;">
                                             <div class="col ml-2">
-                                                <span><strong>You can use the following placeholders to insert
-                                                        information into your email subject and body:</strong></span>
                                                 <table>
-                                                    <?php foreach ( $this->getPlaceholdersUserRightsHolders() as $placeholder => $description ) {
-                                                                echo "<tr><td><code class='dataPlaceholder'>[$placeholder]</code></td><td>$description</td></tr>";
-                                                            } ?>
+                                                    <thead>
+                                                        <tr>
+                                                            <th colspan=2><span><strong>You can use the following
+                                                                        placeholders
+                                                                        to insert information into
+                                                                        your email subject and body:</strong></span>
+                                                            </th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <?php foreach ( $this->getPlaceholdersUserRightsHolders() as $placeholder => $description ) {
+                                                                    echo "<tr><td><code class='dataPlaceholder'>[$placeholder]</code></td><td>$description</td></tr>";
+                                                                } ?>
+                                                    </tbody>
                                                 </table>
                                                 <p><span>You can also use <button
                                                             class="btn btn-xs btn-rcgreen btn-rcgreen-light"
@@ -343,13 +367,21 @@ class Alerts
                                             </div>
                                             <div class="form-group row" style="font-size: small;">
                                                 <div class="col ml-2">
-                                                    <span><strong>You can use the following placeholders to insert
-                                                            information into your email subject and
-                                                            body:</strong></span>
                                                     <table>
-                                                        <?php foreach ( $this->getPlaceholdersUserRightsHolders() as $placeholder => $description ) {
-                                                                    echo "<tr><td><code class='dataPlaceholder'>[$placeholder]</code></td><td>$description</td></tr>";
-                                                                } ?>
+                                                        <thead>
+                                                            <tr>
+                                                                <th colspan=2><span><strong>You can use the following
+                                                                            placeholders
+                                                                            to insert information into
+                                                                            your email subject and body:</strong></span>
+                                                                </th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <?php foreach ( $this->getPlaceholdersUserRightsHolders() as $placeholder => $description ) {
+                                                                        echo "<tr><td><code class='dataPlaceholder'>[$placeholder]</code></td><td>$description</td></tr>";
+                                                                    } ?>
+                                                        </tbody>
                                                     </table>
                                                     <p><span>You can also use <button
                                                                 class="btn btn-xs btn-rcgreen btn-rcgreen-light"
@@ -556,12 +588,20 @@ class Alerts
                                     </div>
                                     <div class="form-group row mt-2" style="font-size: small;">
                                         <div class="col mx-3 p-2" style="background-color:#FFFFFF80;">
-                                            <span><strong>You can use the following placeholders to insert information
-                                                    into your email subject and body:</strong></span>
                                             <table>
-                                                <?php foreach ( $this->getPlaceholdersUsers(true) as $placeholder => $description ) {
-                                                            echo "<tr><td><code class='dataPlaceholder'>[$placeholder]</code></td><td>$description</td></tr>";
-                                                        } ?>
+                                                <thead>
+                                                    <tr>
+                                                        <th colspan=2><span><strong>You can use the following
+                                                                    placeholders
+                                                                    to insert information into
+                                                                    your email subject and body:</strong></span></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <?php foreach ( $this->getPlaceholdersUsers(true) as $placeholder => $description ) {
+                                                                echo "<tr><td><code class='dataPlaceholder'>[$placeholder]</code></td><td>$description</td></tr>";
+                                                            } ?>
+                                                </tbody>
                                             </table>
                                             <p><span>You can also use <button
                                                         class="btn btn-xs btn-rcgreen btn-rcgreen-light"
@@ -644,12 +684,20 @@ class Alerts
                                     </div>
                                     <div class="form-group row mt-2" style="font-size: small;">
                                         <div class="col mx-3 p-2" style="background-color:#FFFFFFA0;">
-                                            <span><strong>You can use the following placeholders to insert information
-                                                    into your email subject and body:</strong></span>
                                             <table>
-                                                <?php foreach ( $this->getPlaceholdersUserRightsHolders(true) as $placeholder => $description ) {
-                                                            echo "<tr><td><code class='dataPlaceholder'>[$placeholder]</code></td><td>$description</td></tr>";
-                                                        } ?>
+                                                <thead>
+                                                    <tr>
+                                                        <th colspan=2><span><strong>You can use the following
+                                                                    placeholders
+                                                                    to insert information into
+                                                                    your email subject and body:</strong></span></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <?php foreach ( $this->getPlaceholdersUserRightsHolders(true) as $placeholder => $description ) {
+                                                                echo "<tr><td><code class='dataPlaceholder'>[$placeholder]</code></td><td>$description</td></tr>";
+                                                            } ?>
+                                                </tbody>
                                             </table>
                                             <p><span>You can also use <button
                                                         class="btn btn-xs btn-rcgreen btn-rcgreen-light"
