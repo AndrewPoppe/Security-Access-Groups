@@ -14,7 +14,7 @@ class APIHandler
     private $project_id;
     private $user;
     private $action;
-    function __construct(SecurityAccessGroups $module, array $post)
+    public function __construct(SecurityAccessGroups $module, array $post)
     {
         $this->module = $module;
         $this->post   = $post;
@@ -214,7 +214,7 @@ class APIHandler
         }
     }
 
-    function getApiRequestInfo()
+    public function getApiRequestInfo()
     {
         return [ $this->action, $this->project_id, $this->user, $this->original_rights ];
     }
