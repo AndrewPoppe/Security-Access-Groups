@@ -31,7 +31,7 @@ class CsvSAGImport
 
     public function parseCsvString()
     {
-        $lineEnding = str_contains($this->csvString, "\r\n") ? "\r\n" : "\n";
+        $lineEnding = strpos($this->csvString, "\r\n") !== false ? "\r\n" : "\n";
         $Data       = str_getcsv($this->csvString, $lineEnding);
         foreach ( $Data as &$Row ) $Row = str_getcsv($Row, ",");
         $this->csvContents = $Data;

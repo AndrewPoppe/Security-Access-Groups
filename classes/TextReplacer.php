@@ -73,7 +73,7 @@ class TextReplacer
     private function replace_sag_user($text)
     {
         $placeholder = '[sag-user]';
-        if ( !str_contains($text, $placeholder) ) {
+        if ( strpos($text, $placeholder) === false ) {
             return $text;
         }
         $username = $this->data["sag_user"] ?? "";
@@ -83,7 +83,7 @@ class TextReplacer
     private function replace_sag_user_fullname($text)
     {
         $placeholder = '[sag-user-fullname]';
-        if ( !str_contains($text, $placeholder) ) {
+        if ( strpos($text, $placeholder) === false ) {
             return $text;
         }
         $fullname = $this->data["sag_user_fullname"] ?? "";
@@ -93,7 +93,7 @@ class TextReplacer
     private function replace_sag_user_email($text)
     {
         $placeholder = '[sag-user-email]';
-        if ( !str_contains($text, $placeholder) ) {
+        if ( strpos($text, $placeholder) === false ) {
             return $text;
         }
         $email             = $this->data["sag_user_email"] ?? "";
@@ -104,7 +104,7 @@ class TextReplacer
     private function replace_sag_rights($text)
     {
         $placeholder = '[sag-rights]';
-        if ( !str_contains($text, $placeholder) ) {
+        if ( strpos($text, $placeholder) === false ) {
             return $text;
         }
         $rights             = $this->data["sag_user_rights"] ?? [];
@@ -115,7 +115,7 @@ class TextReplacer
     private function replace_sag_project_title($text)
     {
         $placeholder = '[sag-project-title]';
-        if ( !str_contains($text, $placeholder) ) {
+        if ( strpos($text, $placeholder) === false ) {
             return $text;
         }
         $title = $this->module->getProject()->getTitle() ?? "";
@@ -125,7 +125,7 @@ class TextReplacer
     private function replace_sag_users($text)
     {
         $placeholder = '[sag-users]';
-        if ( !str_contains($text, $placeholder) ) {
+        if ( strpos($text, $placeholder) === false ) {
             return $text;
         }
         $users             = $this->data["sag_users"] ?? [];
@@ -136,7 +136,7 @@ class TextReplacer
     private function replace_sag_user_fullnames($text)
     {
         $placeholder = '[sag-user-fullnames]';
-        if ( !str_contains($text, $placeholder) ) {
+        if ( strpos($text, $placeholder) === false ) {
             return $text;
         }
         $fullnames             = $this->data["sag_fullnames"] ?? [];
@@ -147,7 +147,7 @@ class TextReplacer
     private function replace_sag_user_emails($text)
     {
         $placeholder = '[sag-user-emails]';
-        if ( !str_contains($text, $placeholder) ) {
+        if ( strpos($text, $placeholder) === false ) {
             return $text;
         }
 
@@ -162,7 +162,7 @@ class TextReplacer
     private function replace_sag_users_table($text)
     {
         $placeholder = '[sag-users-table]';
-        if ( !str_contains($text, $placeholder) ) {
+        if ( strpos($text, $placeholder) === false ) {
             return $text;
         }
 
@@ -173,15 +173,14 @@ class TextReplacer
             return "<a href='mailto:$email'>$email</a>";
         }, $emails);
 
-        $table = "<table class='sag_users' style='border: 1px solid #666; border-collapse: collapse; width: 100%;'><thead><tr><th style='text-align: left;padding: 8px;border: 1px solid #666;background-color: #f2f2f2;'>Name</th><th style='text-align: left;padding: 8px;border: 1px solid #666;background-color: #f2f2f2;'>REDCap Username</th><th style='text-align: left;padding: 8px;border: 1px solid #666;background-color: #f2f2f2;'>Email Address</th><th style='text-align: left;padding: 8px;border: 1px solid #666;background-color: #f2f2f2;'><thead><tr><th>Name</th><th>REDCap Username</th><th>Email Address</th></tr></thead><tbody>";
+        $table = "<table class='sag_users' style='border: 1px solid #666; border-collapse: collapse; width: 100%;'><thead><tr><th style='text-align: left;padding: 8px;border: 1px solid #666;background-color: #f2f2f2;'>Name</th><th style='text-align: left;padding: 8px;border: 1px solid #666;background-color: #f2f2f2;'>REDCap Username</th><th style='text-align: left;padding: 8px;border: 1px solid #666;background-color: #f2f2f2;'>Email Address</th></tr></thead><tbody>";
         foreach ( $users as $index => $username ) {
-            $bg           = $index % 2 == 0 ? "transparent" : "#f2f2f2";
+            $bg       = $index % 2 == 0 ? "transparent" : "#f2f2f2";
             $fullname = $fullnames[$index] ?? "";
             $email    = $emails[$index] ?? "";
             $table .= "<tr style='background-color:" . $bg . ";'><td style='text-align: left;padding: 8px;border: 1px solid #666;'>$fullname</td><td style='text-align: left;padding: 8px;border: 1px solid #666;'>$username</td><td style='text-align: left;padding: 8px;border: 1px solid #666;'>$email</td></tr>";
         }
         $table .= "</tbody></table>";
-        //$table .= $this->getSagUsersTableCss();
 
         return str_replace($placeholder, $table, $text);
     }
@@ -189,7 +188,7 @@ class TextReplacer
     private function replace_sag_users_table_full($text)
     {
         $placeholder = '[sag-users-table-full]';
-        if ( !str_contains($text, $placeholder) ) {
+        if ( strpos($text, $placeholder) === false ) {
             return $text;
         }
 
@@ -211,7 +210,6 @@ class TextReplacer
             $table .= "<tr style='background-color:" . $bg . ";'><td style='text-align: left;padding: 8px;border: 1px solid #666;'>$fullname</td><td style='text-align: left;padding: 8px;border: 1px solid #666;'>$username</td><td style='text-align: left;padding: 8px;border: 1px solid #666;'>$email</td><td style='text-align: left;padding: 8px;border: 1px solid #666;'>$rights_list</td></tr>";
         }
         $table .= "</tbody></table>";
-        //$table .= $this->getSagUsersTableCss();
 
         return str_replace($placeholder, $table, $text);
     }
@@ -219,39 +217,10 @@ class TextReplacer
     private function replace_sag_expiration_date($text)
     {
         $placeholder = '[sag-expiration-date]';
-        if ( !str_contains($text, $placeholder) ) {
+        if ( strpos($text, $placeholder) === false ) {
             return $text;
         }
         $expiration_date = $this->data["sag_expiration_date"] ?? "";
         return str_replace($placeholder, $expiration_date, $text);
-    }
-
-    private function getSagUsersTableCss()
-    {
-        $style = <<<EOF
-        <style>
-            table.sag_users {
-                border: 1px solid #666;
-                border-collapse: collapse;
-                width: 100%;
-            }
-          
-            table.sag_users th,
-            table.sag_users td {
-                text-align: left;
-                padding: 8px;
-                border: 1px solid #666;
-            }
-          
-            table.sag_users th {
-                background-color: #f2f2f2;
-            }
-          
-            table.sag_users tr:nth-child(even) {
-                background-color: #f2f2f2;
-            }
-        </style>
-        EOF;
-        return $style;
     }
 }

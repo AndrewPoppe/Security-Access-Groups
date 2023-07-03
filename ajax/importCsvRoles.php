@@ -35,9 +35,3 @@ if ( filter_input(INPUT_POST, "confirm", FILTER_VALIDATE_BOOLEAN) ) {
 } else {
     echo $sagImport->getUpdateTable();
 }
-
-// $lineEnding = str_contains($CsvString, "\r\n") ? "\r\n" : "\n";
-// $Data       = str_getcsv($CsvString, $lineEnding);
-// foreach ( $Data as &$Row ) $Row = str_getcsv($Row, ",");
-
-// echo json_encode($Data);
