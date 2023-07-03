@@ -1382,74 +1382,108 @@ $(function() {
     public function getDefaultRights()
     {
         $allRights = $this->getAllRights();
-        if ( isset($allRights["data_export_tool"]) )
+        if ( isset($allRights["data_export_tool"]) ) {
             $allRights["data_export_tool"] = 2;
-        if ( isset($allRights["data_import_tool"]) )
+        }
+        if ( isset($allRights["data_import_tool"]) ) {
             $allRights["data_import_tool"] = 0;
-        if ( isset($allRights["data_comparison_tool"]) )
+        }
+        if ( isset($allRights["data_comparison_tool"]) ) {
             $allRights["data_comparison_tool"] = 0;
-        if ( isset($allRights["data_logging"]) )
+        }
+        if ( isset($allRights["data_logging"]) ) {
             $allRights["data_logging"] = 0;
-        if ( isset($allRights["file_repository"]) )
+        }
+        if ( isset($allRights["file_repository"]) ) {
             $allRights["file_repository"] = 1;
-        if ( isset($allRights["double_data"]) )
+        }
+        if ( isset($allRights["double_data"]) ) {
             $allRights["double_data"] = 0;
-        if ( isset($allRights["user_rights"]) )
+        }
+        if ( isset($allRights["user_rights"]) ) {
             $allRights["user_rights"] = 0;
-        if ( isset($allRights["lock_record"]) )
+        }
+        if ( isset($allRights["lock_record"]) ) {
             $allRights["lock_record"] = 0;
-        if ( isset($allRights["lock_record_multiform"]) )
+        }
+        if ( isset($allRights["lock_record_multiform"]) ) {
             $allRights["lock_record_multiform"] = 0;
-        if ( isset($allRights["lock_record_customize"]) )
+        }
+        if ( isset($allRights["lock_record_customize"]) ) {
             $allRights["lock_record_customize"] = 0;
-        if ( isset($allRights["data_access_groups"]) )
+        }
+        if ( isset($allRights["data_access_groups"]) ) {
             $allRights["data_access_groups"] = 0;
-        if ( isset($allRights["graphical"]) )
+        }
+        if ( isset($allRights["graphical"]) ) {
             $allRights["graphical"] = 1;
-        if ( isset($allRights["reports"]) )
+        }
+        if ( isset($allRights["reports"]) ) {
             $allRights["reports"] = 1;
-        if ( isset($allRights["design"]) )
+        }
+        if ( isset($allRights["design"]) ) {
             $allRights["design"] = 0;
-        if ( isset($allRights["alerts"]) )
+        }
+        if ( isset($allRights["alerts"]) ) {
             $allRights["alerts"] = 0;
-        if ( isset($allRights["dts"]) )
+        }
+        if ( isset($allRights["dts"]) ) {
             $allRights["dts"] = 0;
-        if ( isset($allRights["calendar"]) )
+        }
+        if ( isset($allRights["calendar"]) ) {
             $allRights["calendar"] = 1;
-        if ( isset($allRights["record_create"]) )
+        }
+        if ( isset($allRights["record_create"]) ) {
             $allRights["record_create"] = 1;
-        if ( isset($allRights["record_rename"]) )
+        }
+        if ( isset($allRights["record_rename"]) ) {
             $allRights["record_rename"] = 0;
-        if ( isset($allRights["record_delete"]) )
+        }
+        if ( isset($allRights["record_delete"]) ) {
             $allRights["record_delete"] = 0;
-        if ( isset($allRights["participants"]) )
+        }
+        if ( isset($allRights["participants"]) ) {
             $allRights["participants"] = 1;
-        if ( isset($allRights["data_quality_design"]) )
+        }
+        if ( isset($allRights["data_quality_design"]) ) {
             $allRights["data_quality_design"] = 0;
-        if ( isset($allRights["data_quality_execute"]) )
+        }
+        if ( isset($allRights["data_quality_execute"]) ) {
             $allRights["data_quality_execute"] = 0;
-        if ( isset($allRights["data_quality_resolution"]) )
+        }
+        if ( isset($allRights["data_quality_resolution"]) ) {
             $allRights["data_quality_resolution"] = 1;
-        if ( isset($allRights["api_export"]) )
+        }
+        if ( isset($allRights["api_export"]) ) {
             $allRights["api_export"] = 0;
-        if ( isset($allRights["api_import"]) )
+        }
+        if ( isset($allRights["api_import"]) ) {
             $allRights["api_import"] = 0;
-        if ( isset($allRights["mobile_app"]) )
+        }
+        if ( isset($allRights["mobile_app"]) ) {
             $allRights["mobile_app"] = 0;
-        if ( isset($allRights["mobile_app_download_data"]) )
+        }
+        if ( isset($allRights["mobile_app_download_data"]) ) {
             $allRights["mobile_app_download_data"] = 0;
-        if ( isset($allRights["random_setup"]) )
+        }
+        if ( isset($allRights["random_setup"]) ) {
             $allRights["random_setup"] = 0;
-        if ( isset($allRights["random_dashboard"]) )
+        }
+        if ( isset($allRights["random_dashboard"]) ) {
             $allRights["random_dashboard"] = 0;
-        if ( isset($allRights["random_perform"]) )
+        }
+        if ( isset($allRights["random_perform"]) ) {
             $allRights["random_perform"] = 1;
-        if ( isset($allRights["realtime_webservice_mapping"]) )
+        }
+        if ( isset($allRights["realtime_webservice_mapping"]) ) {
             $allRights["realtime_webservice_mapping"] = 0;
-        if ( isset($allRights["realtime_webservice_adjudicate"]) )
+        }
+        if ( isset($allRights["realtime_webservice_adjudicate"]) ) {
             $allRights["realtime_webservice_adjudicate"] = 0;
-        if ( isset($allRights["mycap_participants"]) )
+        }
+        if ( isset($allRights["mycap_participants"]) ) {
             $allRights["mycap_participants"] = 1;
+        }
         return $allRights;
     }
 
