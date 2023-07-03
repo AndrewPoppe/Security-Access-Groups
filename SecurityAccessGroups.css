@@ -325,7 +325,7 @@ a.dropdown-item {
 .fasl,
 .fasr,
 .fass {
-    font-family: "Font Awesome 6 Sharp" !important;
+    font-family: "Font Awesome 6 Sharp", sans-serif !important;
 }
 
 .fa-classic:not(.fa-sharp, .fasl, .fasr, .fass),
@@ -334,7 +334,7 @@ a.dropdown-item {
 .far:not(.fa-sharp, .fasl, .fasr, .fass),
 .fas:not(.fa-sharp, .fasl, .fasr, .fass),
 .fa:not(.fa-sharp, .fasl, .fasr, .fass) {
-    font-family: "Font Awesome 6 Pro" !important;
+    font-family: "Font Awesome 6 Pro", sans-serif !important;
 }
 
 .btn-close {
