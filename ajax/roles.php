@@ -8,6 +8,11 @@ if ( !$module->framework->getUser()->isSuperUser() ) {
     exit;
 }
 
+if ( $_SERVER["REQUEST_METHOD"] !== "POST" ) {
+    http_response_code(405);
+    exit;
+}
+
 $roles          = $module->getAllSystemRoles();
 $allPermissions = $module->getDisplayTextForRights(true);
 

@@ -9,7 +9,7 @@ require_once $module->framework->getSafePath("classes/TextReplacer.php");
 use YaleREDCap\SecurityAccessGroups\TextReplacer;
 
 if ( $_SERVER["REQUEST_METHOD"] !== "POST" ) {
-    http_response_code(400);
+    http_response_code(405);
     exit;
 }
 

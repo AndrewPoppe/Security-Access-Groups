@@ -446,7 +446,6 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                 select.closest('td').attr('data-role', newRole);
                 const rowIndex = dt.row(select.closest('tr')).index();
                 dt.cell(rowIndex, 4).data(newRole);
-                //dt.rows().invalidate().draw();
             })
             .fail(function() {
                 color = "#ff3300";
