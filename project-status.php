@@ -10,7 +10,8 @@ if ( !$module->framework->getUser()->isSuperUser() ) {
     http_response_code(401);
     exit;
 }
-
+$sendAlertsUrl            = $module->framework->getUrl('ajax/sendAlerts.php');
+$replaceSmartVariablesUrl = $module->framework->getUrl('ajax/replaceSmartVariables.php');
 ?>
 <link href="https://cdn.datatables.net/v/dt/dt-1.13.4/b-2.3.6/b-html5-2.3.6/sl-1.6.2/sr-1.2.2/datatables.min.css"
     rel="stylesheet" />
@@ -115,7 +116,8 @@ if ( !$module->framework->getUser()->isSuperUser() ) {
                     class="fa-regular fa-user-xmark fa-fw"></i> Expire User(s)</button>
             <div class="btn-group" role="group">
                 <i class="fa-regular fa-circle-info fa-lg align-self-center text-info" style="cursor:pointer;"
-                    onclick="Swal.fire({html: $('#infoContainer').html(), icon: 'info', showConfirmButton: false});"></i>
+                    onclick="Swal.fire({html: $('#infoContainer').html(), icon: 'info', showConfirmButton: false});">
+                </i>
             </div>
         </div>
         <div id="table-container" class="container mx-0 px-0" style="background-color: #fafafa;">
@@ -143,7 +145,8 @@ if ( !$module->framework->getUser()->isSuperUser() ) {
     $project_id    = $module->framework->getProjectId();
     $adminUsername = $module->framework->getUser()->getUsername();
 
-    $usersResult   = $module->framework->query('SELECT COUNT(username) FROM redcap_user_rights WHERE project_id = ?', [ $project_id ]);
+    $userSql       = 'SELECT COUNT(username) FROM redcap_user_rights WHERE project_id = ?';
+    $usersResult   = $module->framework->query($userSql, [ $project_id ]);
     $usersCount    = intval($usersResult->fetch_assoc()["COUNT(username)"]);
     $userThreshold = 5000;
     if ( $usersCount <= $userThreshold ) {
@@ -253,12 +256,14 @@ if ( !$module->framework->getUser()->isSuperUser() ) {
             `<?= $module->getSystemSetting('user-expiration-email-subject-template') ?? "" ?>`;
         $('#emailSubject-userExpiration').val(userEmailSubjectTemplate);
 
-        const userRightsHolderEmailBodyTemplate =
-            `<?= $module->getSystemSetting('user-expiration-user-rights-holders-reminder-email-body-template') ?? "" ?>`;
+        const userRightsHolderEmailBodyTemplate = `<?=
+                $module->getSystemSetting('user-expiration-user-rights-holders-reminder-email-body-template') ?? ""
+                ?>`;
         tinymce.get('emailBody-userExpiration-UserRightsHolders').setContent(userRightsHolderEmailBodyTemplate);
 
-        const userRightsHolderEmailSubjectTemplate =
-            `<?= $module->getSystemSetting('user-expiration-user-rights-holders-reminder-email-subject-template') ?? "" ?>`;
+        const userRightsHolderEmailSubjectTemplate = `<?=
+                $module->getSystemSetting('user-expiration-user-rights-holders-reminder-email-subject-template') ??
+                "" ?>`;
         $('#emailSubject-userExpiration-UserRightsHolders').val(userRightsHolderEmailSubjectTemplate);
     }
 
@@ -309,7 +314,7 @@ if ( !$module->framework->getUser()->isSuperUser() ) {
         emailFormContents.alertType = 'users';
         emailFormContents.users = getAlertUserInfo();
 
-        $.post("<?= $module->framework->getUrl('ajax/sendAlerts.php') ?>", emailFormContents)
+        $.post("<?= $sendAlertsUrl ?>", emailFormContents)
             .done(response => {
                 const multiple = emailFormContents.users.length > 1;
                 Toast.fire({
@@ -403,7 +408,7 @@ if ( !$module->framework->getUser()->isSuperUser() ) {
         emailFormContents.users = getAlertUserInfo();
         emailFormContents.recipients = getUserRightsHolderAlertRecipients('emailUserRightsHoldersForm');
 
-        $.post("<?= $module->framework->getUrl('ajax/sendAlerts.php') ?>", emailFormContents)
+        $.post("<?= $sendAlertsUrl ?>", emailFormContents)
             .done(response => {
                 const multiple = emailFormContents.recipients.length > 1;
                 Toast.fire({
@@ -507,7 +512,7 @@ if ( !$module->framework->getUser()->isSuperUser() ) {
                         window.location.reload();
                     });
             } else {
-                $.post("<?= $module->framework->getUrl('ajax/sendAlerts.php') ?>", formContents)
+                $.post("<?= $sendAlertsUrl ?>", formContents)
                     .done(response => {
                         Toast.fire({
                             title: 'The user' + (users.length > 1 ? "s were " : " was ") +
@@ -594,8 +599,9 @@ if ( !$module->framework->getUser()->isSuperUser() ) {
     }
 
     function getUserRightsHolderAlertRecipients(form_id) {
-        return $(`#${form_id} .user-rights-holder-selector input:checked`).toArray().map(el => $(el).closest('tr').data(
-            'user'));
+        return $(`#${form_id} .user-rights-holder-selector input:checked`).toArray().map(el => {
+            return $(el).closest('tr').data('user')
+        });
     }
 
     async function previewEmail($emailContainer) {
@@ -618,7 +624,7 @@ if ( !$module->framework->getUser()->isSuperUser() ) {
             'sag_user_rights': ['Project Design and Setup', 'User Rights', 'Create Records']
         };
 
-        return $.post('<?= $module->framework->getUrl('ajax/replaceSmartVariables.php') ?>', {
+        return $.post('<?= $replaceSmartVariablesUrl ?>', {
             text: text,
             data: data
         });
@@ -663,7 +669,7 @@ if ( !$module->framework->getUser()->isSuperUser() ) {
             ]
         };
 
-        return $.post('<?= $module->framework->getUrl('ajax/replaceSmartVariables.php') ?>', {
+        return $.post('<?= $replaceSmartVariablesUrl ?>', {
             text: text,
             data: data
         });
@@ -689,7 +695,7 @@ if ( !$module->framework->getUser()->isSuperUser() ) {
             'sag_user_rights': ['Project Design and Setup', 'User Rights', 'Create Records']
         };
 
-        return $.post('<?= $module->framework->getUrl('ajax/replaceSmartVariables.php') ?>', {
+        return $.post('<?= $replaceSmartVariablesUrl ?>', {
             text: text,
             data: data
         });
@@ -726,15 +732,18 @@ if ( !$module->framework->getUser()->isSuperUser() ) {
             plugins: [
                 'paste autolink lists link searchreplace code fullscreen table directionality hr'
             ],
-            toolbar1: 'formatselect | hr | bold italic underline link | fontsizeselect | alignleft aligncenter alignright alignjustify | undo redo',
-            toolbar2: 'bullist numlist | outdent indent | table tableprops tablecellprops | forecolor backcolor | searchreplace code removeformat | fullscreen',
+            toolbar1: 'formatselect | hr | bold italic underline link | fontsizeselect | ' +
+                'alignleft aligncenter alignright alignjustify | undo redo',
+            toolbar2: 'bullist numlist | outdent indent | table tableprops tablecellprops | ' +
+                'forecolor backcolor | searchreplace code removeformat | fullscreen',
             contextmenu: "copy paste | link inserttable | cell row column deletetable",
             content_css: "<?= $module->framework->getUrl('SecurityAccessGroups.css') ?>",
             relative_urls: false,
             convert_urls: false,
             convert_fonts_to_spans: true,
             extended_valid_elements: 'i[class]',
-            paste_word_valid_elements: "b,strong,i,em,h1,h2,u,p,ol,ul,li,a[href],span,color,font-size,font-color,font-family,mark,table,tr,td",
+            paste_word_valid_elements: "b,strong,i,em,h1,h2,u,p,ol,ul,li,a[href],span,color," +
+                "font-size,font-color,font-family,mark,table,tr,td",
             paste_retain_style_properties: "all",
             paste_postprocess: function(plugin, args) {
                 args.node.innerHTML = cleanHTML(args.node.innerHTML);
@@ -828,7 +837,12 @@ if ( !$module->framework->getUser()->isSuperUser() ) {
                         row.discrepant = hasDiscrepancy ? 'discrepant' :
                             'compliant';
                         row.inputVal =
-                            `<div data-discrepant="${hasDiscrepancy}" data-expired="${row.isExpired}">${hasDiscrepancy ? '<input style="display:block; margin: 0 auto;" type="checkbox" onchange="window.handleActionButtons()"></input>' : ""}</div>`;
+                            `<div data-discrepant="${hasDiscrepancy}" data-expired="${row.isExpired}">` +
+                            (hasDiscrepancy ?
+                                `<input style="display:block; margin: 0 auto;" 
+                                type="checkbox" onchange="window.handleActionButtons()"></input>` :
+                                "") +
+                            `</div>`;
                         if (type === 'filter') {
                             return [row.expired, row.discrepant].join(' ');
                         }
@@ -870,7 +884,9 @@ if ( !$module->framework->getUser()->isSuperUser() ) {
                     title: 'System Role',
                     data: function(row, type, set, meta) {
                         if (row.system_role) {
-                            return `<strong>${row.system_role_name}</strong> <span>(<span class="user-select-all">${row.system_role}</span>)</span>`;
+                            return `<strong>${row.system_role_name}</strong> <span>(<span class="user-select-all">
+                            ${row.system_role}
+                            </span>)</span>`;
                         } else {
                             return `<span class="text-secondary">None</span>`;
                         }
@@ -890,12 +906,15 @@ if ( !$module->framework->getUser()->isSuperUser() ) {
                             return `<a class="${row.isExpired ? "text-secondary" : "text-primary"}"
                                     style="text-decoration: underline; cursor: pointer;"
                                     data-toggle="modal"
-                                    data-target="#modal-${row.username}">${row.bad.length} ${row.bad.length > 1 ? " Rights" : " Right"}</a>
+                                    data-target="#modal-${row.username}">${row.bad.length} ${row.bad.length > 1 ?
+                                    " Rights" : " Right"}</a>
                                     <div class="modal fade" id="modal-${row.username}" tabindex="-1" aria-hidden="true">
                                         <div class="modal-dialog modal-dialog-scrollable">
                                             <div class="modal-content">
                                                 <div class="modal-header bg-dark text-light">
-                                                    <h5 class="m-0">Noncompliant Rights for ${row.name} (${row.username})</h5>
+                                                    <h5 class="m-0">
+                                                    Noncompliant Rights for ${row.name} (${row.username})
+                                                    </h5>
                                                 </div>
                                                 <div class="modal-body">
                                                     <div class="d-flex justify-content-center">
@@ -918,7 +937,9 @@ if ( !$module->framework->getUser()->isSuperUser() ) {
                     title: 'Project Role',
                     data: function(row, type, set, meta) {
                         if (row.project_role) {
-                            return `<strong>${row.project_role_name}</strong> <span>(<span class="user-select-all">${row.project_role}</span>)</span>`;
+                            return `<strong>${row.project_role_name}</strong> <span>(<span class="user-select-all">
+                            ${row.project_role}
+                            </span>)</span>`;
                         } else {
                             return `<span class="text-secondary">None</span>`;
                         }
