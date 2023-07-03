@@ -75,7 +75,7 @@ class Alert
                 );
 
                 if ( !$emailSuccess ) {
-                    throw new \RuntimeException("Error sending email to " . $user['sag_user_email']);
+                    throw new \Error("Error sending email to " . $user['sag_user_email']);
                 }
 
                 $alertLogId = $this->module->framework->log('ALERT', [
@@ -163,7 +163,7 @@ class Alert
                 );
 
                 if ( !$emailSuccess ) {
-                    throw new \RuntimeException("Error sending email to " . $recipientEmail);
+                    throw new \Error("Error sending email to " . $recipientEmail);
                 }
 
                 $alertLogId = $this->module->framework->log('ALERT', [
@@ -261,7 +261,7 @@ class Alert
                 );
 
                 if ( !$emailSuccess ) {
-                    throw new \RuntimeException("Error sending expiration email to " . $user['sag_user_email']);
+                    throw new \Error("Error sending expiration email to " . $user['sag_user_email']);
                 }
 
                 $this->module->framework->log('ALERT', [
@@ -320,7 +320,7 @@ class Alert
                 );
 
                 if ( !$emailSuccess ) {
-                    throw new \RuntimeException("Error sending expiration email to " . $recipientEmail);
+                    throw new \Error("Error sending expiration email to " . $recipientEmail);
                 }
 
                 $this->module->framework->log('ALERT', [
