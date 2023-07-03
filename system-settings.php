@@ -98,7 +98,11 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
             </thead>
             <tbody>
                 <?php foreach ( $roles as $index => $role ) {
-                        echo "<tr><td>example_user_" . (intval($index) + 1) . "</td><td>" . \REDCap::escapeHtml($role["role_id"]) . "</td></tr>";
+                        echo "<tr><td>example_user_",
+                            (intval($index) + 1),
+                            "</td><td>",
+                            \REDCap::escapeHtml($role["role_id"]),
+                            "</td></tr>";
                     } ?>
             </tbody>
         </table>
@@ -131,7 +135,8 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                                 Template</a></li>
                     </ul>
                     <i class="fa-solid fa-circle-info fa-lg align-self-center text-info" style="cursor:pointer;"
-                        onclick="Swal.fire({html: $('#infoContainer').html(), icon: 'info', showConfirmButton: false});"></i>
+                        onclick="const html=$('#infoContainer').html();
+                       Swal.fire({html: html, icon: 'info', showConfirmButton: false});"></i>
                 </div>
 
             </div>
@@ -196,7 +201,10 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
             minimumResultsForSearch: 20,
             templateSelection: function(selection) {
                 return $(
-                    `<div class="d-flex justify-content-between"><strong>${selection.text}</strong>&nbsp;<span class="text-secondary" style="${style}">${selection.id}</span></div>`
+                    `<div class="d-flex justify-content-between">` +
+                    `<strong>${selection.text}</strong>&nbsp;` +
+                    `<span class="text-secondary" style="${style}">${selection.id}</span>` +
+                    `</div>`
                 );
             },
             templateResult: function(option) {
@@ -317,7 +325,8 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                         let body = response.error.join('<br>') + "<div class='container'>";
                         if (response.users.length) {
                             body +=
-                                "<div class='row justify-content-center m-2'><table><thead><tr><th>Username</th></tr></thead><tbody>";
+                                "<div class='row justify-content-center m-2'>" +
+                                "<table><thead><tr><th>Username</th></tr></thead><tbody>";
                             response.users.forEach((user) => {
                                 body += `<tr><td>${user}</td></tr>`;
                             });
@@ -325,7 +334,8 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                         }
                         if (response.roles.length) {
                             body +=
-                                "<div class='row justify-content-center m-2'><table><thead><tr><th>Role ID</th></tr></thead><tbody>";
+                                "<div class='row justify-content-center m-2'>" +
+                                "<table><thead><tr><th>Role ID</th></tr></thead><tbody>";
                             response.roles.forEach((role) => {
                                 body += `<tr><td>${role}</td></tr>`;
                             });
@@ -467,7 +477,10 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
             minimumResultsForSearch: 20,
             templateSelection: function(selection) {
                 return $(
-                    `<div class="d-flex justify-content-between"><strong>${selection.text}</strong>&nbsp;<span class="text-secondary" style="${style}">${selection.id}</span></div>`
+                    `<div class="d-flex justify-content-between">` +
+                    `<strong>${selection.text}</strong>&nbsp;` +
+                    `<span class="text-secondary" style="${style}">${selection.id}</span>` +
+                    `</div>`
                 );
             },
             templateResult: function(option) {
@@ -498,7 +511,10 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                     title: 'Username',
                     data: function(row, type, set, meta) {
                         if (type === 'display') {
-                            return `<a class="user-link" href="${app_path_webroot_full}${app_path_webroot}ControlCenter/view_users.php?username=${row.username}" target="_blank" rel="noopener noreferrer">${row.username}</a>`;
+                            const root = `${app_path_webroot_full}${app_path_webroot}`;
+                            const href =
+                                `${root}ControlCenter/view_users.php?username=${row.username}`;
+                            return `<a class="user-link" href="${href}" target="_blank" rel="noopener noreferrer">${row.username}</a>`;
                         } else {
                             return row.username;
                         }
