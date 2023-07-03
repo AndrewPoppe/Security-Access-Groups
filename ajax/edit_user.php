@@ -19,7 +19,7 @@ $pid  = $module->getProjectId();
 $scriptPath = $module->getSafePath('UserRights/edit_user.php', APP_PATH_DOCROOT);
 
 if ( in_array($submit_action, [ "delete_user", "add_role", "delete_role", "copy_role" ]) ) {
-    require $scriptPath;
+    require_once $scriptPath;
     exit;
 }
 

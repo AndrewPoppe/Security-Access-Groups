@@ -7,7 +7,7 @@ namespace YaleREDCap\SecurityAccessGroups;
 $scriptPath = $module->getSafePath('UserRights/import_export_users.php', APP_PATH_DOCROOT);
 
 if ( $_SERVER["REQUEST_METHOD"] !== "POST" || !isset($_POST['csv_content']) ) {
-    require $scriptPath;
+    require_once $scriptPath;
     exit;
 }
 require_once $module->getSafePath('Config/init_functions.php', APP_PATH_DOCROOT);
