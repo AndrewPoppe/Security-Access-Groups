@@ -89,7 +89,7 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
     <!-- Table Controls -->
     <div class="hidden">
         <input type="file" accept="text/csv" class="form-control-file" id="importUsersFile">
-        <table id="templateTable">
+        <table aria-label="template table" id="templateTable">
             <thead>
                 <tr>
                     <th>username</th>
@@ -136,7 +136,7 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
 
             </div>
         </div>
-        <table id='SUR-System-Table' class="compact cell-border border">
+        <table aria-label='Users Table' id='SUR-System-Table' class="compact cell-border border">
             <thead>
                 <tr>
                     <th data-id="username" class="py-3">Username</th>
@@ -668,7 +668,7 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
     <div class=" clear">
     </div>
     <div id="roleTableWrapper" style="display: none; width: 100%;">
-        <table id="roleTable" class="roleTable cell-border" style="width: 100%">
+        <table aria-label="Roles Table" id="roleTable" class="roleTable cell-border" style="width: 100%">
             <!-- <table id="roleTable" class="table table-striped table-hover table-bordered table-responsive align-middle" style="width: 100%;"> -->
             <thead>
                 <tr style="vertical-align: bottom; text-align: center;">
