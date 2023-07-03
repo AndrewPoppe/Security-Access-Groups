@@ -173,11 +173,12 @@ class TextReplacer
             return "<a href='mailto:$email'>$email</a>";
         }, $emails);
 
-        $table = "<table class='sag_users'><thead><tr><th>Name</th><th>REDCap Username</th><th>Email Address</th></tr></thead><tbody>";
+        $table = "<table class='sag_users' style='border: 1px solid #666; border-collapse: collapse; width: 100%;'><thead><tr><th style='text-align: left;padding: 8px;border: 1px solid #666;background-color: #f2f2f2;'>Name</th><th style='text-align: left;padding: 8px;border: 1px solid #666;background-color: #f2f2f2;'>REDCap Username</th><th style='text-align: left;padding: 8px;border: 1px solid #666;background-color: #f2f2f2;'>Email Address</th><th style='text-align: left;padding: 8px;border: 1px solid #666;background-color: #f2f2f2;'><thead><tr><th>Name</th><th>REDCap Username</th><th>Email Address</th></tr></thead><tbody>";
         foreach ( $users as $index => $username ) {
+            $bg           = $index % 2 == 0 ? "transparent" : "#f2f2f2";
             $fullname = $fullnames[$index] ?? "";
             $email    = $emails[$index] ?? "";
-            $table .= "<tr><td>$fullname</td><td>$username</td><td>$email</td></tr>";
+            $table .= "<tr style='background-color:" . $bg . ";'><td style='text-align: left;padding: 8px;border: 1px solid #666;'>$fullname</td><td style='text-align: left;padding: 8px;border: 1px solid #666;'>$username</td><td style='text-align: left;padding: 8px;border: 1px solid #666;'>$email</td></tr>";
         }
         $table .= "</tbody></table>";
         //$table .= $this->getSagUsersTableCss();
