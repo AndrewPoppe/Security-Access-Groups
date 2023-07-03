@@ -79,7 +79,7 @@ class Alerts
                                 </div>
                                 <div class="form-group row mb-0" style="font-size: small;">
                                     <div class="col ml-2">
-                                        <table>
+                                        <table aria-label="placeholders">
                                             <thead>
                                                 <tr>
                                                     <th colspan=2><span><strong>You can use the following placeholders
@@ -161,7 +161,7 @@ class Alerts
                                     </div>
                                     <div class="form-group row" style="font-size: small;">
                                         <div class="col ml-2">
-                                            <table>
+                                            <table aria-label="placeholders">
                                                 <thead>
                                                     <tr>
                                                         <th colspan=2><span><strong>You can use the following
@@ -275,7 +275,7 @@ class Alerts
                                         </div>
                                         <div class="form-group row" style="font-size: small;">
                                             <div class="col ml-2">
-                                                <table>
+                                                <table aria-label="placeholders">
                                                     <thead>
                                                         <tr>
                                                             <th colspan=2><span><strong>You can use the following
@@ -367,7 +367,7 @@ class Alerts
                                             </div>
                                             <div class="form-group row" style="font-size: small;">
                                                 <div class="col ml-2">
-                                                    <table>
+                                                    <table aria-label="placeholders">
                                                         <thead>
                                                             <tr>
                                                                 <th colspan=2><span><strong>You can use the following
@@ -404,8 +404,8 @@ class Alerts
                                     <div class="mb-1" style="font-size: 14px;">
                                         <strong>Select the recipients:</strong>
                                     </div>
-                                    <table id="recipientTable_UserRightsHolders" class="table table-sm table-bordered"
-                                        style="font-size: 12px;">
+                                    <table aria-label="alert recipients" id="recipientTable_UserRightsHolders"
+                                        class="table table-sm table-bordered" style="font-size: 12px;">
                                         <colgroup>
                                             <col class="col-md-1">
                                             <col class="col-md-2">
@@ -499,7 +499,7 @@ class Alerts
                                             will be expired in this project:</strong></h5>
                                 </div>
                                 <div class="form-group row ml-4 my-0">
-                                    <table id="userExpirationTable"
+                                    <table aria-label="users to be expired" id="userExpirationTable"
                                         class="table table-sm table-hover table-borderless w-50 ml-2">
                                         <tbody></tbody>
                                     </table>
@@ -588,7 +588,7 @@ class Alerts
                                     </div>
                                     <div class="form-group row mt-2" style="font-size: small;">
                                         <div class="col mx-3 p-2" style="background-color:#FFFFFF80;">
-                                            <table>
+                                            <table aria-label="placeholders">
                                                 <thead>
                                                     <tr>
                                                         <th colspan=2><span><strong>You can use the following
@@ -684,7 +684,7 @@ class Alerts
                                     </div>
                                     <div class="form-group row mt-2" style="font-size: small;">
                                         <div class="col mx-3 p-2" style="background-color:#FFFFFFA0;">
-                                            <table>
+                                            <table aria-label="placeholders">
                                                 <thead>
                                                     <tr>
                                                         <th colspan=2><span><strong>You can use the following
@@ -715,7 +715,8 @@ class Alerts
                             <div class="mb-1" style="font-size: 14px;">
                                 <strong>Select the recipients:</strong>
                             </div>
-                            <table id="recipientTable_userExpiration_UserRightsHolders"
+                            <table aria-label="alert recipients - user rights holders"
+                                id="recipientTable_userExpiration_UserRightsHolders"
                                 class="table table-sm table-bordered" style="font-size: 12px;">
                                 <colgroup>
                                     <col class="col-md-1">
@@ -1021,7 +1022,7 @@ function userExpirationUserRightsHoldersToggle(checked) {
 
     private function getAlertTable(array $alert)
     {
-        $table = "<table class='table bg-white' style='border:1px solid #dee2e6'>";
+        $table = "<table aria-label='alerts' class='table bg-white' style='border:1px solid #dee2e6'>";
         $table .= "<tr><th>From:</th><td>" . \REDCap::filterHtml($alert['from']) . "</td></tr>";
         $table .= "<tr><th>To:</th><td>" . \REDCap::filterHtml($alert['to']) . "</td></tr>";
         $table .= "<tr><th>Subject:</th><td>" . \REDCap::filterHtml($alert['subject']) . "</td></tr>";
