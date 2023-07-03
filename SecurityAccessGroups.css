@@ -63,21 +63,21 @@ div#control_center_window p,
 div#control_center_window div,
 div#control_center_window a,
 div#control_center_window table {
-    font-family: "Atkinson Hyperlegible" !important;
+    font-family: "Atkinson Hyperlegible", sans-serif !important;
 }
 
 div.modal {
-    font-family: "Atkinson Hyperlegible" !important;
+    font-family: "Atkinson Hyperlegible", sans-serif !important;
 }
 
 div.SUR-Container,
 div.SUR-Container a,
 div.SUR-Container a:hover {
-    font-family: "Atkinson Hyperlegible" !important;
+    font-family: "Atkinson Hyperlegible", sans-serif !important;
 }
 
 div#control_center_window pre {
-    font-family: "JetBrainsMono" !important;
+    font-family: "JetBrainsMono", monospace !important;
 }
 
 table#SUR-System-Table {
@@ -163,7 +163,7 @@ select.roleSelect {
 }
 
 form#SUR_Role_Setting {
-    font-family: "Atkinson Hyperlegible" !important;
+    font-family: "Atkinson Hyperlegible", sans-serif !important;
 }
 
 form#SUR_Role_Setting div.SUR-form-row {
@@ -361,11 +361,11 @@ td.role-id-column {
 
 .select2-container {
     width: 100% !important;
-    font-family: "Atkinson Hyperlegible" !important;
+    font-family: "Atkinson Hyperlegible", sans-serif !important;
 }
 
 div.dataTables_filter input {
-    font-family: "Atkinson Hyperlegible";
+    font-family: "Atkinson Hyperlegible", sans-serif;
     margin-left: 0 !important;
 }
 
