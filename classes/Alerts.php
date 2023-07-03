@@ -968,6 +968,35 @@ function userExpirationUserRightsHoldersToggle(checked) {
         return $alerts;
     }
 
+    private function getAlertUsers($alert)
+    {
+        $users      = [];
+        $usersArray = isset($alert["users"]) ?
+            json_decode($alert["users"], true) :
+            [ json_decode($alert["user"], true) ];
+        foreach ( $usersArray as $user ) {
+            $users[] = \REDCap::escapeHtml($user["sag_user"]);
+        }
+        return $users;
+    }
+
+    private function getAlertRecipients($alert)
+    {
+        $recipients      = "";
+        $recipientsArray = isset($alert["recipients"]) ?
+            json_decode($alert["recipients"], true) :
+            [ $alert["recipient"] ];
+        foreach ( $recipientsArray as $key => $recipient ) {
+            $recipients .= $key = array_key_first($recipientsArray) ?
+                "" :
+                "<br>";
+            $thisRecipient      = \REDCap::escapeHtml($recipient);
+            $thisRecipientEmail = $this->module->framework->getUser($thisRecipient)->getEmail();
+            $recipients .= "<strong>" . $thisRecipient . "</strong> (" . $thisRecipientEmail . ")";
+        }
+        return $recipients;
+    }
+
     /**
      * Grab array of all alerts and reminders in the project, sent and scheduled
      * 
@@ -982,28 +1011,9 @@ function userExpirationUserRightsHoldersToggle(checked) {
         $rawAlerts = $this->getRawAlerts($project_id);
         $alerts    = [];
         foreach ( $rawAlerts as $row ) {
-            $thisAlert  = [];
-            $users      = [];
-            $usersArray = isset($row["users"]) ?
-                json_decode($row["users"], true) :
-                [ json_decode($row["user"], true) ];
-            foreach ( $usersArray as $user ) {
-                $users[] = \REDCap::escapeHtml($user["sag_user"]);
-            }
-
-            $recipients      = "";
-            $recipientsArray = isset($row["recipients"]) ?
-                json_decode($row["recipients"], true) :
-                [ $row["recipient"] ];
-            foreach ( $recipientsArray as $key => $recipient ) {
-                $recipients .= $key = array_key_first($recipientsArray) ?
-                    "" :
-                    "<br>";
-                $thisRecipient      = \REDCap::escapeHtml($recipient);
-                $thisRecipientEmail = $this->module->framework->getUser($thisRecipient)->getEmail();
-                $recipients .= "<strong>" . $thisRecipient . "</strong> (" . $thisRecipientEmail . ")";
-            }
-
+            $thisAlert       = [];
+            $users           = $this->getAlertUsers($row);
+            $recipients      = $this->getAlertRecipients($row);
             $thisAlert["id"] = \REDCap::escapeHtml($row["log_id"]);
             if ( $row["Type"] === "ALERT" ) {
                 $thisAlert["sendTime"] = $row["sentTimestamp"];
