@@ -4,7 +4,7 @@ namespace YaleREDCap\SecurityAccessGroups;
 
 /** @var SecurityAccessGroups $module */
 
-use YaleREDCap\SecurityAccessGroups\Alerts;
+require_once $module->framework->getSafePath('classes/Alerts.php');
 
 if ( !$module->framework->getUser()->isSuperUser() ) {
     http_response_code(401);
@@ -839,8 +839,8 @@ $replaceSmartVariablesUrl = $module->framework->getUrl('ajax/replaceSmartVariabl
                         row.inputVal =
                             `<div data-discrepant="${hasDiscrepancy}" data-expired="${row.isExpired}">` +
                             (hasDiscrepancy ?
-                                `<input style="display:block; margin: 0 auto;" 
-                                type="checkbox" onchange="window.handleActionButtons()"></input>` :
+                                `<input style="display:block; margin: 0 auto;" ` +
+                                `type="checkbox" onchange="window.handleActionButtons()"></input>` :
                                 "") +
                             `</div>`;
                         if (type === 'filter') {
@@ -884,9 +884,8 @@ $replaceSmartVariablesUrl = $module->framework->getUrl('ajax/replaceSmartVariabl
                     title: 'System Role',
                     data: function(row, type, set, meta) {
                         if (row.system_role) {
-                            return `<strong>${row.system_role_name}</strong> <span>(<span class="user-select-all">
-                            ${row.system_role}
-                            </span>)</span>`;
+                            return `<strong>${row.system_role_name}</strong> <span>(<span class="user-select-all">` +
+                                `${row.system_role}</span>)</span>`;
                         } else {
                             return `<span class="text-secondary">None</span>`;
                         }
@@ -903,31 +902,29 @@ $replaceSmartVariablesUrl = $module->framework->getUrl('ajax/replaceSmartVariabl
                                 rows +=
                                     `<tr style='cursor: default;'><td><span>${right}</span></td></tr>`;
                             }
-                            return `<a class="${row.isExpired ? "text-secondary" : "text-primary"}"
-                                    style="text-decoration: underline; cursor: pointer;"
-                                    data-toggle="modal"
-                                    data-target="#modal-${row.username}">${row.bad.length} ${row.bad.length > 1 ?
-                                    " Rights" : " Right"}</a>
-                                    <div class="modal fade" id="modal-${row.username}" tabindex="-1" aria-hidden="true">
-                                        <div class="modal-dialog modal-dialog-scrollable">
-                                            <div class="modal-content">
-                                                <div class="modal-header bg-dark text-light">
-                                                    <h5 class="m-0">
-                                                    Noncompliant Rights for ${row.name} (${row.username})
-                                                    </h5>
-                                                </div>
-                                                <div class="modal-body">
-                                                    <div class="d-flex justify-content-center">
-                                                        <table class="table table-sm table-hover table-borderless mb-0">
-                                                            <tbody>
-                                                                ${rows}
-                                                            </tbody>
-                                                        </table>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>`;
+                            return `<a class="${row.isExpired ? "text-secondary" : "text-primary"}" ` +
+                                `style="text-decoration: underline; cursor: pointer;" data-toggle="modal" ` +
+                                `data-target="#modal-${row.username}">${row.bad.length} ` +
+                                (row.bad.length > 1 ? " Rights" : " Right") +
+                                `</a>` +
+                                `<div class="modal fade" id="modal-${row.username}" tabindex="-1" aria-hidden="true">` +
+                                `<div class="modal-dialog modal-dialog-scrollable">` +
+                                `<div class="modal-content">` +
+                                `<div class="modal-header bg-dark text-light">` +
+                                `<h5 class="m-0">` +
+                                `Noncompliant Rights for ${row.name} (${row.username})` +
+                                `</h5>` +
+                                `</div>` +
+                                `<div class="modal-body">` +
+                                `<div class="d-flex justify-content-center">` +
+                                `<table class="table table-sm table-hover table-borderless mb-0">` +
+                                `<tbody>${rows}</tbody>` +
+                                `</table>` +
+                                `</div>` +
+                                `</div>` +
+                                `</div>` +
+                                `</div>` +
+                                `</div>`;
                         } else {
                             return "<i class='fa-sharp fa-check mr-1 text-success'></i>None";
                         }
@@ -937,9 +934,9 @@ $replaceSmartVariablesUrl = $module->framework->getUrl('ajax/replaceSmartVariabl
                     title: 'Project Role',
                     data: function(row, type, set, meta) {
                         if (row.project_role) {
-                            return `<strong>${row.project_role_name}</strong> <span>(<span class="user-select-all">
-                            ${row.project_role}
-                            </span>)</span>`;
+                            return `<strong>${row.project_role_name}</strong> <span>(<span class="user-select-all">` +
+                                row.project_role +
+                                `</span>)</span>`;
                         } else {
                             return `<span class="text-secondary">None</span>`;
                         }
