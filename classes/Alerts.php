@@ -501,6 +501,13 @@ class Alerts
                                 <div class="form-group row ml-4 my-0">
                                     <table aria-label="users to be expired" id="userExpirationTable"
                                         class="table table-sm table-hover table-borderless w-50 ml-2">
+                                        <thead>
+                                            <tr style="border-bottom: 1px solid #bdbdbd;">
+                                                <th>REDCap Username</th>
+                                                <th>Name</th>
+                                                <th>Email Address</th>
+                                            </tr>
+                                        </thead>
                                         <tbody></tbody>
                                     </table>
                                 </div>

@@ -235,7 +235,8 @@ if ( !$module->framework->getUser()->isSuperUser() ) {
         const usersToExpire = getSelectedUsers();
         let tableRows = "";
         usersToExpire.forEach(user => {
-            tableRows += `<tr><td><strong>${user.name}</strong> (${user.username}) - ${user.email}</td></tr>`;
+            tableRows +=
+                `<tr><td><strong>${user.username}</strong></td><td>${user.name}</td><td>${user.email}</td></tr>`;
         })
         $('#userExpirationTable tbody').html(tableRows);
         populateDefaultExpireUsersModal();
