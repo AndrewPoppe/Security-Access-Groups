@@ -12,7 +12,7 @@ class CsvUserImport
     public $bad_users = [];
     public $error_messages = [];
     public $assignments = [];
-    function __construct(SecurityAccessGroups $module, string $csvString)
+    public function __construct(SecurityAccessGroups $module, string $csvString)
     {
         $this->module    = $module;
         $this->csvString = $csvString;

@@ -12,7 +12,7 @@ class CsvSAGImport
     public $error_messages = [];
     public $proposed = [];
     private $header;
-    function __construct(SecurityAccessGroups $module, string $csvString)
+    public function __construct(SecurityAccessGroups $module, string $csvString)
     {
         $this->module    = $module;
         $this->csvString = $csvString;
