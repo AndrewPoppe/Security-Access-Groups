@@ -56,10 +56,10 @@ if ( !$module->framework->getUser()->isSuperUser() ) {
         </div>
     </div>
     <div class="alertLogWrapper my-4 mr-3 card card-body bg-light" style="width: 1100px; display: none;">
-        <table id="alertLogTable" class="border" width="100%">
+        <table aria-label="alert log table" id="alertLogTable" class="border" width="100%">
             <thead>
                 <tr style="background-color: #D7D7D7 !important;">
-                    <th class="font-weight-normal" colspan="8" style="border-bottom: none;">
+                    <th class="font-weight-normal" scope="col" colspan="8" style="border-bottom: none;">
                         <div class="container px-0">
                             <div class="row">
                                 <div class="col-4" style="">
@@ -116,14 +116,14 @@ if ( !$module->framework->getUser()->isSuperUser() ) {
                     </th>
                 </tr>
                 <tr>
-                    <th>Alert ID</th>
-                    <th>Send Time</th>
-                    <th>Alert Type</th>
-                    <th>Reminder</th>
-                    <th>View Alert</th>
-                    <th>User(s)</th>
-                    <th>Recipient</th>
-                    <th>Status</th>
+                    <th scope="col">Alert ID</th>
+                    <th scope="col">Send Time</th>
+                    <th scope="col">Alert Type</th>
+                    <th scope="col">Reminder</th>
+                    <th scope="col">View Alert</th>
+                    <th scope="col">User(s)</th>
+                    <th scope="col">Recipient</th>
+                    <th scope="col">Status</th>
                 </tr>
             </thead>
         </table>
