@@ -20,13 +20,13 @@ class SecurityAccessGroups extends AbstractExternalModule
     private array $defaultRights = [];
 
 
-    function __construct()
+    public function __construct()
     {
         parent::__construct();
         $this->defaultRights = $this->getSystemRoleRightsById($this->defaultRoleId);
     }
 
-    function redcap_every_page_before_render()
+    public function redcap_every_page_before_render()
     {
         // Only run on the pages we're interested in
         if (
@@ -103,7 +103,7 @@ class SecurityAccessGroups extends AbstractExternalModule
     }
 
     // CRON job
-    function sendReminders($cronInfo = array())
+    public function sendReminders($cronInfo = array())
     {
         try {
             $Alerts            = new Alerts($this);
@@ -132,7 +132,7 @@ class SecurityAccessGroups extends AbstractExternalModule
         }
     }
 
-    function getAllProjectIds()
+    public function getAllProjectIds()
     {
         try {
             $query       = "select project_id from redcap_projects
@@ -150,7 +150,7 @@ class SecurityAccessGroups extends AbstractExternalModule
         }
     }
 
-    function redcap_user_rights($project_id)
+    public function redcap_user_rights($project_id)
     {
 
         ?>
@@ -396,12 +396,12 @@ $(function() {
 <?php
     }
 
-    function redcap_module_project_enable($version, $project_id)
+    public function redcap_module_project_enable($version, $project_id)
     {
         $this->log('Module Enabled');
     }
 
-    function redcap_module_link_check_display($project_id, $link)
+    public function redcap_module_link_check_display($project_id, $link)
     {
         if ( empty($project_id) || $this->getUser()->isSuperUser() ) {
             return $link;
@@ -410,7 +410,7 @@ $(function() {
         return null;
     }
 
-    function getCurrentRightsFormatted(string $username, $project_id)
+    public function getCurrentRightsFormatted(string $username, $project_id)
     {
         $current_rights      = $this->getCurrentRights($username, $project_id);
         $current_data_export = $this->convertExportRightsStringToArray($current_rights["data_export_instruments"]);
@@ -424,7 +424,7 @@ $(function() {
     }
 
 
-    function getBasicProjectUsers($project_id)
+    private function getBasicProjectUsers($project_id)
     {
         $sql = "select rights.username, 
         info.user_firstname, 
@@ -454,7 +454,7 @@ $(function() {
             return [];
         }
     }
-    function getUsersWithBadRights($project_id)
+    public function getUsersWithBadRights($project_id)
     {
         $users      = $this->getBasicProjectUsers($project_id);
         $roles      = $this->getAllSystemRoles(true);
@@ -487,7 +487,7 @@ $(function() {
         return $bad_rights;
     }
 
-    function getUsersWithBadRights2($project_id)
+    public function getUsersWithBadRights2($project_id)
     {
         $users              = $this->getBasicProjectUsers($project_id);
         $roles              = $this->getAllSystemRoles(true);
@@ -523,23 +523,7 @@ $(function() {
         return $bad_rights;
     }
 
-    function getProjectRoleName($projectRole = null)
-    {
-        try {
-            if ( empty($projectRole) ) {
-                return null;
-            }
-            $sql    = "SELECT role_name FROM redcap_user_roles WHERE role_id = ?";
-            $params = [ $projectRole ];
-            $result = $this->framework->query($sql, $params);
-            return $this->framework->escape($result->fetch_assoc()["role_name"]);
-        } catch ( \Throwable $e ) {
-            $this->framework->log("Error fetching project role name", [ "error" => $e->getMessage() ]);
-            return null;
-        }
-    }
-
-    function logApi(string $action, $project_id, $user, array $original_rights)
+    private function logApi(string $action, $project_id, $user, array $original_rights)
     {
         ob_start(function ($str) use ($action, $project_id, $user, $original_rights) {
 
@@ -678,7 +662,7 @@ $(function() {
         }, 0, PHP_OUTPUT_HANDLER_FLUSHABLE);
     }
 
-    function getUserInfo(string $username) : ?array
+    public function getUserInfo(string $username) : ?array
     {
         $sql = "SELECT username
         , user_email
@@ -707,7 +691,7 @@ $(function() {
         }
     }
 
-    function getAllUserInfo($includeSystemRole = false) : ?array
+    public function getAllUserInfo($includeSystemRole = false) : ?array
     {
         $sql = "SELECT username
         , user_email
@@ -745,7 +729,7 @@ $(function() {
         }
     }
 
-    function getAllRights()
+    private function getAllRights()
     {
         $sql    = "SHOW COLUMNS FROM redcap_user_rights";
         $result = $this->framework->query($sql, []);
@@ -765,7 +749,7 @@ $(function() {
         // return array_unique(array_merge($rights, $modified));
     }
 
-    function getAcceptableRights(string $username)
+    public function getAcceptableRights(string $username)
     {
         $systemRoleId = $this->getUserSystemRole($username);
         $systemRole   = $this->getSystemRoleRightsById($systemRoleId);
@@ -774,7 +758,7 @@ $(function() {
     }
 
     // E.g., from ["export-form-form1"=>"1", "export-form-form2"=>"1"] to "[form1,1][form2,1]"
-    function convertExportRightsArrayToString($fullRightsArray)
+    private function convertExportRightsArrayToString($fullRightsArray)
     {
         $result = "";
         foreach ( $fullRightsArray as $key => $value ) {
@@ -787,7 +771,7 @@ $(function() {
     }
 
     // E.g., from ["form-form1"=>"1", "form-form2"=>"1"] to "[form1,1][form2,1]"
-    function convertDataEntryRightsArrayToString($fullRightsArray)
+    private function convertDataEntryRightsArrayToString($fullRightsArray)
     {
         $result = "";
         foreach ( $fullRightsArray as $key => $value ) {
@@ -805,7 +789,7 @@ $(function() {
     }
 
     // E.g., from "[form1,1][form2,1]" to ["export-form-form1"=>"1", "export-form-form2"=>"1"] 
-    function convertExportRightsStringToArray($fullRightsString)
+    private function convertExportRightsStringToArray($fullRightsString)
     {
         $raw    = \UserRights::convertFormRightsToArray($fullRightsString);
         $result = [];
@@ -816,7 +800,7 @@ $(function() {
     }
 
     // E.g., from "[form1,1][form2,1]" to ["form-form1"=>"1", "form-form2"=>"1"] 
-    function convertDataEntryRightsStringToArray($fullRightsString)
+    private function convertDataEntryRightsStringToArray($fullRightsString)
     {
         $raw    = \UserRights::convertFormRightsToArray($fullRightsString);
         $result = [];
@@ -831,7 +815,7 @@ $(function() {
         return $result;
     }
 
-    function checkProposedRights(array $acceptable_rights, array $requested_rights)
+    public function checkProposedRights(array $acceptable_rights, array $requested_rights)
     {
         $bad_rights  = [];
         $dataViewing = intval($acceptable_rights["dataViewing"]);
@@ -929,7 +913,7 @@ $(function() {
         }
         return array_values(array_unique($bad_rights, SORT_REGULAR));
     }
-    function checkProposedRights2(array $acceptable_rights, array $requested_rights)
+    private function checkProposedRights2(array $acceptable_rights, array $requested_rights)
     {
         $bad_rights  = [];
         $dataViewing = intval($acceptable_rights["dataViewing"]);
@@ -1028,7 +1012,7 @@ $(function() {
         return array_values(array_unique($bad_rights, SORT_REGULAR));
     }
 
-    function isUserExpired($username, $project_id)
+    public function isUserExpired($username, $project_id)
     {
         $sql    = "SELECT * FROM redcap_user_rights WHERE username = ? AND project_id = ?";
         $result = $this->framework->query($sql, [ $username, $project_id ]);
@@ -1036,7 +1020,7 @@ $(function() {
         return !is_null($row["expiration"]) && strtotime($row["expiration"]) < strtotime("today");
     }
 
-    function getRoleIdFromUniqueRoleName($uniqueRoleName)
+    public function getRoleIdFromUniqueRoleName($uniqueRoleName)
     {
         $sql    = "SELECT role_id FROM redcap_user_roles WHERE unique_role_name = ?";
         $result = $this->framework->query($sql, [ $uniqueRoleName ]);
@@ -1044,7 +1028,7 @@ $(function() {
         return $this->framework->escape($row["role_id"]);
     }
 
-    function getUniqueRoleNameFromRoleId($role_id)
+    public function getUniqueRoleNameFromRoleId($role_id)
     {
         $sql    = "SELECT unique_role_name FROM redcap_user_roles WHERE role_id = ?";
         $result = $this->framework->query($sql, [ $role_id ]);
@@ -1052,7 +1036,7 @@ $(function() {
         return $this->framework->escape($row["unique_role_name"]);
     }
 
-    function getUsersInRole($project_id, $role_id)
+    public function getUsersInRole($project_id, $role_id)
     {
         if ( empty($role_id) ) {
             return [];
@@ -1066,7 +1050,7 @@ $(function() {
         return $this->framework->escape($users);
     }
 
-    function getRoleLabel($role_id)
+    public function getRoleLabel($role_id)
     {
         $sql    = "SELECT role_name FROM redcap_user_roles WHERE role_id = ?";
         $result = $this->framework->query($sql, [ $role_id ]);
@@ -1074,14 +1058,14 @@ $(function() {
         return $this->framework->escape($row["role_name"]);
     }
 
-    function getRoleRightsRaw($role_id)
+    public function getRoleRightsRaw($role_id)
     {
         $sql    = "SELECT * FROM redcap_user_roles WHERE role_id = ?";
         $result = $this->framework->query($sql, [ $role_id ]);
         return $this->framework->escape($result->fetch_assoc());
     }
 
-    function getRoleRights($role_id, $pid = null)
+    public function getRoleRights($role_id, $pid = null)
     {
         $project_id  = $pid ?? $this->getProjectId();
         $roles       = \UserRights::getRoles($project_id);
@@ -1097,18 +1081,18 @@ $(function() {
         return $role_rights;
     }
 
-    function getModuleDirectoryPrefix()
+    public function getModuleDirectoryPrefix()
     {
         return strrev(preg_replace("/^.*v_/", "", strrev($this->framework->getModuleDirectoryName()), 1));
     }
 
-    function setUserSystemRole($username, $role_id)
+    private function setUserSystemRole($username, $role_id)
     {
         $setting = $username . "-role";
         $this->setSystemSetting($setting, $role_id);
     }
 
-    function getUserSystemRole($username)
+    public function getUserSystemRole($username)
     {
         $setting = $username . "-role";
         $role    = $this->getSystemSetting($setting);
@@ -1119,7 +1103,7 @@ $(function() {
         return $role;
     }
 
-    function convertPermissions(string $permissions)
+    private function convertPermissions(string $permissions)
     {
         $rights = json_decode($permissions, true);
         foreach ( $rights as $key => $value ) {
@@ -1142,7 +1126,7 @@ $(function() {
         return json_encode($rights);
     }
 
-    function throttleSaveSystemRole(string $role_id, string $role_name, string $permissions)
+    public function throttleSaveSystemRole(string $role_id, string $role_name, string $permissions)
     {
         if ( !$this->throttle("message = ?", 'role', 3, 1) ) {
             $this->saveSystemRole($role_id, $role_name, $permissions);
@@ -1158,7 +1142,7 @@ $(function() {
      *
      * @return [type]
      */
-    function saveSystemRole(string $role_id, string $role_name, string $permissions)
+    public function saveSystemRole(string $role_id, string $role_name, string $permissions)
     {
         try {
             $permissions_converted = $this->convertPermissions($permissions);
@@ -1179,7 +1163,7 @@ $(function() {
         }
     }
 
-    function throttleUpdateSystemRole(string $role_id, string $role_name, string $permissions)
+    public function throttleUpdateSystemRole(string $role_id, string $role_name, string $permissions)
     {
         if ( !$this->throttle("message = 'updated system role'", [], 3, 1) ) {
             $this->updateSystemRole($role_id, $role_name, $permissions);
@@ -1188,7 +1172,7 @@ $(function() {
         }
     }
 
-    function updateSystemRole(string $role_id, string $role_name, string $permissions)
+    public function updateSystemRole(string $role_id, string $role_name, string $permissions)
     {
         try {
             $permissions_converted = $this->convertPermissions($permissions);
@@ -1216,7 +1200,7 @@ $(function() {
         }
     }
 
-    function throttleDeleteSystemRole($role_id)
+    public function throttleDeleteSystemRole($role_id)
     {
         if ( !$this->throttle("message = 'deleted system role'", [], 2, 1) ) {
             $this->deleteSystemRole($role_id);
@@ -1225,7 +1209,7 @@ $(function() {
         }
     }
 
-    function deleteSystemRole($role_id)
+    private function deleteSystemRole($role_id)
     {
         try {
             $result = $this->removeLogs("message = 'role' AND role_id = ? AND (project_id IS NULL OR project_id IS NOT NULL) ", [ $role_id ]);
@@ -1236,7 +1220,7 @@ $(function() {
         }
     }
 
-    function getAllSystemRoles($parsePermissions = false)
+    public function getAllSystemRoles($parsePermissions = false)
     {
         $sql    = "SELECT MAX(log_id) AS 'log_id' WHERE message = 'role' AND (project_id IS NULL OR project_id IS NOT NULL) GROUP BY role_id";
         $result = $this->framework->queryLogs($sql, []);
@@ -1256,7 +1240,7 @@ $(function() {
         return $this->framework->escape($roles);
     }
 
-    function setDefaultSystemRole()
+    private function setDefaultSystemRole()
     {
         $rights                   = $this->getDefaultRights();
         $rights['role_id']        = $this->defaultRoleId;
@@ -1267,7 +1251,7 @@ $(function() {
         return $rights;
     }
 
-    function getSystemRoleRightsById($role_id)
+    public function getSystemRoleRightsById($role_id)
     {
         if ( empty($role_id) ) {
             $role_id = $this->defaultRoleId;
@@ -1287,7 +1271,7 @@ $(function() {
         return $this->framework->escape($rights);
     }
 
-    function systemRoleExists($role_id)
+    public function systemRoleExists($role_id)
     {
         if ( empty($role_id) ) {
             return false;
@@ -1300,7 +1284,7 @@ $(function() {
         return false;
     }
 
-    function generateNewRoleId()
+    public function generateNewRoleId()
     {
         $new_role_id = "role_" . substr(md5(uniqid()), 0, 13);
 
@@ -1311,7 +1295,7 @@ $(function() {
         }
     }
 
-    function getDisplayTextForRights(bool $allRights = false)
+    public function getDisplayTextForRights(bool $allRights = false)
     {
         global $lang;
         $rights = [
@@ -1363,13 +1347,13 @@ $(function() {
         return $rights;
     }
 
-    function getDisplayTextForRight(string $right, string $key = "")
+    private function getDisplayTextForRight(string $right, string $key = "")
     {
         $rights = $this->getDisplayTextForRights(true);
         return $rights[$right] ?? $rights[$key] ?? $right;
     }
 
-    function convertRightName($rightName)
+    private function convertRightName($rightName)
     {
 
         $conversions = [
@@ -1385,7 +1369,7 @@ $(function() {
         return $conversions[$rightName] ?? $rightName;
     }
 
-    function filterPermissions($rawArray)
+    public function filterPermissions($rawArray)
     {
         $allRights                         = $this->getAllRights();
         $dataEntryString                   = $this->convertDataEntryRightsArrayToString($rawArray);
@@ -1396,7 +1380,7 @@ $(function() {
         return $result;
     }
 
-    function getDefaultRights()
+    public function getDefaultRights()
     {
         $allRights = $this->getAllRights();
         if ( isset($allRights["data_export_tool"]) )
@@ -1470,7 +1454,7 @@ $(function() {
         return $allRights;
     }
 
-    function getCurrentRights(string $username, $project_id)
+    public function getCurrentRights(string $username, $project_id)
     {
         $result = $this->framework->query("SELECT * FROM redcap_user_rights WHERE username = ? AND project_id = ?", [ $username, $project_id ]);
         $rights = $result->fetch_assoc();
@@ -1482,7 +1466,7 @@ $(function() {
         return $this->framework->escape($rights);
     }
 
-    function getAllCurrentRights($project_id)
+    private function getAllCurrentRights($project_id)
     {
         $result = $this->framework->query('SELECT r.*, 
         data_entry LIKE "%,3]%" data_entry3,
@@ -1521,7 +1505,7 @@ $(function() {
         return $this->framework->escape($rights);
     }
 
-    function getUserRightsHolders($project_id)
+    public function getUserRightsHolders($project_id)
     {
         try {
             $sql    = 'SELECT rights.username username, 
@@ -1543,7 +1527,7 @@ $(function() {
         }
     }
 
-    function updateLog($log_id, array $params)
+    public function updateLog($log_id, array $params)
     {
         $sql = "UPDATE redcap_external_modules_log_parameters SET value = ? WHERE log_id = ? AND name = ?";
         foreach ( $params as $name => $value ) {
@@ -1557,7 +1541,7 @@ $(function() {
         return true;
     }
 
-    function getRoleEditForm(array $rights, bool $newRole, $role_name = "", $role_id = "")
+    public function getRoleEditForm(array $rights, bool $newRole, $role_name = "", $role_id = "")
     {
         global $lang;
         $allRights       = $this->getAllRights();
