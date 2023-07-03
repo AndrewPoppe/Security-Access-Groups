@@ -3,7 +3,8 @@
 namespace YaleREDCap\SecurityAccessGroups;
 
 /** @var SecurityAccessGroups $module */
-use YaleREDCap\SecurityAccessGroups\CsvUserImport;
+
+require_once $module->framework->getSafePath('classes/CsvUserImport.php');
 
 if ( !$module->getUser()->isSuperUser() ) {
     http_response_code(401);

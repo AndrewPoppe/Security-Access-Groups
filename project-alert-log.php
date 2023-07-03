@@ -337,7 +337,10 @@ $(document).ready(function() {
     });
 
     $('#alertLogTable').DataTable({
-        ajax: "<?= $module->framework->getUrl('ajax/alerts.php') ?>",
+        ajax: {
+            url: "<?= $module->framework->getUrl('ajax/alerts.php') ?>",
+            type: 'POST'
+        },
         deferRender: true,
         columns: [{
                 data: 'id',
