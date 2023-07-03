@@ -514,7 +514,8 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                             const root = `${app_path_webroot_full}${app_path_webroot}`;
                             const href =
                                 `${root}ControlCenter/view_users.php?username=${row.username}`;
-                            return `<a class="user-link" href="${href}" target="_blank" rel="noopener noreferrer">${row.username}</a>`;
+                            const attrs = `target="_blank" rel="noopener noreferrer"`;
+                            return `<a class="user-link" href="${href}" ${attrs}>${row.username}</a>`;
                         } else {
                             return row.username;
                         }
@@ -612,7 +613,7 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
     <?php
 
 
-    } else if ( $tab == "roles" ) {
+    } elseif ( $tab == "roles" ) {
         $displayTextForUserRights    = $module->getDisplayTextForRights();
         $allDisplayTextForUserRights = $module->getDisplayTextForRights(true);
 
@@ -685,14 +686,17 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
     </div>
     <div id="roleTableWrapper" style="display: none; width: 100%;">
         <table aria-label="Roles Table" id="roleTable" class="roleTable cell-border" style="width: 100%">
-            <!-- <table id="roleTable" class="table table-striped table-hover table-bordered table-responsive align-middle" style="width: 100%;"> -->
             <thead>
                 <tr style="vertical-align: bottom; text-align: center;">
                     <th>Order</th>
                     <th data-key="role_name">Role</th>
                     <th data-key="role_id">Role ID</th>
                     <?php foreach ( $allDisplayTextForUserRights as $key => $text ) {
-                            echo "<th data-key='" . \REDCap::escapeHtml($key) . "' class='dt-head-center'>" . \REDCap::escapeHtml($text) . "</th>";
+                            echo "<th data-key='",
+                                \REDCap::escapeHtml($key),
+                                "' class='dt-head-center'>",
+                                \REDCap::escapeHtml($text),
+                                "</th>";
                         } ?>
                 </tr>
             </thead>
@@ -1170,7 +1174,10 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                     className: '',
                     data: function(row, type, set, meta) {
                         if (type === 'display') {
-                            return `<div style="display: flex; align-items: center; white-space: nowrap;"><i class="fa-solid  fa-grip-dots-vertical mr-2 dt-rowReorder-grab text-secondary"></i><a class="SUR_roleLink text-primary" onclick="editRole('${row.role_id}')">${row.role_name}</a></div>`;
+                            return `<div style="display: flex; align-items: center; white-space: nowrap;">` +
+                                `<i class="fa-solid  fa-grip-dots-vertical mr-2 dt-rowReorder-grab text-secondary"></i>` +
+                                `<a class="SUR_roleLink text-primary" onclick="editRole('${row.role_id}')">${row.role_name}</a>` +
+                                `</div>`;
                         } else {
                             return row.role_name;
                         }
