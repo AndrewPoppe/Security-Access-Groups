@@ -7,7 +7,7 @@ namespace YaleREDCap\SecurityAccessGroups;
 $scriptPath = $module->getSafePath('UserRights/assign_user.php', APP_PATH_DOCROOT);
 
 if ( $_SERVER["REQUEST_METHOD"] !== "POST" ) {
-    require $scriptPath;
+    require_once $scriptPath;
     exit;
 }
 
@@ -20,7 +20,7 @@ $sag      = $module->getSystemRoleRightsById($sag_id);
 
 // We don't care if the user is being removed from a role.
 if ( $role_id == 0 ) {
-    require $scriptPath;
+    require_once $scriptPath;
     exit;
 }
 
