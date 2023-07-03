@@ -1642,7 +1642,7 @@ $(function() {
 
                                 <div class="SUR-form-row row">
                                     <div class="col">
-                                        <img style='height:1rem;'
+                                        <img style='height:1rem;' alt='mycap_logo'
                                             src='<?= APP_PATH_IMAGES . "mycap_logo_black.png" ?>'>&nbsp;<?= $lang['rights_437'] ?>
                                     </div>
                                     <div class="col">
