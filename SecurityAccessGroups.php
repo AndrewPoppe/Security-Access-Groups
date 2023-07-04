@@ -154,246 +154,246 @@ class SecurityAccessGroups extends AbstractExternalModule
     {
 
         ?>
-<script>
-$(function() {
+        <script>
+        $(function() {
 
-    <?php if ( isset($_SESSION['SUR_imported']) ) { ?>
-    window.import_type = '<?= $_SESSION['SUR_imported'] ?>';
-    window.import_errors = JSON.parse('<?= $_SESSION['SUR_bad_rights'] ?>');
-    <?php
+            <?php if ( isset($_SESSION['SUR_imported']) ) { ?>
+                window.import_type = '<?= $_SESSION['SUR_imported'] ?>';
+                window.import_errors = JSON.parse('<?= $_SESSION['SUR_bad_rights'] ?>');
+                <?php
                 unset($_SESSION['SUR_imported']);
                 unset($_SESSION['SUR_bad_rights']);
             } ?>
 
-    function createRightsTable(bad_rights) {
-        return `<table class="table table-sm table-borderless table-hover w-50 mt-4 mx-auto" style="font-size:13px; cursor: default;"><tbody><tr><td>${bad_rights.join('</td></tr><tr><td>')}</td></tr></tbody></table>`;
-    }
-
-    function fixLinks() {
-        $('#importUserForm').attr('action', "<?= $this->getUrl("ajax/import_export_users.php") ?>");
-        $('#importUsersForm2').attr('action', "<?= $this->getUrl("ajax/import_export_users.php") ?>");
-        $('#importRoleForm').attr('action', "<?= $this->getUrl("ajax/import_export_roles.php") ?>");
-        $('#importRolesForm2').attr('action', "<?= $this->getUrl("ajax/import_export_roles.php") ?>");
-        $('#importUserRoleForm').attr('action',
-            "<?= $this->getUrl("ajax/import_export_roles.php?action=uploadMapping") ?>");
-        $('#importUserRoleForm2').attr('action',
-            "<?= $this->getUrl("ajax/import_export_roles.php?action=uploadMapping") ?>");
-    }
-
-    function checkImportErrors() {
-        if (window.import_type) {
-            let title = "You can't do that.";
-            let text = "";
-            if (window.import_type == "users") {
-                title = "You cannot import those users.";
-                text =
-                    `The following users included in the provided import file cannot have the following permissions granted to them due to their current SAG assignment:<br><table style="margin-top: 20px; width: 100%;"><thead style="border-bottom: 2px solid #666;"><tr><th>User</th><th>SAG</th><th>Permissions</th></tr></thead><tbody style="border-bottom: 1px solid black;">`;
-                const users = Object.keys(window.import_errors);
-                users.forEach((user) => {
-                    text +=
-                        `<tr style="border-top: 1px solid #666;"><td><strong>${user}</strong></td><td>${window.import_errors[user].SAG}</td><td>${window.import_errors[user].rights.join('<br>')}</td></tr>`;
-                });
-                text += `</tbody></table>`;
-            } else if (window.import_type == "roles") {
-                title = "You cannot import those roles.";
-                text =
-                    `The following roles have users assigned to them, and the following permissions cannot be granted for those users due to their current SAG assignment:<br><table style="margin-top: 20px; width: 100%; table-layout: fixed;"><thead style="border-bottom: 2px solid #666;"><tr><th>User Role</th><th>User</th><th>SAG</th><th COLSPAN=2>Permissions</th></tr></thead><tbody style="border-bottom: 1px solid black;">`;
-                const roles = Object.keys(window.import_errors);
-                roles.forEach((role) => {
-                    const users = Object.keys(window.import_errors[role]);
-                    users.forEach((user, index) => {
-                        const theseRights = window.import_errors[role][user];
-                        text +=
-                            `<tr style='border-top: 1px solid black;'><td><strong>${role}</strong></td><td><strong>${user}</strong></td><td>${theseRights.SAG}</td><td COLSPAN=2>${theseRights.rights.join('<br>')}</td></tr>`;
-                    });
-                })
-                text += `</tbody></table>`;
-            } else if (window.import_type == "roleassignments") {
-                title = "You cannot assign those users to those roles.";
-                text =
-                    `The following permissions cannot be granted for the following users due to their current SAG assignment:<br><table style="margin-top: 20px; width: 100%; table-layout: fixed;"><thead style="border-bottom: 2px solid #666;"><tr><th>User Role</th><th>User</th><th>SAG</th><th COLSPAN=2>Permissions</th></tr></thead><tbody style="border-bottom: 1px solid black;">`;
-                const roles = Object.keys(window.import_errors);
-                roles.forEach((role) => {
-                    const users = Object.keys(window.import_errors[role]);
-                    users.forEach((user, index) => {
-                        const theseRights = window.import_errors[role][user];
-                        text +=
-                            `<tr style='border-top: 1px solid black;'><td><strong>${role}</strong></td><td><strong>${user}</strong></td><td>${theseRights.SAG}</td><td COLSPAN=2>${theseRights.rights.join('<br>')}</td></tr>`;
-                    });
-                })
-                text += `</tbody></table>`;
+            function createRightsTable(bad_rights) {
+                return `<table class="table table-sm table-borderless table-hover w-50 mt-4 mx-auto" style="font-size:13px; cursor: default;"><tbody><tr><td>${bad_rights.join('</td></tr><tr><td>')}</td></tr></tbody></table>`;
             }
-            Swal.fire({
-                icon: 'error',
-                title: title,
-                html: text,
-                width: '900px'
-            });
-        }
-    }
 
-    window.saveUserFormAjax = function() {
-        showProgress(1);
-        const permissions = $('form#user_rights_form').serializeObject();
-        console.log(permissions);
-        $.post('<?= $this->getUrl("ajax/edit_user.php?pid=$project_id") ?>', permissions, function(data) {
-            showProgress(0, 0);
-            try {
-                const result = JSON.parse(data);
-                if (!result.error || !result.bad_rights) {
-                    return;
-                }
-                let title = "You can't do that.";
-                let text = "";
-                let users = Object.keys(result.bad_rights);
-                if (!result.role) {
-                    title = `You cannot grant those user rights to user "${users[0]}"`;
-                    text =
-                        `The user is currently assigned to the SAG: "<strong>${result.bad_rights[users[0]].SAG}</strong>"<br>The following permissions you are attempting to grant cannot be granted to users in that SAG:${createRightsTable(result.bad_rights[users[0]].rights)}`;
-                } else {
-                    title = `You cannot grant those rights to the role<br>"${result.role}"`;
-                    text =
-                        `The following users are assigned to that role, and the following permissions cannot be granted to them because of their current SAG assignment:<br><table style="margin-top: 20px; width: 100%;"><thead style="border-bottom: 2px solid #666;"><tr><th>User</th><th>SAG</th><th>Permissions</th></tr></thead><tbody style="border-bottom: 1px solid black;">`;
-                    users.forEach((user) => {
-                        text +=
-                            `<tr style="border-top: 1px solid #666;"><td><strong>${user}</strong></td><td>${result.bad_rights[user].SAG}</td><td>${result.bad_rights[user].rights.join('<br>')}</td></tr>`;
-                    });
-                    text += `</tbody></table>`;
-                }
-                Swal.fire({
-                    icon: 'error',
-                    title: title,
-                    html: text,
-                    width: '900px'
-                });
-                return;
-            } catch (error) {
-                if ($('#editUserPopup').hasClass('ui-dialog-content')) $('#editUserPopup').dialog(
-                    'destroy');
-                $('#user_rights_roles_table_parent').html(data);
-                simpleDialogAlt($('#user_rights_roles_table_parent div.userSaveMsg'), 1.7);
-                enablePageJS();
-                if ($('#copy_role_success').length) {
-                    setTimeout(function() {
-                        openAddUserPopup('', $('#copy_role_success').val());
-                    }, 1500);
-                }
+            function fixLinks() {
+                $('#importUserForm').attr('action', "<?= $this->getUrl("ajax/import_export_users.php") ?>");
+                $('#importUsersForm2').attr('action', "<?= $this->getUrl("ajax/import_export_users.php") ?>");
+                $('#importRoleForm').attr('action', "<?= $this->getUrl("ajax/import_export_roles.php") ?>");
+                $('#importRolesForm2').attr('action', "<?= $this->getUrl("ajax/import_export_roles.php") ?>");
+                $('#importUserRoleForm').attr('action',
+                    "<?= $this->getUrl("ajax/import_export_roles.php?action=uploadMapping") ?>");
+                $('#importUserRoleForm2').attr('action',
+                    "<?= $this->getUrl("ajax/import_export_roles.php?action=uploadMapping") ?>");
             }
-            fixLinks();
-        });
-    }
 
-    window.assignUserRole = function(username, role_id) {
-        showProgress(1);
-        checkIfuserRights(username, role_id, function(data) {
-            if (data == 1) {
-                console.log(username, role_id);
-                $.post('<?= $this->getUrl("ajax/assign_user.php?pid=$project_id") ?>', {
-                    username: username,
-                    role_id: role_id,
-                    notify_email_role: ($('#notify_email_role').prop('checked') ? 1 : 0),
-                    group_id: $('#user_dag').val()
-                }, function(data) {
-                    showProgress(0, 0);
-                    if (data == '') {
-                        alert(woops);
-                        return;
+            function checkImportErrors() {
+                if (window.import_type) {
+                    let title = "You can't do that.";
+                    let text = "";
+                    if (window.import_type == "users") {
+                        title = "You cannot import those users.";
+                        text =
+                            `The following users included in the provided import file cannot have the following permissions granted to them due to their current SAG assignment:<br><table style="margin-top: 20px; width: 100%;"><thead style="border-bottom: 2px solid #666;"><tr><th>User</th><th>SAG</th><th>Permissions</th></tr></thead><tbody style="border-bottom: 1px solid black;">`;
+                        const users = Object.keys(window.import_errors);
+                        users.forEach((user) => {
+                            text +=
+                                `<tr style="border-top: 1px solid #666;"><td><strong>${user}</strong></td><td>${window.import_errors[user].SAG}</td><td>${window.import_errors[user].rights.join('<br>')}</td></tr>`;
+                        });
+                        text += `</tbody></table>`;
+                    } else if (window.import_type == "roles") {
+                        title = "You cannot import those roles.";
+                        text =
+                            `The following roles have users assigned to them, and the following permissions cannot be granted for those users due to their current SAG assignment:<br><table style="margin-top: 20px; width: 100%; table-layout: fixed;"><thead style="border-bottom: 2px solid #666;"><tr><th>User Role</th><th>User</th><th>SAG</th><th COLSPAN=2>Permissions</th></tr></thead><tbody style="border-bottom: 1px solid black;">`;
+                        const roles = Object.keys(window.import_errors);
+                        roles.forEach((role) => {
+                            const users = Object.keys(window.import_errors[role]);
+                            users.forEach((user, index) => {
+                                const theseRights = window.import_errors[role][user];
+                                text +=
+                                    `<tr style='border-top: 1px solid black;'><td><strong>${role}</strong></td><td><strong>${user}</strong></td><td>${theseRights.SAG}</td><td COLSPAN=2>${theseRights.rights.join('<br>')}</td></tr>`;
+                            });
+                        })
+                        text += `</tbody></table>`;
+                    } else if (window.import_type == "roleassignments") {
+                        title = "You cannot assign those users to those roles.";
+                        text =
+                            `The following permissions cannot be granted for the following users due to their current SAG assignment:<br><table style="margin-top: 20px; width: 100%; table-layout: fixed;"><thead style="border-bottom: 2px solid #666;"><tr><th>User Role</th><th>User</th><th>SAG</th><th COLSPAN=2>Permissions</th></tr></thead><tbody style="border-bottom: 1px solid black;">`;
+                        const roles = Object.keys(window.import_errors);
+                        roles.forEach((role) => {
+                            const users = Object.keys(window.import_errors[role]);
+                            users.forEach((user, index) => {
+                                const theseRights = window.import_errors[role][user];
+                                text +=
+                                    `<tr style='border-top: 1px solid black;'><td><strong>${role}</strong></td><td><strong>${user}</strong></td><td>${theseRights.SAG}</td><td COLSPAN=2>${theseRights.rights.join('<br>')}</td></tr>`;
+                            });
+                        })
+                        text += `</tbody></table>`;
                     }
+                    Swal.fire({
+                        icon: 'error',
+                        title: title,
+                        html: text,
+                        width: '900px'
+                    });
+                }
+            }
+
+            window.saveUserFormAjax = function() {
+                showProgress(1);
+                const permissions = $('form#user_rights_form').serializeObject();
+                console.log(permissions);
+                $.post('<?= $this->getUrl("ajax/edit_user.php?pid=$project_id") ?>', permissions, function(data) {
+                    showProgress(0, 0);
                     try {
                         const result = JSON.parse(data);
                         if (!result.error || !result.bad_rights) {
                             return;
                         }
+                        let title = "You can't do that.";
+                        let text = "";
                         let users = Object.keys(result.bad_rights);
-                        const title =
-                            `You cannot assign user "${username}" to user role "${result.role}"`;
-                        const text =
-                            `The user is currently assigned to the SAG: "<strong>${result.bad_rights[users[0]].SAG}</strong>"<br>The following permissions allowed in user role "${result.role}" cannot be granted to users in that SAG:${createRightsTable(result.bad_rights[users[0]].rights)}`;
-
+                        if (!result.role) {
+                            title = `You cannot grant those user rights to user "${users[0]}"`;
+                            text =
+                                `The user is currently assigned to the SAG: "<strong>${result.bad_rights[users[0]].SAG}</strong>"<br>The following permissions you are attempting to grant cannot be granted to users in that SAG:${createRightsTable(result.bad_rights[users[0]].rights)}`;
+                        } else {
+                            title = `You cannot grant those rights to the role<br>"${result.role}"`;
+                            text =
+                                `The following users are assigned to that role, and the following permissions cannot be granted to them because of their current SAG assignment:<br><table style="margin-top: 20px; width: 100%;"><thead style="border-bottom: 2px solid #666;"><tr><th>User</th><th>SAG</th><th>Permissions</th></tr></thead><tbody style="border-bottom: 1px solid black;">`;
+                            users.forEach((user) => {
+                                text +=
+                                    `<tr style="border-top: 1px solid #666;"><td><strong>${user}</strong></td><td>${result.bad_rights[user].SAG}</td><td>${result.bad_rights[user].rights.join('<br>')}</td></tr>`;
+                            });
+                            text += `</tbody></table>`;
+                        }
                         Swal.fire({
                             icon: 'error',
                             title: title,
                             html: text,
-                            width: '750px'
+                            width: '900px'
                         });
                         return;
                     } catch (error) {
+                        if ($('#editUserPopup').hasClass('ui-dialog-content')) $('#editUserPopup').dialog(
+                            'destroy');
                         $('#user_rights_roles_table_parent').html(data);
-                        showProgress(0, 0);
-                        simpleDialogAlt($(
-                            '#user_rights_roles_table_parent div.userSaveMsg'), 1.7);
+                        simpleDialogAlt($('#user_rights_roles_table_parent div.userSaveMsg'), 1.7);
                         enablePageJS();
-                        setTimeout(function() {
-                            if (role_id == '0') {
-                                simpleDialog(lang.rights_215, lang.global_03 + lang
-                                    .colon + ' ' + lang.rights_214);
-                            }
-                        }, 3200);
+                        if ($('#copy_role_success').length) {
+                            setTimeout(function() {
+                                openAddUserPopup('', $('#copy_role_success').val());
+                            }, 1500);
+                        }
                     }
                     fixLinks();
                 });
-            } else {
-                showProgress(0, 0);
-                setTimeout(function() {
-                    simpleDialog(lang.rights_317, lang.global_03 + lang.colon + ' ' + lang
-                        .rights_316);
-                }, 500);
+            }
+
+            window.assignUserRole = function(username, role_id) {
+                showProgress(1);
+                checkIfuserRights(username, role_id, function(data) {
+                    if (data == 1) {
+                        console.log(username, role_id);
+                        $.post('<?= $this->getUrl("ajax/assign_user.php?pid=$project_id") ?>', {
+                            username: username,
+                            role_id: role_id,
+                            notify_email_role: ($('#notify_email_role').prop('checked') ? 1 : 0),
+                            group_id: $('#user_dag').val()
+                        }, function(data) {
+                            showProgress(0, 0);
+                            if (data == '') {
+                                alert(woops);
+                                return;
+                            }
+                            try {
+                                const result = JSON.parse(data);
+                                if (!result.error || !result.bad_rights) {
+                                    return;
+                                }
+                                let users = Object.keys(result.bad_rights);
+                                const title =
+                                    `You cannot assign user "${username}" to user role "${result.role}"`;
+                                const text =
+                                    `The user is currently assigned to the SAG: "<strong>${result.bad_rights[users[0]].SAG}</strong>"<br>The following permissions allowed in user role "${result.role}" cannot be granted to users in that SAG:${createRightsTable(result.bad_rights[users[0]].rights)}`;
+
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: title,
+                                    html: text,
+                                    width: '750px'
+                                });
+                                return;
+                            } catch (error) {
+                                $('#user_rights_roles_table_parent').html(data);
+                                showProgress(0, 0);
+                                simpleDialogAlt($(
+                                    '#user_rights_roles_table_parent div.userSaveMsg'), 1.7);
+                                enablePageJS();
+                                setTimeout(function() {
+                                    if (role_id == '0') {
+                                        simpleDialog(lang.rights_215, lang.global_03 + lang
+                                            .colon + ' ' + lang.rights_214);
+                                    }
+                                }, 3200);
+                            }
+                            fixLinks();
+                        });
+                    } else {
+                        showProgress(0, 0);
+                        setTimeout(function() {
+                            simpleDialog(lang.rights_317, lang.global_03 + lang.colon + ' ' + lang
+                                .rights_316);
+                        }, 500);
+                    }
+                    fixLinks();
+                });
+            }
+
+            window.setExpiration = function() {
+                $('#tooltipExpirationBtn').button('disable');
+                $('#tooltipExpiration').prop('disabled', true);
+                $('#tooltipExpirationCancel').hide();
+                $('#tooltipExpirationProgress').show();
+                $.post("<?= $this->getUrl('ajax/set_user_expiration.php?pid=' . $this->getProjectId()) ?>", {
+                        username: $('#tooltipExpirationHiddenUsername').val(),
+                        expiration: $('#tooltipExpiration').val()
+                    },
+                    function(data) {
+                        console.log(data);
+                        if (data == '0') {
+                            alert(woops);
+                            return;
+                        }
+                        try {
+                            const result = JSON.parse(data);
+                            if (!result.error || !result.bad_rights) {
+                                return;
+                            }
+                            const users = Object.keys(result.bad_rights);
+                            const title = `You cannot grant those user rights to user "${users[0]}"`;
+                            const text =
+                                `The user is currently assigned to the SAG: "<strong>${result.bad_rights[users[0]].SAG}</strong>"<br>The following permissions you are attempting to grant cannot be granted to users in that SAG:${createRightsTable(result.bad_rights[users[0]].rights)}`;
+
+                            Swal.fire({
+                                icon: 'error',
+                                title: title,
+                                html: text,
+                                width: '750px'
+                            });
+                            return;
+                        } catch (error) {
+                            $('#user_rights_roles_table_parent').html(data);
+                            enablePageJS();
+                        } finally {
+                            setTimeout(function() {
+                                $('#tooltipExpiration').prop('disabled', false);
+                                $('#tooltipExpirationBtn').button('enable');
+                                $('#tooltipExpirationCancel').show();
+                                $('#tooltipExpirationProgress').hide();
+                                $('#userClickExpiration').hide();
+                            }, 400);
+                        }
+                    });
             }
             fixLinks();
+            checkImportErrors();
         });
-    }
-
-    window.setExpiration = function() {
-        $('#tooltipExpirationBtn').button('disable');
-        $('#tooltipExpiration').prop('disabled', true);
-        $('#tooltipExpirationCancel').hide();
-        $('#tooltipExpirationProgress').show();
-        $.post("<?= $this->getUrl('ajax/set_user_expiration.php?pid=' . $this->getProjectId()) ?>", {
-                username: $('#tooltipExpirationHiddenUsername').val(),
-                expiration: $('#tooltipExpiration').val()
-            },
-            function(data) {
-                console.log(data);
-                if (data == '0') {
-                    alert(woops);
-                    return;
-                }
-                try {
-                    const result = JSON.parse(data);
-                    if (!result.error || !result.bad_rights) {
-                        return;
-                    }
-                    const users = Object.keys(result.bad_rights);
-                    const title = `You cannot grant those user rights to user "${users[0]}"`;
-                    const text =
-                        `The user is currently assigned to the SAG: "<strong>${result.bad_rights[users[0]].SAG}</strong>"<br>The following permissions you are attempting to grant cannot be granted to users in that SAG:${createRightsTable(result.bad_rights[users[0]].rights)}`;
-
-                    Swal.fire({
-                        icon: 'error',
-                        title: title,
-                        html: text,
-                        width: '750px'
-                    });
-                    return;
-                } catch (error) {
-                    $('#user_rights_roles_table_parent').html(data);
-                    enablePageJS();
-                } finally {
-                    setTimeout(function() {
-                        $('#tooltipExpiration').prop('disabled', false);
-                        $('#tooltipExpirationBtn').button('enable');
-                        $('#tooltipExpirationCancel').show();
-                        $('#tooltipExpirationProgress').hide();
-                        $('#userClickExpiration').hide();
-                    }, 400);
-                }
-            });
-    }
-    fixLinks();
-    checkImportErrors();
-});
-</script>
-<?php
+        </script>
+        <?php
     }
 
     public function redcap_module_project_enable($version, $project_id)
@@ -933,26 +933,34 @@ $(function() {
         return $role;
     }
 
+    private function convertDataQualityResolution($rights)
+    {
+        // 0: no access
+        // 1: view only
+        // 4: open queries only
+        // 2: respond only to opened queries
+        // 5: open and respond to queries
+        // 3: open, close, and respond to queries
+        $value = $rights["data_quality_resolution"];
+        if ( $value ) {
+            $rights["data_quality_resolution_view"]    = intval($value) > 0 ? 1 : 0;
+            $rights["data_quality_resolution_open"]    = in_array(intval($value), [ 3, 4, 5 ], true) ? 1 : 0;
+            $rights["data_quality_resolution_respond"] = in_array(intval($value), [ 2, 3, 5 ], true) ? 1 : 0;
+            $rights["data_quality_resolution_close"]   = intval($value) === 3 ? 1 : 0;
+        }
+        return $rights;
+    }
+
     private function convertPermissions(string $permissions)
     {
         $rights = json_decode($permissions, true);
+        $rights = $this->convertDataQualityResolution($rights);
         foreach ( $rights as $key => $value ) {
             if ( $value === "on" ) {
                 $rights[$key] = 1;
             }
-            if ( $key === "data_quality_resolution" ) {
-                // 0: no access
-                // 1: view only
-                // 4: open queries only
-                // 2: respond only to opened queries
-                // 5: open and respond to queries
-                // 3: open, close, and respond to queries
-                $rights["data_quality_resolution_view"]    = intval($value) > 0 ? 1 : 0;
-                $rights["data_quality_resolution_open"]    = in_array(intval($value), [ 3, 4, 5 ], true) ? 1 : 0;
-                $rights["data_quality_resolution_respond"] = in_array(intval($value), [ 2, 3, 5 ], true) ? 1 : 0;
-                $rights["data_quality_resolution_close"]   = intval($value) === 3 ? 1 : 0;
-            }
         }
+
         return json_encode($rights);
     }
 
@@ -1009,7 +1017,7 @@ $(function() {
             $sql1                  = "SELECT log_id WHERE message = 'role' AND role_id = ? AND project_id IS NULL";
             $result1               = $this->framework->queryLogs($sql1, [ $role_id ]);
             $log_id                = intval($result1->fetch_assoc()["log_id"]);
-            if ( $log_id != 0 ) {
+            if ( $log_id === 0 ) {
                 throw new \Exception('No role found with the specified id');
             }
             $params = [ "role_name" => $role_name, "permissions" => $permissions_converted ];
@@ -1056,10 +1064,11 @@ $(function() {
         $result = $this->framework->queryLogs($sql, []);
         $roles  = [];
         while ( $row = $result->fetch_assoc() ) {
-            $logId   = $row["log_id"];
-            $sql2    = "SELECT role_id, role_name, permissions WHERE (project_id IS NULL OR project_id IS NOT NULL) AND log_id = ?";
-            $result2 = $this->framework->queryLogs($sql2, [ $logId ]);
-            $role    = $result2->fetch_assoc();
+            $logId             = $row["log_id"];
+            $sql2              = "SELECT role_id, role_name, permissions WHERE (project_id IS NULL OR project_id IS NOT NULL) AND log_id = ?";
+            $result2           = $this->framework->queryLogs($sql2, [ $logId ]);
+            $role              = $result2->fetch_assoc();
+            $role['role_name'] = $this->framework->escape($role['role_name']);
             if ( $parsePermissions ) {
                 $role['permissions']     = json_decode($role['permissions'], true);
                 $roles[$role["role_id"]] = $role;
@@ -1067,7 +1076,7 @@ $(function() {
                 $roles[] = $role;
             }
         }
-        return $this->framework->escape($roles);
+        return $roles;
     }
 
     private function setDefaultSystemRole()
@@ -1411,722 +1420,722 @@ $(function() {
         $allRights       = $this->getAllRights();
         $context_message = ($newRole ? $lang["rights_159"] : $lang["rights_157"]) . ' "<strong>' . \REDCap::escapeHtml($role_name) . '</strong>"';
         ?>
-<div class="modal-xl modal-dialog modal-dialog-scrollable">
-    <div class="modal-content">
-        <div class="modal-header" style="background-color: #e9e9e9; padding-top: 0.5rem; padding-bottom: 0.5rem;">
-            <span class="modal-title" id="staticBackdropLabel" style="font-size: 1rem;"><i
-                    class="fa-solid fa-fw fa-user-tag"></i> <?= $context_message ?></span>
-            <button type="button" class="btn-close align-self-center" data-bs-dismiss="modal" data-dismiss="modal"
-                aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-            <div style="text-align:center; margin: 15px 0;"
-                class="fs14 alert <?= $newRole ? "alert-success" : "alert-primary" ?>">
-                <i class="fa-solid fa-fw fa-user-tag"></i> <?= $context_message ?>
+        <div class="modal-xl modal-dialog modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color: #e9e9e9; padding-top: 0.5rem; padding-bottom: 0.5rem;">
+                    <span class="modal-title" id="staticBackdropLabel" style="font-size: 1rem;"><i
+                            class="fa-solid fa-fw fa-user-tag"></i> <?= $context_message ?></span>
+                    <button type="button" class="btn-close align-self-center" data-bs-dismiss="modal" data-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div style="text-align:center; margin: 15px 0;"
+                        class="fs14 alert <?= $newRole ? "alert-success" : "alert-primary" ?>">
+                        <i class="fa-solid fa-fw fa-user-tag"></i> <?= $context_message ?>
+                    </div>
+                    <form id="SUR_Role_Setting">
+                        <div class="hidden">
+                            <input name="newRole" value="<?= $newRole == true ?>">
+                        </div>
+                        <div class="row">
+                            <div class="col" style='width:475px;'>
+                                <div class='card' style='border-color:#00000060;'>
+                                    <div class='card-header font-weight-bold fs14' style='background-color:#00000017;'>
+                                        <?= $lang['rights_431'] ?>
+                                    </div>
+                                    <div class='card-body p-3' style='background-color:#00000007;'>
+
+                                        <!-- EDIT ROLE NAME -->
+                                        <div class="SUR-form-row row <?= $newRole === true ? "hidden" : "" ?>">
+                                            <div class="col" colspan='2'>
+                                                <i class="fa-solid fa-fw fa-id-card"></i>&nbsp;&nbsp;<?= $lang['rights_199'] ?>
+                                                <input type='text' value="<?= \REDCap::escapeHtml($role_name) ?>"
+                                                    class='x-form-text x-form-field' name='role_name_edit'>
+                                            </div>
+                                        </div>
+
+                                        <!-- HIGHEST LEVEL PRIVILEGES -->
+                                        <hr>
+                                        <div class="SUR-form-row row">
+                                            <div class="col section-header" colspan='2'>
+                                                <?= $lang['rights_299'] ?>
+                                            </div>
+                                        </div>
+
+                                        <!-- Project Setup/Design -->
+                                        <?php if ( isset($allRights["design"]) ) { ?>
+                                            <div class="SUR-form-row row">
+                                                <div class="col">
+                                                    <i class="fa-solid fa-fw fa-tasks"></i>&nbsp;&nbsp;<?= $lang['rights_135'] ?>
+                                                </div>
+                                                <div class="col">
+                                                    <input type='checkbox' <?= $rights["design"] == 1 ? "checked" : "" ?>
+                                                        name='design'>
+                                                </div>
+                                            </div>
+                                        <?php } ?>
+
+                                        <!-- User Rights -->
+                                        <?php if ( isset($allRights["user_rights"]) ) { ?>
+                                            <div class="SUR-form-row row">
+                                                <div class="col">
+                                                    <i class="fa-solid fa-fw fa-user"></i>&nbsp;&nbsp;<?= $lang['app_05'] ?>
+                                                </div>
+                                                <div class="col">
+                                                    <input type='checkbox' <?= $rights["user_rights"] == 1 ? "checked" : "" ?>
+                                                        name='user_rights'>
+                                                </div>
+                                            </div>
+                                        <?php } ?>
+
+                                        <!--Data Access Groups -->
+                                        <?php if ( isset($allRights["data_access_groups"]) ) { ?>
+                                            <div class="SUR-form-row row">
+                                                <div class="col">
+                                                    <i class="fa-solid fa-fw fa-users"></i>&nbsp;&nbsp;<?= $lang['global_22'] ?>
+                                                </div>
+                                                <div class="col">
+                                                    <input type='checkbox'
+                                                        <?= $rights["data_access_groups"] == 1 ? "checked" : "" ?>
+                                                        name='data_access_groups'>
+                                                </div>
+                                            </div>
+                                        <?php } ?>
+
+                                        <!-- OTHER PRIVILEGES -->
+                                        <hr>
+                                        <div class="SUR-form-row row">
+                                            <div class="col section-header" colspan='2'>
+                                                <?= $lang['rights_300'] ?>
+                                            </div>
+                                        </div>
+
+                                        <!-- MyCap Mobile App -->
+                                        <?php if ( isset($allRights["mycap_participants"]) ) { ?>
+
+                                            <div class="SUR-form-row row">
+                                                <div class="col">
+                                                    <img style='height:1rem;' alt='mycap_logo'
+                                                        src='<?= APP_PATH_IMAGES . "mycap_logo_black.png" ?>'>&nbsp;<?= $lang['rights_437'] ?>
+                                                </div>
+                                                <div class="col">
+                                                    <input type='checkbox'
+                                                        <?= $rights["mycap_participants"] == 1 ? "checked" : "" ?>
+                                                        name='mycap_participants'>
+                                                </div>
+                                            </div>
+                                        <?php } ?>
+
+                                        <!-- Survey Distribution Tool rights -->
+                                        <?php if ( isset($allRights["participants"]) ) { ?>
+                                            <div class="SUR-form-row row">
+                                                <div class="col">
+                                                    <div>
+                                                        <i
+                                                            class="fa-solid fa-fw fa-chalkboard-teacher"></i>&nbsp;&nbsp;<?= $lang['app_24'] ?>
+                                                    </div>
+                                                </div>
+                                                <div class="col">
+                                                    <input type='checkbox' <?= $rights["participants"] == 1 ? "checked" : "" ?>
+                                                        name='participants'>
+                                                </div>
+                                            </div>
+                                        <?php } ?>
+
+                                        <!-- Alerts & Notifications -->
+                                        <?php if ( isset($allRights["alerts"]) ) { ?>
+                                            <div class="SUR-form-row row">
+                                                <div class="col">
+                                                    <i class="fa-solid fa-fw fa-bell"></i>&nbsp;&nbsp;<?= $lang['global_154'] ?>
+                                                </div>
+                                                <div class="col">
+                                                    <input type='checkbox' <?= $rights["alerts"] == 1 ? "checked" : "" ?>
+                                                        name='alerts'>
+                                                </div>
+                                            </div>
+                                        <?php } ?>
+
+                                        <!--Calendar rights -->
+                                        <?php if ( isset($allRights["calendar"]) ) { ?>
+                                            <div class="SUR-form-row row">
+                                                <div class="col">
+                                                    <i class="far fa-calendar-alt"></i>&nbsp;&nbsp;
+                                                    <?= $lang['app_08'] ?>
+                                                    <?= $lang['rights_357'] ?>
+                                                </div>
+                                                <div class="col">
+                                                    <input type='checkbox' <?= $rights["calendar"] == 1 ? "checked" : "" ?>
+                                                        name='calendar'>
+                                                </div>
+                                            </div>
+                                        <?php } ?>
+
+                                        <!-- Reports & Report Builder -->
+                                        <?php if ( isset($allRights["reports"]) ) { ?>
+                                            <div class="SUR-form-row row">
+                                                <div class="col">
+                                                    <i class="fa-solid fa-fw fa-search"></i>&nbsp;&nbsp;<?= $lang['rights_356'] ?>
+                                                    <div class="extra-text">
+                                                        <?= $lang['report_builder_130'] ?>
+                                                    </div>
+                                                </div>
+                                                <div class="col">
+                                                    <input type='checkbox' <?= $rights["reports"] == 1 ? "checked" : "" ?>
+                                                        name='reports'>
+                                                </div>
+                                            </div>
+                                        <?php } ?>
+
+                                        <!-- Graphical Data View & Stats -->
+                                        <?php if ( isset($allRights["graphical"]) ) { ?>
+                                            <div class="SUR-form-row row">
+                                                <div class="col">
+                                                    <i
+                                                        class="fa-solid fa-fw fa-chart-column"></i>&nbsp;&nbsp;<?= $lang['report_builder_78'] ?>
+                                                </div>
+                                                <div class="col">
+                                                    <input type='checkbox' <?= $rights["graphical"] == 1 ? "checked" : "" ?>
+                                                        name='graphical'>
+                                                </div>
+                                            </div>
+                                        <?php } ?>
+
+                                        <!-- Double Data Entry -->
+                                        <?php if ( isset($allRights["double_data"]) ) { ?>
+                                            <div class="SUR-form-row row">
+                                                <div class="col mt-1">
+                                                    <i class="fa-solid fa-fw fa-users"></i>&nbsp;&nbsp;<?= $lang['rights_50'] ?>
+                                                </div>
+                                                <div class="col">
+                                                    <div class="form-check">
+                                                        <input id='double_data_reviewer' class="form-check-input" type='radio'
+                                                            name='double_data' <?= $rights["double_data"] == 0 ? "checked" : "" ?>
+                                                            value='0'>
+                                                        <label for="double_data_reviewer"
+                                                            class="form-check-label"><?= $lang['rights_51'] ?></label>
+                                                    </div>
+                                                    <div class="form-check">
+                                                        <input id='double_data_p1' class="form-check-input" type='radio'
+                                                            name='double_data' <?= $rights["double_data"] == 1 ? "checked" : "" ?>
+                                                            value='1'>
+                                                        <label for="double_data_p1"
+                                                            class="form-check-label"><?= $lang['rights_52'] ?>#1</label>
+                                                    </div>
+                                                    <div class="form-check">
+                                                        <input id='double_data_p2' class="form-check-input" type='radio'
+                                                            name='double_data' <?= $rights["double_data"] == 2 ? "checked" : "" ?>
+                                                            value='2'>
+                                                        <label for="double_data_p2"
+                                                            class="form-check-label"><?= $lang['rights_52'] ?>
+                                                            #2</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        <?php } ?>
+
+                                        <!-- Data Import Tool -->
+                                        <?php if ( isset($allRights["data_import_tool"]) ) { ?>
+
+                                            <div class="SUR-form-row row">
+                                                <div class="col">
+                                                    <i class="fa-solid fa-fw fa-file-import"></i>&nbsp;&nbsp;<?= $lang['app_01'] ?>
+                                                </div>
+                                                <div class="col">
+                                                    <input type='checkbox' <?= $rights["data_import_tool"] == 1 ? "checked" : "" ?>
+                                                        name='data_import_tool'>
+                                                </div>
+                                            </div>
+                                        <?php } ?>
+
+                                        <!-- Data Comparison Tool -->
+                                        <?php if ( isset($allRights["data_comparison_tool"]) ) { ?>
+                                            <div class="SUR-form-row row">
+                                                <div class="col">
+                                                    <i class="fa-solid fa-fw fa-not-equal"></i>&nbsp;&nbsp;<?= $lang['app_02'] ?>
+                                                </div>
+                                                <div class="col">
+                                                    <input type='checkbox'
+                                                        <?= $rights["data_comparison_tool"] == 1 ? "checked" : "" ?>
+                                                        name='data_comparison_tool'>
+                                                </div>
+                                            </div>
+                                        <?php } ?>
+
+                                        <!-- Logging -->
+                                        <?php if ( isset($allRights["data_logging"]) ) { ?>
+                                            <div class="SUR-form-row row">
+                                                <div class="col">
+                                                    <i class="fa-solid fa-fw fa-receipt"></i>&nbsp;&nbsp;<?= $lang['app_07'] ?>
+                                                </div>
+                                                <div class="col"><input type='checkbox'
+                                                        <?= $rights["data_logging"] == 1 ? "checked" : "" ?> name='data_logging'>
+                                                </div>
+                                            </div>
+                                        <?php } ?>
+
+                                        <!-- File Repository -->
+                                        <?php if ( isset($allRights["file_repository"]) ) { ?>
+                                            <div class="SUR-form-row row">
+                                                <div class="col">
+                                                    <i class="fa-solid fa-fw fa-folder-open"></i>&nbsp;&nbsp;<?= $lang['app_04'] ?>
+                                                </div>
+                                                <div class="col">
+                                                    <input type='checkbox' <?= $rights["file_repository"] == 1 ? "checked" : "" ?>
+                                                        name='file_repository'>
+                                                </div>
+                                            </div>
+                                        <?php } ?>
+
+                                        <!-- Randomization -->
+                                        <?php if ( isset($allRights["random_setup"]) ) { ?>
+                                            <div class="SUR-form-row row">
+                                                <div class="col mt-1">
+                                                    <i class="fa-solid fa-fw fa-random"></i>&nbsp;&nbsp;<?= $lang['app_21'] ?>
+                                                </div>
+                                                <div class="col">
+                                                    <div class="form-check">
+                                                        <input class='form-check-input' type='checkbox' id='random_setup'
+                                                            <?= $rights["random_setup"] == 1 ? "checked" : "" ?>
+                                                            name='random_setup'>
+                                                        <label class='form-check-label'
+                                                            for='random_setup'><?= $lang['rights_142'] ?></label>
+                                                    </div>
+                                                    <div class="form-check">
+                                                        <input class='form-check-input' type='checkbox' id='random_dashboard'
+                                                            <?= $rights["random_dashboard"] == 1 ? "checked" : "" ?>
+                                                            name='random_dashboard'>
+                                                        <label class='form-check-label'
+                                                            for='random_dashboard'><?= $lang['rights_143'] ?></label>
+                                                    </div>
+                                                    <div class="form-check">
+                                                        <input class='form-check-input' type='checkbox' id='random_perform'
+                                                            <?= $rights["random_perform"] == 1 ? "checked" : "" ?>
+                                                            name='random_perform'>
+                                                        <label class='form-check-label'
+                                                            for='random_perform'><?= $lang['rights_144'] ?></label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        <?php } ?>
+
+                                        <!-- Data Quality -->
+                                        <?php if ( isset($allRights["data_quality_design"]) ) { ?>
+                                            <div class="SUR-form-row row">
+                                                <div class="col mt-1">
+                                                    <i
+                                                        class="fa-solid fa-fw fa-clipboard-check"></i>&nbsp;&nbsp;<?= $lang['app_20'] ?>
+                                                </div>
+                                                <div class="col">
+                                                    <div class="form-check">
+                                                        <input class='form-check-input' type='checkbox' id='data_quality_design'
+                                                            <?= $rights["data_quality_design"] == 1 ? "checked" : "" ?>
+                                                            name='data_quality_design'>
+                                                        <label class='form-check-label'
+                                                            for='data_quality_design'><?= $lang['dataqueries_40'] ?></label>
+                                                    </div>
+                                                    <div class="form-check">
+                                                        <input class='form-check-input' type='checkbox' id='data_quality_execute'
+                                                            <?= $rights["data_quality_execute"] == 1 ? "checked" : "" ?>
+                                                            name='data_quality_execute'>
+                                                        <label class='form-check-label'
+                                                            for='data_quality_execute'><?= $lang['dataqueries_41'] ?></label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        <?php } ?>
+
+                                        <!-- Data Quality resolution -->
+                                        <?php if ( isset($allRights["data_quality_resolution"]) ) { ?>
+                                            <div class="SUR-form-row row">
+                                                <div class="col mt-1">
+                                                    <i
+                                                        class='fa-solid fa-fw fa-comments'></i>&nbsp;&nbsp;<?= $lang['dataqueries_137'] ?>
+                                                </div>
+                                                <div class="col">
+                                                    <div class='form-check'>
+                                                        <input
+                                                            class='form-check-input data_quality_resolution data_quality_resolution_view'
+                                                            type='checkbox' id='data_quality_resolution_view'
+                                                            name='data_quality_resolution_view'
+                                                            <?= $rights["data_quality_resolution_view"] == '1' ? "checked" : "" ?>
+                                                            onchange="if(!this.checked) {$('.data_quality_resolution').prop('checked', false);}">
+                                                        <label class='form-check-label' for='data_quality_resolution_view'>View
+                                                            Queries</label>
+                                                    </div>
+                                                    <div class='form-check'>
+                                                        <input
+                                                            class='form-check-input data_quality_resolution data_quality_resolution_open'
+                                                            type='checkbox' id='data_quality_resolution_open'
+                                                            name='data_quality_resolution_open'
+                                                            <?= $rights["data_quality_resolution_open"] == '1' ? "checked" : "" ?>
+                                                            onchange="if(!this.checked) {$('.data_quality_resolution_close').prop('checked', false);} else {$('.data_quality_resolution_view').prop('checked', true);}">
+                                                        <label class='form-check-label' for='data_quality_resolution_open'>Open
+                                                            Queries</label>
+                                                    </div>
+                                                    <div class='form-check'>
+                                                        <input
+                                                            class='form-check-input data_quality_resolution data_quality_resolution_respond'
+                                                            type='checkbox' id='data_quality_resolution_respond'
+                                                            name='data_quality_resolution_respond'
+                                                            <?= $rights["data_quality_resolution_respond"] == '1' ? "checked" : "" ?>
+                                                            onchange="if(!this.checked) {$('.data_quality_resolution_close').prop('checked', false);} else {$('.data_quality_resolution_view').prop('checked', true);}">
+                                                        <label class='form-check-label'
+                                                            for='data_quality_resolution_respond'>Respond to
+                                                            Queries</label>
+                                                    </div>
+                                                    <div class='form-check'>
+                                                        <input
+                                                            class='form-check-input data_quality_resolution data_quality_resolution_close'
+                                                            type='checkbox' id='data_quality_resolution_close'
+                                                            name='data_quality_resolution_close'
+                                                            <?= $rights["data_quality_resolution_close"] == '1' ? "checked" : "" ?>
+                                                            onchange="if(this.checked) {$('.data_quality_resolution').prop('checked', true);}">
+                                                        <label class='form-check-label' for='data_quality_resolution_close'>Close
+                                                            Queries</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        <?php } ?>
+
+                                        <!-- API -->
+                                        <?php if ( isset($allRights["api_export"]) ) { ?>
+                                            <div class="SUR-form-row row">
+                                                <div class="col mt-1">
+                                                    <i
+                                                        class="fa-solid fa-fw fa-laptop-code"></i>&nbsp;&nbsp;<?= $lang['setup_77'] ?>
+                                                </div>
+                                                <div class="col">
+                                                    <div class='form-check'>
+                                                        <input class='form-check-input' id='api_export'
+                                                            <?= $rights["api_export"] == 1 ? "checked" : "" ?> type='checkbox'
+                                                            name='api_export'>
+                                                        <label class='form-check-label'
+                                                            for='api_export'><?= $lang['rights_139'] ?></label>
+                                                    </div>
+                                                    <div class='form-check'>
+                                                        <input class='form-check-input' id='api_import' name='api_import'
+                                                            <?= $rights["api_import"] == 1 ? "checked" : "" ?> type='checkbox'>
+                                                        <label class='form-check-label'
+                                                            for='api_import'><?= $lang['rights_314'] ?></label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        <?php } ?>
+
+                                        <!-- Dynamic Data Pull OR CDIS-->
+                                        <?php if ( isset($allRights["realtime_webservice_mapping"]) ) { ?>
+                                            <div class="SUR-form-row row">
+                                                <div class="col mt-1">
+                                                    <div>
+                                                        <i class="fa-solid fa-fw fa-database"></i>&nbsp;&nbsp; Clinical
+                                                        Data Pull from EHR -or- Dynamic Data Pull from External Source
+                                                        System
+                                                    </div>
+                                                </div>
+                                                <div class="col">
+                                                    <div class='form-check'>
+                                                        <!-- Mapping rights -->
+                                                        <input class='form-check-input' type="checkbox"
+                                                            id="realtime_webservice_mapping"
+                                                            <?= $rights["realtime_webservice_mapping"] == 1 ? "checked" : "" ?>
+                                                            name="realtime_webservice_mapping">
+                                                        <label class='form-check-label'
+                                                            for='realtime_webservice_mapping'><?php echo $lang['ws_19'] ?></label>
+                                                    </div>
+                                                    <div class='form-check'>
+                                                        <!-- Adjudication rights -->
+                                                        <input class='form-check-input' type="checkbox"
+                                                            id="realtime_webservice_adjudicate"
+                                                            <?= $rights["realtime_webservice_adjudicate"] == 1 ? "checked" : "" ?>
+                                                            name="realtime_webservice_adjudicate">
+                                                        <label class='form-check-label'
+                                                            for='realtime_webservice_adjudicate'><?php echo $lang['ws_20'] ?></label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        <?php } else { ?>
+                                            <!-- Hide input fields to maintain values if setting is disabled at project level -->
+                                            <input type="hidden" name="realtime_webservice_mapping"
+                                                value="<?= $rights["realtime_webservice_mapping"] ?>">
+                                            <input type="hidden" name="realtime_webservice_adjudicate"
+                                                value="<?= $rights["realtime_webservice_adjudicate"] ?>">
+                                        <?php } ?>
+
+                                        <!-- Data Transfer Services -->
+                                        <?php if ( isset($allRights["dts"]) ) { ?>
+                                            <div class="SUR-form-row row">
+                                                <div class="col" valign="top">
+                                                    <div>
+                                                        <i
+                                                            class="fa-solid fa-fw fa-database"></i>&nbsp;&nbsp;<?= $lang["rights_132"] ?>
+                                                    </div>
+                                                </div>
+                                                <div class="col" valign="top">
+
+                                                    <div>
+                                                        <input type="checkbox" <?= $rights["dts"] == 1 ? "checked" : "" ?>
+                                                            name="dts">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        <?php } ?>
+
+                                        <!-- Mobile App -->
+                                        <?php if ( isset($allRights["mobile_app"]) ) { ?>
+                                            <hr>
+                                            <div class="SUR-form-row row">
+                                                <div class="col section-header" colspan='2'>
+                                                    <?= $lang['rights_309'] ?>
+                                                </div>
+
+                                            </div>
+                                            <div class="SUR-form-row row">
+                                                <div class="col">
+                                                    <i
+                                                        class="fa-solid fa-fw fa-tablet-alt"></i>&nbsp;&nbsp;<?= $lang['global_118'] ?>
+                                                    <div class="extra-text">
+                                                        <?= $lang['rights_307'] ?>
+                                                    </div>
+                                                </div>
+                                                <div class="col">
+                                                    <input type='checkbox' <?= $rights["mobile_app"] == '1' ? "checked" : "" ?>
+                                                        name='mobile_app'>
+
+                                                </div>
+                                            </div>
+                                            <div class="SUR-form-row row">
+                                                <div class="col">
+                                                    <?= $lang['rights_306'] ?>
+                                                </div>
+                                                <div class="col">
+                                                    <div>
+                                                        <input type='checkbox'
+                                                            <?= $rights["mobile_app_download_data"] == '1' ? "checked" : "" ?>
+                                                            name='mobile_app_download_data'>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        <?php } ?>
+
+                                        <!-- Create/Rename/Delete Records -->
+                                        <hr>
+                                        <div class="SUR-form-row row">
+                                            <div class="col section-header" colspan='2'>
+                                                <?= $lang['rights_119'] ?>
+                                            </div>
+                                        </div>
+                                        <?php if ( isset($allRights["record_create"]) ) { ?>
+                                            <div class="SUR-form-row row">
+                                                <div class="col">
+                                                    <i
+                                                        class="fa-solid fa-fw fa-plus-square"></i>&nbsp;&nbsp;<?= $lang['rights_99'] ?>
+                                                </div>
+                                                <div class="col">
+                                                    <input type='checkbox' <?= $rights["record_create"] == 1 ? "checked" : "" ?>
+                                                        name='record_create'>
+                                                </div>
+                                            </div>
+                                        <?php } ?>
+                                        <?php if ( isset($allRights["record_rename"]) ) { ?>
+                                            <div class="SUR-form-row row">
+                                                <div class="col">
+                                                    <i
+                                                        class="fa-solid fa-fw fa-exchange-alt"></i>&nbsp;&nbsp;<?= $lang['rights_100'] ?>
+                                                </div>
+                                                <div class="col">
+                                                    <input type='checkbox' <?= $rights["record_rename"] == 1 ? "checked" : "" ?>
+                                                        name='record_rename'>
+                                                </div>
+                                            </div>
+                                        <?php } ?>
+                                        <?php if ( isset($allRights["record_delete"]) ) { ?>
+                                            <div class="SUR-form-row row">
+                                                <div class="col">
+                                                    <i
+                                                        class="fa-solid fa-fw fa-minus-square"></i>&nbsp;&nbsp;<?= $lang['rights_101'] ?>
+                                                </div>
+                                                <div class="col">
+                                                    <input type='checkbox' <?= $rights["record_delete"] == 1 ? "checked" : "" ?>
+                                                        name='record_delete'>
+                                                </div>
+                                            </div>
+                                        <?php } ?>
+
+                                        <!-- Lock Record -->
+                                        <hr>
+                                        <div class="SUR-form-row row">
+                                            <div class="col section-header" colspan='2'>
+                                                <?= $lang['rights_130'] ?>
+                                            </div>
+                                        </div>
+                                        <?php if ( isset($allRights["lock_record_customize"]) ) { ?>
+                                            <div class="SUR-form-row row">
+                                                <div class="col">
+                                                    <div>
+                                                        <i class="fa-solid fa-fw fa-lock"></i>&nbsp;&nbsp;<?= $lang['app_11'] ?>
+                                                    </div>
+                                                </div>
+                                                <div class="col">
+                                                    <input type='checkbox'
+                                                        <?= $rights["lock_record_customize"] == 1 ? "checked" : "" ?>
+                                                        name='lock_record_customize'>
+                                                </div>
+                                            </div>
+                                        <?php } ?>
+                                        <?php if ( isset($allRights["lock_record"]) ) { ?>
+                                            <div class="SUR-form-row row">
+                                                <div class="col mt-1">
+                                                    <div>
+                                                        <i
+                                                            class="fa-solid fa-fw fa-unlock-alt"></i>&nbsp;&nbsp;<?= $lang['rights_97'] ?>
+                                                        <?= $lang['rights_371'] ?>
+                                                    </div>
+                                                    <div class="extra-text">
+                                                        <?= $lang['rights_113'] ?>
+                                                    </div>
+                                                </div>
+                                                <div class="col">
+                                                    <div class='form-check'>
+                                                        <input class='form-check-input' type='radio' id='lock_record_0'
+                                                            name='lock_record' <?= $rights["lock_record"] == '0' ? "checked" : "" ?>
+                                                            value='0'>
+                                                        <label class='form-check-label'
+                                                            for='lock_record_0'><?= $lang['global_23'] ?></label>
+                                                    </div>
+                                                    <div class='form-check'>
+                                                        <input class='form-check-input' type='radio' id='lock_record_1'
+                                                            name='lock_record' <?= $rights["lock_record"] == '1' ? "checked" : "" ?>
+                                                            value='1'>
+                                                        <label class='form-check-label'
+                                                            for='lock_record_1'><?= $lang['rights_115'] ?></label>
+                                                    </div>
+                                                    <div class='form-check'>
+
+                                                        <input class='form-check-input' type='radio' id='lock_record_2'
+                                                            name='lock_record' <?= $rights["lock_record"] == '2' ? "checked" : "" ?>
+                                                            value='2'>
+                                                        <label class='form-check-label'
+                                                            for='lock_record_2'><?= $lang['rights_116'] ?></label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        <?php } ?>
+                                        <?php if ( isset($allRights["lock_record_multiform"]) ) { ?>
+                                            <div class="SUR-form-row row">
+                                                <div class="col">
+                                                    <div>
+                                                        <i
+                                                            class="fa-solid fa-fw fa-unlock-alt"></i>&nbsp;&nbsp;<?= $lang['rights_370'] ?>
+                                                    </div>
+                                                </div>
+                                                <div class="col">
+                                                    <div>
+                                                        <input type='checkbox'
+                                                            <?= $rights["lock_record_multiform"] == '1' ? "checked" : "" ?>
+                                                            name='lock_record_multiform'>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        <?php } ?>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col" style="padding-left:10px;">
+                                <div class='card' style='border-color:#00000060;'>
+                                    <div class='card-header font-weight-bold fs14' style='background-color:#00000017;'>
+                                        <?= $lang['data_export_tool_291'] ?>
+                                    </div>
+                                    <div class='card-body p-0' style='background-color:#00000007;'>
+                                        <div class="SUR-form-row row" style="margin: 10px 20px 10px 0;">
+                                            <div class="col extra-text" colspan='3'>
+                                                <?= $lang['rights_429'] ?>
+                                            </div>
+                                        </div>
+                                        <div class="SUR-form-row row" style="margin: 20px;">
+                                            <div class="col">
+                                                <div class='fs13 pb-2 font-weight-bold'><?= $lang['rights_373'] ?></div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="dataViewing"
+                                                        id="dataViewingNoAccess"
+                                                        <?= $rights["dataViewing"] == 0 ? "checked" : "" ?> value="0">
+                                                    <label class="form-check-label"
+                                                        for="dataViewingNoAccess"><?= $lang['rights_47'] ?>
+                                                        <br><?= $lang['rights_395'] ?></label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="dataViewing"
+                                                        id="dataViewingReadOnly"
+                                                        <?= $rights["dataViewing"] == '1' ? "checked" : "" ?> value="1">
+                                                    <label class="form-check-label"
+                                                        for="dataViewingReadOnly"><?= $lang['rights_61'] ?></label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="dataViewing"
+                                                        id="dataViewingViewAndEdit"
+                                                        <?= $rights["dataViewing"] == '2' ? "checked" : "" ?> value="2">
+                                                    <label class="form-check-label"
+                                                        for="dataViewingViewAndEdit"><?= $lang['rights_138'] ?></label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="dataViewing"
+                                                        id="dataViewingViewAndEditSurveys"
+                                                        <?= $rights["dataViewing"] == '3' ? "checked" : "" ?> value="3">
+                                                    <label class="form-check-label"
+                                                        for="dataViewingViewAndEditSurveys"><?= $lang['rights_137'] ?></label>
+                                                </div>
+                                            </div>
+                                            <div class="col" style='color:#B00000;'>
+                                                <div class='fs13 pb-2 font-weight-bold'><?= $lang['rights_428'] ?></div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="dataExport"
+                                                        id="dataExportNoAccess"
+                                                        <?= $rights["dataExport"] == 0 ? "checked" : "" ?> value="0">
+                                                    <label class="form-check-label"
+                                                        for="dataExportNoAccess"><?= $lang['rights_47'] ?></label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="dataExport"
+                                                        id="dataExportDeidentified"
+                                                        <?= $rights["dataExport"] == '1' ? "checked" : "" ?> value="1">
+                                                    <label class="form-check-label"
+                                                        for="dataExportDeidentified"><?= $lang['rights_48'] ?></label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="dataExport"
+                                                        id="dataExportIdentifiers"
+                                                        <?= $rights["dataExport"] == '2' ? "checked" : "" ?> value="2">
+                                                    <label class="form-check-label"
+                                                        for="dataExportIdentifiers"><?= $lang['data_export_tool_290'] ?></label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="dataExport"
+                                                        id="dataExportFullDataset"
+                                                        <?= $rights["dataExport"] == '3' ? "checked" : "" ?> value="3">
+                                                    <label class="form-check-label"
+                                                        for="dataExportFullDataset"><?= $lang['rights_49'] ?></label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button id="SUR_Save" type="button"
+                        class="btn btn-<?= $newRole ? "success" : "primary" ?>"><?= $newRole ? "Save New Role" : "Save Changes" ?></button>
+                    <button id="SUR_Cancel" type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                        data-dismiss="modal">Cancel
+                    </button>
+                    <?php if ( !$newRole ) { ?>
+                        <button id="SUR_Copy" type="button" class="btn btn-info btn-sm">Copy role</button>
+                        <button id="SUR_Delete" type="button" class="btn btn-danger btn-sm">Delete role</button>
+                    <?php } ?>
+                </div>
             </div>
-            <form id="SUR_Role_Setting">
-                <div class="hidden">
-                    <input name="newRole" value="<?= $newRole == true ?>">
-                </div>
-                <div class="row">
-                    <div class="col" style='width:475px;'>
-                        <div class='card' style='border-color:#00000060;'>
-                            <div class='card-header font-weight-bold fs14' style='background-color:#00000017;'>
-                                <?= $lang['rights_431'] ?>
-                            </div>
-                            <div class='card-body p-3' style='background-color:#00000007;'>
-
-                                <!-- EDIT ROLE NAME -->
-                                <div class="SUR-form-row row <?= $newRole === true ? "hidden" : "" ?>">
-                                    <div class="col" colspan='2'>
-                                        <i class="fa-solid fa-fw fa-id-card"></i>&nbsp;&nbsp;<?= $lang['rights_199'] ?>
-                                        <input type='text' value="<?= \REDCap::escapeHtml($role_name) ?>"
-                                            class='x-form-text x-form-field' name='role_name_edit'>
-                                    </div>
-                                </div>
-
-                                <!-- HIGHEST LEVEL PRIVILEGES -->
-                                <hr>
-                                <div class="SUR-form-row row">
-                                    <div class="col section-header" colspan='2'>
-                                        <?= $lang['rights_299'] ?>
-                                    </div>
-                                </div>
-
-                                <!-- Project Setup/Design -->
-                                <?php if ( isset($allRights["design"]) ) { ?>
-                                <div class="SUR-form-row row">
-                                    <div class="col">
-                                        <i class="fa-solid fa-fw fa-tasks"></i>&nbsp;&nbsp;<?= $lang['rights_135'] ?>
-                                    </div>
-                                    <div class="col">
-                                        <input type='checkbox' <?= $rights["design"] == 1 ? "checked" : "" ?>
-                                            name='design'>
-                                    </div>
-                                </div>
-                                <?php } ?>
-
-                                <!-- User Rights -->
-                                <?php if ( isset($allRights["user_rights"]) ) { ?>
-                                <div class="SUR-form-row row">
-                                    <div class="col">
-                                        <i class="fa-solid fa-fw fa-user"></i>&nbsp;&nbsp;<?= $lang['app_05'] ?>
-                                    </div>
-                                    <div class="col">
-                                        <input type='checkbox' <?= $rights["user_rights"] == 1 ? "checked" : "" ?>
-                                            name='user_rights'>
-                                    </div>
-                                </div>
-                                <?php } ?>
-
-                                <!--Data Access Groups -->
-                                <?php if ( isset($allRights["data_access_groups"]) ) { ?>
-                                <div class="SUR-form-row row">
-                                    <div class="col">
-                                        <i class="fa-solid fa-fw fa-users"></i>&nbsp;&nbsp;<?= $lang['global_22'] ?>
-                                    </div>
-                                    <div class="col">
-                                        <input type='checkbox'
-                                            <?= $rights["data_access_groups"] == 1 ? "checked" : "" ?>
-                                            name='data_access_groups'>
-                                    </div>
-                                </div>
-                                <?php } ?>
-
-                                <!-- OTHER PRIVILEGES -->
-                                <hr>
-                                <div class="SUR-form-row row">
-                                    <div class="col section-header" colspan='2'>
-                                        <?= $lang['rights_300'] ?>
-                                    </div>
-                                </div>
-
-                                <!-- MyCap Mobile App -->
-                                <?php if ( isset($allRights["mycap_participants"]) ) { ?>
-
-                                <div class="SUR-form-row row">
-                                    <div class="col">
-                                        <img style='height:1rem;' alt='mycap_logo'
-                                            src='<?= APP_PATH_IMAGES . "mycap_logo_black.png" ?>'>&nbsp;<?= $lang['rights_437'] ?>
-                                    </div>
-                                    <div class="col">
-                                        <input type='checkbox'
-                                            <?= $rights["mycap_participants"] == 1 ? "checked" : "" ?>
-                                            name='mycap_participants'>
-                                    </div>
-                                </div>
-                                <?php } ?>
-
-                                <!-- Survey Distribution Tool rights -->
-                                <?php if ( isset($allRights["participants"]) ) { ?>
-                                <div class="SUR-form-row row">
-                                    <div class="col">
-                                        <div>
-                                            <i
-                                                class="fa-solid fa-fw fa-chalkboard-teacher"></i>&nbsp;&nbsp;<?= $lang['app_24'] ?>
-                                        </div>
-                                    </div>
-                                    <div class="col">
-                                        <input type='checkbox' <?= $rights["participants"] == 1 ? "checked" : "" ?>
-                                            name='participants'>
-                                    </div>
-                                </div>
-                                <?php } ?>
-
-                                <!-- Alerts & Notifications -->
-                                <?php if ( isset($allRights["alerts"]) ) { ?>
-                                <div class="SUR-form-row row">
-                                    <div class="col">
-                                        <i class="fa-solid fa-fw fa-bell"></i>&nbsp;&nbsp;<?= $lang['global_154'] ?>
-                                    </div>
-                                    <div class="col">
-                                        <input type='checkbox' <?= $rights["alerts"] == 1 ? "checked" : "" ?>
-                                            name='alerts'>
-                                    </div>
-                                </div>
-                                <?php } ?>
-
-                                <!--Calendar rights -->
-                                <?php if ( isset($allRights["calendar"]) ) { ?>
-                                <div class="SUR-form-row row">
-                                    <div class="col">
-                                        <i class="far fa-calendar-alt"></i>&nbsp;&nbsp;
-                                        <?= $lang['app_08'] ?>
-                                        <?= $lang['rights_357'] ?>
-                                    </div>
-                                    <div class="col">
-                                        <input type='checkbox' <?= $rights["calendar"] == 1 ? "checked" : "" ?>
-                                            name='calendar'>
-                                    </div>
-                                </div>
-                                <?php } ?>
-
-                                <!-- Reports & Report Builder -->
-                                <?php if ( isset($allRights["reports"]) ) { ?>
-                                <div class="SUR-form-row row">
-                                    <div class="col">
-                                        <i class="fa-solid fa-fw fa-search"></i>&nbsp;&nbsp;<?= $lang['rights_356'] ?>
-                                        <div class="extra-text">
-                                            <?= $lang['report_builder_130'] ?>
-                                        </div>
-                                    </div>
-                                    <div class="col">
-                                        <input type='checkbox' <?= $rights["reports"] == 1 ? "checked" : "" ?>
-                                            name='reports'>
-                                    </div>
-                                </div>
-                                <?php } ?>
-
-                                <!-- Graphical Data View & Stats -->
-                                <?php if ( isset($allRights["graphical"]) ) { ?>
-                                <div class="SUR-form-row row">
-                                    <div class="col">
-                                        <i
-                                            class="fa-solid fa-fw fa-chart-column"></i>&nbsp;&nbsp;<?= $lang['report_builder_78'] ?>
-                                    </div>
-                                    <div class="col">
-                                        <input type='checkbox' <?= $rights["graphical"] == 1 ? "checked" : "" ?>
-                                            name='graphical'>
-                                    </div>
-                                </div>
-                                <?php } ?>
-
-                                <!-- Double Data Entry -->
-                                <?php if ( isset($allRights["double_data"]) ) { ?>
-                                <div class="SUR-form-row row">
-                                    <div class="col mt-1">
-                                        <i class="fa-solid fa-fw fa-users"></i>&nbsp;&nbsp;<?= $lang['rights_50'] ?>
-                                    </div>
-                                    <div class="col">
-                                        <div class="form-check">
-                                            <input id='double_data_reviewer' class="form-check-input" type='radio'
-                                                name='double_data' <?= $rights["double_data"] == 0 ? "checked" : "" ?>
-                                                value='0'>
-                                            <label for="double_data_reviewer"
-                                                class="form-check-label"><?= $lang['rights_51'] ?></label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input id='double_data_p1' class="form-check-input" type='radio'
-                                                name='double_data' <?= $rights["double_data"] == 1 ? "checked" : "" ?>
-                                                value='1'>
-                                            <label for="double_data_p1"
-                                                class="form-check-label"><?= $lang['rights_52'] ?>#1</label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input id='double_data_p2' class="form-check-input" type='radio'
-                                                name='double_data' <?= $rights["double_data"] == 2 ? "checked" : "" ?>
-                                                value='2'>
-                                            <label for="double_data_p2"
-                                                class="form-check-label"><?= $lang['rights_52'] ?>
-                                                #2</label>
-                                        </div>
-                                    </div>
-                                </div>
-                                <?php } ?>
-
-                                <!-- Data Import Tool -->
-                                <?php if ( isset($allRights["data_import_tool"]) ) { ?>
-
-                                <div class="SUR-form-row row">
-                                    <div class="col">
-                                        <i class="fa-solid fa-fw fa-file-import"></i>&nbsp;&nbsp;<?= $lang['app_01'] ?>
-                                    </div>
-                                    <div class="col">
-                                        <input type='checkbox' <?= $rights["data_import_tool"] == 1 ? "checked" : "" ?>
-                                            name='data_import_tool'>
-                                    </div>
-                                </div>
-                                <?php } ?>
-
-                                <!-- Data Comparison Tool -->
-                                <?php if ( isset($allRights["data_comparison_tool"]) ) { ?>
-                                <div class="SUR-form-row row">
-                                    <div class="col">
-                                        <i class="fa-solid fa-fw fa-not-equal"></i>&nbsp;&nbsp;<?= $lang['app_02'] ?>
-                                    </div>
-                                    <div class="col">
-                                        <input type='checkbox'
-                                            <?= $rights["data_comparison_tool"] == 1 ? "checked" : "" ?>
-                                            name='data_comparison_tool'>
-                                    </div>
-                                </div>
-                                <?php } ?>
-
-                                <!-- Logging -->
-                                <?php if ( isset($allRights["data_logging"]) ) { ?>
-                                <div class="SUR-form-row row">
-                                    <div class="col">
-                                        <i class="fa-solid fa-fw fa-receipt"></i>&nbsp;&nbsp;<?= $lang['app_07'] ?>
-                                    </div>
-                                    <div class="col"><input type='checkbox'
-                                            <?= $rights["data_logging"] == 1 ? "checked" : "" ?> name='data_logging'>
-                                    </div>
-                                </div>
-                                <?php } ?>
-
-                                <!-- File Repository -->
-                                <?php if ( isset($allRights["file_repository"]) ) { ?>
-                                <div class="SUR-form-row row">
-                                    <div class="col">
-                                        <i class="fa-solid fa-fw fa-folder-open"></i>&nbsp;&nbsp;<?= $lang['app_04'] ?>
-                                    </div>
-                                    <div class="col">
-                                        <input type='checkbox' <?= $rights["file_repository"] == 1 ? "checked" : "" ?>
-                                            name='file_repository'>
-                                    </div>
-                                </div>
-                                <?php } ?>
-
-                                <!-- Randomization -->
-                                <?php if ( isset($allRights["random_setup"]) ) { ?>
-                                <div class="SUR-form-row row">
-                                    <div class="col mt-1">
-                                        <i class="fa-solid fa-fw fa-random"></i>&nbsp;&nbsp;<?= $lang['app_21'] ?>
-                                    </div>
-                                    <div class="col">
-                                        <div class="form-check">
-                                            <input class='form-check-input' type='checkbox' id='random_setup'
-                                                <?= $rights["random_setup"] == 1 ? "checked" : "" ?>
-                                                name='random_setup'>
-                                            <label class='form-check-label'
-                                                for='random_setup'><?= $lang['rights_142'] ?></label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class='form-check-input' type='checkbox' id='random_dashboard'
-                                                <?= $rights["random_dashboard"] == 1 ? "checked" : "" ?>
-                                                name='random_dashboard'>
-                                            <label class='form-check-label'
-                                                for='random_dashboard'><?= $lang['rights_143'] ?></label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class='form-check-input' type='checkbox' id='random_perform'
-                                                <?= $rights["random_perform"] == 1 ? "checked" : "" ?>
-                                                name='random_perform'>
-                                            <label class='form-check-label'
-                                                for='random_perform'><?= $lang['rights_144'] ?></label>
-                                        </div>
-                                    </div>
-                                </div>
-                                <?php } ?>
-
-                                <!-- Data Quality -->
-                                <?php if ( isset($allRights["data_quality_design"]) ) { ?>
-                                <div class="SUR-form-row row">
-                                    <div class="col mt-1">
-                                        <i
-                                            class="fa-solid fa-fw fa-clipboard-check"></i>&nbsp;&nbsp;<?= $lang['app_20'] ?>
-                                    </div>
-                                    <div class="col">
-                                        <div class="form-check">
-                                            <input class='form-check-input' type='checkbox' id='data_quality_design'
-                                                <?= $rights["data_quality_design"] == 1 ? "checked" : "" ?>
-                                                name='data_quality_design'>
-                                            <label class='form-check-label'
-                                                for='data_quality_design'><?= $lang['dataqueries_40'] ?></label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class='form-check-input' type='checkbox' id='data_quality_execute'
-                                                <?= $rights["data_quality_execute"] == 1 ? "checked" : "" ?>
-                                                name='data_quality_execute'>
-                                            <label class='form-check-label'
-                                                for='data_quality_execute'><?= $lang['dataqueries_41'] ?></label>
-                                        </div>
-                                    </div>
-                                </div>
-                                <?php } ?>
-
-                                <!-- Data Quality resolution -->
-                                <?php if ( isset($allRights["data_quality_resolution"]) ) { ?>
-                                <div class="SUR-form-row row">
-                                    <div class="col mt-1">
-                                        <i
-                                            class='fa-solid fa-fw fa-comments'></i>&nbsp;&nbsp;<?= $lang['dataqueries_137'] ?>
-                                    </div>
-                                    <div class="col">
-                                        <div class='form-check'>
-                                            <input
-                                                class='form-check-input data_quality_resolution data_quality_resolution_view'
-                                                type='checkbox' id='data_quality_resolution_view'
-                                                name='data_quality_resolution_view'
-                                                <?= $rights["data_quality_resolution_view"] == '1' ? "checked" : "" ?>
-                                                onchange="if(!this.checked) {$('.data_quality_resolution').prop('checked', false);}">
-                                            <label class='form-check-label' for='data_quality_resolution_view'>View
-                                                Queries</label>
-                                        </div>
-                                        <div class='form-check'>
-                                            <input
-                                                class='form-check-input data_quality_resolution data_quality_resolution_open'
-                                                type='checkbox' id='data_quality_resolution_open'
-                                                name='data_quality_resolution_open'
-                                                <?= $rights["data_quality_resolution_open"] == '1' ? "checked" : "" ?>
-                                                onchange="if(!this.checked) {$('.data_quality_resolution_close').prop('checked', false);} else {$('.data_quality_resolution_view').prop('checked', true);}">
-                                            <label class='form-check-label' for='data_quality_resolution_open'>Open
-                                                Queries</label>
-                                        </div>
-                                        <div class='form-check'>
-                                            <input
-                                                class='form-check-input data_quality_resolution data_quality_resolution_respond'
-                                                type='checkbox' id='data_quality_resolution_respond'
-                                                name='data_quality_resolution_respond'
-                                                <?= $rights["data_quality_resolution_respond"] == '1' ? "checked" : "" ?>
-                                                onchange="if(!this.checked) {$('.data_quality_resolution_close').prop('checked', false);} else {$('.data_quality_resolution_view').prop('checked', true);}">
-                                            <label class='form-check-label'
-                                                for='data_quality_resolution_respond'>Respond to
-                                                Queries</label>
-                                        </div>
-                                        <div class='form-check'>
-                                            <input
-                                                class='form-check-input data_quality_resolution data_quality_resolution_close'
-                                                type='checkbox' id='data_quality_resolution_close'
-                                                name='data_quality_resolution_close'
-                                                <?= $rights["data_quality_resolution_close"] == '1' ? "checked" : "" ?>
-                                                onchange="if(this.checked) {$('.data_quality_resolution').prop('checked', true);}">
-                                            <label class='form-check-label' for='data_quality_resolution_close'>Close
-                                                Queries</label>
-                                        </div>
-                                    </div>
-                                </div>
-                                <?php } ?>
-
-                                <!-- API -->
-                                <?php if ( isset($allRights["api_export"]) ) { ?>
-                                <div class="SUR-form-row row">
-                                    <div class="col mt-1">
-                                        <i
-                                            class="fa-solid fa-fw fa-laptop-code"></i>&nbsp;&nbsp;<?= $lang['setup_77'] ?>
-                                    </div>
-                                    <div class="col">
-                                        <div class='form-check'>
-                                            <input class='form-check-input' id='api_export'
-                                                <?= $rights["api_export"] == 1 ? "checked" : "" ?> type='checkbox'
-                                                name='api_export'>
-                                            <label class='form-check-label'
-                                                for='api_export'><?= $lang['rights_139'] ?></label>
-                                        </div>
-                                        <div class='form-check'>
-                                            <input class='form-check-input' id='api_import' name='api_import'
-                                                <?= $rights["api_import"] == 1 ? "checked" : "" ?> type='checkbox'>
-                                            <label class='form-check-label'
-                                                for='api_import'><?= $lang['rights_314'] ?></label>
-                                        </div>
-                                    </div>
-                                </div>
-                                <?php } ?>
-
-                                <!-- Dynamic Data Pull OR CDIS-->
-                                <?php if ( isset($allRights["realtime_webservice_mapping"]) ) { ?>
-                                <div class="SUR-form-row row">
-                                    <div class="col mt-1">
-                                        <div>
-                                            <i class="fa-solid fa-fw fa-database"></i>&nbsp;&nbsp; Clinical
-                                            Data Pull from EHR -or- Dynamic Data Pull from External Source
-                                            System
-                                        </div>
-                                    </div>
-                                    <div class="col">
-                                        <div class='form-check'>
-                                            <!-- Mapping rights -->
-                                            <input class='form-check-input' type="checkbox"
-                                                id="realtime_webservice_mapping"
-                                                <?= $rights["realtime_webservice_mapping"] == 1 ? "checked" : "" ?>
-                                                name="realtime_webservice_mapping">
-                                            <label class='form-check-label'
-                                                for='realtime_webservice_mapping'><?php echo $lang['ws_19'] ?></label>
-                                        </div>
-                                        <div class='form-check'>
-                                            <!-- Adjudication rights -->
-                                            <input class='form-check-input' type="checkbox"
-                                                id="realtime_webservice_adjudicate"
-                                                <?= $rights["realtime_webservice_adjudicate"] == 1 ? "checked" : "" ?>
-                                                name="realtime_webservice_adjudicate">
-                                            <label class='form-check-label'
-                                                for='realtime_webservice_adjudicate'><?php echo $lang['ws_20'] ?></label>
-                                        </div>
-                                    </div>
-                                </div>
-                                <?php } else { ?>
-                                <!-- Hide input fields to maintain values if setting is disabled at project level -->
-                                <input type="hidden" name="realtime_webservice_mapping"
-                                    value="<?= $rights["realtime_webservice_mapping"] ?>">
-                                <input type="hidden" name="realtime_webservice_adjudicate"
-                                    value="<?= $rights["realtime_webservice_adjudicate"] ?>">
-                                <?php } ?>
-
-                                <!-- Data Transfer Services -->
-                                <?php if ( isset($allRights["dts"]) ) { ?>
-                                <div class="SUR-form-row row">
-                                    <div class="col" valign="top">
-                                        <div>
-                                            <i
-                                                class="fa-solid fa-fw fa-database"></i>&nbsp;&nbsp;<?= $lang["rights_132"] ?>
-                                        </div>
-                                    </div>
-                                    <div class="col" valign="top">
-
-                                        <div>
-                                            <input type="checkbox" <?= $rights["dts"] == 1 ? "checked" : "" ?>
-                                                name="dts">
-                                        </div>
-                                    </div>
-                                </div>
-                                <?php } ?>
-
-                                <!-- Mobile App -->
-                                <?php if ( isset($allRights["mobile_app"]) ) { ?>
-                                <hr>
-                                <div class="SUR-form-row row">
-                                    <div class="col section-header" colspan='2'>
-                                        <?= $lang['rights_309'] ?>
-                                    </div>
-
-                                </div>
-                                <div class="SUR-form-row row">
-                                    <div class="col">
-                                        <i
-                                            class="fa-solid fa-fw fa-tablet-alt"></i>&nbsp;&nbsp;<?= $lang['global_118'] ?>
-                                        <div class="extra-text">
-                                            <?= $lang['rights_307'] ?>
-                                        </div>
-                                    </div>
-                                    <div class="col">
-                                        <input type='checkbox' <?= $rights["mobile_app"] == '1' ? "checked" : "" ?>
-                                            name='mobile_app'>
-
-                                    </div>
-                                </div>
-                                <div class="SUR-form-row row">
-                                    <div class="col">
-                                        <?= $lang['rights_306'] ?>
-                                    </div>
-                                    <div class="col">
-                                        <div>
-                                            <input type='checkbox'
-                                                <?= $rights["mobile_app_download_data"] == '1' ? "checked" : "" ?>
-                                                name='mobile_app_download_data'>
-                                        </div>
-                                    </div>
-                                </div>
-                                <?php } ?>
-
-                                <!-- Create/Rename/Delete Records -->
-                                <hr>
-                                <div class="SUR-form-row row">
-                                    <div class="col section-header" colspan='2'>
-                                        <?= $lang['rights_119'] ?>
-                                    </div>
-                                </div>
-                                <?php if ( isset($allRights["record_create"]) ) { ?>
-                                <div class="SUR-form-row row">
-                                    <div class="col">
-                                        <i
-                                            class="fa-solid fa-fw fa-plus-square"></i>&nbsp;&nbsp;<?= $lang['rights_99'] ?>
-                                    </div>
-                                    <div class="col">
-                                        <input type='checkbox' <?= $rights["record_create"] == 1 ? "checked" : "" ?>
-                                            name='record_create'>
-                                    </div>
-                                </div>
-                                <?php } ?>
-                                <?php if ( isset($allRights["record_rename"]) ) { ?>
-                                <div class="SUR-form-row row">
-                                    <div class="col">
-                                        <i
-                                            class="fa-solid fa-fw fa-exchange-alt"></i>&nbsp;&nbsp;<?= $lang['rights_100'] ?>
-                                    </div>
-                                    <div class="col">
-                                        <input type='checkbox' <?= $rights["record_rename"] == 1 ? "checked" : "" ?>
-                                            name='record_rename'>
-                                    </div>
-                                </div>
-                                <?php } ?>
-                                <?php if ( isset($allRights["record_delete"]) ) { ?>
-                                <div class="SUR-form-row row">
-                                    <div class="col">
-                                        <i
-                                            class="fa-solid fa-fw fa-minus-square"></i>&nbsp;&nbsp;<?= $lang['rights_101'] ?>
-                                    </div>
-                                    <div class="col">
-                                        <input type='checkbox' <?= $rights["record_delete"] == 1 ? "checked" : "" ?>
-                                            name='record_delete'>
-                                    </div>
-                                </div>
-                                <?php } ?>
-
-                                <!-- Lock Record -->
-                                <hr>
-                                <div class="SUR-form-row row">
-                                    <div class="col section-header" colspan='2'>
-                                        <?= $lang['rights_130'] ?>
-                                    </div>
-                                </div>
-                                <?php if ( isset($allRights["lock_record_customize"]) ) { ?>
-                                <div class="SUR-form-row row">
-                                    <div class="col">
-                                        <div>
-                                            <i class="fa-solid fa-fw fa-lock"></i>&nbsp;&nbsp;<?= $lang['app_11'] ?>
-                                        </div>
-                                    </div>
-                                    <div class="col">
-                                        <input type='checkbox'
-                                            <?= $rights["lock_record_customize"] == 1 ? "checked" : "" ?>
-                                            name='lock_record_customize'>
-                                    </div>
-                                </div>
-                                <?php } ?>
-                                <?php if ( isset($allRights["lock_record"]) ) { ?>
-                                <div class="SUR-form-row row">
-                                    <div class="col mt-1">
-                                        <div>
-                                            <i
-                                                class="fa-solid fa-fw fa-unlock-alt"></i>&nbsp;&nbsp;<?= $lang['rights_97'] ?>
-                                            <?= $lang['rights_371'] ?>
-                                        </div>
-                                        <div class="extra-text">
-                                            <?= $lang['rights_113'] ?>
-                                        </div>
-                                    </div>
-                                    <div class="col">
-                                        <div class='form-check'>
-                                            <input class='form-check-input' type='radio' id='lock_record_0'
-                                                name='lock_record' <?= $rights["lock_record"] == '0' ? "checked" : "" ?>
-                                                value='0'>
-                                            <label class='form-check-label'
-                                                for='lock_record_0'><?= $lang['global_23'] ?></label>
-                                        </div>
-                                        <div class='form-check'>
-                                            <input class='form-check-input' type='radio' id='lock_record_1'
-                                                name='lock_record' <?= $rights["lock_record"] == '1' ? "checked" : "" ?>
-                                                value='1'>
-                                            <label class='form-check-label'
-                                                for='lock_record_1'><?= $lang['rights_115'] ?></label>
-                                        </div>
-                                        <div class='form-check'>
-
-                                            <input class='form-check-input' type='radio' id='lock_record_2'
-                                                name='lock_record' <?= $rights["lock_record"] == '2' ? "checked" : "" ?>
-                                                value='2'>
-                                            <label class='form-check-label'
-                                                for='lock_record_2'><?= $lang['rights_116'] ?></label>
-                                        </div>
-                                    </div>
-                                </div>
-                                <?php } ?>
-                                <?php if ( isset($allRights["lock_record_multiform"]) ) { ?>
-                                <div class="SUR-form-row row">
-                                    <div class="col">
-                                        <div>
-                                            <i
-                                                class="fa-solid fa-fw fa-unlock-alt"></i>&nbsp;&nbsp;<?= $lang['rights_370'] ?>
-                                        </div>
-                                    </div>
-                                    <div class="col">
-                                        <div>
-                                            <input type='checkbox'
-                                                <?= $rights["lock_record_multiform"] == '1' ? "checked" : "" ?>
-                                                name='lock_record_multiform'>
-                                        </div>
-                                    </div>
-                                </div>
-                                <?php } ?>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col" style="padding-left:10px;">
-                        <div class='card' style='border-color:#00000060;'>
-                            <div class='card-header font-weight-bold fs14' style='background-color:#00000017;'>
-                                <?= $lang['data_export_tool_291'] ?>
-                            </div>
-                            <div class='card-body p-0' style='background-color:#00000007;'>
-                                <div class="SUR-form-row row" style="margin: 10px 20px 10px 0;">
-                                    <div class="col extra-text" colspan='3'>
-                                        <?= $lang['rights_429'] ?>
-                                    </div>
-                                </div>
-                                <div class="SUR-form-row row" style="margin: 20px;">
-                                    <div class="col">
-                                        <div class='fs13 pb-2 font-weight-bold'><?= $lang['rights_373'] ?></div>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="dataViewing"
-                                                id="dataViewingNoAccess"
-                                                <?= $rights["dataViewing"] == 0 ? "checked" : "" ?> value="0">
-                                            <label class="form-check-label"
-                                                for="dataViewingNoAccess"><?= $lang['rights_47'] ?>
-                                                <br><?= $lang['rights_395'] ?></label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="dataViewing"
-                                                id="dataViewingReadOnly"
-                                                <?= $rights["dataViewing"] == '1' ? "checked" : "" ?> value="1">
-                                            <label class="form-check-label"
-                                                for="dataViewingReadOnly"><?= $lang['rights_61'] ?></label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="dataViewing"
-                                                id="dataViewingViewAndEdit"
-                                                <?= $rights["dataViewing"] == '2' ? "checked" : "" ?> value="2">
-                                            <label class="form-check-label"
-                                                for="dataViewingViewAndEdit"><?= $lang['rights_138'] ?></label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="dataViewing"
-                                                id="dataViewingViewAndEditSurveys"
-                                                <?= $rights["dataViewing"] == '3' ? "checked" : "" ?> value="3">
-                                            <label class="form-check-label"
-                                                for="dataViewingViewAndEditSurveys"><?= $lang['rights_137'] ?></label>
-                                        </div>
-                                    </div>
-                                    <div class="col" style='color:#B00000;'>
-                                        <div class='fs13 pb-2 font-weight-bold'><?= $lang['rights_428'] ?></div>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="dataExport"
-                                                id="dataExportNoAccess"
-                                                <?= $rights["dataExport"] == 0 ? "checked" : "" ?> value="0">
-                                            <label class="form-check-label"
-                                                for="dataExportNoAccess"><?= $lang['rights_47'] ?></label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="dataExport"
-                                                id="dataExportDeidentified"
-                                                <?= $rights["dataExport"] == '1' ? "checked" : "" ?> value="1">
-                                            <label class="form-check-label"
-                                                for="dataExportDeidentified"><?= $lang['rights_48'] ?></label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="dataExport"
-                                                id="dataExportIdentifiers"
-                                                <?= $rights["dataExport"] == '2' ? "checked" : "" ?> value="2">
-                                            <label class="form-check-label"
-                                                for="dataExportIdentifiers"><?= $lang['data_export_tool_290'] ?></label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="dataExport"
-                                                id="dataExportFullDataset"
-                                                <?= $rights["dataExport"] == '3' ? "checked" : "" ?> value="3">
-                                            <label class="form-check-label"
-                                                for="dataExportFullDataset"><?= $lang['rights_49'] ?></label>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </form>
         </div>
-        <div class="modal-footer">
-            <button id="SUR_Save" type="button"
-                class="btn btn-<?= $newRole ? "success" : "primary" ?>"><?= $newRole ? "Save New Role" : "Save Changes" ?></button>
-            <button id="SUR_Cancel" type="button" class="btn btn-secondary" data-bs-dismiss="modal"
-                data-dismiss="modal">Cancel
-            </button>
-            <?php if ( !$newRole ) { ?>
-            <button id="SUR_Copy" type="button" class="btn btn-info btn-sm">Copy role</button>
-            <button id="SUR_Delete" type="button" class="btn btn-danger btn-sm">Delete role</button>
-            <?php } ?>
-        </div>
-    </div>
-</div>
-<?php
+        <?php
     }
 }
