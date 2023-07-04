@@ -71,6 +71,22 @@ class RightsChecker
         }
     }
 
+    private function checkDataViewingRights2($right)
+    {
+        $isDataViewingRight = substr_compare($right, "data_entry", 0, strlen("data_entry")) === 0;
+        if ( !$isDataViewingRight ) {
+            return;
+        }
+        $this->accountedFor = true;
+        if ( $right === "data_entry3" && $this->dataViewing < 3 ) {
+            $this->badRights[] = "Data Viewing - Edit Survey Responses";
+        } else if ( $right === "data_entry1" && $this->dataViewing < 2 ) {
+            $this->badRights[] = "Data Viewing - View & Edit";
+        } else if ( $right === "data_entry2" && $this->dataViewing < 1 ) {
+            $this->badRights[] = "Data Viewing - Read Only";
+        }
+    }
+
     private function checkDataExportRights($right, $value)
     {
         $isDataExportRight = substr_compare($right, "export-form-", 0, strlen("export-form-")) === 0;
@@ -84,6 +100,23 @@ class RightsChecker
         } elseif ( $value === '3' && $this->dataExport < 2 ) {
             $this->badRights[] = "Data Export - Remove Identifiers";
         } elseif ( $value === '2' && $this->dataExport < 1 ) {
+            $this->badRights[] = "Data Export - De-Identified";
+        }
+    }
+
+    private function checkDataExportRights2($right)
+    {
+        $isDataExportRight = substr_compare($right, "data_export", 0, strlen("data_export")) === 0;
+        if ( !$isDataExportRight ) {
+            return;
+        }
+        $this->accountedFor = true;
+        // 0: no access, 2: deidentified, 3: remove identifiers, 1: full data set
+        if ( $right === "data_export1" && $this->dataExport < 3 ) {
+            $this->badRights[] = "Data Export - Full Data Set";
+        } else if ( $right === "data_export3" && $this->dataExport < 2 ) {
+            $this->badRights[] = "Data Export - Remove Identifiers";
+        } else if ( $right === "data_export2" && $this->dataExport < 1 ) {
             $this->badRights[] = "Data Export - De-Identified";
         }
     }
@@ -166,6 +199,38 @@ class RightsChecker
             $this->checkDoubleDataRights($right);
             $this->checkRecordLockingRights($right, $value);
             $this->checkDataResolutionRights($right, $value);
+
+            if ( !$this->accountedFor && $this->acceptableRights[$right] == 0 ) {
+                $this->badRights[] = $this->module->getDisplayTextForRight($right);
+            }
+        }
+        return array_values(array_unique($this->badRights, SORT_REGULAR));
+    }
+
+    public function checkRights2()
+    {
+        foreach ( $this->requestedRights as $right => $value ) {
+
+            $this->accountedFor = false;
+
+            if ( $value === 0 || $value === '0' ) {
+                continue;
+            }
+
+            $right = $this->module->convertRightName($right);
+            if ( $this->isSafeRight($right) ) {
+                continue;
+            }
+
+            $isDataQualityResolutionRight = $right == "data_quality_resolution";
+
+
+            $this->checkDataViewingRights2($right);
+            $this->checkDataExportRights2($right);
+            $this->checkDoubleDataRights($right);
+            $this->checkRecordLockingRights($right, $value);
+            $this->checkDataResolutionRights($right, $value);
+
 
             if ( !$this->accountedFor && $this->acceptableRights[$right] == 0 ) {
                 $this->badRights[] = $this->module->getDisplayTextForRight($right);

@@ -1130,7 +1130,10 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
         const check = '<i class="fa-solid fa-check fa-xl" style="color: green;"></i>';
         const x = '<i class="fa-regular fa-xmark" style="color: #D00000;"></i>';
         const table = $('#roleTable').DataTable({
-            ajax: '<?= $module->framework->getUrl("ajax/roles.php") ?>',
+            ajax: {
+                url: '<?= $module->framework->getUrl("ajax/roles.php") ?>',
+                method: 'POST'
+            },
             deferRender: true,
             searching: false,
             info: false,
