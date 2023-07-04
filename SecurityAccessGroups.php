@@ -2,8 +2,9 @@
 
 namespace YaleREDCap\SecurityAccessGroups;
 
-use YaleREDCap\SecurityAccessGroups\APIHandler;
-use YaleREDCap\SecurityAccessGroups\Alerts;
+require_once 'classes/APIHandler.php';
+require_once 'classes/Alerts.php';
+require_once 'classes/RightsChecker.php';
 use ExternalModules\AbstractExternalModule;
 use ExternalModules\Framework;
 
@@ -828,104 +829,13 @@ $(function() {
         return $result;
     }
 
-    public function checkProposedRights(array $acceptable_rights, array $requested_rights)
+
+    public function checkProposedRights(array $acceptableRights, array $requestedRights)
     {
-        $bad_rights  = [];
-        $dataViewing = intval($acceptable_rights["dataViewing"]);
-        $dataExport  = intval($acceptable_rights["dataExport"]);
-        foreach ( $requested_rights as $right => $value ) {
-
-            $right = $this->convertRightName($right);
-
-            $safeRights = [ "project_id", "username", "role_id", "user", "submit-action", "role_name", "role_name_edit", "redcap_csrf_token", "expiration", "group_role", "group_id", "api_token", "data_access_group_id", "unique_role_name", "role_label", "notify_email" ];
-            if ( $value == "0" || in_array($right, $safeRights, true) ) {
-                continue;
-            }
-
-            $isSurveyResponseEditingRight = substr_compare($right, "form-editresp-", 0, strlen("form-editresp-")) === 0;
-            $isDataViewingRight           = substr_compare($right, "form-", 0, strlen("form-")) === 0;
-            $isDataExportRight            = substr_compare($right, "export-form-", 0, strlen("export-form-")) === 0;
-            $isDoubleDataRight            = $right == "double_data";
-            $isRecordLockRight            = $right == "lock_record";
-            $isDataQualityResolutionRight = $right == "data_quality_resolution";
-
-            if ( $isSurveyResponseEditingRight && $value == "on" && $dataViewing < 3 ) {
-                $bad_rights[] = "Data Viewing - Edit Survey Responses";
-            } else if ( $isDataViewingRight ) {
-                // 0: no access, 2: read only, 1: view and edit
-                if ( $value === '1' && $dataViewing < 2 ) {
-                    $bad_rights[] = "Data Viewing - View & Edit";
-                } else if ( $value === '2' && $dataViewing < 1 ) {
-                    $bad_rights[] = "Data Viewing - Read Only";
-                }
-            } else if ( $isDataExportRight ) {
-                // 0: no access, 2: deidentified, 3: remove identifiers, 1: full data set
-                if ( $value === '1' && $dataExport < 3 ) {
-                    $bad_rights[] = "Data Export - Full Data Set";
-                } else if ( $value === '3' && $dataExport < 2 ) {
-                    $bad_rights[] = "Data Export - Remove Identifiers";
-                } else if ( $value === '2' && $dataExport < 1 ) {
-                    $bad_rights[] = "Data Export - De-Identified";
-                }
-            } else if ( $isDoubleDataRight && intval($acceptable_rights[$right]) == 0 ) {
-                $bad_rights[] = "Double Data Entry Person";
-            } else if ( $isRecordLockRight && intval($value) > intval($acceptable_rights[$right]) ) {
-                $bad_rights[] = "Record Locking" . ($value == 2 ? " with E-signature" : "");
-            } else if ( $isDataQualityResolutionRight ) {
-                // 0: no access
-                // 1: view only
-                // 4: open queries only
-                // 2: respond only to opened queries
-                // 5: open and respond to queries
-                // 3: open, close, and respond to queries
-                $dqr_view    = $acceptable_rights["data_quality_resolution_view"] == 1;
-                $dqr_open    = $acceptable_rights["data_quality_resolution_open"] == 1;
-                $dqr_respond = $acceptable_rights["data_quality_resolution_respond"] == 1;
-                $dqr_close   = $acceptable_rights["data_quality_resolution_close"] == 1;
-                switch ($value) {
-                    case '1':
-                        if ( !$dqr_view ) {
-                            $bad_rights[] = $this->getDisplayTextForRight("data_quality_resolution_view");
-                        }
-                        break;
-                    case '4':
-                        if ( !$dqr_open ) {
-                            $bad_rights[] = $this->getDisplayTextForRight("data_quality_resolution_open");
-                        }
-                        break;
-                    case '2':
-                        if ( !$dqr_respond ) {
-                            $bad_rights[] = $this->getDisplayTextForRight("data_quality_resolution_respond");
-                        }
-                        break;
-                    case '5':
-                        if ( !$dqr_open ) {
-                            $bad_rights[] = $this->getDisplayTextForRight("data_quality_resolution_open");
-                        }
-                        if ( !$dqr_respond ) {
-                            $bad_rights[] = $this->getDisplayTextForRight("data_quality_resolution_respond");
-                        }
-                        break;
-                    case '3':
-                        if ( !$dqr_open ) {
-                            $bad_rights[] = $this->getDisplayTextForRight("data_quality_resolution_open");
-                        }
-                        if ( !$dqr_respond ) {
-                            $bad_rights[] = $this->getDisplayTextForRight("data_quality_resolution_respond");
-                        }
-                        if ( !$dqr_close ) {
-                            $bad_rights[] = $this->getDisplayTextForRight("data_quality_resolution_close");
-                        }
-                        break;
-                    default:
-                        break;
-                }
-            } else if ( $acceptable_rights[$right] == 0 ) {
-                $bad_rights[] = $this->getDisplayTextForRight($right);
-            }
-        }
-        return array_values(array_unique($bad_rights, SORT_REGULAR));
+        $rightsChecker = new RightsChecker($this, $requestedRights, $acceptableRights);
+        return $rightsChecker->checkRights();
     }
+
     private function checkProposedRights2(array $acceptable_rights, array $requested_rights)
     {
         $bad_rights  = [];
@@ -1281,7 +1191,7 @@ $(function() {
                 $rights = $this->setDefaultSystemRole();
             }
         }
-        return $this->framework->escape($rights);
+        return $rights;
     }
 
     public function systemRoleExists($role_id)
@@ -1360,13 +1270,13 @@ $(function() {
         return $rights;
     }
 
-    private function getDisplayTextForRight(string $right, string $key = "")
+    public function getDisplayTextForRight(string $right, string $key = "")
     {
         $rights = $this->getDisplayTextForRights(true);
         return $rights[$right] ?? $rights[$key] ?? $right;
     }
 
-    private function convertRightName($rightName)
+    public function convertRightName($rightName)
     {
 
         $conversions = [

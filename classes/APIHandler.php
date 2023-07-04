@@ -205,7 +205,6 @@ class APIHandler
                         "username" => $username,
                         "rights"   => $this->module->getCurrentRights($username, $this->project_id)
                     ];
-                    $this->module->framework->log('orig', [ 'rights' => json_encode($this->original_rights, JSON_PRETTY_PRINT) ]);
                 }
             }
             $this->bad_rights = $bad_rights;
