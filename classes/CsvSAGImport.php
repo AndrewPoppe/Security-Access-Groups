@@ -56,11 +56,11 @@ class CsvSAGImport
             $thisRowClean = true;
             if ( $key === array_key_first($this->csvContents) ) {
                 foreach ( $row as $permission => $value ) {
-                    if ( $permission === "role_name" || $permission === "role_id" ) {
+                    if ( $permission === 'role_name' || $permission === 'role_id' ) {
                         continue;
                     }
                     if ( !in_array($permission, $this->permissions) ) {
-                        $this->error_messages[] = "One or more permissions was invalid.";
+                        $this->error_messages[] = 'One or more permissions was invalid.';
                         $thisRowClean           = false;
                     } else {
                         continue;
