@@ -80,9 +80,9 @@ class RightsChecker
         $this->accountedFor = true;
         if ( $right === "data_entry3" && $this->dataViewing < 3 ) {
             $this->badRights[] = "Data Viewing - Edit Survey Responses";
-        } else if ( $right === "data_entry1" && $this->dataViewing < 2 ) {
+        } elseif ( $right === "data_entry1" && $this->dataViewing < 2 ) {
             $this->badRights[] = "Data Viewing - View & Edit";
-        } else if ( $right === "data_entry2" && $this->dataViewing < 1 ) {
+        } elseif ( $right === "data_entry2" && $this->dataViewing < 1 ) {
             $this->badRights[] = "Data Viewing - Read Only";
         }
     }
@@ -114,9 +114,9 @@ class RightsChecker
         // 0: no access, 2: deidentified, 3: remove identifiers, 1: full data set
         if ( $right === "data_export1" && $this->dataExport < 3 ) {
             $this->badRights[] = "Data Export - Full Data Set";
-        } else if ( $right === "data_export3" && $this->dataExport < 2 ) {
+        } elseif ( $right === "data_export3" && $this->dataExport < 2 ) {
             $this->badRights[] = "Data Export - Remove Identifiers";
-        } else if ( $right === "data_export2" && $this->dataExport < 1 ) {
+        } elseif ( $right === "data_export2" && $this->dataExport < 1 ) {
             $this->badRights[] = "Data Export - De-Identified";
         }
     }
@@ -221,9 +221,6 @@ class RightsChecker
             if ( $this->isSafeRight($right) ) {
                 continue;
             }
-
-            $isDataQualityResolutionRight = $right == "data_quality_resolution";
-
 
             $this->checkDataViewingRights2($right);
             $this->checkDataExportRights2($right);

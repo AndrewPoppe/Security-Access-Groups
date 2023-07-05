@@ -33,7 +33,9 @@ class CsvSAGImport
     {
         $lineEnding = strpos($this->csvString, "\r\n") !== false ? "\r\n" : "\n";
         $Data       = str_getcsv($this->csvString, $lineEnding);
-        foreach ( $Data as &$Row ) $Row = str_getcsv($Row, ",");
+        foreach ( $Data as &$Row ) {
+            $Row = str_getcsv($Row, ",");
+        }
         $this->csvContents = $Data;
     }
 
@@ -68,14 +70,12 @@ class CsvSAGImport
             }
 
             $thisRoleName = htmlspecialchars(trim($row[$roleNameIndex]), ENT_QUOTES);
-            //unset($row[$roleNameIndex]);
             if ( empty($thisRoleName) ) {
                 $this->error_messages[] = "One or more role name was invalid.";
                 $thisRowClean           = false;
             }
 
             $thisRole = trim($row[$roleIdIndex]);
-            //unset($row[$roleIdIndex]);
             if ( empty($thisRole) || !$this->module->systemRoleExists($thisRole) ) {
                 $thisRole = '[new]';
             }
