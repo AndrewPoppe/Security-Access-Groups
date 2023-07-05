@@ -18,23 +18,23 @@ class APIHandler
     {
         $this->module = $module;
         $this->post   = $post;
-        $this->token  = $this->post["token"];
-        $this->data   = json_decode($this->post["data"] ?? "{}", true);
-        $this->action = htmlspecialchars($this->post["content"]);
+        $this->token  = $this->post['token'];
+        $this->data   = json_decode($this->post['data'] ?? '{}', true);
+        $this->action = htmlspecialchars($this->post['content']);
     }
 
     public function handleRequest()
     {
-        switch ($this->post["content"]) {
-            case "userRoleMapping":
+        switch ($this->post['content']) {
+            case 'userRoleMapping':
                 $this->module->log('Processing API Role Mapping Import');
                 $this->checkApiUserRoleMapping();
                 break;
-            case "userRole":
+            case 'userRole':
                 $this->module->log('Processing API Role Import');
                 $this->checkUserRoles();
                 break;
-            case "user":
+            case 'user':
                 $this->module->log('Processing API User Import');
                 $this->checkUsers();
                 break;
@@ -48,13 +48,13 @@ class APIHandler
     public function shouldProcess()
     {
         $rights          = $this->getUserRightsFromToken() ?? [];
-        $this->projectId = $rights["project_id"];
-        $this->user      = $rights["username"];
+        $this->projectId = $rights['project_id'];
+        $this->user      = $rights['username'];
 
         $prefix                   = $this->module->getModuleDirectoryPrefix();
         $isModuleEnabledInProject = (bool) $this->module->isModuleEnabled($prefix, $this->projectId);
-        $isApiUserRightsMethod    = in_array($this->action, [ "user", "userRole", "userRoleMapping" ], true);
-        $dataImported             = isset($this->post["data"]);
+        $isApiUserRightsMethod    = in_array($this->action, [ 'user', 'userRole', 'userRoleMapping' ], true);
+        $dataImported             = isset($this->post['data']);
 
         return $isModuleEnabledInProject && $isApiUserRightsMethod && $dataImported;
     }
@@ -83,7 +83,7 @@ class APIHandler
             $result = $this->module->query($sql, [ $this->token ]);
             $rights = $result->fetch_assoc();
         } catch ( \Throwable $e ) {
-            $this->module->log('Error getting user rights from API token', [ "error" => $e->getMessage() ]);
+            $this->module->log('Error getting user rights from API token', [ 'error' => $e->getMessage() ]);
         } finally {
             return $this->module->framework->escape($rights);
         }
@@ -92,31 +92,31 @@ class APIHandler
     private function checkApiUserRoleMapping()
     {
         try {
-            $bad_rights = [];
+            $badRights = [];
             foreach ( $this->data as $this_assignment ) {
-                $username       = $this_assignment["username"];
-                $uniqueRoleName = $this_assignment["unique_role_name"];
+                $username       = $this_assignment['username'];
+                $uniqueRoleName = $this_assignment['unique_role_name'];
                 if ( $uniqueRoleName == '' ) {
                     continue;
                 }
-                $role_id = $this->module->getRoleIdFromUniqueRoleName($uniqueRoleName);
-                if ( empty($role_id) ) {
+                $roleId = $this->module->getRoleIdFromUniqueRoleName($uniqueRoleName);
+                if ( empty($roleId) ) {
                     continue;
                 }
-                $role_name         = \ExternalModules\ExternalModules::getRoleName($this->projectId, $role_id);
-                $role_rights       = $this->module->getRoleRights($role_id, $this->projectId);
-                $acceptable_rights = $this->module->getAcceptableRights($username);
-                $these_bad_rights  = $this->module->checkProposedRights($acceptable_rights, $role_rights);
+                $roleName         = \ExternalModules\ExternalModules::getRoleName($this->projectId, $roleId);
+                $roleRights       = $this->module->getRoleRights($roleId, $this->projectId);
+                $acceptableRights = $this->module->getAcceptableRights($username);
+                $theseBadRights   = $this->module->checkProposedRights($acceptableRights, $roleRights);
                 // We ignore expired users
                 $userExpired = $this->module->isUserExpired($username, $this->projectId);
-                if ( !empty($these_bad_rights) && !$userExpired ) {
-                    $bad_rights[$role_name] = $these_bad_rights;
+                if ( !empty($theseBadRights) && !$userExpired ) {
+                    $badRights[$roleName] = $theseBadRights;
                 }
             }
-            $this->badRights      = $bad_rights;
+            $this->badRights      = $badRights;
             $this->originalRights = $this->data;
         } catch ( \Throwable $e ) {
-            $this->module->log('Error Processing API User Role Mapping Import', [ "error" => $e->getMessage() ]);
+            $this->module->log('Error Processing API User Role Mapping Import', [ 'error' => $e->getMessage() ]);
         }
     }
 
@@ -169,8 +169,8 @@ class APIHandler
         try {
             $badRights = [];
             foreach ( $this->data as $thisRole ) {
-                $roleLabel   = $thisRole["role_label"];
-                $roleId      = $this->module->getRoleIdFromUniqueRoleName($thisRole["unique_role_name"]);
+                $roleLabel   = $thisRole['role_label'];
+                $roleId      = $this->module->getRoleIdFromUniqueRoleName($thisRole['unique_role_name']);
                 $usersInRole = $this->module->getUsersInRole($this->projectId, $roleId);
                 $thisRole    = $this->handleFormsViewing($thisRole);
                 $thisRole    = $this->handleFormsExport($thisRole);
@@ -185,7 +185,7 @@ class APIHandler
             }
             $this->badRights = $badRights;
         } catch ( \Throwable $e ) {
-            $this->module->log('Error Processing API User Role Import', [ "error" => $e->getMessage() ]);
+            $this->module->log('Error Processing API User Role Import', [ 'error' => $e->getMessage() ]);
         }
     }
 
@@ -215,14 +215,14 @@ class APIHandler
                     $badRights[$username] = $theseBadRights;
                 } else {
                     $this->originalRights[] = [
-                        "username" => $username,
-                        "rights"   => $this->module->getCurrentRights($username, $this->projectId)
+                        'username' => $username,
+                        'rights'   => $this->module->getCurrentRights($username, $this->projectId)
                     ];
                 }
             }
             $this->badRights = $badRights;
         } catch ( \Throwable $e ) {
-            $this->module->log('Error Processing API User Import', [ "error" => $e->getMessage() ]);
+            $this->module->log('Error Processing API User Import', [ 'error' => $e->getMessage() ]);
         }
     }
 
