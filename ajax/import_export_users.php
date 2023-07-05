@@ -36,7 +36,7 @@ if ( isset($_POST['csv_content']) && $_POST['csv_content'] != '' ) {
             unset($this_user['forms_export']);
         }
         $this_user = array_filter($this_user, function ($value, $key) {
-            return ($value != 0);
+            return $value != 0;
         }, ARRAY_FILTER_USE_BOTH);
 
         $acceptable_rights = $module->getAcceptableRights($username);

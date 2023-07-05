@@ -120,46 +120,70 @@ class APIHandler
         }
     }
 
+    private function handleFormsViewing($rights)
+    {
+        if ( isset($rights['forms']) && $rights['forms'] != '' ) {
+            foreach ( $rights['forms'] as $thisForm => $thisRight ) {
+                $rights['form-' . $thisForm] = $thisRight;
+            }
+            unset($rights['forms']);
+        }
+        return $rights;
+    }
+
+    private function handleFormsExport($rights)
+    {
+        if ( isset($rights['forms_export']) && $rights['forms_export'] != '' ) {
+            foreach ( $rights['forms_export'] as $thisForm => $thisRight ) {
+                $rights['export-form-' . $thisForm] = $thisRight;
+            }
+            unset($rights['forms_export']);
+        }
+        return $rights;
+    }
+
+    private function filterRights($rights)
+    {
+        return array_filter($rights, function ($value) {
+            return $value != 0;
+        });
+    }
+
+    private function checkUsersInRole($usersInRole, $thisRole)
+    {
+        $theseBadRights = [];
+        foreach ( $usersInRole as $username ) {
+            $acceptableRights = $this->module->getAcceptableRights($username);
+            $userBadRights    = $this->module->checkProposedRights($acceptableRights, $thisRole);
+            // We ignore expired users
+            $userExpired = $this->module->isUserExpired($username, $this->project_id);
+            if ( !empty($userBadRights) && !$userExpired ) {
+                $theseBadRights[$username] = $userBadRights;
+            }
+        }
+        return $theseBadRights;
+    }
+
     private function checkUserRoles()
     {
         try {
-            $bad_rights = [];
-            foreach ( $this->data as $this_role ) {
-                $role_label  = $this_role["role_label"];
-                $role_id     = $this->module->getRoleIdFromUniqueRoleName($this_role["unique_role_name"]);
-                $usersInRole = $this->module->getUsersInRole($this->project_id, $role_id);
-                if ( isset($this_role['forms']) && $this_role['forms'] != '' ) {
-                    foreach ( $this_role['forms'] as $this_form => $this_right ) {
-                        $this_role['form-' . $this_form] = $this_right;
-                    }
-                    unset($this_role['forms']);
-                }
-                if ( isset($this_role['forms_export']) && $this_role['forms_export'] != '' ) {
-                    foreach ( $this_role['forms_export'] as $this_form => $this_right ) {
-                        $this_role['export-form-' . $this_form] = $this_right;
-                    }
-                    unset($this_role['forms_export']);
-                }
-                $this_role = array_filter($this_role, function ($value, $key) {
-                    return ($value != 0);
-                }, ARRAY_FILTER_USE_BOTH);
+            $badRights = [];
+            foreach ( $this->data as $thisRole ) {
+                $roleLabel   = $thisRole["role_label"];
+                $roleId      = $this->module->getRoleIdFromUniqueRoleName($thisRole["unique_role_name"]);
+                $usersInRole = $this->module->getUsersInRole($this->project_id, $roleId);
+                $thisRole    = $this->handleFormsViewing($thisRole);
+                $thisRole    = $this->handleFormsExport($thisRole);
+                $thisRole    = $this->filterRights($thisRole);
 
-                $these_bad_rights = [];
-                foreach ( $usersInRole as $username ) {
-                    $acceptable_rights = $this->module->getAcceptableRights($username);
-                    $user_bad_rights   = $this->module->checkProposedRights($acceptable_rights, $this_role);
-                    // We ignore expired users
-                    $userExpired = $this->module->isUserExpired($username, $this->project_id);
-                    if ( !empty($user_bad_rights) && !$userExpired ) {
-                        $these_bad_rights[$username] = $user_bad_rights;
-                    }
+                $theseBadRights = $this->checkUsersInRole($usersInRole, $thisRole);
+                if ( !empty($theseBadRights) ) {
+                    $badRights[$roleLabel] = $theseBadRights;
                 }
-                if ( !empty($these_bad_rights) ) {
-                    $bad_rights[$role_label] = $these_bad_rights;
-                }
+
                 $this->original_rights = \UserRights::getRoles($this->project_id);
             }
-            $this->bad_rights = $bad_rights;
+            $this->bad_rights = $badRights;
         } catch ( \Throwable $e ) {
             $this->module->log('Error Processing API User Role Import', [ "error" => $e->getMessage() ]);
         }
@@ -168,38 +192,27 @@ class APIHandler
     private function checkUsers()
     {
         try {
-            $bad_rights = [];
-            foreach ( $this->data as $this_user ) {
-                $username = $this_user['username'];
-                if ( isset($this_user['forms']) && $this_user['forms'] != '' ) {
-                    foreach ( $this_user['forms'] as $this_form => $this_right ) {
-                        $this_user['form-' . $this_form] = $this_right;
-                    }
-                    unset($this_user['forms']);
-                }
-                if ( isset($this_user['forms_export']) && $this_user['forms_export'] != '' ) {
-                    foreach ( $this_user['forms_export'] as $this_form => $this_right ) {
-                        $this_user['export-form-' . $this_form] = $this_right;
-                    }
-                    unset($this_user['forms_export']);
-                }
-                $this_user = array_filter($this_user, function ($value, $key) {
-                    return ($value != 0);
-                }, ARRAY_FILTER_USE_BOTH);
+            $badRights = [];
+            foreach ( $this->data as $thisUser ) {
+                $username = $thisUser['username'];
+                $thisUser = $this->handleFormsViewing($thisUser);
+                $thisUser = $this->handleFormsExport($thisUser);
+                $thisUser = $this->filterRights($thisUser);
 
-                $acceptable_rights = $this->module->getAcceptableRights($username);
-                $these_bad_rights  = $this->module->checkProposedRights($acceptable_rights, $this_user);
+                $acceptableRights = $this->module->getAcceptableRights($username);
+                $theseBadRights   = $this->module->checkProposedRights($acceptableRights, $thisUser);
 
                 // We ignore expired users, unless the request unexpires them
-                $userExpired         = $this->module->isUserExpired($username, $this->project_id);
-                $requestedExpiration = urldecode($this_user["expiration"]);
-                $requestedUnexpired  = empty($requestedExpiration) || (strtotime($requestedExpiration) >= strtotime('today'));
+                $userExpired            = $this->module->isUserExpired($username, $this->project_id);
+                $requestedExpiration    = urldecode($thisUser['expiration']);
+                $expirationDateInFuture = strtotime($requestedExpiration) >= strtotime('today');
+                $requestedUnexpired     = empty($requestedExpiration) || $expirationDateInFuture;
                 if ( $userExpired && !$requestedUnexpired ) {
                     $ignore = true;
                 }
 
-                if ( !empty($these_bad_rights) && !$ignore ) {
-                    $bad_rights[$username] = $these_bad_rights;
+                if ( !empty($theseBadRights) && !$ignore ) {
+                    $badRights[$username] = $theseBadRights;
                 } else {
                     $this->original_rights[] = [
                         "username" => $username,
@@ -207,7 +220,7 @@ class APIHandler
                     ];
                 }
             }
-            $this->bad_rights = $bad_rights;
+            $this->bad_rights = $badRights;
         } catch ( \Throwable $e ) {
             $this->module->log('Error Processing API User Import', [ "error" => $e->getMessage() ]);
         }

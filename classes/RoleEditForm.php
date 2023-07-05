@@ -14,8 +14,8 @@ class RoleEditForm
     private $contextMessage;
     public function __construct(
         SecurityAccessGroups $module, array $rights, bool $newRole,
-        $roleName = "",
-        $roleId = ""
+        $roleName = '',
+        $roleId = ''
     ) {
         global $lang;
         $this->module    = $module;
@@ -26,8 +26,8 @@ class RoleEditForm
         $this->lang      = $lang;
         $this->allRights = $this->module->getAllRights();
 
-        $newMessage           = $lang["rights_159"];
-        $existingMessage      = $lang["rights_157"];
+        $newMessage           = $lang['rights_159'];
+        $existingMessage      = $lang['rights_157'];
         $messageSuffix        = ' "<strong>' . \REDCap::escapeHtml($roleName) . '</strong>"';
         $this->contextMessage = ($newRole ? $newMessage : $existingMessage) . $messageSuffix;
     }
@@ -103,7 +103,7 @@ class RoleEditForm
     {
         $label    = $this->lang['rights_199'];
         $roleName = $this->module->escape($this->roleName);
-        $hidden   = $this->newRole ? "hidden" : "";
+        $hidden   = $this->newRole ? "hidden" : '';
         echo <<<"EOT"
         <!-- EDIT ROLE NAME -->
         <div class="SUR-form-row row $hidden">
@@ -132,9 +132,9 @@ class RoleEditForm
 
     private function getProjectSetupDesign()
     {
-        if ( isset($this->allRights["design"]) ) {
+        if ( isset($this->allRights['design']) ) {
             $label   = $this->lang['rights_135'];
-            $checked = $this->rights["design"] == 1 ? "checked" : "";
+            $checked = $this->rights['design'] == 1 ? 'checked' : '';
             echo <<<"EOT"
             <!-- Project Setup/Design -->
             <div class="SUR-form-row row">
@@ -151,9 +151,9 @@ class RoleEditForm
     }
     private function getUserRights()
     {
-        if ( isset($this->allRights["user_rights"]) ) {
+        if ( isset($this->allRights['user_rights']) ) {
             $label   = $this->lang['app_05'];
-            $checked = $this->rights["user_rights"] == 1 ? "checked" : "";
+            $checked = $this->rights['user_rights'] == 1 ? 'checked' : '';
             echo <<<"EOT"
             <!-- User Rights -->
             <div class="SUR-form-row row">
@@ -170,9 +170,9 @@ class RoleEditForm
     }
     private function getDataAccessGroups()
     {
-        if ( isset($this->allRights["data_access_groups"]) ) {
+        if ( isset($this->allRights['data_access_groups']) ) {
             $label   = $this->lang['global_22'];
-            $checked = $this->rights["data_access_groups"] == 1 ? "checked" : "";
+            $checked = $this->rights['data_access_groups'] == 1 ? 'checked' : '';
             echo <<<"EOT"
             <!--Data Access Groups -->
             <div class="SUR-form-row row">
@@ -201,9 +201,9 @@ class RoleEditForm
     }
     private function getMycapMobileApp()
     {
-        if ( isset($this->allRights["mycap_participants"]) ) {
+        if ( isset($this->allRights['mycap_participants']) ) {
             $label   = $this->lang['rights_437'];
-            $checked = $this->rights["mycap_participants"] == 1 ? "checked" : "";
+            $checked = $this->rights['mycap_participants'] == 1 ? 'checked' : '';
             $imgPath = APP_PATH_IMAGES . "mycap_logo_black.png";
             echo <<<"EOT"
             <!-- MyCap Mobile App -->
@@ -221,9 +221,9 @@ class RoleEditForm
     }
     private function getSurveyDistTool()
     {
-        if ( isset($this->allRights["participants"]) ) {
+        if ( isset($this->allRights['participants']) ) {
             $label   = $this->lang['app_24'];
-            $checked = $this->rights["participants"] == 1 ? "checked" : "";
+            $checked = $this->rights['participants'] == 1 ? 'checked' : '';
             echo <<<"EOT"
             <!-- Survey Distribution Tool -->
             <div class="SUR-form-row row">
@@ -242,9 +242,9 @@ class RoleEditForm
     }
     private function getAlerts()
     {
-        if ( isset($this->allRights["alerts"]) ) {
+        if ( isset($this->allRights['alerts']) ) {
             $label   = $this->lang['global_154'];
-            $checked = $this->rights["alerts"] == 1 ? "checked" : "";
+            $checked = $this->rights['alerts'] == 1 ? 'checked' : '';
             echo <<<"EOT"
             <!-- Alerts -->
             <div class="SUR-form-row row">
@@ -261,10 +261,10 @@ class RoleEditForm
     }
     private function getCalendar()
     {
-        if ( isset($this->allRights["calendar"]) ) {
+        if ( isset($this->allRights['calendar']) ) {
             $label1  = $this->lang['app_08'];
             $label2  = $this->lang['rights_357'];
-            $checked = $this->rights["calendar"] == 1 ? "checked" : "";
+            $checked = $this->rights['calendar'] == 1 ? 'checked' : '';
             echo <<<"EOT"
             <!-- Calendar -->
             <div class="SUR-form-row row">
@@ -281,10 +281,10 @@ class RoleEditForm
     }
     private function getReports()
     {
-        if ( isset($this->allRights["reports"]) ) {
+        if ( isset($this->allRights['reports']) ) {
             $label1  = $this->lang['rights_356'];
             $label2  = $this->lang['report_builder_130'];
-            $checked = $this->rights["reports"] == 1 ? "checked" : "";
+            $checked = $this->rights['reports'] == 1 ? 'checked' : '';
             echo <<<"EOT"
             <!-- Reports -->
             <div class="SUR-form-row row">
@@ -301,9 +301,9 @@ class RoleEditForm
     }
     private function getStatsAndCharts()
     {
-        if ( isset($this->allRights["graphical"]) ) {
+        if ( isset($this->allRights['graphical']) ) {
             $label   = $this->lang['report_builder_78'];
-            $checked = $this->rights["graphical"] == 1 ? "checked" : "";
+            $checked = $this->rights['graphical'] == 1 ? 'checked' : '';
             echo <<<"EOT"
             <!-- Graphical Data View & Stats -->
             <div class="SUR-form-row row">
@@ -320,14 +320,14 @@ class RoleEditForm
     }
     private function getDoubleDataEntry()
     {
-        if ( isset($this->allRights["double_data"]) ) {
+        if ( isset($this->allRights['double_data']) ) {
             $label1   = $this->lang['rights_50'];
             $label2   = $this->lang['rights_51'];
-            $label3   = $this->lang['rights_52'] . " #1";
-            $label4   = $this->lang['rights_52'] . " #2";
-            $checked1 = $this->rights["double_data"] == 0 ? "checked" : "";
-            $checked2 = $this->rights["double_data"] == 1 ? "checked" : "";
-            $checked3 = $this->rights["double_data"] == 2 ? "checked" : "";
+            $label3   = $this->lang['rights_52'] . ' #1';
+            $label4   = $this->lang['rights_52'] . ' #2';
+            $checked1 = $this->rights['double_data'] == 0 ? 'checked' : '';
+            $checked2 = $this->rights['double_data'] == 1 ? 'checked' : '';
+            $checked3 = $this->rights['double_data'] == 2 ? 'checked' : '';
             echo <<<"EOT"
             <div class="SUR-form-row row">
                 <div class="col mt-1">
@@ -356,9 +356,9 @@ class RoleEditForm
     }
     private function getDataImportTool()
     {
-        if ( isset($this->allRights["data_import_tool"]) ) {
+        if ( isset($this->allRights['data_import_tool']) ) {
             $label   = $this->lang['app_01'];
-            $checked = $this->rights["data_import_tool"] == 1 ? "checked" : "";
+            $checked = $this->rights['data_import_tool'] == 1 ? 'checked' : '';
             echo <<<"EOT"
             <div class="SUR-form-row row">
                 <div class="col">
@@ -373,9 +373,9 @@ class RoleEditForm
     }
     private function getDataComparisonTool()
     {
-        if ( isset($this->allRights["data_comparison_tool"]) ) {
+        if ( isset($this->allRights['data_comparison_tool']) ) {
             $label   = $this->lang['app_02'];
-            $checked = $this->rights["data_comparison_tool"] == 1 ? "checked" : "";
+            $checked = $this->rights['data_comparison_tool'] == 1 ? 'checked' : '';
             echo <<<"EOT"
             <div class="SUR-form-row row">
                 <div class="col">
@@ -390,9 +390,9 @@ class RoleEditForm
     }
     private function getLogging()
     {
-        if ( isset($this->allRights["data_logging"]) ) {
+        if ( isset($this->allRights['data_logging']) ) {
             $label   = $this->lang['app_07'];
-            $checked = $this->rights["data_logging"] == 1 ? "checked" : "";
+            $checked = $this->rights['data_logging'] == 1 ? 'checked' : '';
             echo <<<"EOT"
             <div class="SUR-form-row row">
                 <div class="col">
@@ -407,9 +407,9 @@ class RoleEditForm
     }
     private function getFileRepository()
     {
-        if ( isset($this->allRights["file_repository"]) ) {
+        if ( isset($this->allRights['file_repository']) ) {
             $label   = $this->lang['app_04'];
-            $checked = $this->rights["file_repository"] == 1 ? "checked" : "";
+            $checked = $this->rights['file_repository'] == 1 ? 'checked' : '';
             echo <<<"EOT"
             <div class="SUR-form-row row">
                 <div class="col">
@@ -424,14 +424,14 @@ class RoleEditForm
     }
     private function getRandomization()
     {
-        if ( isset($this->allRights["random_setup"]) ) {
+        if ( isset($this->allRights['random_setup']) ) {
             $label1   = $this->lang['app_21'];
             $label2   = $this->lang['rights_142'];
             $label3   = $this->lang['rights_143'];
             $label4   = $this->lang['rights_144'];
-            $checked1 = $this->rights["random_setup"] == 1 ? "checked" : "";
-            $checked2 = $this->rights["random_dashboard"] == 1 ? "checked" : "";
-            $checked3 = $this->rights["random_perform"] == 1 ? "checked" : "";
+            $checked1 = $this->rights['random_setup'] == 1 ? 'checked' : '';
+            $checked2 = $this->rights['random_dashboard'] == 1 ? 'checked' : '';
+            $checked3 = $this->rights['random_perform'] == 1 ? 'checked' : '';
             echo <<<"EOT"
             <div class="SUR-form-row row">
                 <div class="col mt-1">
@@ -463,12 +463,12 @@ class RoleEditForm
     }
     private function getDataQuality()
     {
-        if ( isset($this->allRights["data_quality_design"]) ) {
+        if ( isset($this->allRights['data_quality_design']) ) {
             $label1   = $this->lang['app_20'];
             $label2   = $this->lang['dataqueries_40'];
             $label3   = $this->lang['dataqueries_41'];
-            $checked1 = $this->rights["data_quality_design"] == 1 ? "checked" : "";
-            $checked2 = $this->rights["data_quality_execute"] == 1 ? "checked" : "";
+            $checked1 = $this->rights['data_quality_design'] == 1 ? 'checked' : '';
+            $checked2 = $this->rights['data_quality_execute'] == 1 ? 'checked' : '';
             echo <<<"EOT"
             <div class="SUR-form-row row">
                 <div class="col mt-1">
@@ -495,12 +495,12 @@ class RoleEditForm
     }
     private function getDataQualityResolution()
     {
-        if ( isset($this->allRights["data_quality_resolution"]) ) {
+        if ( isset($this->allRights['data_quality_resolution']) ) {
             $label    = $this->lang['dataqueries_137'];
-            $checked1 = $this->rights["data_quality_resolution_view"] == 1 ? "checked" : "";
-            $checked2 = $this->rights["data_quality_resolution_open"] == 1 ? "checked" : "";
-            $checked3 = $this->rights["data_quality_resolution_respond"] == 1 ? "checked" : "";
-            $checked4 = $this->rights["data_quality_resolution_close"] == 1 ? "checked" : "";
+            $checked1 = $this->rights['data_quality_resolution_view'] == 1 ? 'checked' : '';
+            $checked2 = $this->rights['data_quality_resolution_open'] == 1 ? 'checked' : '';
+            $checked3 = $this->rights['data_quality_resolution_respond'] == 1 ? 'checked' : '';
+            $checked4 = $this->rights['data_quality_resolution_close'] == 1 ? 'checked' : '';
             echo <<<"EOT"
             <div class="SUR-form-row row">
                 <div class="col mt-1">
@@ -548,12 +548,12 @@ class RoleEditForm
     }
     private function getAPI()
     {
-        if ( isset($this->allRights["api_export"]) ) {
+        if ( isset($this->allRights['api_export']) ) {
             $label1   = $this->lang['setup_77'];
             $label2   = $this->lang['rights_139'];
             $label3   = $this->lang['rights_314'];
-            $checked1 = $this->rights["api_export"] == 1 ? "checked" : "";
-            $checked2 = $this->rights["api_import"] == 1 ? "checked" : "";
+            $checked1 = $this->rights['api_export'] == 1 ? 'checked' : '';
+            $checked2 = $this->rights['api_import'] == 1 ? 'checked' : '';
             echo <<<"EOT"
             <div class="SUR-form-row row">
                 <div class="col mt-1">
@@ -576,11 +576,11 @@ class RoleEditForm
     }
     private function getDDPorCDIS()
     {
-        if ( isset($this->allRights["realtime_webservice_mapping"]) ) {
+        if ( isset($this->allRights['realtime_webservice_mapping']) ) {
             $label1   = $this->lang['ws_19'];
             $label2   = $this->lang['ws_20'];
-            $checked1 = $this->rights["realtime_webservice_mapping"] == 1 ? "checked" : "";
-            $checked2 = $this->rights["realtime_webservice_adjudicate"] == 1 ? "checked" : "";
+            $checked1 = $this->rights['realtime_webservice_mapping'] == 1 ? 'checked' : '';
+            $checked2 = $this->rights['realtime_webservice_adjudicate'] == 1 ? 'checked' : '';
             echo <<<"EOT"
             <div class="SUR-form-row row">
                 <div class="col mt-1">
@@ -609,8 +609,8 @@ class RoleEditForm
             </div>
             EOT;
         } else {
-            $val1 = $this->rights["realtime_webservice_mapping"];
-            $val2 = $this->rights["realtime_webservice_adjudicate"];
+            $val1 = $this->rights['realtime_webservice_mapping'];
+            $val2 = $this->rights['realtime_webservice_adjudicate'];
             echo <<<"EOT"
             <!-- Hide input fields to maintain values if setting is disabled at project level -->
             <input type="hidden" name="realtime_webservice_mapping" value="$val1">
@@ -621,9 +621,9 @@ class RoleEditForm
 
     private function getDTS()
     {
-        if ( isset($this->allRights["dts"]) ) {
+        if ( isset($this->allRights['dts']) ) {
             $label   = $this->lang['rights_132'];
-            $checked = $this->rights["dts"] == 1 ? "checked" : "";
+            $checked = $this->rights['dts'] == 1 ? 'checked' : '';
             echo <<<"EOT"
         <div class="SUR-form-row row">
         <div class="col" valign="top">
@@ -643,13 +643,13 @@ class RoleEditForm
     }
     private function getMobileApp()
     {
-        if ( isset($this->allRights["mobile_app"]) ) {
+        if ( isset($this->allRights['mobile_app']) ) {
             $label1   = $this->lang['rights_309'];
             $label2   = $this->lang['global_118'];
             $label3   = $this->lang['rights_307'];
             $label4   = $this->lang['rights_306'];
-            $checked1 = $this->rights["mobile_app"] == 1 ? "checked" : "";
-            $checked2 = $this->rights["mobile_app_download_data"] == 1 ? "checked" : "";
+            $checked1 = $this->rights['mobile_app'] == 1 ? 'checked' : '';
+            $checked2 = $this->rights['mobile_app_download_data'] == 1 ? 'checked' : '';
             echo <<<"EOT"
             <hr>
             <div class="SUR-form-row row">
@@ -690,9 +690,9 @@ class RoleEditForm
             <div class="col section-header" colspan='2'>$label1</div>
         </div>
         EOT;
-        if ( isset($this->allRights["record_create"]) ) {
+        if ( isset($this->allRights['record_create']) ) {
             $label   = $this->lang['rights_99'];
-            $checked = $this->rights["record_create"] == 1 ? "checked" : "";
+            $checked = $this->rights['record_create'] == 1 ? 'checked' : '';
             echo <<<"EOT"
             <div class="SUR-form-row row">
                 <div class="col">
@@ -704,9 +704,9 @@ class RoleEditForm
             </div>
             EOT;
         }
-        if ( isset($this->allRights["record_rename"]) ) {
+        if ( isset($this->allRights['record_rename']) ) {
             $label   = $this->lang['rights_100'];
-            $checked = $this->rights["record_rename"] == 1 ? "checked" : "";
+            $checked = $this->rights['record_rename'] == 1 ? 'checked' : '';
             echo <<<"EOT"
             <div class="SUR-form-row row">
                 <div class="col">
@@ -718,9 +718,9 @@ class RoleEditForm
             </div>
             EOT;
         }
-        if ( isset($this->allRights["record_delete"]) ) {
+        if ( isset($this->allRights['record_delete']) ) {
             $label   = $this->lang['rights_101'];
-            $checked = $this->rights["record_delete"] == 1 ? "checked" : "";
+            $checked = $this->rights['record_delete'] == 1 ? 'checked' : '';
             echo <<<"EOT"
             <div class="SUR-form-row row">
                 <div class="col">
@@ -927,8 +927,8 @@ class RoleEditForm
     }
     private function getFormEnd()
     {
-        $buttonClass = $this->newRole ? "btn-success" : "btn-primary";
-        $label       = $this->newRole ? "Save New Role" : "Save Changes";
+        $buttonClass = $this->newRole ? 'btn-success' : 'btn-primary';
+        $label       = $this->newRole ? 'Save New Role' : 'Save Changes';
         echo <<<"EOT"
                                 </div>
                             </div>
