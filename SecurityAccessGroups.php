@@ -111,7 +111,7 @@ class SecurityAccessGroups extends AbstractExternalModule
             $enabledSystemwide = $this->framework->getSystemSetting('enabled');
             $prefix            = $this->getModuleDirectoryPrefix();
 
-            if ( $enabledSystemwide == true ) {
+            if ( $enabledSystemwide ) {
                 $allProjectIds = $this->getAllProjectIds();
                 $projectIds    = array_filter($allProjectIds, function ($projectId) use ($prefix) {
                     return $this->isModuleEnabled($prefix, $projectId);
@@ -136,16 +136,16 @@ class SecurityAccessGroups extends AbstractExternalModule
     public function getAllProjectIds()
     {
         try {
-            $query       = "select project_id from redcap_projects
+            $query      = "select project_id from redcap_projects
             where created_by is not null
             and completed_time is null
             and date_deleted is null";
-            $result      = $this->framework->query($query, []);
-            $project_ids = [];
+            $result     = $this->framework->query($query, []);
+            $projectIds = [];
             while ( $row = $result->fetch_assoc() ) {
-                $project_ids[] = intval($row["project_id"]);
+                $projectIds[] = intval($row["project_id"]);
             }
-            return $project_ids;
+            return $projectIds;
         } catch ( \Exception $e ) {
             $this->log("Error fetching all projects", [ "error" => $e->getMessage() ]);
         }
