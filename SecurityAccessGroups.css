@@ -607,3 +607,7 @@ tr.selected>* {
     box-shadow: none !important;
     color: inherit !important;
 }
+
+.infoButton:hover {
+    color: #138496 !important;
+}
