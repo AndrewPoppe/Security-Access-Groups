@@ -125,7 +125,7 @@ if ( isset($_POST['csv_content']) && $_POST['csv_content'] != '' ) {
                 unset($this_role['forms_export']);
             }
             $this_role = array_filter($this_role, function ($value, $key) {
-                return ($value != 0);
+                return $value != 0;
             }, ARRAY_FILTER_USE_BOTH);
 
             $these_bad_rights = [];
@@ -149,67 +149,68 @@ if ( isset($_POST['csv_content']) && $_POST['csv_content'] != '' ) {
         }
 
         if ( empty($bad_rights) ) {
-            ob_start(function ($str) use ($all_current_rights, $module, $pid, $all_role_ids_orig) {
+            ob_start(function () use ($all_current_rights, $module, $pid, $all_role_ids_orig) {
                 try {
                     $imported    = $_SESSION["imported"] === "userroles";
                     $error_count = sizeof($_SESSION["errors"]) ?? 0;
                     $succeeded   = $imported && $error_count === 0;
-                    if ( $succeeded ) {
-                        $data_values      = "";
-                        $all_role_ids_new = array_keys(\UserRights::getRoles($pid));
-                        $logTable         = $module->framework->getProject($pid)->getLogTable();
-                        $redcap_user      = $module->getUser()->getUsername();
-                        foreach ( $all_role_ids_new as $role_id ) {
-                            $newRole     = !in_array($role_id, $all_role_ids_orig, true);
-                            $changedRole = in_array($role_id, array_keys($all_current_rights), true);
-                            if ( !$newRole && !$changedRole ) {
-                                continue;
-                            }
-                            $pk         = $role_id;
-                            $role_label = $module->getRoleLabel($role_id);
+                    if ( !$succeeded ) {
+                        return;
+                    }
+                    $data_values      = "";
+                    $all_role_ids_new = array_keys(\UserRights::getRoles($pid));
+                    $logTable         = $module->framework->getProject($pid)->getLogTable();
+                    $redcap_user      = $module->getUser()->getUsername();
+                    foreach ( $all_role_ids_new as $role_id ) {
+                        $newRole     = !in_array($role_id, $all_role_ids_orig, true);
+                        $changedRole = in_array($role_id, array_keys($all_current_rights), true);
+                        if ( !$newRole && !$changedRole ) {
+                            continue;
+                        }
+                        $pk         = $role_id;
+                        $role_label = $module->getRoleLabel($role_id);
 
-                            if ( $newRole ) {
-                                $description      = 'Add role';
-                                $event            = 'INSERT';
-                                $current_rights   = [];
-                                $orig_data_values = "role = '" . $role_label . "'";
-                                $sql              = "SELECT log_event_id FROM $logTable WHERE project_id = ? AND user = ? AND page = 'ExternalModules/index.php' AND object_type = 'redcap_user_rights' AND pk IS NULL AND event = 'INSERT' AND data_values = ? AND TIMESTAMPDIFF(SECOND,ts,NOW()) <= 10 ORDER BY ts DESC";
-                                $params           = [ $pid, $redcap_user, $orig_data_values ];
-                            } else {
-                                $description    = "Edit role";
-                                $event          = "update";
-                                $current_rights = $all_current_rights[$role_id];
-                                $sql            = "SELECT log_event_id FROM $logTable WHERE project_id = ? AND user = ? AND page = 'ExternalModules/index.php' AND object_type = 'redcap_user_roles' AND pk = ? AND event = 'UPDATE' AND TIMESTAMPDIFF(SECOND,ts,NOW()) <= 10 ORDER BY ts DESC";
-                                $params         = [ $pid, $redcap_user, $pk ];
-                            }
+                        if ( $newRole ) {
+                            $description      = 'Add role';
+                            $event            = 'INSERT';
+                            $current_rights   = [];
+                            $orig_data_values = "role = '" . $role_label . "'";
+                            $sql              = "SELECT log_event_id FROM $logTable WHERE project_id = ? AND user = ? AND page = 'ExternalModules/index.php' AND object_type = 'redcap_user_rights' AND pk IS NULL AND event = 'INSERT' AND data_values = ? AND TIMESTAMPDIFF(SECOND,ts,NOW()) <= 10 ORDER BY ts DESC";
+                            $params           = [ $pid, $redcap_user, $orig_data_values ];
+                        } else {
+                            $description    = "Edit role";
+                            $event          = "UPDATE";
+                            $current_rights = $all_current_rights[$role_id];
+                            $sql            = "SELECT log_event_id FROM $logTable WHERE project_id = ? AND user = ? AND page = 'ExternalModules/index.php' AND object_type = 'redcap_user_roles' AND pk = ? AND event = 'UPDATE' AND TIMESTAMPDIFF(SECOND,ts,NOW()) <= 10 ORDER BY ts DESC";
+                            $params         = [ $pid, $redcap_user, $pk ];
+                        }
 
-                            $updated_rights = $module->getRoleRightsRaw($role_id) ?? [];
-                            $changes        = json_encode(array_diff_assoc($updated_rights, $current_rights), JSON_PRETTY_PRINT);
-                            $changes        = $changes === "[]" ? "None" : $changes;
-                            $data_values    = "role = '$role_label'\nchanges = $changes\n\n";
+                        $updated_rights = $module->getRoleRightsRaw($role_id) ?? [];
+                        $changes        = json_encode(array_diff_assoc($updated_rights, $current_rights), JSON_PRETTY_PRINT);
+                        $changes        = $changes === "[]" ? "None" : $changes;
+                        $data_values    = "role = '$role_label'\nchanges = $changes\n\n";
 
-                            $result       = $module->framework->query($sql, $params);
-                            $log_event_id = intval($result->fetch_assoc()["log_event_id"]);
+                        $result       = $module->framework->query($sql, $params);
+                        $log_event_id = intval($result->fetch_assoc()["log_event_id"]);
 
-                            if ( $log_event_id != 0 ) {
-                                $module->framework->query("UPDATE $logTable SET data_values = ?, pk = ? WHERE log_event_id = ?", [ $data_values, $pk, $log_event_id ]);
-                            } else {
-                                \Logging::logEvent(
-                                    '',
-                                    "redcap_user_roles",
-                                    $event,
-                                    $pk,
-                                    $data_values,
-                                    $description,
-                                    "",
-                                    "",
-                                    "",
-                                    true,
-                                    null,
-                                    null,
-                                    false
-                                );
-                            }
+                        if ( $log_event_id != 0 ) {
+                            $module->framework->query("UPDATE $logTable SET data_values = ?, pk = ? WHERE log_event_id = ?", [ $data_values, $pk, $log_event_id ]);
+                        } else {
+                            \Logging::logEvent(
+                                '',
+                                "redcap_user_roles",
+                                $event,
+                                $pk,
+                                $data_values,
+                                $description,
+                                "",
+                                "",
+                                "",
+                                true,
+                                null,
+                                null,
+                                false
+                            );
                         }
                     }
                 } catch ( \Throwable $e ) {
