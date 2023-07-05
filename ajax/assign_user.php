@@ -13,26 +13,26 @@ if ( $_SERVER['REQUEST_METHOD'] !== 'POST' ) {
 
 $data     = filter_input_array(INPUT_POST, FILTER_SANITIZE_ENCODED);
 $username = $data['username'];
-$role_id  = $data['role_id'];
-$sag_id   = $module->getUserSystemRole($username);
-$sag      = $module->getSystemRoleRightsById($sag_id);
+$roleId   = $data['role_id'];
+$sagId    = $module->getUserSystemRole($username);
+$sag      = $module->getSystemRoleRightsById($sagId);
 
 
 // We don't care if the user is being removed from a role.
-if ( $role_id == 0 ) {
+if ( $roleId == 0 ) {
     require_once $scriptPath;
     exit;
 }
 
-$role_label       = $module->getRoleLabel($role_id);
-$unique_role_name = $module->getUniqueRoleNameFromRoleId($role_id);
-$role_name        = $module->getRoleLabel($role_id);
+$roleLabel        = $module->getRoleLabel($roleId);
+$unique_role_name = $module->getUniqueRoleNameFromRoleId($roleId);
+$role_name        = $module->getRoleLabel($roleId);
 $project_id       = $module->framework->getProjectId();
 
-$role_rights       = $module->getRoleRights($role_id);
-$acceptable_rights = $module->getAcceptableRights($username);
+$role_rights      = $module->getRoleRights($roleId);
+$acceptableRights = $module->getAcceptableRights($username);
 
-$badRights = $module->checkProposedRights($acceptable_rights, $role_rights);
+$badRights = $module->checkProposedRights($acceptableRights, $role_rights);
 $errors    = !empty($badRights);
 
 // We ignore expired users
@@ -42,8 +42,8 @@ if ( $errors === false || $userExpired ) {
     $info = [
         'project_id'       => $project_id,
         'username'         => $username,
-        'role_id'          => $role_id,
-        'role_label'       => $role_label,
+        'role_id'          => $roleId,
+        'role_label'       => $roleLabel,
         'unique_role_name' => $unique_role_name
     ];
     ob_start(function ($str) use ($info, $module) {

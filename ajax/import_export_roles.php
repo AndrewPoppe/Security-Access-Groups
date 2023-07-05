@@ -21,59 +21,59 @@ if ( isset($_POST['csv_content']) && $_POST['csv_content'] != '' ) {
         $badRights = [];
         foreach ( $data as $key => $this_assignment ) {
             $username       = $this_assignment['username'];
-            $sag_id         = $module->getUserSystemRole($username);
-            $sag            = $module->getSystemRoleRightsById($sag_id);
+            $sagId          = $module->getUserSystemRole($username);
+            $sag            = $module->getSystemRoleRightsById($sagId);
             $uniqueRoleName = $this_assignment['unique_role_name'];
             if ( $uniqueRoleName == '' ) {
                 continue;
             }
-            $role_id           = $module->getRoleIdFromUniqueRoleName($uniqueRoleName);
-            $role_name         = \ExternalModules\ExternalModules::getRoleName($pid, $role_id);
-            $role_rights       = $module->getRoleRights($role_id);
-            $acceptable_rights = $module->getAcceptableRights($username);
-            $these_bad_rights  = $module->checkProposedRights($acceptable_rights, $role_rights);
+            $roleId           = $module->getRoleIdFromUniqueRoleName($uniqueRoleName);
+            $role_name        = \ExternalModules\ExternalModules::getRoleName($pid, $roleId);
+            $role_rights      = $module->getRoleRights($roleId);
+            $acceptableRights = $module->getAcceptableRights($username);
+            $theseBadRights   = $module->checkProposedRights($acceptableRights, $role_rights);
             // We ignore expired users
             $userExpired = $module->isUserExpired($username, $pid);
-            if ( !empty($these_bad_rights) && !$userExpired ) {
+            if ( !empty($theseBadRights) && !$userExpired ) {
                 $badRights[$role_name][$username] = [
                     'SAG'    => $sag['role_name'],
-                    'rights' => $these_bad_rights
+                    'rights' => $theseBadRights
                 ];
             }
         }
         if ( empty($badRights) ) {
             ob_start(function () use ($module, $pid, $data) {
                 try {
-                    $imported    = $_SESSION['imported'] === 'userroleMapping';
-                    $error_count = sizeof($_SESSION['errors']) ?? 0;
-                    $succeeded   = $imported && $error_count === 0;
+                    $imported   = $_SESSION['imported'] === 'userroleMapping';
+                    $errorCount = sizeof($_SESSION['errors']) ?? 0;
+                    $succeeded  = $imported && $errorCount === 0;
                     if ( $succeeded ) {
-                        $data_values = '';
-                        $logTable    = $module->framework->getProject($pid)->getLogTable();
-                        $redcap_user = $module->getUser()->getUsername();
+                        $dataValues = '';
+                        $logTable   = $module->framework->getProject($pid)->getLogTable();
+                        $redcapUser = $module->getUser()->getUsername();
                         foreach ( $data as $this_assignment ) {
-                            $username         = $this_assignment['username'];
-                            $unique_role_name = $this_assignment['unique_role_name'];
-                            $unique_role_name = $unique_role_name == '' ? 'None' : $unique_role_name;
-                            $role_id          = $module->getRoleIdFromUniqueRoleName($unique_role_name);
-                            $role_label       = $module->getRoleLabel($role_id) ?? 'None';
-                            $data_values      = "user = '" . $username . "'\nrole = '" . $role_label . "'\nunique_role_name = '" . $unique_role_name . "'";
+                            $username       = $this_assignment['username'];
+                            $uniqueRoleName = $this_assignment['unique_role_name'];
+                            $uniqueRoleName = $uniqueRoleName == '' ? 'None' : $uniqueRoleName;
+                            $roleId         = $module->getRoleIdFromUniqueRoleName($uniqueRoleName);
+                            $roleLabel      = $module->getRoleLabel($roleId) ?? 'None';
+                            $dataValues     = "user = '" . $username . "'\nrole = '" . $roleLabel . "'\nunique_role_name = '" . $uniqueRoleName . "'";
 
                             $sql    = "SELECT log_event_id FROM $logTable WHERE project_id = ? AND user = ? AND page = 'ExternalModules/index.php' AND object_type = 'redcap_user_rights' AND pk = ? AND event = 'INSERT' AND TIMESTAMPDIFF(SECOND,ts,NOW()) <= 10 ORDER BY ts DESC";
-                            $params = [ $pid, $redcap_user, $username ];
+                            $params = [ $pid, $redcapUser, $username ];
 
-                            $result       = $module->framework->query($sql, $params);
-                            $log_event_id = intval($result->fetch_assoc()['log_event_id']);
+                            $result     = $module->framework->query($sql, $params);
+                            $logEventId = intval($result->fetch_assoc()['log_event_id']);
 
-                            if ( $log_event_id != 0 ) {
-                                $module->framework->query("UPDATE $logTable SET data_values = ? WHERE log_event_id = ?", [ $data_values, $log_event_id ]);
+                            if ( $logEventId != 0 ) {
+                                $module->framework->query("UPDATE $logTable SET data_values = ? WHERE log_event_id = ?", [ $dataValues, $logEventId ]);
                             } else {
                                 \Logging::logEvent(
                                     '',
                                     'redcap_user_rights',
                                     'INSERT',
                                     $username,
-                                    $data_values,
+                                    $dataValues,
                                     'Assign user to role',
                                     '',
                                     '',
@@ -100,108 +100,108 @@ if ( isset($_POST['csv_content']) && $_POST['csv_content'] != '' ) {
         }
     } else {
 
-        $badRights          = [];
-        $all_current_rights = [];
-        $all_role_ids_orig  = array_keys(\UserRights::getRoles($pid));
-        foreach ( $data as $key => $this_role ) {
-            $role_label = $this_role['role_label'];
-            $role_id    = $module->getRoleIdFromUniqueRoleName($this_role['unique_role_name']);
-            if ( isset($role_id) ) {
-                $all_current_rights[$role_id] = $module->getRoleRightsRaw($role_id);
+        $badRights        = [];
+        $allCurrentRights = [];
+        $allRoleIdsOrig   = array_keys(\UserRights::getRoles($pid));
+        foreach ( $data as $key => $thisRole ) {
+            $roleLabel = $thisRole['role_label'];
+            $roleId    = $module->getRoleIdFromUniqueRoleName($thisRole['unique_role_name']);
+            if ( isset($roleId) ) {
+                $allCurrentRights[$roleId] = $module->getRoleRightsRaw($roleId);
             }
-            $usersInRole = $module->getUsersInRole($pid, $role_id);
-            if ( isset($this_role['forms']) && $this_role['forms'] != '' ) {
-                foreach ( explode(',', $this_role['forms']) as $this_pair ) {
-                    list( $this_form, $this_right )  = explode(':', $this_pair, 2);
-                    $this_role['form-' . $this_form] = $this_right;
+            $usersInRole = $module->getUsersInRole($pid, $roleId);
+            if ( isset($thisRole['forms']) && $thisRole['forms'] != '' ) {
+                foreach ( explode(',', $thisRole['forms']) as $thisPair ) {
+                    list( $thisForm, $thisRight )  = explode(':', $thisPair, 2);
+                    $thisRole['form-' . $thisForm] = $thisRight;
                 }
-                unset($this_role['forms']);
+                unset($thisRole['forms']);
             }
-            if ( isset($this_role['forms_export']) && $this_role['forms_export'] != '' ) {
-                foreach ( explode(',', $this_role['forms_export']) as $this_pair ) {
-                    list( $this_form, $this_right )         = explode(':', $this_pair, 2);
-                    $this_role['export-form-' . $this_form] = $this_right;
+            if ( isset($thisRole['forms_export']) && $thisRole['forms_export'] != '' ) {
+                foreach ( explode(',', $thisRole['forms_export']) as $thisPair ) {
+                    list( $thisForm, $thisRight )         = explode(':', $thisPair, 2);
+                    $thisRole['export-form-' . $thisForm] = $thisRight;
                 }
-                unset($this_role['forms_export']);
+                unset($thisRole['forms_export']);
             }
-            $this_role = array_filter($this_role, function ($value) {
+            $thisRole = array_filter($thisRole, function ($value) {
                 return $value != 0;
             });
 
-            $these_bad_rights = [];
+            $theseBadRights = [];
             foreach ( $usersInRole as $username ) {
-                $sag_id            = $module->getUserSystemRole($username);
-                $sag               = $module->getSystemRoleRightsById($sag_id);
-                $acceptable_rights = $module->getAcceptableRights($username);
-                $user_bad_rights   = $module->checkProposedRights($acceptable_rights, $this_role);
+                $sagId            = $module->getUserSystemRole($username);
+                $sag              = $module->getSystemRoleRightsById($sagId);
+                $acceptableRights = $module->getAcceptableRights($username);
+                $userBadRights    = $module->checkProposedRights($acceptableRights, $thisRole);
                 // We ignore expired users
                 $userExpired = $module->isUserExpired($username, $pid);
-                if ( !empty($user_bad_rights) && !$userExpired ) {
-                    $these_bad_rights[$username] = [
+                if ( !empty($userBadRights) && !$userExpired ) {
+                    $theseBadRights[$username] = [
                         'SAG'    => $sag['role_name'],
-                        'rights' => $user_bad_rights
+                        'rights' => $userBadRights
                     ];
                 }
             }
-            if ( !empty($these_bad_rights) ) {
-                $badRights[$role_label] = $these_bad_rights;
+            if ( !empty($theseBadRights) ) {
+                $badRights[$roleLabel] = $theseBadRights;
             }
         }
 
         if ( empty($badRights) ) {
-            ob_start(function () use ($all_current_rights, $module, $pid, $all_role_ids_orig) {
+            ob_start(function () use ($allCurrentRights, $module, $pid, $allRoleIdsOrig) {
                 try {
-                    $imported    = $_SESSION['imported'] === 'userroles';
-                    $error_count = sizeof($_SESSION['errors']) ?? 0;
-                    $succeeded   = $imported && $error_count === 0;
+                    $imported   = $_SESSION['imported'] === 'userroles';
+                    $errorCount = sizeof($_SESSION['errors']) ?? 0;
+                    $succeeded  = $imported && $errorCount === 0;
                     if ( !$succeeded ) {
                         return;
                     }
-                    $data_values      = '';
-                    $all_role_ids_new = array_keys(\UserRights::getRoles($pid));
-                    $logTable         = $module->framework->getProject($pid)->getLogTable();
-                    $redcap_user      = $module->getUser()->getUsername();
-                    foreach ( $all_role_ids_new as $role_id ) {
-                        $newRole     = !in_array($role_id, $all_role_ids_orig, true);
-                        $changedRole = in_array($role_id, array_keys($all_current_rights), true);
+                    $dataValues    = '';
+                    $allRoleIdsNew = array_keys(\UserRights::getRoles($pid));
+                    $logTable      = $module->framework->getProject($pid)->getLogTable();
+                    $redcapUser    = $module->getUser()->getUsername();
+                    foreach ( $allRoleIdsNew as $roleId ) {
+                        $newRole     = !in_array($roleId, $allRoleIdsOrig, true);
+                        $changedRole = in_array($roleId, array_keys($allCurrentRights), true);
                         if ( !$newRole && !$changedRole ) {
                             continue;
                         }
-                        $pk         = $role_id;
-                        $role_label = $module->getRoleLabel($role_id);
+                        $pk        = $roleId;
+                        $roleLabel = $module->getRoleLabel($roleId);
 
                         if ( $newRole ) {
-                            $description      = 'Add role';
-                            $event            = 'INSERT';
-                            $current_rights   = [];
-                            $orig_data_values = "role = '" . $role_label . "'";
-                            $sql              = "SELECT log_event_id FROM $logTable WHERE project_id = ? AND user = ? AND page = 'ExternalModules/index.php' AND object_type = 'redcap_user_rights' AND pk IS NULL AND event = 'INSERT' AND data_values = ? AND TIMESTAMPDIFF(SECOND,ts,NOW()) <= 10 ORDER BY ts DESC";
-                            $params           = [ $pid, $redcap_user, $orig_data_values ];
+                            $description    = 'Add role';
+                            $event          = 'INSERT';
+                            $currentRights  = [];
+                            $origDataValues = "role = '" . $roleLabel . "'";
+                            $sql            = "SELECT log_event_id FROM $logTable WHERE project_id = ? AND user = ? AND page = 'ExternalModules/index.php' AND object_type = 'redcap_user_rights' AND pk IS NULL AND event = 'INSERT' AND data_values = ? AND TIMESTAMPDIFF(SECOND,ts,NOW()) <= 10 ORDER BY ts DESC";
+                            $params         = [ $pid, $redcapUser, $origDataValues ];
                         } else {
-                            $description    = 'Edit role';
-                            $event          = 'UPDATE';
-                            $current_rights = $all_current_rights[$role_id];
-                            $sql            = "SELECT log_event_id FROM $logTable WHERE project_id = ? AND user = ? AND page = 'ExternalModules/index.php' AND object_type = 'redcap_user_roles' AND pk = ? AND event = 'UPDATE' AND TIMESTAMPDIFF(SECOND,ts,NOW()) <= 10 ORDER BY ts DESC";
-                            $params         = [ $pid, $redcap_user, $pk ];
+                            $description   = 'Edit role';
+                            $event         = 'UPDATE';
+                            $currentRights = $allCurrentRights[$roleId];
+                            $sql           = "SELECT log_event_id FROM $logTable WHERE project_id = ? AND user = ? AND page = 'ExternalModules/index.php' AND object_type = 'redcap_user_roles' AND pk = ? AND event = 'UPDATE' AND TIMESTAMPDIFF(SECOND,ts,NOW()) <= 10 ORDER BY ts DESC";
+                            $params        = [ $pid, $redcapUser, $pk ];
                         }
 
-                        $updated_rights = $module->getRoleRightsRaw($role_id) ?? [];
-                        $changes        = json_encode(array_diff_assoc($updated_rights, $current_rights), JSON_PRETTY_PRINT);
-                        $changes        = $changes === '[]' ? 'None' : $changes;
-                        $data_values    = "role = '$role_label'\nchanges = $changes\n\n";
+                        $updatedRights = $module->getRoleRightsRaw($roleId) ?? [];
+                        $changes       = json_encode(array_diff_assoc($updatedRights, $currentRights), JSON_PRETTY_PRINT);
+                        $changes       = $changes === '[]' ? 'None' : $changes;
+                        $dataValues    = "role = '$roleLabel'\nchanges = $changes\n\n";
 
-                        $result       = $module->framework->query($sql, $params);
-                        $log_event_id = intval($result->fetch_assoc()["log_event_id"]);
+                        $result     = $module->framework->query($sql, $params);
+                        $logEventId = intval($result->fetch_assoc()["log_event_id"]);
 
-                        if ( $log_event_id != 0 ) {
-                            $module->framework->query("UPDATE $logTable SET data_values = ?, pk = ? WHERE log_event_id = ?", [ $data_values, $pk, $log_event_id ]);
+                        if ( $logEventId != 0 ) {
+                            $module->framework->query("UPDATE $logTable SET data_values = ?, pk = ? WHERE log_event_id = ?", [ $dataValues, $pk, $logEventId ]);
                         } else {
                             \Logging::logEvent(
                                 '',
                                 'redcap_user_roles',
                                 $event,
                                 $pk,
-                                $data_values,
+                                $dataValues,
                                 $description,
                                 '',
                                 '',

@@ -11,12 +11,12 @@ if ( !$module->getUser()->isSuperUser() ) {
 
 // We're submitting the form to add/edit the role
 if ( $_SERVER["REQUEST_METHOD"] === "POST" ) {
-    $role_id = filter_input(INPUT_POST, "role_id", FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-    if ( empty($role_id) || !$module->systemRoleExists($role_id) ) {
+    $roleId = filter_input(INPUT_POST, "role_id", FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+    if ( empty($roleId) || !$module->systemRoleExists($roleId) ) {
         http_response_code(400);
         echo "The provided role ID was bad.";
         exit;
     }
-    echo $module->throttleDeleteSystemRole($role_id);
+    echo $module->throttleDeleteSystemRole($roleId);
     exit;
 }

@@ -25,13 +25,13 @@ if ( !empty($expiration) && strtotime($expiration) < strtotime('today') ) {
     exit;
 }
 
-$sag_id            = $module->getUserSystemRole($username);
-$sag               = $module->getSystemRoleRightsById($sag_id);
-$acceptable_rights = $module->getAcceptableRights($username);
-$current_rights    = $module->getCurrentRights($username, $module->getProjectId());
-$current_rights    = $module->getCurrentRightsFormatted($username, $module->getProjectId());
-$badRights         = $module->checkProposedRights($acceptable_rights, $current_rights);
-$errors            = !empty($badRights);
+$sagId            = $module->getUserSystemRole($username);
+$sag              = $module->getSystemRoleRightsById($sagId);
+$acceptableRights = $module->getAcceptableRights($username);
+$current_rights   = $module->getCurrentRights($username, $module->getProjectId());
+$current_rights   = $module->getCurrentRightsFormatted($username, $module->getProjectId());
+$badRights        = $module->checkProposedRights($acceptableRights, $current_rights);
+$errors           = !empty($badRights);
 
 if ( $errors === false ) {
     require_once $scriptPath;

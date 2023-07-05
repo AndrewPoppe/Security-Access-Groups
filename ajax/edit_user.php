@@ -24,13 +24,13 @@ if ( in_array($submitAction, [ 'delete_user', 'add_role', 'delete_role', 'copy_r
 }
 
 if ( in_array($submitAction, [ 'add_user', 'edit_user' ]) ) {
-    $acceptable_rights = $module->getAcceptableRights($user);
-    $sag_id            = $module->getUserSystemRole($user);
-    $sag               = $module->getSystemRoleRightsById($sag_id);
-    $badRights         = $module->checkProposedRights($acceptable_rights, $data);
-    $current_rights    = $module->getCurrentRights($user, $pid);
-    $requested_rights  = $module->filterPermissions($data);
-    $errors            = !empty($badRights);
+    $acceptableRights = $module->getAcceptableRights($user);
+    $sagId            = $module->getUserSystemRole($user);
+    $sag              = $module->getSystemRoleRightsById($sagId);
+    $badRights        = $module->checkProposedRights($acceptableRights, $data);
+    $current_rights   = $module->getCurrentRights($user, $pid);
+    $requested_rights = $module->filterPermissions($data);
+    $errors           = !empty($badRights);
 
     // We ignore expired users, unless the request unexpires them
     $userExpired         = $module->isUserExpired($user, $module->getProjectId());
@@ -106,18 +106,18 @@ if ( $submitAction === "edit_role" ) {
     $usersInRole = $module->getUsersInRole($pid, $role);
     $badRights   = [];
     foreach ( $usersInRole as $username ) {
-        $acceptable_rights = $module->getAcceptableRights($username);
-        $these_bad_rights  = $module->checkProposedRights($acceptable_rights, $data);
-        $sag_id            = $module->getUserSystemRole($username);
-        $sag               = $module->getSystemRoleRightsById($sag_id);
+        $acceptableRights = $module->getAcceptableRights($username);
+        $theseBadRights   = $module->checkProposedRights($acceptableRights, $data);
+        $sagId            = $module->getUserSystemRole($username);
+        $sag              = $module->getSystemRoleRightsById($sagId);
 
         // We ignore expired users
         $userExpired = $module->isUserExpired($username, $module->getProjectId());
 
-        if ( !empty($these_bad_rights) && !$userExpired ) {
+        if ( !empty($theseBadRights) && !$userExpired ) {
             $badRights[$username] = [
                 "SAG"    => $sag["role_name"],
-                "rights" => $these_bad_rights
+                "rights" => $theseBadRights
             ];
         }
     }
