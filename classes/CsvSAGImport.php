@@ -33,7 +33,7 @@ class CsvSAGImport
 
     public function parseCsvString()
     {
-        $lineEnding = strpos($this->csvString, '\r\n') !== false ? '\r\n' : '\n';
+        $lineEnding = strpos($this->csvString, "\r\n") !== false ? "\r\n" : "\n";
         $data       = str_getcsv($this->csvString, $lineEnding);
         foreach ( $data as &$row ) {
             $row = str_getcsv($row, ',');
@@ -43,12 +43,12 @@ class CsvSAGImport
 
     private function permissionsNamesAreClean($row)
     {
-        foreach ( $row as $permission => $value ) {
+        foreach ( $row as $permission ) {
             if ( $permission === 'role_name' || $permission === 'role_id' ) {
                 continue;
             }
             if ( !in_array($permission, $this->permissions, true) ) {
-                $this->errorMessages[] = 'One or more permissions was invalid.';
+                $this->errorMessages[] = 'One or more permissions was invalid.' . $permission;
                 $this->rowValid        = false;
             }
         }

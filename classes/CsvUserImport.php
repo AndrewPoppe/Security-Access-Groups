@@ -22,7 +22,7 @@ class CsvUserImport
 
     public function parseCsvString()
     {
-        $lineEnding = strpos($this->csvString, '\r\n') !== false ? '\r\n' : '\n';
+        $lineEnding = strpos($this->csvString, "\r\n") !== false ? "\r\n" : "\n";
         $data       = str_getcsv($this->csvString, $lineEnding);
         foreach ( $data as &$row ) {
             $row = str_getcsv($row, ',');
@@ -94,16 +94,16 @@ class CsvUserImport
 
         if ( !empty($this->badUsers) || !empty($this->badRoles) ) {
             $this->errorMessages[] = 'The following users and/or roles do not exist.';
-            $valid                 = false;
+            $this->valid           = false;
         }
 
         if ( empty($this->cleanContents) ) {
             $this->errorMessages[] = 'No valid user role assignments were present in the import file.';
-            $valid                 = false;
+            $this->valid           = false;
         }
 
         $this->errorMessages = array_values(array_unique($this->errorMessages));
-        return $valid;
+        return $this->valid;
     }
 
     private function getAssignments()

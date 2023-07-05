@@ -1097,7 +1097,7 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                 if (response == true) {
                     Swal.fire({
                             icon: 'success',
-                            html: "Successfully imported assignments.",
+                            html: "Successfully imported Security Access Group definitions.",
                             customClass: {
                                 confirmButton: 'btn btn-primary',
                             },
