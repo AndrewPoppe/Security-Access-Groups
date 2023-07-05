@@ -27,9 +27,9 @@ $contentsValid = $userImport->contentsValid();
 if ( $contentsValid !== true ) {
     http_response_code(400);
     echo json_encode([
-        "error" => $userImport->error_messages,
-        "roles" => $userImport->bad_roles,
-        "users" => $userImport->bad_users
+        "error" => $userImport->errorMessages,
+        "roles" => $userImport->badRoles,
+        "users" => $userImport->badUsers
     ]);
     exit;
 }
