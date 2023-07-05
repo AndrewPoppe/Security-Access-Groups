@@ -1027,9 +1027,7 @@ class Alerts
             json_decode($alert['recipients'], true) :
             [ $alert['recipient'] ];
         foreach ( $recipientsArray as $key => $recipient ) {
-            $recipients .= $key = array_key_first($recipientsArray) ?
-                '' :
-                '<br>';
+            $recipients .= ($key == array_key_first($recipientsArray)) ? '' : '<br>';
             $thisRecipient      = \REDCap::escapeHtml($recipient);
             $thisRecipientEmail = $this->module->framework->getUser($thisRecipient)->getEmail();
             $recipients .= '<strong>' . $thisRecipient . '</strong> (' . $thisRecipientEmail . ')';

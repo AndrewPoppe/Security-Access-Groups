@@ -186,7 +186,7 @@ class CsvSAGImport
                         <button type="button" class="btn-close align-self-center" data-bs-dismiss="modal" data-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                    <div class="container mb-4 w-90" style="font-size:larger;">Examine the table of proposed changes below to verify it is correct. 
+                    <div class="container mb-4 w-90" style="font-size:larger;">Examine the table of proposed changes below to verify it is correct.
                     Only roles in highlighted rows will be affected.</div>
                     <table class="table table-bordered">
                         <thead class="thead-dark">

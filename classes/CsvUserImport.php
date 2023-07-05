@@ -140,8 +140,8 @@ class CsvUserImport
                         <button type="button" class="btn-close align-self-center" data-bs-dismiss="modal" data-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                    <div class="container mb-4 w-90" style="font-size:larger;">Examine the table of proposed changes below to verify it is correct. 
-                    Only users in highlighted rows will be affected, and for those users the "Role" 
+                    <div class="container mb-4 w-90" style="font-size:larger;">Examine the table of proposed changes below to verify it is correct.
+                    Only users in highlighted rows will be affected, and for those users the "Role"
                     column will show both the <span class="text-primary font-weight-bold"">proposed role</span> as well as the <span class="text-danger font-weight-bold"">current role</span>.</div>
                     <table class="table table-bordered">
                         <thead class="thead-dark">
@@ -167,7 +167,7 @@ class CsvUserImport
             $html .= '<tr class="' . $rowClass . '">
                 <td class="' . $cellClass . ' align-middle">' . $row["username"] . '</td>
                 <td class="' . $cellClass . ' align-middle">' . $row["name"] . '</td>
-                <td class="align-middle">' . $roleText . '</td>        
+                <td class="align-middle">' . $roleText . '</td>
             </tr>';
         }
 
@@ -176,7 +176,7 @@ class CsvUserImport
                 </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal" data-bs-dismiss="modal">Cancel</button>
-                        <button type="button" class="btn btn-primary" onclick="confirmImport()" ' . ($nothingToDo ? 'title="There are no changes to make" disabled' : '') . '>Confirm</button>            
+                        <button type="button" class="btn btn-primary" onclick="confirmImport()" ' . ($nothingToDo ? 'title="There are no changes to make" disabled' : '') . '>Confirm</button>
                     </div>
                 </div>
             </div>
