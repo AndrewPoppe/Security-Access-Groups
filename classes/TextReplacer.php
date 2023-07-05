@@ -32,7 +32,7 @@ class TextReplacer
             null,
             null,
             null,
-            $this->data["sag_user"],
+            $this->data['sag_user'],
             false,
             null,
             null,
@@ -76,7 +76,7 @@ class TextReplacer
         if ( strpos($text, $placeholder) === false ) {
             return $text;
         }
-        $username = $this->data["sag_user"] ?? "";
+        $username = $this->data['sag_user'] ?? '';
         return str_replace($placeholder, $username, $text);
     }
 
@@ -86,7 +86,7 @@ class TextReplacer
         if ( strpos($text, $placeholder) === false ) {
             return $text;
         }
-        $fullname = $this->data["sag_user_fullname"] ?? "";
+        $fullname = $this->data['sag_user_fullname'] ?? '';
         return str_replace($placeholder, $fullname, $text);
     }
 
@@ -96,7 +96,7 @@ class TextReplacer
         if ( strpos($text, $placeholder) === false ) {
             return $text;
         }
-        $email            = $this->data["sag_user_email"] ?? "";
+        $email            = $this->data['sag_user_email'] ?? '';
         $emailReplacement = '<a href="mailto:' . $email . '">' . $email . '</a>';
         return str_replace($placeholder, $emailReplacement, $text);
     }
@@ -107,7 +107,7 @@ class TextReplacer
         if ( strpos($text, $placeholder) === false ) {
             return $text;
         }
-        $rights            = $this->data["sag_user_rights"] ?? [];
+        $rights            = $this->data['sag_user_rights'] ?? [];
         $rightsReplacement = $this->makeList($rights);
         return str_replace($placeholder, $rightsReplacement, $text);
     }
@@ -118,7 +118,7 @@ class TextReplacer
         if ( strpos($text, $placeholder) === false ) {
             return $text;
         }
-        $title = $this->module->getProject()->getTitle() ?? "";
+        $title = $this->module->getProject()->getTitle() ?? '';
         return str_replace($placeholder, $title, $text);
     }
 
@@ -128,7 +128,7 @@ class TextReplacer
         if ( strpos($text, $placeholder) === false ) {
             return $text;
         }
-        $users            = $this->data["sag_users"] ?? [];
+        $users            = $this->data['sag_users'] ?? [];
         $usersReplacement = $this->makeList($users);
         return str_replace($placeholder, $usersReplacement, $text);
     }
@@ -139,7 +139,7 @@ class TextReplacer
         if ( strpos($text, $placeholder) === false ) {
             return $text;
         }
-        $fullnames            = $this->data["sag_fullnames"] ?? [];
+        $fullnames            = $this->data['sag_fullnames'] ?? [];
         $fullnamesReplacement = $this->makeList($fullnames);
         return str_replace($placeholder, $fullnamesReplacement, $text);
     }
@@ -151,7 +151,7 @@ class TextReplacer
             return $text;
         }
 
-        $emails            = $this->data["sag_emails"] ?? [];
+        $emails            = $this->data['sag_emails'] ?? [];
         $emails            = array_map(function ($email) {
             return "<a href='mailto:$email'>$email</a>";
         }, $emails);
@@ -166,21 +166,21 @@ class TextReplacer
             return $text;
         }
 
-        $users     = $this->data["sag_users"] ?? [];
-        $fullnames = $this->data["sag_fullnames"] ?? [];
-        $emails    = $this->data["sag_emails"] ?? [];
+        $users     = $this->data['sag_users'] ?? [];
+        $fullnames = $this->data['sag_fullnames'] ?? [];
+        $emails    = $this->data['sag_emails'] ?? [];
         $emails    = array_map(function ($email) {
             return "<a href='mailto:$email'>$email</a>";
         }, $emails);
 
         $table = "<table class='sag_users' style='border: 1px solid #666; border-collapse: collapse; width: 100%;'><thead><tr><th style='text-align: left;padding: 8px;border: 1px solid #666;background-color: #f2f2f2;'>Name</th><th style='text-align: left;padding: 8px;border: 1px solid #666;background-color: #f2f2f2;'>REDCap Username</th><th style='text-align: left;padding: 8px;border: 1px solid #666;background-color: #f2f2f2;'>Email Address</th></tr></thead><tbody>";
         foreach ( $users as $index => $username ) {
-            $bg       = $index % 2 == 0 ? "transparent" : "#f2f2f2";
-            $fullname = $fullnames[$index] ?? "";
-            $email    = $emails[$index] ?? "";
+            $bg       = $index % 2 == 0 ? 'transparent' : '#f2f2f2';
+            $fullname = $fullnames[$index] ?? '';
+            $email    = $emails[$index] ?? '';
             $table .= "<tr style='background-color:" . $bg . ";'><td style='text-align: left;padding: 8px;border: 1px solid #666;'>$fullname</td><td style='text-align: left;padding: 8px;border: 1px solid #666;'>$username</td><td style='text-align: left;padding: 8px;border: 1px solid #666;'>$email</td></tr>";
         }
-        $table .= "</tbody></table>";
+        $table .= '</tbody></table>';
 
         return str_replace($placeholder, $table, $text);
     }
@@ -192,24 +192,24 @@ class TextReplacer
             return $text;
         }
 
-        $users     = $this->data["sag_users"] ?? [];
-        $fullnames = $this->data["sag_fullnames"] ?? [];
-        $emails    = $this->data["sag_emails"] ?? [];
+        $users     = $this->data['sag_users'] ?? [];
+        $fullnames = $this->data['sag_fullnames'] ?? [];
+        $emails    = $this->data['sag_emails'] ?? [];
         $emails    = array_map(function ($email) {
             return "<a href='mailto:$email'>$email</a>";
         }, $emails);
-        $rights    = $this->data["sag_rights"] ?? [];
+        $rights    = $this->data['sag_rights'] ?? [];
 
         $table = "<table class='sag_users' style='border: 1px solid #666; border-collapse: collapse; width: 100%;'><thead><tr><th style='text-align: left;padding: 8px;border: 1px solid #666;background-color: #f2f2f2;'>Name</th><th style='text-align: left;padding: 8px;border: 1px solid #666;background-color: #f2f2f2;'>REDCap Username</th><th style='text-align: left;padding: 8px;border: 1px solid #666;background-color: #f2f2f2;'>Email Address</th><th style='text-align: left;padding: 8px;border: 1px solid #666;background-color: #f2f2f2;'>Noncompliant Rights</th></tr></thead><tbody>";
         foreach ( $users as $index => $username ) {
-            $bg          = $index % 2 == 0 ? "transparent" : "#f2f2f2";
-            $fullname    = $fullnames[$index] ?? "";
-            $email       = $emails[$index] ?? "";
+            $bg          = $index % 2 == 0 ? 'transparent' : '#f2f2f2';
+            $fullname    = $fullnames[$index] ?? '';
+            $email       = $emails[$index] ?? '';
             $theseRights = $rights[$index] ?? [];
             $rightsList  = $this->makeList($theseRights);
             $table .= "<tr style='background-color:" . $bg . ";'><td style='text-align: left;padding: 8px;border: 1px solid #666;'>$fullname</td><td style='text-align: left;padding: 8px;border: 1px solid #666;'>$username</td><td style='text-align: left;padding: 8px;border: 1px solid #666;'>$email</td><td style='text-align: left;padding: 8px;border: 1px solid #666;'>$rightsList</td></tr>";
         }
-        $table .= "</tbody></table>";
+        $table .= '</tbody></table>';
 
         return str_replace($placeholder, $table, $text);
     }
@@ -220,7 +220,7 @@ class TextReplacer
         if ( strpos($text, $placeholder) === false ) {
             return $text;
         }
-        $expirationDate = $this->data["sag_expiration_date"] ?? "";
+        $expirationDate = $this->data['sag_expiration_date'] ?? '';
         return str_replace($placeholder, $expirationDate, $text);
     }
 }
