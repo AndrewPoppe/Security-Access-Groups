@@ -155,246 +155,246 @@ class SecurityAccessGroups extends AbstractExternalModule
     {
 
         ?>
-<script>
-$(function() {
+        <script>
+            $(function () {
 
-    <?php if ( isset($_SESSION['SUR_imported']) ) { ?>
-    window.import_type = '<?= $_SESSION['SUR_imported'] ?>';
-    window.import_errors = JSON.parse('<?= $_SESSION['SUR_bad_rights'] ?>');
-    <?php
+                <?php if ( isset($_SESSION['SUR_imported']) ) { ?>
+                    window.import_type = '<?= $_SESSION['SUR_imported'] ?>';
+                    window.import_errors = JSON.parse('<?= $_SESSION['SUR_bad_rights'] ?>');
+                    <?php
                     unset($_SESSION['SUR_imported']);
                     unset($_SESSION['SUR_bad_rights']);
                 } ?>
 
-    function createRightsTable(bad_rights) {
-        return `<table class="table table-sm table-borderless table-hover w-50 mt-4 mx-auto" style="font-size:13px; cursor: default;"><tbody><tr><td>${bad_rights.join('</td></tr><tr><td>')}</td></tr></tbody></table>`;
-    }
-
-    function fixLinks() {
-        $('#importUserForm').attr('action', "<?= $this->getUrl("ajax/import_export_users.php") ?>");
-        $('#importUsersForm2').attr('action', "<?= $this->getUrl("ajax/import_export_users.php") ?>");
-        $('#importRoleForm').attr('action', "<?= $this->getUrl("ajax/import_export_roles.php") ?>");
-        $('#importRolesForm2').attr('action', "<?= $this->getUrl("ajax/import_export_roles.php") ?>");
-        $('#importUserRoleForm').attr('action',
-            "<?= $this->getUrl("ajax/import_export_roles.php?action=uploadMapping") ?>");
-        $('#importUserRoleForm2').attr('action',
-            "<?= $this->getUrl("ajax/import_export_roles.php?action=uploadMapping") ?>");
-    }
-
-    function checkImportErrors() {
-        if (window.import_type) {
-            let title = "You can't do that.";
-            let text = "";
-            if (window.import_type == "users") {
-                title = "You cannot import those users.";
-                text =
-                    `The following users included in the provided import file cannot have the following permissions granted to them due to their current SAG assignment:<br><table style="margin-top: 20px; width: 100%;"><thead style="border-bottom: 2px solid #666;"><tr><th>User</th><th>SAG</th><th>Permissions</th></tr></thead><tbody style="border-bottom: 1px solid black;">`;
-                const users = Object.keys(window.import_errors);
-                users.forEach((user) => {
-                    text +=
-                        `<tr style="border-top: 1px solid #666;"><td><strong>${user}</strong></td><td>${window.import_errors[user].SAG}</td><td>${window.import_errors[user].rights.join('<br>')}</td></tr>`;
-                });
-                text += `</tbody></table>`;
-            } else if (window.import_type == "roles") {
-                title = "You cannot import those roles.";
-                text =
-                    `The following roles have users assigned to them, and the following permissions cannot be granted for those users due to their current SAG assignment:<br><table style="margin-top: 20px; width: 100%; table-layout: fixed;"><thead style="border-bottom: 2px solid #666;"><tr><th>User Role</th><th>User</th><th>SAG</th><th COLSPAN=2>Permissions</th></tr></thead><tbody style="border-bottom: 1px solid black;">`;
-                const roles = Object.keys(window.import_errors);
-                roles.forEach((role) => {
-                    const users = Object.keys(window.import_errors[role]);
-                    users.forEach((user, index) => {
-                        const theseRights = window.import_errors[role][user];
-                        text +=
-                            `<tr style='border-top: 1px solid black;'><td><strong>${role}</strong></td><td><strong>${user}</strong></td><td>${theseRights.SAG}</td><td COLSPAN=2>${theseRights.rights.join('<br>')}</td></tr>`;
-                    });
-                })
-                text += `</tbody></table>`;
-            } else if (window.import_type == "roleassignments") {
-                title = "You cannot assign those users to those roles.";
-                text =
-                    `The following permissions cannot be granted for the following users due to their current SAG assignment:<br><table style="margin-top: 20px; width: 100%; table-layout: fixed;"><thead style="border-bottom: 2px solid #666;"><tr><th>User Role</th><th>User</th><th>SAG</th><th COLSPAN=2>Permissions</th></tr></thead><tbody style="border-bottom: 1px solid black;">`;
-                const roles = Object.keys(window.import_errors);
-                roles.forEach((role) => {
-                    const users = Object.keys(window.import_errors[role]);
-                    users.forEach((user, index) => {
-                        const theseRights = window.import_errors[role][user];
-                        text +=
-                            `<tr style='border-top: 1px solid black;'><td><strong>${role}</strong></td><td><strong>${user}</strong></td><td>${theseRights.SAG}</td><td COLSPAN=2>${theseRights.rights.join('<br>')}</td></tr>`;
-                    });
-                })
-                text += `</tbody></table>`;
-            }
-            Swal.fire({
-                icon: 'error',
-                title: title,
-                html: text,
-                width: '900px'
-            });
-        }
-    }
-
-    window.saveUserFormAjax = function() {
-        showProgress(1);
-        const permissions = $('form#user_rights_form').serializeObject();
-        console.log(permissions);
-        $.post('<?= $this->getUrl("ajax/edit_user.php?pid=$project_id") ?>', permissions, function(data) {
-            showProgress(0, 0);
-            try {
-                const result = JSON.parse(data);
-                if (!result.error || !result.bad_rights) {
-                    return;
+                function createRightsTable(bad_rights) {
+                    return `<table class="table table-sm table-borderless table-hover w-50 mt-4 mx-auto" style="font-size:13px; cursor: default;"><tbody><tr><td>${bad_rights.join('</td></tr><tr><td>')}</td></tr></tbody></table>`;
                 }
-                let title = "You can't do that.";
-                let text = "";
-                let users = Object.keys(result.bad_rights);
-                if (!result.role) {
-                    title = `You cannot grant those user rights to user "${users[0]}"`;
-                    text =
-                        `The user is currently assigned to the SAG: "<strong>${result.bad_rights[users[0]].SAG}</strong>"<br>The following permissions you are attempting to grant cannot be granted to users in that SAG:${createRightsTable(result.bad_rights[users[0]].rights)}`;
-                } else {
-                    title = `You cannot grant those rights to the role<br>"${result.role}"`;
-                    text =
-                        `The following users are assigned to that role, and the following permissions cannot be granted to them because of their current SAG assignment:<br><table style="margin-top: 20px; width: 100%;"><thead style="border-bottom: 2px solid #666;"><tr><th>User</th><th>SAG</th><th>Permissions</th></tr></thead><tbody style="border-bottom: 1px solid black;">`;
-                    users.forEach((user) => {
-                        text +=
-                            `<tr style="border-top: 1px solid #666;"><td><strong>${user}</strong></td><td>${result.bad_rights[user].SAG}</td><td>${result.bad_rights[user].rights.join('<br>')}</td></tr>`;
-                    });
-                    text += `</tbody></table>`;
-                }
-                Swal.fire({
-                    icon: 'error',
-                    title: title,
-                    html: text,
-                    width: '900px'
-                });
-                return;
-            } catch (error) {
-                if ($('#editUserPopup').hasClass('ui-dialog-content')) $('#editUserPopup').dialog(
-                    'destroy');
-                $('#user_rights_roles_table_parent').html(data);
-                simpleDialogAlt($('#user_rights_roles_table_parent div.userSaveMsg'), 1.7);
-                enablePageJS();
-                if ($('#copy_role_success').length) {
-                    setTimeout(function() {
-                        openAddUserPopup('', $('#copy_role_success').val());
-                    }, 1500);
-                }
-            }
-            fixLinks();
-        });
-    }
 
-    window.assignUserRole = function(username, role_id) {
-        showProgress(1);
-        checkIfuserRights(username, role_id, function(data) {
-            if (data == 1) {
-                console.log(username, role_id);
-                $.post('<?= $this->getUrl("ajax/assign_user.php?pid=$project_id") ?>', {
-                    username: username,
-                    role_id: role_id,
-                    notify_email_role: ($('#notify_email_role').prop('checked') ? 1 : 0),
-                    group_id: $('#user_dag').val()
-                }, function(data) {
-                    showProgress(0, 0);
-                    if (data == '') {
-                        alert(woops);
-                        return;
-                    }
-                    try {
-                        const result = JSON.parse(data);
-                        if (!result.error || !result.bad_rights) {
-                            return;
+                function fixLinks() {
+                    $('#importUserForm').attr('action', "<?= $this->getUrl("ajax/import_export_users.php") ?>");
+                    $('#importUsersForm2').attr('action', "<?= $this->getUrl("ajax/import_export_users.php") ?>");
+                    $('#importRoleForm').attr('action', "<?= $this->getUrl("ajax/import_export_roles.php") ?>");
+                    $('#importRolesForm2').attr('action', "<?= $this->getUrl("ajax/import_export_roles.php") ?>");
+                    $('#importUserRoleForm').attr('action',
+                        "<?= $this->getUrl("ajax/import_export_roles.php?action=uploadMapping") ?>");
+                    $('#importUserRoleForm2').attr('action',
+                        "<?= $this->getUrl("ajax/import_export_roles.php?action=uploadMapping") ?>");
+                }
+
+                function checkImportErrors() {
+                    if (window.import_type) {
+                        let title = "You can't do that.";
+                        let text = "";
+                        if (window.import_type == "users") {
+                            title = "You cannot import those users.";
+                            text =
+                                `The following users included in the provided import file cannot have the following permissions granted to them due to their current SAG assignment:<br><table style="margin-top: 20px; width: 100%;"><thead style="border-bottom: 2px solid #666;"><tr><th>User</th><th>SAG</th><th>Permissions</th></tr></thead><tbody style="border-bottom: 1px solid black;">`;
+                            const users = Object.keys(window.import_errors);
+                            users.forEach((user) => {
+                                text +=
+                                    `<tr style="border-top: 1px solid #666;"><td><strong>${user}</strong></td><td>${window.import_errors[user].SAG}</td><td>${window.import_errors[user].rights.join('<br>')}</td></tr>`;
+                            });
+                            text += `</tbody></table>`;
+                        } else if (window.import_type == "roles") {
+                            title = "You cannot import those roles.";
+                            text =
+                                `The following roles have users assigned to them, and the following permissions cannot be granted for those users due to their current SAG assignment:<br><table style="margin-top: 20px; width: 100%; table-layout: fixed;"><thead style="border-bottom: 2px solid #666;"><tr><th>User Role</th><th>User</th><th>SAG</th><th COLSPAN=2>Permissions</th></tr></thead><tbody style="border-bottom: 1px solid black;">`;
+                            const roles = Object.keys(window.import_errors);
+                            roles.forEach((role) => {
+                                const users = Object.keys(window.import_errors[role]);
+                                users.forEach((user, index) => {
+                                    const theseRights = window.import_errors[role][user];
+                                    text +=
+                                        `<tr style='border-top: 1px solid black;'><td><strong>${role}</strong></td><td><strong>${user}</strong></td><td>${theseRights.SAG}</td><td COLSPAN=2>${theseRights.rights.join('<br>')}</td></tr>`;
+                                });
+                            })
+                            text += `</tbody></table>`;
+                        } else if (window.import_type == "roleassignments") {
+                            title = "You cannot assign those users to those roles.";
+                            text =
+                                `The following permissions cannot be granted for the following users due to their current SAG assignment:<br><table style="margin-top: 20px; width: 100%; table-layout: fixed;"><thead style="border-bottom: 2px solid #666;"><tr><th>User Role</th><th>User</th><th>SAG</th><th COLSPAN=2>Permissions</th></tr></thead><tbody style="border-bottom: 1px solid black;">`;
+                            const roles = Object.keys(window.import_errors);
+                            roles.forEach((role) => {
+                                const users = Object.keys(window.import_errors[role]);
+                                users.forEach((user, index) => {
+                                    const theseRights = window.import_errors[role][user];
+                                    text +=
+                                        `<tr style='border-top: 1px solid black;'><td><strong>${role}</strong></td><td><strong>${user}</strong></td><td>${theseRights.SAG}</td><td COLSPAN=2>${theseRights.rights.join('<br>')}</td></tr>`;
+                                });
+                            })
+                            text += `</tbody></table>`;
                         }
-                        let users = Object.keys(result.bad_rights);
-                        const title =
-                            `You cannot assign user "${username}" to user role "${result.role}"`;
-                        const text =
-                            `The user is currently assigned to the SAG: "<strong>${result.bad_rights[users[0]].SAG}</strong>"<br>The following permissions allowed in user role "${result.role}" cannot be granted to users in that SAG:${createRightsTable(result.bad_rights[users[0]].rights)}`;
-
                         Swal.fire({
                             icon: 'error',
                             title: title,
                             html: text,
-                            width: '750px'
+                            width: '900px'
                         });
-                        return;
-                    } catch (error) {
-                        $('#user_rights_roles_table_parent').html(data);
+                    }
+                }
+
+                window.saveUserFormAjax = function () {
+                    showProgress(1);
+                    const permissions = $('form#user_rights_form').serializeObject();
+                    console.log(permissions);
+                    $.post('<?= $this->getUrl("ajax/edit_user.php?pid=$project_id") ?>', permissions, function (data) {
                         showProgress(0, 0);
-                        simpleDialogAlt($(
-                            '#user_rights_roles_table_parent div.userSaveMsg'), 1.7);
-                        enablePageJS();
-                        setTimeout(function() {
-                            if (role_id == '0') {
-                                simpleDialog(lang.rights_215, lang.global_03 + lang
-                                    .colon + ' ' + lang.rights_214);
+                        try {
+                            const result = JSON.parse(data);
+                            if (!result.error || !result.bad_rights) {
+                                return;
                             }
-                        }, 3200);
-                    }
-                    fixLinks();
-                });
-            } else {
-                showProgress(0, 0);
-                setTimeout(function() {
-                    simpleDialog(lang.rights_317, lang.global_03 + lang.colon + ' ' + lang
-                        .rights_316);
-                }, 500);
-            }
-            fixLinks();
-        });
-    }
-
-    window.setExpiration = function() {
-        $('#tooltipExpirationBtn').button('disable');
-        $('#tooltipExpiration').prop('disabled', true);
-        $('#tooltipExpirationCancel').hide();
-        $('#tooltipExpirationProgress').show();
-        $.post("<?= $this->getUrl('ajax/set_user_expiration.php?pid=' . $this->getProjectId()) ?>", {
-                username: $('#tooltipExpirationHiddenUsername').val(),
-                expiration: $('#tooltipExpiration').val()
-            },
-            function(data) {
-                console.log(data);
-                if (data == '0') {
-                    alert(woops);
-                    return;
-                }
-                try {
-                    const result = JSON.parse(data);
-                    if (!result.error || !result.bad_rights) {
-                        return;
-                    }
-                    const users = Object.keys(result.bad_rights);
-                    const title = `You cannot grant those user rights to user "${users[0]}"`;
-                    const text =
-                        `The user is currently assigned to the SAG: "<strong>${result.bad_rights[users[0]].SAG}</strong>"<br>The following permissions you are attempting to grant cannot be granted to users in that SAG:${createRightsTable(result.bad_rights[users[0]].rights)}`;
-
-                    Swal.fire({
-                        icon: 'error',
-                        title: title,
-                        html: text,
-                        width: '750px'
+                            let title = "You can't do that.";
+                            let text = "";
+                            let users = Object.keys(result.bad_rights);
+                            if (!result.role) {
+                                title = `You cannot grant those user rights to user "${users[0]}"`;
+                                text =
+                                    `The user is currently assigned to the SAG: "<strong>${result.bad_rights[users[0]].SAG}</strong>"<br>The following permissions you are attempting to grant cannot be granted to users in that SAG:${createRightsTable(result.bad_rights[users[0]].rights)}`;
+                            } else {
+                                title = `You cannot grant those rights to the role<br>"${result.role}"`;
+                                text =
+                                    `The following users are assigned to that role, and the following permissions cannot be granted to them because of their current SAG assignment:<br><table style="margin-top: 20px; width: 100%;"><thead style="border-bottom: 2px solid #666;"><tr><th>User</th><th>SAG</th><th>Permissions</th></tr></thead><tbody style="border-bottom: 1px solid black;">`;
+                                users.forEach((user) => {
+                                    text +=
+                                        `<tr style="border-top: 1px solid #666;"><td><strong>${user}</strong></td><td>${result.bad_rights[user].SAG}</td><td>${result.bad_rights[user].rights.join('<br>')}</td></tr>`;
+                                });
+                                text += `</tbody></table>`;
+                            }
+                            Swal.fire({
+                                icon: 'error',
+                                title: title,
+                                html: text,
+                                width: '900px'
+                            });
+                            return;
+                        } catch (error) {
+                            if ($('#editUserPopup').hasClass('ui-dialog-content')) $('#editUserPopup').dialog(
+                                'destroy');
+                            $('#user_rights_roles_table_parent').html(data);
+                            simpleDialogAlt($('#user_rights_roles_table_parent div.userSaveMsg'), 1.7);
+                            enablePageJS();
+                            if ($('#copy_role_success').length) {
+                                setTimeout(function () {
+                                    openAddUserPopup('', $('#copy_role_success').val());
+                                }, 1500);
+                            }
+                        }
+                        fixLinks();
                     });
-                    return;
-                } catch (error) {
-                    $('#user_rights_roles_table_parent').html(data);
-                    enablePageJS();
-                } finally {
-                    setTimeout(function() {
-                        $('#tooltipExpiration').prop('disabled', false);
-                        $('#tooltipExpirationBtn').button('enable');
-                        $('#tooltipExpirationCancel').show();
-                        $('#tooltipExpirationProgress').hide();
-                        $('#userClickExpiration').hide();
-                    }, 400);
                 }
+
+                window.assignUserRole = function (username, role_id) {
+                    showProgress(1);
+                    checkIfuserRights(username, role_id, function (data) {
+                        if (data == 1) {
+                            console.log(username, role_id);
+                            $.post('<?= $this->getUrl("ajax/assign_user.php?pid=$project_id") ?>', {
+                                username: username,
+                                role_id: role_id,
+                                notify_email_role: ($('#notify_email_role').prop('checked') ? 1 : 0),
+                                group_id: $('#user_dag').val()
+                            }, function (data) {
+                                showProgress(0, 0);
+                                if (data == '') {
+                                    alert(woops);
+                                    return;
+                                }
+                                try {
+                                    const result = JSON.parse(data);
+                                    if (!result.error || !result.bad_rights) {
+                                        return;
+                                    }
+                                    let users = Object.keys(result.bad_rights);
+                                    const title =
+                                        `You cannot assign user "${username}" to user role "${result.role}"`;
+                                    const text =
+                                        `The user is currently assigned to the SAG: "<strong>${result.bad_rights[users[0]].SAG}</strong>"<br>The following permissions allowed in user role "${result.role}" cannot be granted to users in that SAG:${createRightsTable(result.bad_rights[users[0]].rights)}`;
+
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: title,
+                                        html: text,
+                                        width: '750px'
+                                    });
+                                    return;
+                                } catch (error) {
+                                    $('#user_rights_roles_table_parent').html(data);
+                                    showProgress(0, 0);
+                                    simpleDialogAlt($(
+                                        '#user_rights_roles_table_parent div.userSaveMsg'), 1.7);
+                                    enablePageJS();
+                                    setTimeout(function () {
+                                        if (role_id == '0') {
+                                            simpleDialog(lang.rights_215, lang.global_03 + lang
+                                                .colon + ' ' + lang.rights_214);
+                                        }
+                                    }, 3200);
+                                }
+                                fixLinks();
+                            });
+                        } else {
+                            showProgress(0, 0);
+                            setTimeout(function () {
+                                simpleDialog(lang.rights_317, lang.global_03 + lang.colon + ' ' + lang
+                                    .rights_316);
+                            }, 500);
+                        }
+                        fixLinks();
+                    });
+                }
+
+                window.setExpiration = function () {
+                    $('#tooltipExpirationBtn').button('disable');
+                    $('#tooltipExpiration').prop('disabled', true);
+                    $('#tooltipExpirationCancel').hide();
+                    $('#tooltipExpirationProgress').show();
+                    $.post("<?= $this->getUrl('ajax/set_user_expiration.php?pid=' . $this->getProjectId()) ?>", {
+                        username: $('#tooltipExpirationHiddenUsername').val(),
+                        expiration: $('#tooltipExpiration').val()
+                    },
+                        function (data) {
+                            console.log(data);
+                            if (data == '0') {
+                                alert(woops);
+                                return;
+                            }
+                            try {
+                                const result = JSON.parse(data);
+                                if (!result.error || !result.bad_rights) {
+                                    return;
+                                }
+                                const users = Object.keys(result.bad_rights);
+                                const title = `You cannot grant those user rights to user "${users[0]}"`;
+                                const text =
+                                    `The user is currently assigned to the SAG: "<strong>${result.bad_rights[users[0]].SAG}</strong>"<br>The following permissions you are attempting to grant cannot be granted to users in that SAG:${createRightsTable(result.bad_rights[users[0]].rights)}`;
+
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: title,
+                                    html: text,
+                                    width: '750px'
+                                });
+                                return;
+                            } catch (error) {
+                                $('#user_rights_roles_table_parent').html(data);
+                                enablePageJS();
+                            } finally {
+                                setTimeout(function () {
+                                    $('#tooltipExpiration').prop('disabled', false);
+                                    $('#tooltipExpirationBtn').button('enable');
+                                    $('#tooltipExpirationCancel').show();
+                                    $('#tooltipExpirationProgress').hide();
+                                    $('#userClickExpiration').hide();
+                                }, 400);
+                            }
+                        });
+                }
+                fixLinks();
+                checkImportErrors();
             });
-    }
-    fixLinks();
-    checkImportErrors();
-});
-</script>
-<?php
+        </script>
+        <?php
     }
 
     public function redcap_module_project_enable($version, $project_id)
@@ -1012,7 +1012,7 @@ $(function() {
             $result1               = $this->framework->queryLogs($sql1, [ $role_id ]);
             $log_id                = intval($result1->fetch_assoc()["log_id"]);
             if ( $log_id === 0 ) {
-                throw new \Exception('No role found with the specified id');
+                throw new \Error('No role found with the specified id');
             }
             $params = [ "role_name" => $role_name, "permissions" => $permissions_converted ];
             foreach ( $params as $name => $value ) {
