@@ -20,19 +20,19 @@ class TextReplacer
 
     private function cleanText(string $text) : string
     {
-        $dirty_text = htmlspecialchars_decode($text);
-        return \REDCap::filterHtml($dirty_text);
+        $dirtyText = htmlspecialchars_decode($text);
+        return \REDCap::filterHtml($dirtyText);
     }
 
     public function replaceText()
     {
-        $replaced_text = \Piping::pipeSpecialTags(
+        $replacedText = \Piping::pipeSpecialTags(
             $this->cleanerText,
             $this->module->getProjectId(),
             null,
             null,
             null,
-            $username = $this->data["sag_user"],
+            $this->data["sag_user"],
             false,
             null,
             null,
@@ -44,8 +44,8 @@ class TextReplacer
             false,
             false
         );
-        $replaced_text = $this->replacePlaceholders($replaced_text);
-        return $replaced_text;
+        $replacedText = $this->replacePlaceholders($replacedText);
+        return $replacedText;
     }
 
     private function makeList($array)
@@ -55,10 +55,10 @@ class TextReplacer
 
     public function replacePlaceholders($text)
     {
-        $text = $this->replace_sag_user($text);
-        $text = $this->replace_sag_user_fullname($text);
-        $text = $this->replace_sag_user_email($text);
-        $text = $this->replace_sag_rights($text);
+        $text = $this->replaceSagUser($text);
+        $text = $this->replaceSagUserFullname($text);
+        $text = $this->replaceSagUserEmail($text);
+        $text = $this->replaceSagRights($text);
         $text = $this->replace_sag_project_title($text);
         $text = $this->replace_sag_users($text);
         $text = $this->replace_sag_user_fullnames($text);
@@ -70,7 +70,7 @@ class TextReplacer
         return $text;
     }
 
-    private function replace_sag_user($text)
+    private function replaceSagUser($text)
     {
         $placeholder = '[sag-user]';
         if ( strpos($text, $placeholder) === false ) {
@@ -80,7 +80,7 @@ class TextReplacer
         return str_replace($placeholder, $username, $text);
     }
 
-    private function replace_sag_user_fullname($text)
+    private function replaceSagUserFullname($text)
     {
         $placeholder = '[sag-user-fullname]';
         if ( strpos($text, $placeholder) === false ) {
@@ -90,26 +90,26 @@ class TextReplacer
         return str_replace($placeholder, $fullname, $text);
     }
 
-    private function replace_sag_user_email($text)
+    private function replaceSagUserEmail($text)
     {
         $placeholder = '[sag-user-email]';
         if ( strpos($text, $placeholder) === false ) {
             return $text;
         }
-        $email             = $this->data["sag_user_email"] ?? "";
-        $email_replacement = '<a href="mailto:' . $email . '">' . $email . '</a>';
-        return str_replace($placeholder, $email_replacement, $text);
+        $email            = $this->data["sag_user_email"] ?? "";
+        $emailReplacement = '<a href="mailto:' . $email . '">' . $email . '</a>';
+        return str_replace($placeholder, $emailReplacement, $text);
     }
 
-    private function replace_sag_rights($text)
+    private function replaceSagRights($text)
     {
         $placeholder = '[sag-rights]';
         if ( strpos($text, $placeholder) === false ) {
             return $text;
         }
-        $rights             = $this->data["sag_user_rights"] ?? [];
-        $rights_replacement = $this->makeList($rights);
-        return str_replace($placeholder, $rights_replacement, $text);
+        $rights            = $this->data["sag_user_rights"] ?? [];
+        $rightsReplacement = $this->makeList($rights);
+        return str_replace($placeholder, $rightsReplacement, $text);
     }
 
     private function replace_sag_project_title($text)
