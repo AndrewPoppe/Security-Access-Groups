@@ -45,20 +45,20 @@ class SecurityAccessGroups extends AbstractExternalModule
 
         // API
         if ( PAGE === "api/index.php" ) {
-            $API = new APIHandler($this, $_POST);
-            if ( !$API->shouldProcess() ) {
+            $api = new APIHandler($this, $_POST);
+            if ( !$api->shouldProcess() ) {
                 return;
             }
 
-            $API->handleRequest();
-            if ( !$API->shouldAllowImport() ) {
-                $bad_rights = $API->getBadRights();
+            $api->handleRequest();
+            if ( !$api->shouldAllowImport() ) {
+                $badRights = $api->getBadRights();
                 http_response_code(401);
-                echo json_encode($bad_rights);
+                echo json_encode($badRights);
                 $this->exitAfterHook();
                 return;
             } else {
-                [ $action, $project_id, $user, $original_rights ] = $API->getApiRequestInfo();
+                [ $action, $project_id, $user, $original_rights ] = $api->getApiRequestInfo();
                 $this->logApi($action, $project_id, $user, $original_rights);
             }
             return;
@@ -107,23 +107,23 @@ class SecurityAccessGroups extends AbstractExternalModule
     public function sendReminders($cronInfo = array())
     {
         try {
-            $Alerts            = new Alerts($this);
+            $alerts            = new Alerts($this);
             $enabledSystemwide = $this->framework->getSystemSetting('enabled');
             $prefix            = $this->getModuleDirectoryPrefix();
 
             if ( $enabledSystemwide == true ) {
-                $all_project_ids = $this->getAllProjectIds();
-                $project_ids     = array_filter($all_project_ids, function ($project_id) use ($prefix) {
-                    return $this->isModuleEnabled($prefix, $project_id);
+                $allProjectIds = $this->getAllProjectIds();
+                $projectIds    = array_filter($allProjectIds, function ($projectId) use ($prefix) {
+                    return $this->isModuleEnabled($prefix, $projectId);
                 });
             } else {
-                $project_ids = $this->getProjectsWithModuleEnabled();
+                $projectIds = $this->getProjectsWithModuleEnabled();
             }
 
-            foreach ( $project_ids as $localProjectId ) {
+            foreach ( $projectIds as $localProjectId ) {
                 // Specifying project id just to prevent reminders being sent
                 // for projects that no longer have the module enabled.
-                $Alerts->sendUserReminders($localProjectId);
+                $alerts->sendUserReminders($localProjectId);
             }
 
             return "The \"{$cronInfo['cron_name']}\" cron job completed successfully.";
@@ -151,7 +151,7 @@ class SecurityAccessGroups extends AbstractExternalModule
         }
     }
 
-    public function redcap_user_rights($project_id)
+    public function redcap_user_rights($projectId)
     {
 
         ?>
@@ -237,7 +237,7 @@ class SecurityAccessGroups extends AbstractExternalModule
                     showProgress(1);
                     const permissions = $('form#user_rights_form').serializeObject();
                     console.log(permissions);
-                    $.post('<?= $this->getUrl("ajax/edit_user.php?pid=$project_id") ?>', permissions, function (data) {
+                    $.post('<?= $this->getUrl("ajax/edit_user.php?pid=$projectId") ?>', permissions, function (data) {
                         showProgress(0, 0);
                         try {
                             const result = JSON.parse(data);
@@ -289,7 +289,7 @@ class SecurityAccessGroups extends AbstractExternalModule
                     checkIfuserRights(username, role_id, function (data) {
                         if (data == 1) {
                             console.log(username, role_id);
-                            $.post('<?= $this->getUrl("ajax/assign_user.php?pid=$project_id") ?>', {
+                            $.post('<?= $this->getUrl("ajax/assign_user.php?pid=$projectId") ?>', {
                                 username: username,
                                 role_id: role_id,
                                 notify_email_role: ($('#notify_email_role').prop('checked') ? 1 : 0),
@@ -397,35 +397,35 @@ class SecurityAccessGroups extends AbstractExternalModule
         <?php
     }
 
-    public function redcap_module_project_enable($version, $project_id)
+    public function redcap_module_project_enable($version, $projectId)
     {
         $this->log('Module Enabled');
     }
 
-    public function redcap_module_link_check_display($project_id, $link)
+    public function redcap_module_link_check_display($projectId, $link)
     {
-        if ( empty($project_id) || $this->getUser()->isSuperUser() ) {
+        if ( empty($projectId) || $this->getUser()->isSuperUser() ) {
             return $link;
         }
 
         return null;
     }
 
-    public function getCurrentRightsFormatted(string $username, $project_id)
+    public function getCurrentRightsFormatted(string $username, $projectId)
     {
-        $current_rights      = $this->getCurrentRights($username, $project_id);
-        $current_data_export = $this->convertExportRightsStringToArray($current_rights["data_export_instruments"]);
-        $current_data_entry  = $this->convertDataEntryRightsStringToArray($current_rights["data_entry"]);
-        $current_rights      = array_merge($current_rights, $current_data_export, $current_data_entry);
-        unset($current_rights["data_export_instruments"]);
-        unset($current_rights["data_entry"]);
-        unset($current_rights["data_export_tool"]);
-        unset($current_rights["external_module_config"]);
-        return $current_rights;
+        $currentRights     = $this->getCurrentRights($username, $projectId);
+        $currentDataExport = $this->convertExportRightsStringToArray($currentRights["data_export_instruments"]);
+        $currentDataEntry  = $this->convertDataEntryRightsStringToArray($currentRights["data_entry"]);
+        $currentRights     = array_merge($currentRights, $currentDataExport, $currentDataEntry);
+        unset($currentRights["data_export_instruments"]);
+        unset($currentRights["data_entry"]);
+        unset($currentRights["data_export_tool"]);
+        unset($currentRights["external_module_config"]);
+        return $currentRights;
     }
 
 
-    private function getBasicProjectUsers($project_id)
+    private function getBasicProjectUsers($projectId)
     {
         $sql = 'select rights.username,
         info.user_firstname,
@@ -444,7 +444,7 @@ class SecurityAccessGroups extends AbstractExternalModule
         LEFT JOIN redcap_external_module_settings em ON em.key = concat(rights.username,\'-role\')
         where rights.project_id = ?';
         try {
-            $result = $this->framework->query($sql, [ $project_id ]);
+            $result = $this->framework->query($sql, [ $projectId ]);
             $users  = [];
             while ( $row = $result->fetch_assoc() ) {
                 $users[] = $this->framework->escape($row);
@@ -455,22 +455,22 @@ class SecurityAccessGroups extends AbstractExternalModule
             return [];
         }
     }
-    public function getUsersWithBadRights($project_id)
+    public function getUsersWithBadRights($projectId)
     {
-        $users      = $this->getBasicProjectUsers($project_id);
-        $roles      = $this->getAllSystemRoles(true);
-        $bad_rights = [];
+        $users     = $this->getBasicProjectUsers($projectId);
+        $roles     = $this->getAllSystemRoles(true);
+        $badRights = [];
         foreach ( $users as $user ) {
             $expiration            = $user["expiration"];
             $isExpired             = $expiration != "" && strtotime($expiration) < strtotime("today");
             $username              = $user["username"];
-            $acceptable_rights     = $roles[$user["system_role"]]["permissions"];
-            $current_rights        = $this->getCurrentRightsFormatted($username, $project_id);
-            $bad                   = $this->checkProposedRights($acceptable_rights, $current_rights);
+            $acceptableRights      = $roles[$user["system_role"]]["permissions"];
+            $currentRights         = $this->getCurrentRightsFormatted($username, $projectId);
+            $bad                   = $this->checkProposedRights($acceptableRights, $currentRights);
             $systemRoleName        = $roles[$user["system_role"]]["role_name"];
             $projectRoleUniqueName = $user["unique_role_name"];
             $projectRoleName       = $user["role_name"];
-            $bad_rights[]          = [
+            $badRights[]           = [
                 "username"          => $username,
                 "name"              => $user["user_firstname"] . " " . $user["user_lastname"],
                 "email"             => $user["user_email"],
@@ -480,19 +480,19 @@ class SecurityAccessGroups extends AbstractExternalModule
                 "system_role_name"  => $systemRoleName,
                 "project_role"      => $projectRoleUniqueName,
                 "project_role_name" => $projectRoleName,
-                "acceptable"        => $acceptable_rights,
-                "current"           => $current_rights,
+                "acceptable"        => $acceptableRights,
+                "current"           => $currentRights,
                 "bad"               => $bad
             ];
         }
-        return $bad_rights;
+        return $badRights;
     }
 
-    public function getUsersWithBadRights2($project_id)
+    public function getUsersWithBadRights2($projectId)
     {
-        $users            = $this->getBasicProjectUsers($project_id);
+        $users            = $this->getBasicProjectUsers($projectId);
         $roles            = $this->getAllSystemRoles(true);
-        $allCurrentRights = $this->getAllCurrentRights($project_id);
+        $allCurrentRights = $this->getAllCurrentRights($projectId);
         $badRights        = [];
         foreach ( $users as $user ) {
             $expiration            = $user['expiration'];
@@ -524,16 +524,16 @@ class SecurityAccessGroups extends AbstractExternalModule
         return $badRights;
     }
 
-    private function logApiUser($project_id, $user, array $original_rights)
+    private function logApiUser($projectId, $user, array $originalRights)
     {
-        foreach ( $original_rights as $these_original_rights ) {
-            $username    = $these_original_rights["username"];
-            $oldRights   = $these_original_rights["rights"] ?? [];
-            $newUser     = empty($oldRights);
-            $newRights   = $this->getCurrentRights($username, $project_id);
-            $changes     = json_encode(array_diff_assoc($newRights, $oldRights), JSON_PRETTY_PRINT);
-            $changes     = $changes === "[]" ? "None" : $changes;
-            $data_values = "user = '" . $username . "'\nchanges = " . $changes;
+        foreach ( $originalRights as $theseOriginalRights ) {
+            $username   = $theseOriginalRights["username"];
+            $oldRights  = $theseOriginalRights["rights"] ?? [];
+            $newUser    = empty($oldRights);
+            $newRights  = $this->getCurrentRights($username, $projectId);
+            $changes    = json_encode(array_diff_assoc($newRights, $oldRights), JSON_PRETTY_PRINT);
+            $changes    = $changes === "[]" ? "None" : $changes;
+            $dataValues = "user = '" . $username . "'\nchanges = " . $changes;
             if ( $newUser ) {
                 $event       = "INSERT";
                 $description = "Add user";
@@ -541,20 +541,20 @@ class SecurityAccessGroups extends AbstractExternalModule
                 $event       = "UPDATE";
                 $description = "Edit user";
             }
-            $logTable     = $this->framework->getProject($project_id)->getLogTable();
-            $sql          = "SELECT log_event_id FROM $logTable WHERE project_id = ? AND user = ? AND page = 'api/index.php' AND object_type = 'redcap_user_rights' AND pk = ? AND event = ? AND TIMESTAMPDIFF(SECOND,ts,NOW()) <= 10 ORDER BY ts DESC";
-            $params       = [ $project_id, $user, $username, $event ];
-            $result       = $this->framework->query($sql, $params);
-            $log_event_id = intval($result->fetch_assoc()["log_event_id"]);
-            if ( $log_event_id != 0 ) {
-                $this->framework->query("UPDATE $logTable SET data_values = ? WHERE log_event_id = ?", [ $data_values, $log_event_id ]);
+            $logTable   = $this->framework->getProject($projectId)->getLogTable();
+            $sql        = "SELECT log_event_id FROM $logTable WHERE project_id = ? AND user = ? AND page = 'api/index.php' AND object_type = 'redcap_user_rights' AND pk = ? AND event = ? AND TIMESTAMPDIFF(SECOND,ts,NOW()) <= 10 ORDER BY ts DESC";
+            $params     = [ $projectId, $user, $username, $event ];
+            $result     = $this->framework->query($sql, $params);
+            $logEventId = intval($result->fetch_assoc()["log_event_id"]);
+            if ( $logEventId != 0 ) {
+                $this->framework->query("UPDATE $logTable SET data_values = ? WHERE log_event_id = ?", [ $dataValues, $logEventId ]);
             } else {
                 \Logging::logEvent(
                     '',
                     'redcap_user_rights',
                     $event,
                     $username,
-                    $data_values,
+                    $dataValues,
                     $description,
                     "",
                     "",
@@ -568,44 +568,44 @@ class SecurityAccessGroups extends AbstractExternalModule
         }
     }
 
-    private function logApiUserRole($project_id, $user, array $original_rights)
+    private function logApiUserRole($projectId, $user, array $originalRights)
     {
-        $newRights = \UserRights::getRoles($project_id);
+        $newRights = \UserRights::getRoles($projectId);
         foreach ( $newRights as $role_id => $role ) {
-            $oldRights   = $original_rights[$role_id] ?? [];
-            $newRole     = empty($oldRights);
-            $role_label  = $role["role_name"];
-            $changes     = json_encode(array_diff_assoc($role, $oldRights), JSON_PRETTY_PRINT);
-            $changes     = $changes === "[]" ? "None" : $changes;
-            $data_values = "role = '" . $role_label . "'\nchanges = " . $changes;
-            $logTable    = $this->framework->getProject($project_id)->getLogTable();
+            $oldRights  = $originalRights[$role_id] ?? [];
+            $newRole    = empty($oldRights);
+            $roleLabel  = $role["role_name"];
+            $changes    = json_encode(array_diff_assoc($role, $oldRights), JSON_PRETTY_PRINT);
+            $changes    = $changes === "[]" ? "None" : $changes;
+            $dataValues = "role = '" . $roleLabel . "'\nchanges = " . $changes;
+            $logTable   = $this->framework->getProject($projectId)->getLogTable();
 
             if ( $newRole ) {
-                $description      = 'Add role';
-                $event            = 'INSERT';
-                $orig_data_values = "role = '" . $role_label . "'";
-                $object_type      = "redcap_user_rights";
-                $sql              = "SELECT log_event_id FROM $logTable WHERE project_id = ? AND user = ? AND page = 'api/index.php' AND object_type = 'redcap_user_rights' AND pk IS NULL AND event = 'INSERT' AND data_values = ? AND TIMESTAMPDIFF(SECOND,ts,NOW()) <= 10 ORDER BY ts DESC";
-                $params           = [ $project_id, $user, $orig_data_values ];
+                $description    = 'Add role';
+                $event          = 'INSERT';
+                $origDataValues = "role = '" . $roleLabel . "'";
+                $objectType     = "redcap_user_rights";
+                $sql            = "SELECT log_event_id FROM $logTable WHERE project_id = ? AND user = ? AND page = 'api/index.php' AND object_type = 'redcap_user_rights' AND pk IS NULL AND event = 'INSERT' AND data_values = ? AND TIMESTAMPDIFF(SECOND,ts,NOW()) <= 10 ORDER BY ts DESC";
+                $params         = [ $projectId, $user, $origDataValues ];
             } else {
                 $description = "Edit role";
                 $event       = "update";
-                $object_type = "redcap_user_roles";
+                $objectType  = "redcap_user_roles";
                 $sql         = "SELECT log_event_id FROM $logTable WHERE project_id = ? AND user = ? AND page = 'api/index.php' AND object_type = 'redcap_user_roles' AND pk = ? AND event = 'UPDATE' AND TIMESTAMPDIFF(SECOND,ts,NOW()) <= 10 ORDER BY ts DESC";
-                $params      = [ $project_id, $user, $role_id ];
+                $params      = [ $projectId, $user, $role_id ];
             }
 
-            $result       = $this->framework->query($sql, $params);
-            $log_event_id = intval($result->fetch_assoc()["log_event_id"]);
-            if ( $log_event_id != 0 ) {
-                $this->framework->query("UPDATE $logTable SET data_values = ? WHERE log_event_id = ?", [ $data_values, $log_event_id ]);
+            $result     = $this->framework->query($sql, $params);
+            $logEventId = intval($result->fetch_assoc()["log_event_id"]);
+            if ( $logEventId != 0 ) {
+                $this->framework->query("UPDATE $logTable SET data_values = ? WHERE log_event_id = ?", [ $dataValues, $logEventId ]);
             } else {
                 \Logging::logEvent(
                     '',
-                    $object_type,
+                    $objectType,
                     $event,
                     $role_id,
-                    $data_values,
+                    $dataValues,
                     $description,
                     "",
                     "",
@@ -619,31 +619,31 @@ class SecurityAccessGroups extends AbstractExternalModule
         }
     }
 
-    private function logApiUserRoleMapping($project_id, $user, array $original_rights)
+    private function logApiUserRoleMapping($projectId, $user, array $originalRights)
     {
-        foreach ( $original_rights as $mapping ) {
-            $username         = $mapping["username"];
-            $unique_role_name = $mapping["unique_role_name"];
-            $role_id          = $this->getRoleIdFromUniqueRoleName($unique_role_name);
-            $role_label       = $this->getRoleLabel($role_id);
+        foreach ( $originalRights as $mapping ) {
+            $username       = $mapping["username"];
+            $uniqueRoleName = $mapping["unique_role_name"];
+            $roleId         = $this->getRoleIdFromUniqueRoleName($uniqueRoleName);
+            $roleLabel      = $this->getRoleLabel($roleId);
 
-            $logTable     = $this->framework->getProject($project_id)->getLogTable();
-            $sql          = "SELECT log_event_id FROM $logTable WHERE project_id = ? AND user = ? AND page = 'api/index.php' AND object_type = 'redcap_user_rights' AND pk = ? AND event = 'INSERT' AND TIMESTAMPDIFF(SECOND,ts,NOW()) <= 10 ORDER BY ts DESC";
-            $params       = [ $project_id, $user, $username ];
-            $result       = $this->framework->query($sql, $params);
-            $log_event_id = intval($result->fetch_assoc()["log_event_id"]);
+            $logTable   = $this->framework->getProject($projectId)->getLogTable();
+            $sql        = "SELECT log_event_id FROM $logTable WHERE project_id = ? AND user = ? AND page = 'api/index.php' AND object_type = 'redcap_user_rights' AND pk = ? AND event = 'INSERT' AND TIMESTAMPDIFF(SECOND,ts,NOW()) <= 10 ORDER BY ts DESC";
+            $params     = [ $projectId, $user, $username ];
+            $result     = $this->framework->query($sql, $params);
+            $logEventId = intval($result->fetch_assoc()["log_event_id"]);
 
-            $data_values = "user = '" . $username . "'\nrole = '" . $role_label . "'\nunique_role_name = '" . $unique_role_name . "'";
+            $dataValues = "user = '" . $username . "'\nrole = '" . $roleLabel . "'\nunique_role_name = '" . $uniqueRoleName . "'";
 
-            if ( $log_event_id != 0 ) {
-                $this->framework->query("UPDATE $logTable SET data_values = ? WHERE log_event_id = ?", [ $data_values, $log_event_id ]);
+            if ( $logEventId != 0 ) {
+                $this->framework->query("UPDATE $logTable SET data_values = ? WHERE log_event_id = ?", [ $dataValues, $logEventId ]);
             } else {
                 \Logging::logEvent(
                     '',
                     'redcap_user_rights',
                     'INSERT',
                     $username,
-                    $data_values,
+                    $dataValues,
                     'Assign user to role',
                     "",
                     "",
@@ -657,20 +657,20 @@ class SecurityAccessGroups extends AbstractExternalModule
         }
     }
 
-    private function logApi(string $action, $project_id, $user, array $original_rights)
+    private function logApi(string $action, $projectId, $user, array $originalRights)
     {
-        ob_start(function ($str) use ($action, $project_id, $user, $original_rights) {
+        ob_start(function ($str) use ($action, $projectId, $user, $originalRights) {
 
             if ( strpos($str, '{"error":') === 0 ) {
                 $this->log('api_failed');
                 return $str;
             }
             if ( $action === "user" ) {
-                $this->logApiUser($project_id, $user, $original_rights);
+                $this->logApiUser($projectId, $user, $originalRights);
             } elseif ( $action === "userRole" ) {
-                $this->logApiUserRole($project_id, $user, $original_rights);
+                $this->logApiUserRole($projectId, $user, $originalRights);
             } elseif ( $action === "userRoleMapping" ) {
-                $this->logApiUserRoleMapping($project_id, $user, $original_rights);
+                $this->logApiUserRoleMapping($projectId, $user, $originalRights);
             }
 
             return $str;
@@ -761,8 +761,7 @@ class SecurityAccessGroups extends AbstractExternalModule
     {
         $systemRoleId = $this->getUserSystemRole($username);
         $systemRole   = $this->getSystemRoleRightsById($systemRoleId);
-        $roleRights   = json_decode($systemRole["permissions"], true);
-        return $roleRights;
+        return json_decode($systemRole["permissions"], true);
     }
 
     // E.g., from ["export-form-form1"=>"1", "export-form-form2"=>"1"] to "[form1,1][form2,1]"
@@ -796,7 +795,7 @@ class SecurityAccessGroups extends AbstractExternalModule
         return $result;
     }
 
-    // E.g., from "[form1,1][form2,1]" to ["export-form-form1"=>"1", "export-form-form2"=>"1"] 
+    // E.g., from "[form1,1][form2,1]" to ["export-form-form1"=>"1", "export-form-form2"=>"1"]
     private function convertExportRightsStringToArray($fullRightsString)
     {
         $raw    = \UserRights::convertFormRightsToArray($fullRightsString);
@@ -807,7 +806,7 @@ class SecurityAccessGroups extends AbstractExternalModule
         return $result;
     }
 
-    // E.g., from "[form1,1][form2,1]" to ["form-form1"=>"1", "form-form2"=>"1"] 
+    // E.g., from "[form1,1][form2,1]" to ["form-form1"=>"1", "form-form2"=>"1"]
     private function convertDataEntryRightsStringToArray($fullRightsString)
     {
         $raw    = \UserRights::convertFormRightsToArray($fullRightsString);
@@ -836,10 +835,10 @@ class SecurityAccessGroups extends AbstractExternalModule
         return $rightsChecker->checkRights2();
     }
 
-    public function isUserExpired($username, $project_id)
+    public function isUserExpired($username, $projectId)
     {
         $sql    = "SELECT * FROM redcap_user_rights WHERE username = ? AND project_id = ?";
-        $result = $this->framework->query($sql, [ $username, $project_id ]);
+        $result = $this->framework->query($sql, [ $username, $projectId ]);
         $row    = $result->fetch_assoc();
         return !is_null($row["expiration"]) && strtotime($row["expiration"]) < strtotime("today");
     }
@@ -852,21 +851,21 @@ class SecurityAccessGroups extends AbstractExternalModule
         return $this->framework->escape($row["role_id"]);
     }
 
-    public function getUniqueRoleNameFromRoleId($role_id)
+    public function getUniqueRoleNameFromRoleId($roleId)
     {
         $sql    = "SELECT unique_role_name FROM redcap_user_roles WHERE role_id = ?";
-        $result = $this->framework->query($sql, [ $role_id ]);
+        $result = $this->framework->query($sql, [ $roleId ]);
         $row    = $result->fetch_assoc();
         return $this->framework->escape($row["unique_role_name"]);
     }
 
-    public function getUsersInRole($project_id, $role_id)
+    public function getUsersInRole($projectId, $roleId)
     {
-        if ( empty($role_id) ) {
+        if ( empty($roleId) ) {
             return [];
         }
         $sql    = "select * from redcap_user_rights where project_id = ? and role_id = ?";
-        $result = $this->framework->query($sql, [ $project_id, $role_id ]);
+        $result = $this->framework->query($sql, [ $projectId, $roleId ]);
         $users  = [];
         while ( $row = $result->fetch_assoc() ) {
             $users[] = $row["username"];
@@ -874,35 +873,34 @@ class SecurityAccessGroups extends AbstractExternalModule
         return $this->framework->escape($users);
     }
 
-    public function getRoleLabel($role_id)
+    public function getRoleLabel($roleId)
     {
         $sql    = "SELECT role_name FROM redcap_user_roles WHERE role_id = ?";
-        $result = $this->framework->query($sql, [ $role_id ]);
+        $result = $this->framework->query($sql, [ $roleId ]);
         $row    = $result->fetch_assoc();
         return $this->framework->escape($row["role_name"]);
     }
 
-    public function getRoleRightsRaw($role_id)
+    public function getRoleRightsRaw($roleId)
     {
         $sql    = "SELECT * FROM redcap_user_roles WHERE role_id = ?";
-        $result = $this->framework->query($sql, [ $role_id ]);
+        $result = $this->framework->query($sql, [ $roleId ]);
         return $this->framework->escape($result->fetch_assoc());
     }
 
-    public function getRoleRights($role_id, $pid = null)
+    public function getRoleRights($roleId, $pid = null)
     {
-        $project_id  = $pid ?? $this->getProjectId();
-        $roles       = \UserRights::getRoles($project_id);
-        $this_role   = $roles[$role_id];
-        $role_rights = array_filter($this_role, function ($value, $key) {
-            $off           = $value === "0";
-            $null          = is_null($value);
-            $unset         = isset($value) && is_null($value);
-            $excluded      = in_array($key, [ "role_name", "unique_role_name", "project_id", "data_entry", "data_export_instruments" ], true);
-            $also_excluded = !in_array($key, $this->getAllRights(), true);
-            return !$off && !$unset && !$excluded && !$also_excluded && !$null;
+        $projectId = $pid ?? $this->getProjectId();
+        $roles     = \UserRights::getRoles($projectId);
+        $thisRole  = $roles[$roleId];
+        return array_filter($thisRole, function ($value, $key) {
+            $off          = $value === "0";
+            $null         = is_null($value);
+            $unset        = isset($value) && is_null($value);
+            $excluded     = in_array($key, [ "role_name", "unique_role_name", "project_id", "data_entry", "data_export_instruments" ], true);
+            $alsoExcluded = !in_array($key, $this->getAllRights(), true);
+            return !$off && !$unset && !$excluded && !$alsoExcluded && !$null;
         }, ARRAY_FILTER_USE_BOTH);
-        return $role_rights;
     }
 
     public function getModuleDirectoryPrefix()
@@ -910,10 +908,10 @@ class SecurityAccessGroups extends AbstractExternalModule
         return strrev(preg_replace("/^.*v_/", "", strrev($this->framework->getModuleDirectoryName()), 1));
     }
 
-    private function setUserSystemRole($username, $role_id)
+    private function setUserSystemRole($username, $roleId)
     {
         $setting = $username . "-role";
-        $this->setSystemSetting($setting, $role_id);
+        $this->setSystemSetting($setting, $roleId);
     }
 
     public function getUserSystemRole($username)
@@ -958,97 +956,97 @@ class SecurityAccessGroups extends AbstractExternalModule
         return json_encode($rights);
     }
 
-    public function throttleSaveSystemRole(string $role_id, string $role_name, string $permissions)
+    public function throttleSaveSystemRole(string $roleId, string $roleName, string $permissions)
     {
         if ( !$this->throttle("message = ?", 'role', 3, 1) ) {
-            $this->saveSystemRole($role_id, $role_name, $permissions);
+            $this->saveSystemRole($roleId, $roleName, $permissions);
         } else {
-            $this->log('saveSystemRole Throttled', [ "role_id" => $role_id, "role_name" => $role_name, "user" => $this->getUser()->getUsername() ]);
+            $this->log('saveSystemRole Throttled', [ "role_id" => $roleId, "role_name" => $roleName, "user" => $this->getUser()->getUsername() ]);
         }
     }
 
     /**
-     * @param string $role_id
-     * @param string $role_name
+     * @param string $roleId
+     * @param string $roleName
      * @param string $permissions - json-encoded string of user rights
      *
      * @return [type]
      */
-    public function saveSystemRole(string $role_id, string $role_name, string $permissions)
+    public function saveSystemRole(string $roleId, string $roleName, string $permissions)
     {
         try {
-            $permissions_converted = $this->convertPermissions($permissions);
+            $permissionsConverted = $this->convertPermissions($permissions);
             $this->log("role", [
-                "role_id"     => $role_id,
-                "role_name"   => $role_name,
-                "permissions" => $permissions_converted,
+                "role_id"     => $roleId,
+                "role_name"   => $roleName,
+                "permissions" => $permissionsConverted,
                 "user"        => $this->getUser()->getUsername()
             ]);
         } catch ( \Throwable $e ) {
             $this->log('Error saving system role', [
                 "error"       => $e->getMessage(),
-                "role_id"     => $role_id,
-                "role_name"   => $role_name,
-                "permissions" => $permissions_converted,
+                "role_id"     => $roleId,
+                "role_name"   => $roleName,
+                "permissions" => $permissionsConverted,
                 "user"        => $this->getUser()->getUsername()
             ]);
         }
     }
 
-    public function throttleUpdateSystemRole(string $role_id, string $role_name, string $permissions)
+    public function throttleUpdateSystemRole(string $roleId, string $roleName, string $permissions)
     {
         if ( !$this->throttle("message = 'updated system role'", [], 3, 1) ) {
-            $this->updateSystemRole($role_id, $role_name, $permissions);
+            $this->updateSystemRole($roleId, $roleName, $permissions);
         } else {
-            $this->log('updateSystemRole Throttled', [ "role_id" => $role_id, "role_name" => $role_name, "user" => $this->getUser()->getUsername() ]);
+            $this->log('updateSystemRole Throttled', [ "role_id" => $roleId, "role_name" => $roleName, "user" => $this->getUser()->getUsername() ]);
         }
     }
 
-    public function updateSystemRole(string $role_id, string $role_name, string $permissions)
+    public function updateSystemRole(string $roleId, string $roleName, string $permissions)
     {
         try {
-            $permissions_converted = $this->convertPermissions($permissions);
-            $sql1                  = "SELECT log_id WHERE message = 'role' AND role_id = ? AND project_id IS NULL";
-            $result1               = $this->framework->queryLogs($sql1, [ $role_id ]);
-            $log_id                = intval($result1->fetch_assoc()["log_id"]);
-            if ( $log_id === 0 ) {
+            $permissionsConverted = $this->convertPermissions($permissions);
+            $sql1                 = "SELECT log_id WHERE message = 'role' AND role_id = ? AND project_id IS NULL";
+            $result1              = $this->framework->queryLogs($sql1, [ $roleId ]);
+            $logId                = intval($result1->fetch_assoc()["log_id"]);
+            if ( $logId === 0 ) {
                 throw new \Error('No role found with the specified id');
             }
-            $params = [ "role_name" => $role_name, "permissions" => $permissions_converted ];
+            $params = [ "role_name" => $roleName, "permissions" => $permissionsConverted ];
             foreach ( $params as $name => $value ) {
                 $sql = "UPDATE redcap_external_modules_log_parameters SET value = ? WHERE log_id = ? AND name = ?";
-                $this->framework->query($sql, [ $value, $log_id, $name ]);
+                $this->framework->query($sql, [ $value, $logId, $name ]);
             }
-            $this->log('updated system role', [ 'role_id' => $role_id, 'role_name' => $role_name, 'permissions' => $permissions_converted, "user" => $this->getUser()->getUsername() ]);
+            $this->log('updated system role', [ 'role_id' => $roleId, 'role_name' => $roleName, 'permissions' => $permissionsConverted, "user" => $this->getUser()->getUsername() ]);
         } catch ( \Throwable $e ) {
             $this->log('Error updating system role', [
                 'error'                 => $e->getMessage(),
-                'role_id'               => $role_id,
-                'role_name'             => $role_name,
+                'role_id'               => $roleId,
+                'role_name'             => $roleName,
                 'permissions_orig'      => $permissions,
-                'permissions_converted' => $permissions_converted,
+                'permissions_converted' => $permissionsConverted,
                 "user"                  => $this->getUser()->getUsername()
             ]);
         }
     }
 
-    public function throttleDeleteSystemRole($role_id)
+    public function throttleDeleteSystemRole($roleId)
     {
         if ( !$this->throttle("message = 'deleted system role'", [], 2, 1) ) {
-            $this->deleteSystemRole($role_id);
+            $this->deleteSystemRole($roleId);
         } else {
-            $this->log('deleteSystemRole Throttled', [ "role_id" => $role_id, "user" => $this->getUser()->getUsername() ]);
+            $this->log('deleteSystemRole Throttled', [ "role_id" => $roleId, "user" => $this->getUser()->getUsername() ]);
         }
     }
 
-    private function deleteSystemRole($role_id)
+    private function deleteSystemRole($roleId)
     {
         try {
-            $result = $this->removeLogs("message = 'role' AND role_id = ? AND (project_id IS NULL OR project_id IS NOT NULL) ", [ $role_id ]);
-            $this->log('deleted system role', [ "user" => $this->getUser()->getUsername(), "role_id" => $role_id ]);
+            $result = $this->removeLogs("message = 'role' AND role_id = ? AND (project_id IS NULL OR project_id IS NOT NULL) ", [ $roleId ]);
+            $this->log('deleted system role', [ "user" => $this->getUser()->getUsername(), "role_id" => $roleId ]);
             return $result;
         } catch ( \Throwable $e ) {
-            $this->log('Error deleting system role', [ "error" => $e->getMessage(), "user" => $this->getUser()->getUsername(), "role_id" => $role_id ]);
+            $this->log('Error deleting system role', [ "error" => $e->getMessage(), "user" => $this->getUser()->getUsername(), "role_id" => $roleId ]);
         }
     }
 
@@ -1084,18 +1082,18 @@ class SecurityAccessGroups extends AbstractExternalModule
         return $rights;
     }
 
-    public function getSystemRoleRightsById($role_id)
+    public function getSystemRoleRightsById($roleId)
     {
-        if ( empty($role_id) ) {
-            $role_id = $this->defaultRoleId;
+        if ( empty($roleId) ) {
+            $roleId = $this->defaultRoleId;
         }
         $sql    = "SELECT role_id, role_name, permissions WHERE message = 'role' AND role_id = ? AND (project_id IS NULL OR project_id IS NOT NULL) ORDER BY log_id DESC LIMIT 1";
-        $result = $this->framework->queryLogs($sql, [ $role_id ]);
+        $result = $this->framework->queryLogs($sql, [ $roleId ]);
         $rights = $result->fetch_assoc();
         if ( empty($rights) ) {
-            $role_id2 = $this->defaultRoleId;
-            $result2  = $this->framework->queryLogs($sql, [ $role_id2 ]);
-            $rights   = $result2->fetch_assoc();
+            $roleId2 = $this->defaultRoleId;
+            $result2 = $this->framework->queryLogs($sql, [ $roleId2 ]);
+            $rights  = $result2->fetch_assoc();
 
             if ( empty($rights) ) {
                 $rights = $this->setDefaultSystemRole();
@@ -1104,13 +1102,13 @@ class SecurityAccessGroups extends AbstractExternalModule
         return $rights;
     }
 
-    public function systemRoleExists($role_id)
+    public function systemRoleExists($roleId)
     {
-        if ( empty($role_id) ) {
+        if ( empty($roleId) ) {
             return false;
         }
         foreach ( $this->getAllSystemRoles() as $role ) {
-            if ( $role_id == $role["role_id"] ) {
+            if ( $roleId == $role["role_id"] ) {
                 return true;
             }
         }
@@ -1119,12 +1117,12 @@ class SecurityAccessGroups extends AbstractExternalModule
 
     public function generateNewRoleId()
     {
-        $new_role_id = "role_" . substr(md5(uniqid()), 0, 13);
+        $newRoleId = "role_" . substr(md5(uniqid()), 0, 13);
 
-        if ( $this->systemRoleExists($new_role_id) ) {
+        if ( $this->systemRoleExists($newRoleId) ) {
             return $this->generateNewRoleId();
         } else {
-            return $new_role_id;
+            return $newRoleId;
         }
     }
 
@@ -1321,9 +1319,9 @@ class SecurityAccessGroups extends AbstractExternalModule
         return $allRights;
     }
 
-    public function getCurrentRights(string $username, $project_id)
+    public function getCurrentRights(string $username, $projectId)
     {
-        $result = $this->framework->query("SELECT * FROM redcap_user_rights WHERE username = ? AND project_id = ?", [ $username, $project_id ]);
+        $result = $this->framework->query("SELECT * FROM redcap_user_rights WHERE username = ? AND project_id = ?", [ $username, $projectId ]);
         $rights = $result->fetch_assoc();
         if ( !empty($rights["role_id"]) ) {
             $result2 = $this->framework->query("SELECT * FROM redcap_user_roles WHERE role_id = ?", [ $rights["role_id"] ]);
@@ -1333,7 +1331,7 @@ class SecurityAccessGroups extends AbstractExternalModule
         return $this->framework->escape($rights);
     }
 
-    private function getAllCurrentRights($project_id)
+    private function getAllCurrentRights($projectId)
     {
         $result = $this->framework->query('SELECT r.*,
         data_entry LIKE "%,3]%" data_entry3,
@@ -1342,7 +1340,7 @@ class SecurityAccessGroups extends AbstractExternalModule
         data_export_instruments LIKE "%,3]%" data_export3,
         data_export_instruments LIKE "%,2]%" data_export2,
         data_export_instruments LIKE "%,1]%" data_export1
-        FROM redcap_user_rights r WHERE project_id = ? AND role_id IS NULL', [ $project_id ]);
+        FROM redcap_user_rights r WHERE project_id = ? AND role_id IS NULL', [ $projectId ]);
         $rights = [];
         while ( $row = $result->fetch_assoc() ) {
             unset($row['data_export_instruments']);
@@ -1361,7 +1359,7 @@ class SecurityAccessGroups extends AbstractExternalModule
         FROM redcap_user_rights user
         LEFT JOIN redcap_user_roles role
         ON user.role_id = role.role_id
-        WHERE user.project_id = ? AND user.role_id IS NOT NULL', [ $project_id ]);
+        WHERE user.project_id = ? AND user.role_id IS NOT NULL', [ $projectId ]);
         while ( $row = $result2->fetch_assoc() ) {
             unset($row['data_export_instruments']);
             unset($row['data_entry']);
@@ -1372,7 +1370,7 @@ class SecurityAccessGroups extends AbstractExternalModule
         return $this->framework->escape($rights);
     }
 
-    public function getUserRightsHolders($project_id)
+    public function getUserRightsHolders($projectId)
     {
         try {
             $sql    = 'SELECT rights.username username,
@@ -1383,7 +1381,7 @@ class SecurityAccessGroups extends AbstractExternalModule
             on rights.username = info.username
             where project_id = ?
             and user_rights = 1';
-            $result = $this->framework->query($sql, [ $project_id ]);
+            $result = $this->framework->query($sql, [ $projectId ]);
             $users  = [];
             while ( $row = $result->fetch_assoc() ) {
                 $users[] = $row;
