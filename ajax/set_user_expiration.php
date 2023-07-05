@@ -30,12 +30,12 @@ $sag               = $module->getSystemRoleRightsById($sag_id);
 $acceptable_rights = $module->getAcceptableRights($username);
 $current_rights    = $module->getCurrentRights($username, $module->getProjectId());
 $current_rights    = $module->getCurrentRightsFormatted($username, $module->getProjectId());
-$bad_rights        = $module->checkProposedRights($acceptable_rights, $current_rights);
-$errors            = !empty($bad_rights);
+$badRights         = $module->checkProposedRights($acceptable_rights, $current_rights);
+$errors            = !empty($badRights);
 
 if ( $errors === false ) {
     require_once $scriptPath;
     exit;
 } else {
-    echo json_encode([ "error" => true, "bad_rights" => [ "$username" => [ "SAG" => $sag["role_name"], "rights" => $bad_rights ] ] ]);
+    echo json_encode([ "error" => true, "bad_rights" => [ "$username" => [ "SAG" => $sag["role_name"], "rights" => $badRights ] ] ]);
 }

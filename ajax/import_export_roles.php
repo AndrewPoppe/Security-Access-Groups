@@ -18,7 +18,7 @@ if ( isset($_POST['csv_content']) && $_POST['csv_content'] != '' ) {
     $pid         = $module->framework->getProjectId();
 
     if ( $_GET['action'] == 'uploadMapping' ) {
-        $bad_rights = [];
+        $badRights = [];
         foreach ( $data as $key => $this_assignment ) {
             $username       = $this_assignment['username'];
             $sag_id         = $module->getUserSystemRole($username);
@@ -35,13 +35,13 @@ if ( isset($_POST['csv_content']) && $_POST['csv_content'] != '' ) {
             // We ignore expired users
             $userExpired = $module->isUserExpired($username, $pid);
             if ( !empty($these_bad_rights) && !$userExpired ) {
-                $bad_rights[$role_name][$username] = [
+                $badRights[$role_name][$username] = [
                     'SAG'    => $sag['role_name'],
                     'rights' => $these_bad_rights
                 ];
             }
         }
-        if ( empty($bad_rights) ) {
+        if ( empty($badRights) ) {
             ob_start(function () use ($module, $pid, $data) {
                 try {
                     $imported    = $_SESSION['imported'] === 'userroleMapping';
@@ -95,12 +95,12 @@ if ( isset($_POST['csv_content']) && $_POST['csv_content'] != '' ) {
             ob_end_flush(); // End buffering and clean up
         } else {
             $_SESSION['SUR_imported']   = 'roleassignments';
-            $_SESSION['SUR_bad_rights'] = json_encode($bad_rights);
+            $_SESSION['SUR_bad_rights'] = json_encode($badRights);
             redirect(APP_PATH_WEBROOT . 'UserRights/index.php?pid=' . PROJECT_ID);
         }
     } else {
 
-        $bad_rights         = [];
+        $badRights          = [];
         $all_current_rights = [];
         $all_role_ids_orig  = array_keys(\UserRights::getRoles($pid));
         foreach ( $data as $key => $this_role ) {
@@ -144,11 +144,11 @@ if ( isset($_POST['csv_content']) && $_POST['csv_content'] != '' ) {
                 }
             }
             if ( !empty($these_bad_rights) ) {
-                $bad_rights[$role_label] = $these_bad_rights;
+                $badRights[$role_label] = $these_bad_rights;
             }
         }
 
-        if ( empty($bad_rights) ) {
+        if ( empty($badRights) ) {
             ob_start(function () use ($all_current_rights, $module, $pid, $all_role_ids_orig) {
                 try {
                     $imported    = $_SESSION['imported'] === 'userroles';
@@ -222,7 +222,7 @@ if ( isset($_POST['csv_content']) && $_POST['csv_content'] != '' ) {
             ob_end_flush(); // End buffering and clean up
         } else {
             $_SESSION['SUR_imported']   = 'roles';
-            $_SESSION['SUR_bad_rights'] = json_encode($bad_rights);
+            $_SESSION['SUR_bad_rights'] = json_encode($badRights);
             redirect(APP_PATH_WEBROOT . 'UserRights/index.php?pid=' . PROJECT_ID);
         }
     }

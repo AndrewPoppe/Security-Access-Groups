@@ -32,8 +32,8 @@ $project_id       = $module->framework->getProjectId();
 $role_rights       = $module->getRoleRights($role_id);
 $acceptable_rights = $module->getAcceptableRights($username);
 
-$bad_rights = $module->checkProposedRights($acceptable_rights, $role_rights);
-$errors     = !empty($bad_rights);
+$badRights = $module->checkProposedRights($acceptable_rights, $role_rights);
+$errors    = !empty($badRights);
 
 // We ignore expired users
 $userExpired = $module->isUserExpired($username, $project_id);
@@ -53,10 +53,10 @@ if ( $errors === false || $userExpired ) {
             if ( $succeeded ) {
                 $dataValues = "user = '" . $info["username"] . "'\nrole = '" . $info["role_label"] . "'\nunique_role_name = '" . $info["unique_role_name"] . "'";
 
-                $logTable     = $module->framework->getProject($info['project_id'])->getLogTable();
-                $sql          = "SELECT log_event_id FROM $logTable WHERE project_id = ? AND user = ? AND page = 'ExternalModules/index.php' AND object_type = 'redcap_user_rights' AND pk = ? AND event IN ('INSERT','UPDATE') AND description = 'Assign user to role' AND TIMESTAMPDIFF(SECOND,ts,NOW()) <= 10 ORDER BY ts DESC";
-                $params       = [ $info['project_id'], $module->framework->getUser()->getUsername(), $info['username'] ];
-                $result       = $module->query($sql, $params);
+                $logTable   = $module->framework->getProject($info['project_id'])->getLogTable();
+                $sql        = "SELECT log_event_id FROM $logTable WHERE project_id = ? AND user = ? AND page = 'ExternalModules/index.php' AND object_type = 'redcap_user_rights' AND pk = ? AND event IN ('INSERT','UPDATE') AND description = 'Assign user to role' AND TIMESTAMPDIFF(SECOND,ts,NOW()) <= 10 ORDER BY ts DESC";
+                $params     = [ $info['project_id'], $module->framework->getUser()->getUsername(), $info['username'] ];
+                $result     = $module->query($sql, $params);
                 $logEventId = intval($result->fetch_assoc()['log_event_id']);
                 if ( $logEventId != 0 ) {
                     $module->query("UPDATE $logTable SET data_values = ? WHERE log_event_id = ?", [ $module->framework->escape($dataValues), $logEventId ]);
@@ -86,6 +86,6 @@ if ( $errors === false || $userExpired ) {
     require_once $scriptPath;
     ob_end_flush(); // End buffering and clean up
 } else {
-    echo json_encode($module->framework->escape([ 'error' => true, 'bad_rights' => [ "$username" => [ 'SAG' => $sag['role_name'], 'rights' => $bad_rights ] ], 'role' => $role_name ]));
+    echo json_encode($module->framework->escape([ 'error' => true, 'bad_rights' => [ "$username" => [ 'SAG' => $sag['role_name'], 'rights' => $badRights ] ], 'role' => $role_name ]));
 }
 exit;

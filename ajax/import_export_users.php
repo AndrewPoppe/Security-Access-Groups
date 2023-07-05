@@ -14,7 +14,7 @@ require_once $module->getSafePath('Config/init_functions.php', APP_PATH_DOCROOT)
 if ( isset($_POST['csv_content']) && $_POST['csv_content'] != '' ) {
     $csv_content        = filter_input(INPUT_POST, 'csv_content');
     $data               = csvToArray(removeBOMfromUTF8($csv_content));
-    $bad_rights         = [];
+    $badRights          = [];
     $all_current_rights = [];
     foreach ( $data as $key => $this_user ) {
         $username = $this_user['username'];
@@ -54,14 +54,14 @@ if ( isset($_POST['csv_content']) && $_POST['csv_content'] != '' ) {
         $ignore              = $userExpired && !$requestedUnexpired;
 
         if ( !empty($these_bad_rights) && !$ignore ) {
-            $bad_rights[$username] = [
+            $badRights[$username] = [
                 'SAG'    => $sag['role_name'],
                 'rights' => $these_bad_rights
             ];
         }
     }
 
-    if ( empty($bad_rights) ) {
+    if ( empty($badRights) ) {
         ob_start(function () use ($all_current_rights, $module) {
             try {
                 $imported    = $_SESSION['imported'] === 'users';
@@ -112,9 +112,9 @@ if ( isset($_POST['csv_content']) && $_POST['csv_content'] != '' ) {
         require_once $scriptPath;
         ob_end_flush(); // End buffering and clean up
     } else {
-        $module->framework->log('User Rights Import: Bad rights found', [ 'bad rights' => json_encode($bad_rights) ]);
+        $module->framework->log('User Rights Import: Bad rights found', [ 'bad rights' => json_encode($badRights) ]);
         $_SESSION['SUR_imported']   = 'users';
-        $_SESSION['SUR_bad_rights'] = json_encode($bad_rights);
+        $_SESSION['SUR_bad_rights'] = json_encode($badRights);
         redirect(APP_PATH_WEBROOT . 'UserRights/index.php?pid=' . PROJECT_ID);
     }
 }
