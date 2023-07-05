@@ -59,13 +59,13 @@ class TextReplacer
         $text = $this->replaceSagUserFullname($text);
         $text = $this->replaceSagUserEmail($text);
         $text = $this->replaceSagRights($text);
-        $text = $this->replace_sag_project_title($text);
-        $text = $this->replace_sag_users($text);
-        $text = $this->replace_sag_user_fullnames($text);
-        $text = $this->replace_sag_user_emails($text);
-        $text = $this->replace_sag_users_table($text);
-        $text = $this->replace_sag_users_table_full($text);
-        $text = $this->replace_sag_expiration_date($text);
+        $text = $this->replaceSagProjectTitle($text);
+        $text = $this->replaceSagUsers($text);
+        $text = $this->replaceSagUserFullnames($text);
+        $text = $this->replaceSagUserEmails($text);
+        $text = $this->replaceSagUsersTable($text);
+        $text = $this->replaceSagUsersTableFull($text);
+        $text = $this->replaceSagExpirationDate($text);
 
         return $text;
     }
@@ -112,7 +112,7 @@ class TextReplacer
         return str_replace($placeholder, $rightsReplacement, $text);
     }
 
-    private function replace_sag_project_title($text)
+    private function replaceSagProjectTitle($text)
     {
         $placeholder = '[sag-project-title]';
         if ( strpos($text, $placeholder) === false ) {
@@ -122,44 +122,44 @@ class TextReplacer
         return str_replace($placeholder, $title, $text);
     }
 
-    private function replace_sag_users($text)
+    private function replaceSagUsers($text)
     {
         $placeholder = '[sag-users]';
         if ( strpos($text, $placeholder) === false ) {
             return $text;
         }
-        $users             = $this->data["sag_users"] ?? [];
-        $users_replacement = $this->makeList($users);
-        return str_replace($placeholder, $users_replacement, $text);
+        $users            = $this->data["sag_users"] ?? [];
+        $usersReplacement = $this->makeList($users);
+        return str_replace($placeholder, $usersReplacement, $text);
     }
 
-    private function replace_sag_user_fullnames($text)
+    private function replaceSagUserFullnames($text)
     {
         $placeholder = '[sag-user-fullnames]';
         if ( strpos($text, $placeholder) === false ) {
             return $text;
         }
-        $fullnames             = $this->data["sag_fullnames"] ?? [];
-        $fullnames_replacement = $this->makeList($fullnames);
-        return str_replace($placeholder, $fullnames_replacement, $text);
+        $fullnames            = $this->data["sag_fullnames"] ?? [];
+        $fullnamesReplacement = $this->makeList($fullnames);
+        return str_replace($placeholder, $fullnamesReplacement, $text);
     }
 
-    private function replace_sag_user_emails($text)
+    private function replaceSagUserEmails($text)
     {
         $placeholder = '[sag-user-emails]';
         if ( strpos($text, $placeholder) === false ) {
             return $text;
         }
 
-        $emails             = $this->data["sag_emails"] ?? [];
-        $emails             = array_map(function ($email) {
+        $emails            = $this->data["sag_emails"] ?? [];
+        $emails            = array_map(function ($email) {
             return "<a href='mailto:$email'>$email</a>";
         }, $emails);
-        $emails_replacement = $this->makeList($emails);
-        return str_replace($placeholder, $emails_replacement, $text);
+        $emailsReplacement = $this->makeList($emails);
+        return str_replace($placeholder, $emailsReplacement, $text);
     }
 
-    private function replace_sag_users_table($text)
+    private function replaceSagUsersTable($text)
     {
         $placeholder = '[sag-users-table]';
         if ( strpos($text, $placeholder) === false ) {
@@ -185,7 +185,7 @@ class TextReplacer
         return str_replace($placeholder, $table, $text);
     }
 
-    private function replace_sag_users_table_full($text)
+    private function replaceSagUsersTableFull($text)
     {
         $placeholder = '[sag-users-table-full]';
         if ( strpos($text, $placeholder) === false ) {
@@ -202,25 +202,25 @@ class TextReplacer
 
         $table = "<table class='sag_users' style='border: 1px solid #666; border-collapse: collapse; width: 100%;'><thead><tr><th style='text-align: left;padding: 8px;border: 1px solid #666;background-color: #f2f2f2;'>Name</th><th style='text-align: left;padding: 8px;border: 1px solid #666;background-color: #f2f2f2;'>REDCap Username</th><th style='text-align: left;padding: 8px;border: 1px solid #666;background-color: #f2f2f2;'>Email Address</th><th style='text-align: left;padding: 8px;border: 1px solid #666;background-color: #f2f2f2;'>Noncompliant Rights</th></tr></thead><tbody>";
         foreach ( $users as $index => $username ) {
-            $bg           = $index % 2 == 0 ? "transparent" : "#f2f2f2";
-            $fullname     = $fullnames[$index] ?? "";
-            $email        = $emails[$index] ?? "";
-            $these_rights = $rights[$index] ?? [];
-            $rights_list  = $this->makeList($these_rights);
-            $table .= "<tr style='background-color:" . $bg . ";'><td style='text-align: left;padding: 8px;border: 1px solid #666;'>$fullname</td><td style='text-align: left;padding: 8px;border: 1px solid #666;'>$username</td><td style='text-align: left;padding: 8px;border: 1px solid #666;'>$email</td><td style='text-align: left;padding: 8px;border: 1px solid #666;'>$rights_list</td></tr>";
+            $bg          = $index % 2 == 0 ? "transparent" : "#f2f2f2";
+            $fullname    = $fullnames[$index] ?? "";
+            $email       = $emails[$index] ?? "";
+            $theseRights = $rights[$index] ?? [];
+            $rightsList  = $this->makeList($theseRights);
+            $table .= "<tr style='background-color:" . $bg . ";'><td style='text-align: left;padding: 8px;border: 1px solid #666;'>$fullname</td><td style='text-align: left;padding: 8px;border: 1px solid #666;'>$username</td><td style='text-align: left;padding: 8px;border: 1px solid #666;'>$email</td><td style='text-align: left;padding: 8px;border: 1px solid #666;'>$rightsList</td></tr>";
         }
         $table .= "</tbody></table>";
 
         return str_replace($placeholder, $table, $text);
     }
 
-    private function replace_sag_expiration_date($text)
+    private function replaceSagExpirationDate($text)
     {
         $placeholder = '[sag-expiration-date]';
         if ( strpos($text, $placeholder) === false ) {
             return $text;
         }
-        $expiration_date = $this->data["sag_expiration_date"] ?? "";
-        return str_replace($placeholder, $expiration_date, $text);
+        $expirationDate = $this->data["sag_expiration_date"] ?? "";
+        return str_replace($placeholder, $expirationDate, $text);
     }
 }
