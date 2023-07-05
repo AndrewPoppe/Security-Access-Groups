@@ -8,10 +8,10 @@ class APIHandler
     private $post;
     private $token;
     private $data;
-    private $original_rights = [];
-    private $bad_rights = [];
+    private $originalRights = [];
+    private $badRights = [];
     private $requestHandled = false;
-    private $project_id;
+    private $projectId;
     private $user;
     private $action;
     public function __construct(SecurityAccessGroups $module, array $post)
@@ -47,12 +47,12 @@ class APIHandler
 
     public function shouldProcess()
     {
-        $rights           = $this->getUserRightsFromToken() ?? [];
-        $this->project_id = $rights["project_id"];
-        $this->user       = $rights["username"];
+        $rights          = $this->getUserRightsFromToken() ?? [];
+        $this->projectId = $rights["project_id"];
+        $this->user      = $rights["username"];
 
         $prefix                   = $this->module->getModuleDirectoryPrefix();
-        $isModuleEnabledInProject = (bool) $this->module->isModuleEnabled($prefix, $this->project_id);
+        $isModuleEnabledInProject = (bool) $this->module->isModuleEnabled($prefix, $this->projectId);
         $isApiUserRightsMethod    = in_array($this->action, [ "user", "userRole", "userRoleMapping" ], true);
         $dataImported             = isset($this->post["data"]);
 
@@ -64,7 +64,7 @@ class APIHandler
         if ( !$this->requestHandled ) {
             $this->handleRequest();
         }
-        return $this->bad_rights;
+        return $this->badRights;
     }
 
     public function shouldAllowImport()
@@ -72,7 +72,7 @@ class APIHandler
         if ( !$this->requestHandled ) {
             $this->handleRequest();
         }
-        return empty($this->bad_rights);
+        return empty($this->badRights);
     }
 
     private function getUserRightsFromToken()
@@ -103,18 +103,18 @@ class APIHandler
                 if ( empty($role_id) ) {
                     continue;
                 }
-                $role_name         = \ExternalModules\ExternalModules::getRoleName($this->project_id, $role_id);
-                $role_rights       = $this->module->getRoleRights($role_id, $this->project_id);
+                $role_name         = \ExternalModules\ExternalModules::getRoleName($this->projectId, $role_id);
+                $role_rights       = $this->module->getRoleRights($role_id, $this->projectId);
                 $acceptable_rights = $this->module->getAcceptableRights($username);
                 $these_bad_rights  = $this->module->checkProposedRights($acceptable_rights, $role_rights);
                 // We ignore expired users
-                $userExpired = $this->module->isUserExpired($username, $this->project_id);
+                $userExpired = $this->module->isUserExpired($username, $this->projectId);
                 if ( !empty($these_bad_rights) && !$userExpired ) {
                     $bad_rights[$role_name] = $these_bad_rights;
                 }
             }
-            $this->bad_rights      = $bad_rights;
-            $this->original_rights = $this->data;
+            $this->badRights      = $bad_rights;
+            $this->originalRights = $this->data;
         } catch ( \Throwable $e ) {
             $this->module->log('Error Processing API User Role Mapping Import', [ "error" => $e->getMessage() ]);
         }
@@ -156,7 +156,7 @@ class APIHandler
             $acceptableRights = $this->module->getAcceptableRights($username);
             $userBadRights    = $this->module->checkProposedRights($acceptableRights, $thisRole);
             // We ignore expired users
-            $userExpired = $this->module->isUserExpired($username, $this->project_id);
+            $userExpired = $this->module->isUserExpired($username, $this->projectId);
             if ( !empty($userBadRights) && !$userExpired ) {
                 $theseBadRights[$username] = $userBadRights;
             }
@@ -171,7 +171,7 @@ class APIHandler
             foreach ( $this->data as $thisRole ) {
                 $roleLabel   = $thisRole["role_label"];
                 $roleId      = $this->module->getRoleIdFromUniqueRoleName($thisRole["unique_role_name"]);
-                $usersInRole = $this->module->getUsersInRole($this->project_id, $roleId);
+                $usersInRole = $this->module->getUsersInRole($this->projectId, $roleId);
                 $thisRole    = $this->handleFormsViewing($thisRole);
                 $thisRole    = $this->handleFormsExport($thisRole);
                 $thisRole    = $this->filterRights($thisRole);
@@ -181,9 +181,9 @@ class APIHandler
                     $badRights[$roleLabel] = $theseBadRights;
                 }
 
-                $this->original_rights = \UserRights::getRoles($this->project_id);
+                $this->originalRights = \UserRights::getRoles($this->projectId);
             }
-            $this->bad_rights = $badRights;
+            $this->badRights = $badRights;
         } catch ( \Throwable $e ) {
             $this->module->log('Error Processing API User Role Import', [ "error" => $e->getMessage() ]);
         }
@@ -203,7 +203,7 @@ class APIHandler
                 $theseBadRights   = $this->module->checkProposedRights($acceptableRights, $thisUser);
 
                 // We ignore expired users, unless the request unexpires them
-                $userExpired            = $this->module->isUserExpired($username, $this->project_id);
+                $userExpired            = $this->module->isUserExpired($username, $this->projectId);
                 $requestedExpiration    = urldecode($thisUser['expiration']);
                 $expirationDateInFuture = strtotime($requestedExpiration) >= strtotime('today');
                 $requestedUnexpired     = empty($requestedExpiration) || $expirationDateInFuture;
@@ -214,13 +214,13 @@ class APIHandler
                 if ( !empty($theseBadRights) && !$ignore ) {
                     $badRights[$username] = $theseBadRights;
                 } else {
-                    $this->original_rights[] = [
+                    $this->originalRights[] = [
                         "username" => $username,
-                        "rights"   => $this->module->getCurrentRights($username, $this->project_id)
+                        "rights"   => $this->module->getCurrentRights($username, $this->projectId)
                     ];
                 }
             }
-            $this->bad_rights = $badRights;
+            $this->badRights = $badRights;
         } catch ( \Throwable $e ) {
             $this->module->log('Error Processing API User Import', [ "error" => $e->getMessage() ]);
         }
@@ -228,6 +228,6 @@ class APIHandler
 
     public function getApiRequestInfo()
     {
-        return [ $this->action, $this->project_id, $this->user, $this->original_rights ];
+        return [ $this->action, $this->projectId, $this->user, $this->originalRights ];
     }
 }
