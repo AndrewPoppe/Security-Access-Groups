@@ -28,14 +28,14 @@ if ( isset($_POST['csv_content']) && $_POST['csv_content'] != '' ) {
                 continue;
             }
             $roleId           = $module->getRoleIdFromUniqueRoleName($uniqueRoleName);
-            $role_name        = \ExternalModules\ExternalModules::getRoleName($pid, $roleId);
+            $roleName         = \ExternalModules\ExternalModules::getRoleName($pid, $roleId);
             $role_rights      = $module->getRoleRights($roleId);
             $acceptableRights = $module->getAcceptableRights($username);
             $theseBadRights   = $module->checkProposedRights($acceptableRights, $role_rights);
             // We ignore expired users
             $userExpired = $module->isUserExpired($username, $pid);
             if ( !empty($theseBadRights) && !$userExpired ) {
-                $badRights[$role_name][$username] = [
+                $badRights[$roleName][$username] = [
                     'SAG'    => $sag['role_name'],
                     'rights' => $theseBadRights
                 ];
