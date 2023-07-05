@@ -25,7 +25,7 @@ $contentsValid = $sagImport->contentsValid();
 if ( $contentsValid !== true ) {
     http_response_code(400);
     echo json_encode([
-        "error" => $sagImport->error_messages
+        "error" => $sagImport->errorMessages
     ]);
     exit;
 }
