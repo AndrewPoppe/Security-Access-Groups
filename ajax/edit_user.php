@@ -28,8 +28,8 @@ if ( in_array($submitAction, [ 'add_user', 'edit_user' ]) ) {
     $sagId            = $module->getUserSystemRole($user);
     $sag              = $module->getSystemRoleRightsById($sagId);
     $badRights        = $module->checkProposedRights($acceptableRights, $data);
-    $current_rights   = $module->getCurrentRights($user, $pid);
-    $requested_rights = $module->filterPermissions($data);
+    $currentRights    = $module->getCurrentRights($user, $pid);
+    $requestedRights  = $module->filterPermissions($data);
     $errors           = !empty($badRights);
 
     // We ignore expired users, unless the request unexpires them
@@ -41,11 +41,11 @@ if ( in_array($submitAction, [ 'add_user', 'edit_user' ]) ) {
     }
 
     if ( $errors === false || $ignore === true ) {
-        $module->log('Adding/Editing User', [ 'user' => $user, 'requested_rights' => json_encode($requested_rights) ]);
+        $module->log('Adding/Editing User', [ 'user' => $user, 'requested_rights' => json_encode($requestedRights) ]);
         $actionInfo = [
             'action'        => $submitAction,
-            'rights'        => $requested_rights,
-            'currentRights' => $current_rights,
+            'rights'        => $requestedRights,
+            'currentRights' => $currentRights,
             'user'          => $user,
             'project_id'    => $pid
         ];
@@ -122,11 +122,11 @@ if ( $submitAction === "edit_role" ) {
         }
     }
     if ( empty($badRights) ) {
-        $requested_rights = $module->filterPermissions($data);
-        $module->log("Editing Role", [ "role" => $role, "requested_rights" => json_encode($requested_rights) ]);
+        $requestedRights = $module->filterPermissions($data);
+        $module->log("Editing Role", [ "role" => $role, "requested_rights" => json_encode($requestedRights) ]);
         $actionInfo = [
             "action"        => $submitAction,
-            "rights"        => $requested_rights,
+            "rights"        => $requestedRights,
             "currentRights" => $module->getRoleRightsRaw($role),
             "role"          => $role,
             "project_id"    => $pid

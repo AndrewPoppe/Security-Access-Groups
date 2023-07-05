@@ -13,9 +13,9 @@ if ( $_SERVER['REQUEST_METHOD'] !== 'POST' || !isset($_POST['csv_content']) ) {
 require_once $module->getSafePath('Config/init_functions.php', APP_PATH_DOCROOT);
 if ( isset($_POST['csv_content']) && $_POST['csv_content'] != '' ) {
 
-    $csv_content = filter_input(INPUT_POST, 'csv_content');
-    $data        = csvToArray(removeBOMfromUTF8($csv_content));
-    $pid         = $module->framework->getProjectId();
+    $csvContent = filter_input(INPUT_POST, 'csv_content');
+    $data       = csvToArray(removeBOMfromUTF8($csvContent));
+    $pid        = $module->framework->getProjectId();
 
     if ( $_GET['action'] == 'uploadMapping' ) {
         $badRights = [];
