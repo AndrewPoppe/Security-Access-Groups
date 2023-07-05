@@ -6,7 +6,7 @@ namespace YaleREDCap\SecurityAccessGroups;
 
 require_once $module->framework->getSafePath('classes/Alerts.php');
 
-if ( $_SERVER["REQUEST_METHOD"] !== "POST" ) {
+if ( $_SERVER['REQUEST_METHOD'] !== 'POST' ) {
     http_response_code(405);
     exit;
 }
@@ -16,10 +16,10 @@ if ( !$module->framework->getUser()->isSuperUser() ) {
     exit;
 }
 
-$alert_id = filter_input(INPUT_POST, "alert_id", FILTER_VALIDATE_INT);
+$alert_id = filter_input(INPUT_POST, 'alert_id', FILTER_VALIDATE_INT);
 if ( !$alert_id ) {
     http_response_code(400);
-    echo "Alert ID not formatted correctly";
+    echo 'Alert ID not formatted correctly';
     exit;
 }
 
@@ -27,7 +27,7 @@ $Alerts = new Alerts($module);
 $alert  = $Alerts->getAlertById($alert_id);
 if ( !$alert ) {
     http_response_code(400);
-    echo "Alert not found";
+    echo 'Alert not found';
     exit;
 }
 
