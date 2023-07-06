@@ -183,6 +183,8 @@ $replaceSmartVariablesUrl = $module->framework->getUrl('ajax/replaceSmartVariabl
         const checked = $(el).prop('checked');
         dt.rows(function(idx, data, node) {
             return data.bad.length > 0
+        }, {
+            search: 'applied'
         }).select(checked);
         $('.user-selector input').prop('checked', checked).trigger('change');
     }

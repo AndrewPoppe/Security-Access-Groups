@@ -124,9 +124,9 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                         <span class="sr-only">Toggle Dropdown</span>
                     </button>
                     <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" onclick="exportCsv();"><i
-                                    class="fa-sharp fa-regular fa-file-arrow-down fa-fw mr-1 text-success"></i>Export
-                                User Assignments</a></li>
+                        <li><a class="dropdown-item" onclick="handleCsvExport();"><i
+                                    class="fa-sharp fa-regular fa-file-arrow-down fa-fw mr-1 text-success">
+                                </i>Export User Assignments</a></li>
                         <li><a class="dropdown-item" onclick="importCsv();"><i
                                     class="fa-sharp fa-solid fa-file-arrow-up fa-fw mr-1 text-danger"></i>Import User
                                 Assignments</a></li>
@@ -215,14 +215,38 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
         });
     }
 
-    function exportCsv() {
+    function handleCsvExport() {
+        const dt = $('#SUR-System-Table').DataTable();
+        if (dt.search() != '') {
+            Swal.fire({
+                title: 'Export Filtered Data?',
+                text: 'You have a filter applied to the table. Do you want to export the filtered data or all data?',
+                icon: 'question',
+                showCancelButton: true,
+                showDenyButton: true,
+                confirmButtonText: 'Export Filtered Data',
+                denyButtonText: 'Export All Data'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    exportCsv(true);
+                } else if (result.isDenied) {
+                    exportCsv();
+                }
+            });
+        } else {
+            exportCsv();
+        }
+    }
+
+    function exportCsv(useFilter = false) {
+        const dt = $('#SUR-System-Table').DataTable();
         const newLine = navigator.userAgent.match(/Windows/) ? '\r\n' : '\n';
         const escapeChar = '"';
         const boundary = '"';
         const separator = ',';
         const extension = '.csv';
         const reBoundary = new RegExp(boundary, 'g');
-        const filename = 'SystemRoles_Users_' + formatNow() + extension;
+        const filename = 'SystemRoles_Users_' + (useFilter ? 'FILTERED_' : '') + formatNow() + extension;
         let charset = document.characterSet || document.charset;
         if (charset) {
             charset = ';charset=' + charset;
@@ -241,8 +265,12 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
             return s;
         };
 
-        const dt = $('#SUR-System-Table').DataTable();
-        const allData = dt.rows().data();
+
+        const useSearch = useFilter ? 'applied' : 'none';
+        const allData = dt.rows({
+            search: useSearch,
+            page: 'all'
+        }).data();
         const data = dt.buttons.exportData({
             format: {
                 header: function(html, col, node) {
@@ -264,9 +292,10 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                     }
                 }
             },
-            exportOptions: {
+            modifier: {
                 page: 'all',
-                search: 'none'
+                search: useSearch
+
             }
         });
 
