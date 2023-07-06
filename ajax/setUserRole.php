@@ -32,4 +32,5 @@ if ( !$module->systemRoleExists($role) ) {
 http_response_code(200);
 $setting = $username . "-role";
 $module->framework->setSystemSetting($setting, $role);
+$module->framework->log('Assigned SAG', [ 'user' => $username, 'role' => $role ]);
 exit;

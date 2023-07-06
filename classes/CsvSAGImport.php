@@ -250,6 +250,7 @@ class CsvSAGImport
                     $this->module->saveSystemRole($role, $roleName, json_encode($row['permissions']));
                 }
             }
+            $this->module->log('Imported SAGs from CSV');
             $success = true;
         } catch ( \Throwable $e ) {
             $this->module->log('Error importing roles', [ 'error' => $e->getMessage() ]);

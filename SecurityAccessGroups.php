@@ -961,7 +961,11 @@ $(function() {
         if ( !$this->throttle("message = ?", 'role', 3, 1) ) {
             $this->saveSystemRole($roleId, $roleName, $permissions);
         } else {
-            $this->log('saveSystemRole Throttled', [ "role_id" => $roleId, "role_name" => $roleName, "user" => $this->getUser()->getUsername() ]);
+            $this->log('saveSystemRole Throttled', [
+                "role_id"   => $roleId,
+                "role_name" => $roleName,
+                "user"      => $this->getUser()->getUsername()
+            ]);
         }
     }
 
@@ -981,6 +985,11 @@ $(function() {
                 "role_name"   => $roleName,
                 "permissions" => $permissionsConverted,
                 "user"        => $this->getUser()->getUsername()
+            ]);
+            $this->framework->log("Saved SAG", [
+                "role_id"     => $roleId,
+                "role_name"   => $roleName,
+                "permissions" => $permissionsConverted
             ]);
         } catch ( \Throwable $e ) {
             $this->log('Error saving system role', [
@@ -1017,7 +1026,12 @@ $(function() {
                 $sql = "UPDATE redcap_external_modules_log_parameters SET value = ? WHERE log_id = ? AND name = ?";
                 $this->framework->query($sql, [ $value, $logId, $name ]);
             }
-            $this->log('updated system role', [ 'role_id' => $roleId, 'role_name' => $roleName, 'permissions' => $permissionsConverted, "user" => $this->getUser()->getUsername() ]);
+            $this->log('Updated SAG', [
+                'role_id'     => $roleId,
+                'role_name'   => $roleName,
+                'permissions' => $permissionsConverted,
+                "user"        => $this->getUser()->getUsername()
+            ]);
         } catch ( \Throwable $e ) {
             $this->log('Error updating system role', [
                 'error'                 => $e->getMessage(),
@@ -1043,7 +1057,10 @@ $(function() {
     {
         try {
             $result = $this->removeLogs("message = 'role' AND role_id = ? AND (project_id IS NULL OR project_id IS NOT NULL) ", [ $roleId ]);
-            $this->log('deleted system role', [ "user" => $this->getUser()->getUsername(), "role_id" => $roleId ]);
+            $this->log('Deleted SAG', [
+                'user'    => $this->getUser()->getUsername(),
+                'role_id' => $roleId
+            ]);
             return $result;
         } catch ( \Throwable $e ) {
             $this->log('Error deleting system role', [ "error" => $e->getMessage(), "user" => $this->getUser()->getUsername(), "role_id" => $roleId ]);

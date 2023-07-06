@@ -198,6 +198,7 @@ class CsvUserImport
                 $setting = $username . '-role';
                 $this->module->setSystemSetting($setting, $role);
             }
+            $this->module->log('Imported SAG assignments', [ 'assignments' => json_encode($this->assignments) ]);
             $success = true;
         } catch ( \Throwable $e ) {
             $this->module->log('Error importing role assignments', [ 'error' => $e->getMessage() ]);

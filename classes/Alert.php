@@ -46,11 +46,11 @@ class Alert
         ]);
 
         if ( $alertType === "users" ) {
-            $this->sendUsersAlertsAndScheduleReminders();
+            return $this->sendUsersAlertsAndScheduleReminders();
         } elseif ( $alertType === "userRightsHolders" ) {
-            $this->sendUserRightsHoldersAlertsAndScheduleReminders();
+            return $this->sendUserRightsHoldersAlertsAndScheduleReminders();
         } elseif ( $alertType === "expiration" ) {
-            $this->sendUserExpirationAlertsAndScheduleReminders();
+            return $this->sendUserExpirationAlertsAndScheduleReminders();
         }
     }
 
@@ -121,11 +121,15 @@ class Alert
                     ]);
                 }
             }
+            $error = false;
         } catch ( \Throwable $e ) {
             $this->module->framework->log(
                 "Error sending users alert",
                 [ 'error' => $e->getMessage() ]
             );
+            $error = $e->getMessage();
+        } finally {
+            return $error;
         }
     }
 
@@ -211,22 +215,26 @@ class Alert
                     ]);
                 }
             }
+            $error = false;
         } catch ( \Throwable $e ) {
             $this->module->framework->log(
                 "Error sending user rights holder alert",
                 [ 'error' => $e->getMessage() ]
             );
+            $error = $e->getMessage();
+        } finally {
+            return $error;
         }
     }
 
     private function sendUserExpirationAlertsAndScheduleReminders()
     {
         if ( $this->getSendUserNotification() ) {
-            $this->sendUserExpirationUserAlertsAndScheduleReminders();
+            return $this->sendUserExpirationUserAlertsAndScheduleReminders();
         }
 
         if ( $this->getSendNotificationUserExpirationUserRightsHolders() ) {
-            $this->sendUserExpirationUserRightsHoldersAlertsAndScheduleReminders();
+            return $this->sendUserExpirationUserRightsHoldersAlertsAndScheduleReminders();
         }
     }
 
@@ -278,11 +286,15 @@ class Alert
                 ]);
 
             }
+            $error = false;
         } catch ( \Throwable $e ) {
             $this->module->framework->log(
                 "Error sending expiration users alert",
                 [ 'error' => $e->getMessage() ]
             );
+            $error = $e->getMessage();
+        } finally {
+            return $error;
         }
 
     }
@@ -336,11 +348,15 @@ class Alert
                     "sentTimestamp"    => time()
                 ]);
             }
+            $error = false;
         } catch ( \Throwable $e ) {
             $this->module->framework->log(
                 "Error sending user expiration alert to user rights holder",
                 [ 'error' => $e->getMessage() ]
             );
+            $error = $e->getMessage();
+        } finally {
+            return $error;
         }
     }
 

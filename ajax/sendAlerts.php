@@ -68,12 +68,15 @@ if ( $data['alertType'] === 'expiration' ) {
 }
 
 $module->framework->log('Sending alerts', [ 'data' => json_encode($data) ]);
-try {
-    $Alert = new Alert($module, $data);
-    $Alert->sendAlerts();
+$Alert = new Alert($module, $data);
+$error = $Alert->sendAlerts();
+if ( !$error ) {
     $module->framework->log('Sent alerts', [ 'data' => json_encode($data) ]);
-} catch ( \Throwable $e ) {
-    $module->framework->log('Error sending alerts: ', [ 'error' => $e->getMessage() ]);
+    http_response_code(200);
+} else {
+    $module->framework->log('Error sending alerts: ', [ 'error' => $error ]);
+    http_response_code(500);
+    $data['error'] = $error;
 }
 echo json_encode($data);
 exit();
