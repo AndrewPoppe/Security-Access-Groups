@@ -134,8 +134,8 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                                     class="fa-sharp fa-solid fa-download fa-fw mr-1 text-primary"></i>Download Import
                                 Template</a></li>
                     </ul>
-                    <i class="fa-solid fa-circle-info fa-lg align-self-center text-info" style="cursor:pointer;"
-                        onclick="const html=$('#infoContainer').html();
+                    <i class="fa-solid fa-circle-info fa-lg align-self-center text-info infoButton"
+                        style="cursor:pointer;" onclick="const html=$('#infoContainer').html();
                        Swal.fire({html: html, icon: 'info', showConfirmButton: false});"></i>
                 </div>
 
