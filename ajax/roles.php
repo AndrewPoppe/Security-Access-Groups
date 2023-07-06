@@ -8,7 +8,7 @@ if ( !$module->framework->getUser()->isSuperUser() ) {
     exit;
 }
 
-if ( $_SERVER["REQUEST_METHOD"] !== "POST" ) {
+if ( $_SERVER['REQUEST_METHOD'] !== 'POST' ) {
     http_response_code(405);
     exit;
 }
@@ -18,13 +18,13 @@ $allPermissions = $module->getDisplayTextForRights(true);
 
 $rolesForTable = [];
 foreach ( $roles as $index => $role ) {
-    $role["index"]       = $index;
-    $permissions         = json_decode($role["permissions"], true);
-    $role["permissions"] = [];
+    $role['index']       = $index;
+    $permissions         = json_decode($role['permissions'], true);
+    $role['permissions'] = [];
     foreach ( $allPermissions as $permission => $displayText ) {
-        $role["permissions"][$permission] = $permissions[$permission] ?? null;
+        $role['permissions'][$permission] = $permissions[$permission] ?? null;
     }
     $rolesForTable[] = $role;
 }
 
-echo json_encode([ "data" => $rolesForTable ]);
+echo json_encode([ 'data' => $rolesForTable ]);
