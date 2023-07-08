@@ -86,6 +86,6 @@ if ( $errors === false || $userExpired ) {
     require_once $scriptPath;
     ob_end_flush(); // End buffering and clean up
 } else {
-    echo json_encode($module->framework->escape([ 'error' => true, 'bad_rights' => [ "$username" => [ 'SAG' => $sag['role_name'], 'rights' => $badRights ] ], 'role' => $roleName ]));
+    echo json_encode($module->framework->escape([ 'error' => true, 'bad_rights' => [ "$username" => [ 'SAG' => $sag['sag_name'], 'rights' => $badRights ] ], 'role' => $roleName ]));
 }
 exit;

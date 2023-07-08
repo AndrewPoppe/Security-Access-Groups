@@ -9,44 +9,44 @@ if ( !$module->framework->getUser()->isSuperUser() ) {
     exit;
 }
 
-// We're submitting the form to add/edit the role
+// We're submitting the form to add/edit the SAG
 if ( $_SERVER['REQUEST_METHOD'] === 'POST' ) {
-    $data     = filter_input_array(INPUT_POST, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-    $roleId   = $data['role_id'] ?? $module->generateNewRoleId();
-    $roleName = $data['role_name_edit'];
-    $newRole  = $data['newRole'];
-    if ( $newRole == 1 ) {
-        $module->throttleSaveSag($roleId, $roleName, json_encode($data));
+    $data    = filter_input_array(INPUT_POST, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+    $sagId   = $data['sag_id'] ?? $module->generateNewSagId();
+    $sagName = $data['sag_name_edit'];
+    $newSag  = $data['newSag'];
+    if ( $newSag == 1 ) {
+        $module->throttleSaveSag($sagId, $sagName, json_encode($data));
     } else {
-        $module->throttleUpdateSag($roleId, $roleName, json_encode($data));
+        $module->throttleUpdateSag($sagId, $sagName, json_encode($data));
     }
-    echo $roleId;
+    echo $sagId;
     exit;
 }
 
-// We're asking for the add/edit role form contents
+// We're asking for the add/edit SAG form contents
 if ( $_SERVER['REQUEST_METHOD'] === 'GET' ) {
-    require_once $module->getSafePath('classes/RoleEditForm.php');
-    $newRole  = filter_input(INPUT_GET, 'newRole', FILTER_VALIDATE_BOOLEAN);
-    $roleId   = filter_input(INPUT_GET, 'role_id', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-    $roleName = filter_input(INPUT_GET, 'role_name', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+    require_once $module->getSafePath('classes/SagEditForm.php');
+    $newSag  = filter_input(INPUT_GET, 'newSag', FILTER_VALIDATE_BOOLEAN);
+    $sagId   = filter_input(INPUT_GET, 'sag_id', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+    $sagName = filter_input(INPUT_GET, 'sag_name', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 
-    if ( $newRole === true ) {
-        $rights  = $module->getDefaultRights();
-        $newRole = true;
+    if ( $newSag === true ) {
+        $rights = $module->getDefaultRights();
+        $newSag = true;
     } else {
-        $thisRole = $module->getSagRightsById($roleId);
+        $thisRole = $module->getSagRightsById($sagId);
         $rights   = json_decode($thisRole['permissions'], true);
-        $roleName = $thisRole['role_name'];
-        $newRole  = false;
+        $sagName  = $thisRole['sag_name'];
+        $newSag   = false;
     }
-    $roleEditForm = new RoleEditForm(
+    $SagEditForm = new SagEditForm(
         $module,
         $rights,
-        $newRole,
-        $roleName,
-        $roleId
+        $newSag,
+        $sagName,
+        $sagId
     );
-    $roleEditForm->getForm();
+    $SagEditForm->getForm();
     exit;
 }

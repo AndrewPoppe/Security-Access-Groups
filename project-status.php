@@ -882,9 +882,9 @@ $replaceSmartVariablesUrl = $module->framework->getUrl('ajax/replaceSmartVariabl
                 {
                     title: 'Security Access Group',
                     data: function (row, type, set, meta) {
-                        if (row.system_role) {
-                            return `<strong>${row.system_role_name}</strong> <span>(<span class="user-select-all">` +
-                                `${row.system_role}</span>)</span>`;
+                        if (row.sag) {
+                            return `<strong>${row.sag_name}</strong> <span>(<span class="user-select-all">` +
+                                `${row.sag}</span>)</span>`;
                         } else {
                             return `<span class="text-secondary">None</span>`;
                         }
