@@ -485,7 +485,6 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                 select.closest('td').attr('data-sag', newSag);
                 const rowIndex = dt.row(select.closest('tr')).index();
                 dt.cell(rowIndex, 4).data(newSag);
-                dt.ajax.reload();
             })
             .fail(function() {
                 color = "#ff3300";
@@ -1154,6 +1153,18 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
             })
     }
 
+    function hover() {
+        const thisNode = $(this);
+        const rowIdx = thisNode.attr('data-dt-row');
+        $("tr[data-dt-row='" + rowIdx + "'] td").addClass("highlight"); // shade only the hovered row
+    }
+
+    function dehover() {
+        const thisNode = $(this);
+        const rowIdx = thisNode.attr('data-dt-row');
+        $("tr[data-dt-row='" + rowIdx + "'] td").removeClass("highlight"); // shade only the hovered row
+    }
+
     $(document).ready(function() {
         const importFileElement = document.getElementById("importSagsFile");
         importFileElement.addEventListener("change", handleFiles, false);
@@ -1184,10 +1195,9 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
             },
             initComplete: function() {
                 $('#sagTableWrapper').show();
-                setTimeout(() => {
-                    $(this).DataTable().stateRestore();
-                    $(this).DataTable().columns.adjust().draw();
-                }, 0);
+                const table = this.api();
+
+
                 const theseSettingsString = localStorage.getItem('DataTables_sagOrder');
                 if (theseSettingsString) {
                     const theseSettings = JSON.parse(theseSettingsString);
@@ -1197,7 +1207,48 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                         table.cell(rowLoop, 0).data(desiredIndex);
                     });
                     table.order([0, 'asc']).draw();
-                };
+                } else {
+                    const order = table.column(2).data().toArray();
+                    localStorage.setItem('DataTables_sagOrder', JSON.stringify(order));
+                }
+
+                table.on('draw', function() {
+                    $('.dataTable tbody tr').each((i, row) => {
+                        row.onmouseenter = hover;
+                        row.onmouseleave = dehover;
+                    });
+                });
+
+                table.on('row-reordered', function(e, diff, edit) {
+                    setTimeout(() => {
+                        const order = table.column(2).data().toArray();
+                        localStorage.setItem('DataTables_sagOrder', JSON.stringify(
+                            order));
+                    }, 0);
+                });
+
+                table.rows().every(function() {
+                    const rowNode = this.node();
+                    const rowIndex = this.index();
+                    $(rowNode).attr('data-dt-row', rowIndex);
+                });
+
+                $('.dataTable tbody tr').each((i, row) => {
+                    row.onmouseenter = hover;
+                    row.onmouseleave = dehover;
+                });
+
+                table.on('row-reorder', function(e, diff, edit) {
+                    const data = table.rows().data();
+                    const newOrder = [];
+                    for (let i = 0; i < data.length; i++) {
+                        newOrder.push(data[i][0]);
+                    }
+                });
+                setTimeout(() => {
+                    table.stateRestore();
+                    table.columns.adjust().draw();
+                }, 0);
             },
 
             columns: [{
@@ -1635,62 +1686,6 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                 orderable: false
             }]
         });
-
-        table.on('draw', function() {
-            $('.dataTable tbody tr').each((i, row) => {
-                row.onmouseenter = hover;
-                row.onmouseleave = dehover;
-            });
-        });
-
-        table.on('row-reordered', function(e, diff, edit) {
-            setTimeout(() => {
-                const order = table.column(2).data().toArray();
-                localStorage.setItem('DataTables_sagOrder', JSON.stringify(order));
-            }, 0);
-        });
-
-        table.rows().every(function() {
-            const rowNode = this.node();
-            const rowIndex = this.index();
-            $(rowNode).attr('data-dt-row', rowIndex);
-        });
-
-        const theseSettingsString = localStorage.getItem('DataTables_sagOrder');
-        if (theseSettingsString) {
-            const theseSettings = JSON.parse(theseSettingsString);
-            table.rows().every(function(rowIdx, tableLoop, rowLoop) {
-                const thisSagId = table.cell(rowLoop, 2).data();
-                const desiredIndex = theseSettings.indexOf(thisSagId);
-                table.cell(rowLoop, 0).data(desiredIndex);
-            });
-            table.order([0, 'asc']).draw();
-        };
-
-        $('.dataTable tbody tr').each((i, row) => {
-            row.onmouseenter = hover;
-            row.onmouseleave = dehover;
-        });
-
-        table.on('row-reorder', function(e, diff, edit) {
-            const data = table.rows().data();
-            const newOrder = [];
-            for (let i = 0; i < data.length; i++) {
-                newOrder.push(data[i][0]);
-            }
-        });
-
-        function hover() {
-            const thisNode = $(this);
-            const rowIdx = thisNode.attr('data-dt-row');
-            $("tr[data-dt-row='" + rowIdx + "'] td").addClass("highlight"); // shade only the hovered row
-        }
-
-        function dehover() {
-            const thisNode = $(this);
-            const rowIdx = thisNode.attr('data-dt-row');
-            $("tr[data-dt-row='" + rowIdx + "'] td").removeClass("highlight"); // shade only the hovered row
-        }
 
         $('#newSagName').keyup(function(event) {
             if (event.which === 13) {

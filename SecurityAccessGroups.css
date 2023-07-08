@@ -158,6 +158,10 @@ div.dt-rowReorder-float-parent {
     cursor: grabbing !important;
 }
 
+body.dt-rowReorder-noOverflow {
+    cursor: grabbing !important;
+}
+
 select.sagSelect {
     width: 100%;
 }
