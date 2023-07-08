@@ -85,7 +85,7 @@ class RoleEditForm
                 <div style="text-align:center; margin: 15px 0;" class="fs14 alert $alertClass">
                     <i class="fa-solid fa-fw fa-user-tag"></i> $this->contextMessage
                 </div>
-                <form id="SUR_Role_Setting">
+                <form id="SAG_Setting">
                     <div class="hidden">
                         <input name="newRole" value="$this->newRole">
                     </div>
@@ -938,7 +938,7 @@ class RoleEditForm
             </form>
         </div>
         <div class="modal-footer">
-            <button id="SUR_Save" type="button"
+            <button id="SAG_Save" type="button"
                 class="btn $buttonClass">$label</button>
             <button id="SUR_Cancel" type="button" class="btn btn-secondary" data-bs-dismiss="modal"
                 data-dismiss="modal">Cancel
@@ -946,8 +946,8 @@ class RoleEditForm
         EOT;
         if ( !$this->newRole ) {
             echo <<<"EOT"
-            <button id="SUR_Copy" type="button" class="btn btn-info btn-sm">Copy role</button>
-            <button id="SUR_Delete" type="button" class="btn btn-danger btn-sm">Delete role</button>
+            <button id="SAG_Copy" type="button" class="btn btn-info btn-sm">Copy role</button>
+            <button id="SAG_Delete" type="button" class="btn btn-danger btn-sm">Delete role</button>
             EOT;
         }
         echo <<<"EOT"

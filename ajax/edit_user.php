@@ -25,8 +25,8 @@ if ( in_array($submitAction, [ 'delete_user', 'add_role', 'delete_role', 'copy_r
 
 if ( in_array($submitAction, [ 'add_user', 'edit_user' ]) ) {
     $acceptableRights = $module->getAcceptableRights($user);
-    $sagId            = $module->getUserSystemRole($user);
-    $sag              = $module->getSystemRoleRightsById($sagId);
+    $sagId            = $module->getUserSag($user);
+    $sag              = $module->getSagRightsById($sagId);
     $badRights        = $module->checkProposedRights($acceptableRights, $data);
     $currentRights    = $module->getCurrentRights($user, $pid);
     $requestedRights  = $module->filterPermissions($data);
@@ -102,14 +102,14 @@ if ( $submitAction === "edit_role" ) {
     if ( !isset($data["role_name"]) || $data["role_name"] == "" ) {
         exit;
     }
-    $role        = $data["user"];
-    $usersInRole = $module->getUsersInRole($pid, $role);
+    $sag         = $data["user"];
+    $usersInRole = $module->getUsersInRole($pid, $sag);
     $badRights   = [];
     foreach ( $usersInRole as $username ) {
         $acceptableRights = $module->getAcceptableRights($username);
         $theseBadRights   = $module->checkProposedRights($acceptableRights, $data);
-        $sagId            = $module->getUserSystemRole($username);
-        $sag              = $module->getSystemRoleRightsById($sagId);
+        $sagId            = $module->getUserSag($username);
+        $sag              = $module->getSagRightsById($sagId);
 
         // We ignore expired users
         $userExpired = $module->isUserExpired($username, $module->getProjectId());
@@ -123,12 +123,12 @@ if ( $submitAction === "edit_role" ) {
     }
     if ( empty($badRights) ) {
         $requestedRights = $module->filterPermissions($data);
-        $module->log("Editing Role", [ "role" => $role, "requested_rights" => json_encode($requestedRights) ]);
+        $module->log("Editing Role", [ "role" => $sag, "requested_rights" => json_encode($requestedRights) ]);
         $actionInfo = [
             "action"        => $submitAction,
             "rights"        => $requestedRights,
-            "currentRights" => $module->getRoleRightsRaw($role),
-            "role"          => $role,
+            "currentRights" => $module->getRoleRightsRaw($sag),
+            "role"          => $sag,
             "project_id"    => $pid
         ];
 

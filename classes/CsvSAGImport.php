@@ -67,7 +67,7 @@ class CsvSAGImport
     private function checkRoleId($roleId)
     {
         $roleId = trim($roleId);
-        if ( empty($roleId) || !$this->module->systemRoleExists($roleId) ) {
+        if ( empty($roleId) || !$this->module->sagExists($roleId) ) {
             $roleId = '[new]';
         }
         return $roleId;
@@ -133,9 +133,9 @@ class CsvSAGImport
         foreach ( $this->cleanContents as $row ) {
             $thisResult             = [];
             $id                     = $row['role_id'];
-            $thisResult['existing'] = $this->module->systemRoleExists($id);
+            $thisResult['existing'] = $this->module->sagExists($id);
             if ( $thisResult['existing'] ) {
-                $currentRole                = $this->module->getSystemRoleRightsById($id);
+                $currentRole                = $this->module->getSagRightsById($id);
                 $currentRole['permissions'] = json_decode($currentRole['permissions'], true);
             } else {
                 $currentRole = $row;
@@ -243,11 +243,11 @@ class CsvSAGImport
                 if ( empty($roleName) ) {
                     continue;
                 }
-                if ( $this->module->systemRoleExists($role) ) {
-                    $this->module->updateSystemRole($role, $roleName, json_encode($row['permissions']));
+                if ( $this->module->sagExists($role) ) {
+                    $this->module->updateSag($role, $roleName, json_encode($row['permissions']));
                 } else {
                     $role = $this->module->generateNewRoleId();
-                    $this->module->saveSystemRole($role, $roleName, json_encode($row['permissions']));
+                    $this->module->saveSag($role, $roleName, json_encode($row['permissions']));
                 }
             }
             $this->module->log('Imported SAGs from CSV');

@@ -16,15 +16,15 @@ use ExternalModules\Framework;
 class SecurityAccessGroups extends AbstractExternalModule
 {
 
-    public string $defaultRoleId = "role_Default";
-    public string $defaultRoleName = "Default Role";
+    public string $defaultSagId = "sag_Default";
+    public string $defaultSagName = "Default SAG";
     private array $defaultRights = [];
 
 
     public function __construct()
     {
         parent::__construct();
-        $this->defaultRights = $this->getSystemRoleRightsById($this->defaultRoleId);
+        $this->defaultRights = $this->getSagRightsById($this->defaultSagId);
     }
 
     public function redcap_every_page_before_render()
@@ -158,12 +158,12 @@ class SecurityAccessGroups extends AbstractExternalModule
 <script>
 $(function() {
 
-    <?php if ( isset($_SESSION['SUR_imported']) ) { ?>
-    window.import_type = '<?= $_SESSION['SUR_imported'] ?>';
-    window.import_errors = JSON.parse('<?= $_SESSION['SUR_bad_rights'] ?>');
+    <?php if ( isset($_SESSION['SAG_imported']) ) { ?>
+    window.import_type = '<?= $_SESSION['SAG_imported'] ?>';
+    window.import_errors = JSON.parse('<?= $_SESSION['SAG_bad_rights'] ?>');
     <?php
-                    unset($_SESSION['SUR_imported']);
-                    unset($_SESSION['SUR_bad_rights']);
+                    unset($_SESSION['SAG_imported']);
+                    unset($_SESSION['SAG_bad_rights']);
                 } ?>
 
     function createRightsTable(bad_rights) {
@@ -441,7 +441,7 @@ $(function() {
         on rights.role_id = roles.role_id
         left join redcap_user_information info
         on rights.username = info.username
-        LEFT JOIN redcap_external_module_settings em ON em.key = concat(rights.username,\'-role\')
+        LEFT JOIN redcap_external_module_settings em ON em.key = concat(rights.username,\'-sag\')
         where rights.project_id = ?';
         try {
             $result = $this->framework->query($sql, [ $projectId ]);
@@ -458,7 +458,7 @@ $(function() {
     public function getUsersWithBadRights($projectId)
     {
         $users     = $this->getBasicProjectUsers($projectId);
-        $roles     = $this->getAllSystemRoles(true);
+        $roles     = $this->getAllSags(true);
         $badRights = [];
         foreach ( $users as $user ) {
             $expiration            = $user["expiration"];
@@ -467,7 +467,7 @@ $(function() {
             $acceptableRights      = $roles[$user["system_role"]]["permissions"];
             $currentRights         = $this->getCurrentRightsFormatted($username, $projectId);
             $bad                   = $this->checkProposedRights($acceptableRights, $currentRights);
-            $systemRoleName        = $roles[$user["system_role"]]["role_name"];
+            $sagName               = $roles[$user["system_role"]]["role_name"];
             $projectRoleUniqueName = $user["unique_role_name"];
             $projectRoleName       = $user["role_name"];
             $badRights[]           = [
@@ -477,7 +477,7 @@ $(function() {
                 "expiration"        => $expiration == "" ? "never" : $expiration,
                 "isExpired"         => $isExpired,
                 "system_role"       => $user["system_role"],
-                "system_role_name"  => $systemRoleName,
+                "system_role_name"  => $sagName,
                 "project_role"      => $projectRoleUniqueName,
                 "project_role_name" => $projectRoleName,
                 "acceptable"        => $acceptableRights,
@@ -491,19 +491,19 @@ $(function() {
     public function getUsersWithBadRights2($projectId)
     {
         $users            = $this->getBasicProjectUsers($projectId);
-        $roles            = $this->getAllSystemRoles(true);
+        $roles            = $this->getAllSags(true);
         $allCurrentRights = $this->getAllCurrentRights($projectId);
         $badRights        = [];
         foreach ( $users as $user ) {
             $expiration            = $user['expiration'];
             $isExpired             = $expiration != '' && strtotime($expiration) < strtotime('today');
             $username              = $user['username'];
-            $systemRole            = $user['system_role'] ?? $this->defaultRoleId;
-            $systemRole            = array_key_exists($systemRole, $roles) ? $systemRole : $this->defaultRoleId;
-            $acceptableRights      = $roles[$systemRole]['permissions'];
+            $sag                   = $user['system_role'] ?? $this->defaultSagId;
+            $sag                   = array_key_exists($sag, $roles) ? $sag : $this->defaultSagId;
+            $acceptableRights      = $roles[$sag]['permissions'];
             $currentRights         = $allCurrentRights[$username];
             $bad                   = $this->checkProposedRights2($acceptableRights, $currentRights);
-            $systemRoleName        = $roles[$systemRole]['role_name'];
+            $sagName               = $roles[$sag]['role_name'];
             $projectRoleUniqueName = $user['unique_role_name'];
             $projectRoleName       = $user['role_name'];
             $badRights[]           = [
@@ -512,8 +512,8 @@ $(function() {
                 'email'             => $user['user_email'],
                 'expiration'        => $expiration == '' ? 'never' : $expiration,
                 'isExpired'         => $isExpired,
-                'system_role'       => $systemRole,
-                'system_role_name'  => $systemRoleName,
+                'system_role'       => $sag,
+                'system_role_name'  => $sagName,
                 'project_role'      => $projectRoleUniqueName,
                 'project_role_name' => $projectRoleName,
                 'acceptable'        => $acceptableRights,
@@ -706,7 +706,7 @@ $(function() {
         }
     }
 
-    public function getAllUserInfo($includeSystemRole = false) : ?array
+    public function getAllUserInfo($includeSag = false) : ?array
     {
         $sql = "SELECT username
         , user_email
@@ -725,12 +725,12 @@ $(function() {
         , user_expiration
         , user_sponsor
         , allow_create_db";
-        if ( $includeSystemRole ) {
+        if ( $includeSag ) {
             $sql .= ", em.value as system_role";
         }
         $sql .= " FROM redcap_user_information u";
-        if ( $includeSystemRole ) {
-            $sql .= " LEFT JOIN redcap_external_module_settings em ON em.key = concat(u.username,'-role')";
+        if ( $includeSag ) {
+            $sql .= " LEFT JOIN redcap_external_module_settings em ON em.key = concat(u.username,'-sag')";
         }
         try {
             $result   = $this->framework->query($sql, []);
@@ -759,9 +759,9 @@ $(function() {
 
     public function getAcceptableRights(string $username)
     {
-        $systemRoleId = $this->getUserSystemRole($username);
-        $systemRole   = $this->getSystemRoleRightsById($systemRoleId);
-        return json_decode($systemRole["permissions"], true);
+        $sagId = $this->getUserSag($username);
+        $sag   = $this->getSagRightsById($sagId);
+        return json_decode($sag["permissions"], true);
     }
 
     // E.g., from ["export-form-form1"=>"1", "export-form-form2"=>"1"] to "[form1,1][form2,1]"
@@ -908,19 +908,19 @@ $(function() {
         return strrev(preg_replace("/^.*v_/", "", strrev($this->framework->getModuleDirectoryName()), 1));
     }
 
-    private function setUserSystemRole($username, $roleId)
+    private function setUserSag($username, $roleId)
     {
-        $setting = $username . "-role";
+        $setting = $username . "-sag";
         $this->setSystemSetting($setting, $roleId);
     }
 
-    public function getUserSystemRole($username)
+    public function getUserSag($username)
     {
-        $setting = $username . "-role";
+        $setting = $username . "-sag";
         $role    = $this->getSystemSetting($setting);
-        if ( empty($role) || !$this->systemRoleExists($role) ) {
-            $role = $this->defaultRoleId;
-            $this->setUserSystemRole($username, $role);
+        if ( empty($role) || !$this->sagExists($role) ) {
+            $role = $this->defaultSagId;
+            $this->setUserSag($username, $role);
         }
         return $role;
     }
@@ -956,12 +956,12 @@ $(function() {
         return json_encode($rights);
     }
 
-    public function throttleSaveSystemRole(string $roleId, string $roleName, string $permissions)
+    public function throttleSaveSag(string $roleId, string $roleName, string $permissions)
     {
         if ( !$this->throttle("message = ?", 'role', 3, 1) ) {
-            $this->saveSystemRole($roleId, $roleName, $permissions);
+            $this->saveSag($roleId, $roleName, $permissions);
         } else {
-            $this->log('saveSystemRole Throttled', [
+            $this->log('saveSag Throttled', [
                 "role_id"   => $roleId,
                 "role_name" => $roleName,
                 "user"      => $this->getUser()->getUsername()
@@ -976,7 +976,7 @@ $(function() {
      *
      * @return [type]
      */
-    public function saveSystemRole(string $roleId, string $roleName, string $permissions)
+    public function saveSag(string $roleId, string $roleName, string $permissions)
     {
         try {
             $permissionsConverted = $this->convertPermissions($permissions);
@@ -1002,16 +1002,16 @@ $(function() {
         }
     }
 
-    public function throttleUpdateSystemRole(string $roleId, string $roleName, string $permissions)
+    public function throttleUpdateSag(string $roleId, string $roleName, string $permissions)
     {
-        if ( !$this->throttle("message = 'updated system role'", [], 3, 1) ) {
-            $this->updateSystemRole($roleId, $roleName, $permissions);
+        if ( !$this->throttle("message = 'Updated SAG'", [], 3, 1) ) {
+            $this->updateSag($roleId, $roleName, $permissions);
         } else {
-            $this->log('updateSystemRole Throttled', [ "role_id" => $roleId, "role_name" => $roleName, "user" => $this->getUser()->getUsername() ]);
+            $this->log('updateSag Throttled', [ "role_id" => $roleId, "role_name" => $roleName, "user" => $this->getUser()->getUsername() ]);
         }
     }
 
-    public function updateSystemRole(string $roleId, string $roleName, string $permissions)
+    public function updateSag(string $roleId, string $roleName, string $permissions)
     {
         try {
             $permissionsConverted = $this->convertPermissions($permissions);
@@ -1044,16 +1044,16 @@ $(function() {
         }
     }
 
-    public function throttleDeleteSystemRole($roleId)
+    public function throttleDeleteSag($roleId)
     {
-        if ( !$this->throttle("message = 'deleted system role'", [], 2, 1) ) {
-            $this->deleteSystemRole($roleId);
+        if ( !$this->throttle("message = 'Deleted SAG'", [], 2, 1) ) {
+            $this->deleteSag($roleId);
         } else {
-            $this->log('deleteSystemRole Throttled', [ "role_id" => $roleId, "user" => $this->getUser()->getUsername() ]);
+            $this->log('deleteSag Throttled', [ "role_id" => $roleId, "user" => $this->getUser()->getUsername() ]);
         }
     }
 
-    private function deleteSystemRole($roleId)
+    private function deleteSag($roleId)
     {
         try {
             $result = $this->removeLogs("message = 'role' AND role_id = ? AND (project_id IS NULL OR project_id IS NOT NULL) ", [ $roleId ]);
@@ -1067,7 +1067,7 @@ $(function() {
         }
     }
 
-    public function getAllSystemRoles($parsePermissions = false)
+    public function getAllSags($parsePermissions = false)
     {
         $sql    = 'SELECT MAX(log_id) AS \'log_id\' WHERE message = \'role\' AND (project_id IS NULL OR project_id IS NOT NULL) GROUP BY role_id';
         $result = $this->framework->queryLogs($sql, []);
@@ -1088,44 +1088,44 @@ $(function() {
         return $roles;
     }
 
-    private function setDefaultSystemRole()
+    private function setDefaultSag()
     {
         $rights                   = $this->getDefaultRights();
-        $rights['role_id']        = $this->defaultRoleId;
-        $rights['role_name_edit'] = $this->defaultRoleName;
+        $rights['role_id']        = $this->defaultSagId;
+        $rights['role_name_edit'] = $this->defaultSagName;
         $rights['dataViewing']    = '3';
         $rights['dataExport']     = '3';
-        $this->saveSystemRole($this->defaultRoleId, $this->defaultRoleName, json_encode($rights));
+        $this->saveSag($this->defaultSagId, $this->defaultSagName, json_encode($rights));
         return $rights;
     }
 
-    public function getSystemRoleRightsById($roleId)
+    public function getSagRightsById($roleId)
     {
         if ( empty($roleId) ) {
-            $roleId = $this->defaultRoleId;
+            $roleId = $this->defaultSagId;
         }
         $sql    = "SELECT role_id, role_name, permissions WHERE message = 'role' AND role_id = ? AND (project_id IS NULL OR project_id IS NOT NULL) ORDER BY log_id DESC LIMIT 1";
         $result = $this->framework->queryLogs($sql, [ $roleId ]);
         $rights = $result->fetch_assoc();
         if ( empty($rights) ) {
-            $roleId2 = $this->defaultRoleId;
+            $roleId2 = $this->defaultSagId;
             $result2 = $this->framework->queryLogs($sql, [ $roleId2 ]);
             $rights  = $result2->fetch_assoc();
 
             if ( empty($rights) ) {
-                $rights = $this->setDefaultSystemRole();
+                $rights = $this->setDefaultSag();
             }
         }
         return $rights;
     }
 
-    public function systemRoleExists($roleId)
+    public function sagExists($sagId)
     {
-        if ( empty($roleId) ) {
+        if ( empty($sagId) ) {
             return false;
         }
-        foreach ( $this->getAllSystemRoles() as $role ) {
-            if ( $roleId == $role["role_id"] ) {
+        foreach ( $this->getAllSags() as $role ) {
+            if ( $sagId == $role["role_id"] ) {
                 return true;
             }
         }
@@ -1134,9 +1134,9 @@ $(function() {
 
     public function generateNewRoleId()
     {
-        $newRoleId = "role_" . substr(md5(uniqid()), 0, 13);
+        $newRoleId = "sag_" . substr(md5(uniqid()), 0, 13);
 
-        if ( $this->systemRoleExists($newRoleId) ) {
+        if ( $this->sagExists($newRoleId) ) {
             return $this->generateNewRoleId();
         } else {
             return $newRoleId;

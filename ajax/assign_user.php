@@ -14,8 +14,8 @@ if ( $_SERVER['REQUEST_METHOD'] !== 'POST' ) {
 $data     = filter_input_array(INPUT_POST, FILTER_SANITIZE_ENCODED);
 $username = $data['username'];
 $roleId   = $data['role_id'];
-$sagId    = $module->getUserSystemRole($username);
-$sag      = $module->getSystemRoleRightsById($sagId);
+$sagId    = $module->getUserSag($username);
+$sag      = $module->getSagRightsById($sagId);
 
 
 // We don't care if the user is being removed from a role.

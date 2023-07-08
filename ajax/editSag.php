@@ -16,9 +16,9 @@ if ( $_SERVER['REQUEST_METHOD'] === 'POST' ) {
     $roleName = $data['role_name_edit'];
     $newRole  = $data['newRole'];
     if ( $newRole == 1 ) {
-        $module->throttleSaveSystemRole($roleId, $roleName, json_encode($data));
+        $module->throttleSaveSag($roleId, $roleName, json_encode($data));
     } else {
-        $module->throttleUpdateSystemRole($roleId, $roleName, json_encode($data));
+        $module->throttleUpdateSag($roleId, $roleName, json_encode($data));
     }
     echo $roleId;
     exit;
@@ -35,7 +35,7 @@ if ( $_SERVER['REQUEST_METHOD'] === 'GET' ) {
         $rights  = $module->getDefaultRights();
         $newRole = true;
     } else {
-        $thisRole = $module->getSystemRoleRightsById($roleId);
+        $thisRole = $module->getSagRightsById($roleId);
         $rights   = json_decode($thisRole['permissions'], true);
         $roleName = $thisRole['role_name'];
         $newRole  = false;

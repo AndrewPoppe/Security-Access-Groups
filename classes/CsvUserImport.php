@@ -57,7 +57,7 @@ class CsvUserImport
             $this->errorMessages[] = 'One or more role id was invalid.';
             $this->rowValid        = false;
         }
-        if ( !$this->module->systemRoleExists($role) ) {
+        if ( !$this->module->sagExists($role) ) {
             $this->badRoles[] = htmlspecialchars($role, ENT_QUOTES);
             $this->rowValid   = false;
         }
@@ -109,10 +109,10 @@ class CsvUserImport
     private function getAssignments()
     {
         foreach ( $this->cleanContents as $row ) {
-            $currentRole       = $this->module->getUserSystemRole($row['user']);
+            $currentRole       = $this->module->getUserSag($row['user']);
             $userInfo          = $this->module->getUserInfo($row['user']);
-            $requestedRoleInfo = $this->module->getSystemRoleRightsById($row['role']);
-            $currentRoleInfo   = $this->module->getSystemRoleRightsById($currentRole);
+            $requestedRoleInfo = $this->module->getSagRightsById($row['role']);
+            $currentRoleInfo   = $this->module->getSagRightsById($currentRole);
 
             $result = [
                 'username'    => $userInfo['username'],
