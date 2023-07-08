@@ -124,25 +124,25 @@ table#SUR-System-Table a.user-link {
     text-decoration: underline;
 }
 
-table.roleTable tr.odd,
-table.roleTable tr.odd>td.dtfc-fixed-left {
+table.sagTable tr.odd,
+table.sagTable tr.odd>td.dtfc-fixed-left {
     background-color: white !important;
 }
 
-table.roleTable tr.even,
-table.roleTable tr.even .dtfc-fixed-left {
+table.sagTable tr.even,
+table.sagTable tr.even .dtfc-fixed-left {
     background-color: #efefef !important;
 }
 
-table.roleTable thead tr,
-table.roleTable thead th.dtfc-fixed-left {
+table.sagTable thead tr,
+table.sagTable thead th.dtfc-fixed-left {
     background-color: #ececec;
 }
 
-table.roleTable tr.odd td.highlight,
-table.roleTable tr.odd>td.dtfc-fixed-left.highlight,
-table.roleTable tr.even td.highlight,
-table.roleTable tr.even>td.dtfc-fixed-left.highlight {
+table.sagTable tr.odd td.highlight,
+table.sagTable tr.odd>td.dtfc-fixed-left.highlight,
+table.sagTable tr.even td.highlight,
+table.sagTable tr.even>td.dtfc-fixed-left.highlight {
     background-color: #d9ebf5 !important;
 }
 
@@ -158,39 +158,43 @@ div.dt-rowReorder-float-parent {
     cursor: grabbing !important;
 }
 
-select.roleSelect {
+body.dt-rowReorder-noOverflow {
+    cursor: grabbing !important;
+}
+
+select.sagSelect {
     width: 100%;
 }
 
-form#SUR_Role_Setting {
+form#SAG_Setting {
     font-family: "Atkinson Hyperlegible", sans-serif !important;
 }
 
-form#SUR_Role_Setting div.SUR-form-row {
+form#SAG_Setting div.SUR-form-row {
     margin: 5px -5px;
 }
 
-form#SUR_Role_Setting hr {
+form#SAG_Setting hr {
     margin: 0.5rem 0;
 }
 
-form#SUR_Role_Setting .section-header {
+form#SAG_Setting .section-header {
     color: #A00000;
     font-size: 11px;
 }
 
-form#SUR_Role_Setting .extra-text {
+form#SAG_Setting .extra-text {
     margin-left: 1.5rem;
     font-size: 11px;
     color: #777;
 }
 
-a.SUR_roleLink {
+a.SagLink {
     font-weight: bold;
     color: #0000D0;
 }
 
-a.SUR_roleLink:hover {
+a.SagLink:hover {
     text-decoration: underline;
     cursor: pointer;
 }
@@ -207,25 +211,25 @@ div#pagecontainer {
     margin-top: .3rem !important;
 }
 
-div#roleTableWrapper {
+div#sagTableWrapper {
     border-top: 1px solid rgba(0, 0, 0, 0.30);
     border-right: 1px solid rgba(0, 0, 0, 0.30);
     border: 1px solid rgba(0, 0, 0, 0.30);
 }
 
-table.roleTable thead th {
+table.sagTable thead th {
     border-right: solid 1px rgba(0, 0, 0, 0.15);
 }
 
-div#roleTableWrapper div.dataTables_wrapper.no-footer .dataTables_scrollBody {
+div#sagTableWrapper div.dataTables_wrapper.no-footer .dataTables_scrollBody {
     border-bottom: none !important;
 }
 
-table.roleTable tbody td.dtfc-fixed-left {
+table.sagTable tbody td.dtfc-fixed-left {
     border-left: none !important;
 }
 
-table.roleTable tbody td:last-child:not(.dtfc-fixed-left) {
+table.sagTable tbody td:last-child:not(.dtfc-fixed-left) {
     border-right: none;
 }
 
@@ -353,7 +357,7 @@ a.dropdown-item {
     padding: .25rem 1.5rem .25rem 0.5rem;
 }
 
-td.role-id-column {
+td.sag-id-column {
     font-size: small;
     color: #222
 }

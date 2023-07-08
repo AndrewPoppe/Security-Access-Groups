@@ -8,7 +8,7 @@ class CsvUserImport
     private $module;
     public $csvContents;
     public $cleanContents;
-    public $badRoles = [];
+    public $badSags = [];
     public $badUsers = [];
     public $errorMessages = [];
     public $assignments = [];
@@ -50,18 +50,18 @@ class CsvUserImport
         return $userInfo;
     }
 
-    private function checkRole($role)
+    private function checkSag($sag)
     {
-        $role = trim($role);
-        if ( empty($role) ) {
-            $this->errorMessages[] = 'One or more role id was invalid.';
+        $sag = trim($sag);
+        if ( empty($sag) ) {
+            $this->errorMessages[] = 'One or more SAG id was invalid.';
             $this->rowValid        = false;
         }
-        if ( !$this->module->systemRoleExists($role) ) {
-            $this->badRoles[] = htmlspecialchars($role, ENT_QUOTES);
-            $this->rowValid   = false;
+        if ( !$this->module->sagExists($sag) ) {
+            $this->badSags[] = htmlspecialchars($sag, ENT_QUOTES);
+            $this->rowValid  = false;
         }
-        return $role;
+        return $sag;
     }
 
     public function contentsValid()
@@ -69,9 +69,9 @@ class CsvUserImport
         $header = $this->csvContents[0];
 
         $usernameIndex = array_search('username', $header, true);
-        $roleIdIndex   = array_search('role_id', $header, true);
-        if ( $usernameIndex === false || $roleIdIndex === false ) {
-            $this->errorMessages[] = 'Input file did not contain \'username\' and/or \'role_id\' columns.';
+        $sagIdIndex    = array_search('sag_id', $header, true);
+        if ( $usernameIndex === false || $sagIdIndex === false ) {
+            $this->errorMessages[] = 'Input file did not contain \'username\' and/or \'sag_id\' columns.';
             return false;
         }
 
@@ -83,22 +83,22 @@ class CsvUserImport
             }
             $thisUsername = $this->checkUsername($row[$usernameIndex]);
             $this->checkUser($thisUsername);
-            $thisRole = $this->checkRole($row[$roleIdIndex]);
+            $thisSag = $this->checkSag($row[$sagIdIndex]);
 
             if ( !$this->rowValid ) {
                 $this->valid = false;
             } else {
-                $this->cleanContents[] = [ 'user' => $thisUsername, 'role' => $thisRole ];
+                $this->cleanContents[] = [ 'user' => $thisUsername, 'sag' => $thisSag ];
             }
         }
 
-        if ( !empty($this->badUsers) || !empty($this->badRoles) ) {
-            $this->errorMessages[] = 'The following users and/or roles do not exist.';
+        if ( !empty($this->badUsers) || !empty($this->badSags) ) {
+            $this->errorMessages[] = 'The following users and/or SAGs do not exist.';
             $this->valid           = false;
         }
 
         if ( empty($this->cleanContents) ) {
-            $this->errorMessages[] = 'No valid user role assignments were present in the import file.';
+            $this->errorMessages[] = 'No valid SAG assignments were present in the import file.';
             $this->valid           = false;
         }
 
@@ -109,20 +109,20 @@ class CsvUserImport
     private function getAssignments()
     {
         foreach ( $this->cleanContents as $row ) {
-            $currentRole       = $this->module->getUserSystemRole($row['user']);
-            $userInfo          = $this->module->getUserInfo($row['user']);
-            $requestedRoleInfo = $this->module->getSystemRoleRightsById($row['role']);
-            $currentRoleInfo   = $this->module->getSystemRoleRightsById($currentRole);
+            $currentSag       = $this->module->getUserSag($row['user']);
+            $userInfo         = $this->module->getUserInfo($row['user']);
+            $requestedSagInfo = $this->module->getSagRightsById($row['sag']);
+            $currentSagInfo   = $this->module->getSagRightsById($currentSag);
 
             $result = [
-                'username'    => $userInfo['username'],
-                'name'        => $userInfo['user_firstname'] . ' ' . $userInfo['user_lastname'],
-                'currentRole' => '<strong>' . $currentRoleInfo['role_name'] . '</strong> (' . $currentRoleInfo['role_id'] . ')'
+                'username'   => $userInfo['username'],
+                'name'       => $userInfo['user_firstname'] . ' ' . $userInfo['user_lastname'],
+                'currentSag' => '<strong>' . $currentSagInfo['sag_name'] . '</strong> (' . $currentSagInfo['sag_id'] . ')'
             ];
 
-            if ( $currentRole !== $row['role'] ) {
-                $result['newRoleId'] = $requestedRoleInfo['role_id'];
-                $result['newRole']   = '<strong>' . $requestedRoleInfo['role_name'] . '</strong> (' . $requestedRoleInfo['role_id'] . ')';
+            if ( $currentSag !== $row['sag'] ) {
+                $result['newSagId'] = $requestedSagInfo['sag_id'];
+                $result['newSag']   = '<strong>' . $requestedSagInfo['sag_name'] . '</strong> (' . $requestedSagInfo['sag_id'] . ')';
             }
 
             $this->assignments[] = $result;
@@ -136,19 +136,19 @@ class CsvUserImport
             <div class="modal-lg modal-dialog modal-dialog-scrollable">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">Confirm role assignments</h5>
+                        <h5 class="modal-title">Confirm SAG assignments</h5>
                         <button type="button" class="btn-close align-self-center" data-bs-dismiss="modal" data-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
                     <div class="container mb-4 w-90" style="font-size:larger;">Examine the table of proposed changes below to verify it is correct.
-                    Only users in highlighted rows will be affected, and for those users the "Role"
-                    column will show both the <span class="text-primary font-weight-bold"">proposed role</span> as well as the <span class="text-danger font-weight-bold"">current role</span>.</div>
+                    Only users in highlighted rows will be affected, and for those users the "SAG"
+                    column will show both the <span class="text-primary font-weight-bold"">proposed SAG</span> as well as the <span class="text-danger font-weight-bold"">current SAG</span>.</div>
                     <table class="table table-bordered">
                         <thead class="thead-dark">
                             <tr>
                                 <th>Username</th>
                                 <th>Name</th>
-                                <th>Role</th>
+                                <th>SAG</th>
                             </tr>
                         </thead>
                         <tbody>';
@@ -156,18 +156,18 @@ class CsvUserImport
         foreach ( $this->assignments as $row ) {
             $rowClass  = 'text-secondary';
             $cellClass = '';
-            if ( isset($row['newRole']) ) {
+            if ( isset($row['newSag']) ) {
                 $nothingToDo = false;
                 $rowClass    = 'table-warning';
                 $cellClass   = 'font-weight-bold';
-                $roleText    = '<span>New: </span><span class="text-primary">' . $row["newRole"] . '</span><br><span>Current: </span><span class="text-danger">' . $row["currentRole"] . '</span>';
+                $sagText     = '<span>New: </span><span class="text-primary">' . $row["newSag"] . '</span><br><span>Current: </span><span class="text-danger">' . $row["currentSag"] . '</span>';
             } else {
-                $roleText = '<span>' . $row['currentRole'] . '</span>';
+                $sagText = '<span>' . $row['currentSag'] . '</span>';
             }
             $html .= '<tr class="' . $rowClass . '">
                 <td class="' . $cellClass . ' align-middle">' . $row["username"] . '</td>
                 <td class="' . $cellClass . ' align-middle">' . $row["name"] . '</td>
-                <td class="align-middle">' . $roleText . '</td>
+                <td class="align-middle">' . $sagText . '</td>
             </tr>';
         }
 
@@ -191,17 +191,17 @@ class CsvUserImport
         try {
             foreach ( $this->assignments as $row ) {
                 $username = $row['username'];
-                $role     = $row['newRoleId'];
-                if ( empty($role) ) {
+                $sag      = $row['newSagId'];
+                if ( empty($sag) ) {
                     continue;
                 }
-                $setting = $username . '-role';
-                $this->module->setSystemSetting($setting, $role);
+                $setting = $username . '-sag';
+                $this->module->setSystemSetting($setting, $sag);
             }
             $this->module->log('Imported SAG assignments', [ 'assignments' => json_encode($this->assignments) ]);
             $success = true;
         } catch ( \Throwable $e ) {
-            $this->module->log('Error importing role assignments', [ 'error' => $e->getMessage() ]);
+            $this->module->log('Error importing SAG assignments', [ 'error' => $e->getMessage() ]);
         } finally {
             return $success;
         }

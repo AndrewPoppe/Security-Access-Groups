@@ -27,7 +27,7 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
 <h4 style='color:#900; margin-top: 0 0 10px;'>
     <i class='fa-solid fa-users-between-lines'></i>&nbsp;<span>Security Access Groups</span>
 </h4>
-<div class="SUR_Container">
+<div class="SAG_Container">
     <div id="sub-nav" class="d-none d-sm-block mr-4 mb-0 ml-0">
         <ul>
             <li class="<?= $tab === "userlist" ? "active" : "" ?>">
@@ -37,11 +37,11 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                     Users
                 </a>
             </li>
-            <li class="<?= $tab === "roles" ? "active" : "" ?>">
-                <a href="<?= $module->framework->getUrl('system-settings.php?tab=roles') ?>"
+            <li class="<?= $tab === "sags" ? "active" : "" ?>">
+                <a href="<?= $module->framework->getUrl('system-settings.php?tab=sags') ?>"
                     style="font-size:13px;color:#393733;padding:7px 9px;">
                     <i class="fa-solid fa-user-tag"></i>
-                    Roles
+                    Security Access Groups
                 </a>
             </li>
         </ul>
@@ -49,7 +49,7 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
     <div class="clear"></div>
 
     <?php if ( $tab == "userlist" ) {
-        $roles = $module->getAllSystemRoles();
+        $sags = $module->getAllSags();
         ?>
 
     <p style='margin:20px 0;max-width:1000px;'>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc velit
@@ -93,15 +93,15 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
             <thead>
                 <tr>
                     <th>username</th>
-                    <th>role_id</th>
+                    <th>sag_id</th>
                 </tr>
             </thead>
             <tbody>
-                <?php foreach ( $roles as $index => $role ) {
+                <?php foreach ( $sags as $index => $sag ) {
                         echo "<tr><td>example_user_",
                             (intval($index) + 1),
                             "</td><td>",
-                            \REDCap::escapeHtml($role["role_id"]),
+                            \REDCap::escapeHtml($sag["sag_id"]),
                             "</td></tr>";
                     } ?>
             </tbody>
@@ -147,8 +147,8 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                     <th data-id="username" class="py-3">Username</th>
                     <th data-id="name" class="py-3">Name</th>
                     <th data-id="email" class="py-3">Email</th>
-                    <th data-id="role" class="py-3">Role</th>
-                    <th data-id="role_id" class="py-3">Role Id</th>
+                    <th data-id="sag" class="py-3">SAG Name</th>
+                    <th data-id="sag_id" class="py-3">SAG ID</th>
                 </tr>
             </thead>
             <tbody>
@@ -157,9 +157,9 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
     </div>
 
     <script>
-    window.system_roles = {
-        <?php foreach ( $roles as $role ) {
-                    echo "'" . $role["role_id"] . "': '" . $role["role_name"] . "',";
+    window.sags = {
+        <?php foreach ( $sags as $sag ) {
+                    echo "'" . $sag["sag_id"] . "': '" . $sag["sag_name"] . "',";
                 } ?>
     };
 
@@ -184,7 +184,7 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
     function toggleEditMode(event) {
         const button = $('button.editUsersButton');
         const editing = !$(button).data('editing');
-        $('.roleSelect').attr('disabled', !editing);
+        $('.sagSelect').attr('disabled', !editing);
         $(button).data('editing', editing);
         let style = 'none';
         if (editing) {
@@ -197,7 +197,7 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
             $(button).removeClass('btn-outline-danger');
             style = 'user-select:all; cursor: text; margin-left: 1px; margin-right: 1px;';
         }
-        $('.roleSelect').select2({
+        $('.sagSelect').select2({
             minimumResultsForSearch: 20,
             templateSelection: function(selection) {
                 return $(
@@ -246,7 +246,7 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
         const separator = ',';
         const extension = '.csv';
         const reBoundary = new RegExp(boundary, 'g');
-        const filename = 'SystemRoles_Users_' + (useFilter ? 'FILTERED_' : '') + formatNow() + extension;
+        const filename = 'SecurityAccessGroups_Users_' + (useFilter ? 'FILTERED_' : '') + formatNow() + extension;
         let charset = document.characterSet || document.charset;
         if (charset) {
             charset = ';charset=' + charset;
@@ -286,9 +286,9 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                     } else if (col === 2) {
                         return allData[row]["user_email"];
                     } else if (col === 3) {
-                        return window.system_roles[allData[row]["system_role"]];
+                        return window.sags[allData[row]["sag"]];
                     } else if (col === 4) {
-                        return allData[row]["system_role"];
+                        return allData[row]["sag"];
                     }
                 }
             },
@@ -361,12 +361,12 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                             });
                             body += "</tbody></table></div>";
                         }
-                        if (response.roles.length) {
+                        if (response.sags.length) {
                             body +=
                                 "<div class='row justify-content-center m-2'>" +
-                                "<table><thead><tr><th>Role ID</th></tr></thead><tbody>";
-                            response.roles.forEach((role) => {
-                                body += `<tr><td>${role}</td></tr>`;
+                                "<table><thead><tr><th>SAG ID</th></tr></thead><tbody>";
+                            response.sags.forEach((sag) => {
+                                body += `<tr><td>${sag}</td></tr>`;
                             });
                             body += "</tbody></table></div>";
                         }
@@ -432,7 +432,7 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
         const separator = ',';
         const extension = '.csv';
         const reBoundary = new RegExp(boundary, 'g');
-        const filename = 'SystemRoles_Users_ImportTemplate' + extension;
+        const filename = 'SecurityAccessGroups_Users_ImportTemplate' + extension;
         let charset = document.characterSet || document.charset;
         if (charset) {
             charset = ';charset=' + charset;
@@ -467,33 +467,34 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
             true);
     }
 
-    function saveSystemRole(selectNode) {
+    function saveSag(selectNode) {
         const select = $(selectNode);
         const tr = $(selectNode).closest('tr');
         const user = tr.data('user');
-        const newRole = select.val();
+        const newSag = select.val();
 
-        const url = '<?= $module->framework->getUrl("ajax/setUserRole.php") ?>';
+        const url = '<?= $module->framework->getUrl("ajax/assignSag.php") ?>';
         let color = "#66ff99";
         const dt = $('#SUR-System-Table').DataTable();
         $.post(url, {
                 "username": user,
-                "role": newRole
+                "sag": newSag
             })
             .done(function(response) {
-                select.closest('td').data('role', newRole);
-                select.closest('td').attr('data-role', newRole);
+                select.closest('td').data('sag', newSag);
+                select.closest('td').attr('data-sag', newSag);
                 const rowIndex = dt.row(select.closest('tr')).index();
-                dt.cell(rowIndex, 4).data(newRole);
+                dt.cell(rowIndex, 4).data(newSag);
             })
             .fail(function() {
                 color = "#ff3300";
-                select.val(select.closest('td').data('role')).select2();
+                select.val(select.closest('td').data('sag')).select2();
             })
             .always(function() {
                 $(tr).find('td').effect('highlight', {
                     color: color
                 }, 2000);
+
             });
     }
 
@@ -502,7 +503,7 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
         const editing = $(button).data('editing');
         const style = editing ? 'user-select:all; cursor: text; margin-left: 1px; margin-right: 1px;' : 'none';
 
-        $('.roleSelect').select2({
+        $('.sagSelect').select2({
             minimumResultsForSearch: 20,
             templateSelection: function(selection) {
                 return $(
@@ -518,7 +519,7 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                 );
             }
         });
-        $('.roleSelect').attr('disabled', !editing);
+        $('.sagSelect').attr('disabled', !editing);
     }
 
     $(document).ready(function() {
@@ -566,22 +567,22 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                 }, {
                     title: 'Security Access Group',
                     data: function(row, type, set, meta) {
-                        if (row.system_role === null) {
-                            row.system_role = '<?= $module->defaultRoleId ?>';
+                        if (row.sag === null) {
+                            row.sag = '<?= $module->defaultSagId ?>';
                         }
                         if (type === 'filter') {
-                            return row.system_role + ' ' + window.system_roles[row.system_role];
+                            return row.sag + ' ' + window.sags[row.sag];
                         } else if (type === 'sort') {
-                            return window.system_roles[row.system_role];
+                            return window.sags[row.sag];
                         } else {
                             let result =
-                                `<select class="roleSelect" disabled="true" onchange="saveSystemRole(this)">`;
-                            for (let system_role_id in system_roles) {
-                                const system_role_label = system_roles[system_role_id];
-                                const selected = system_role_id == row.system_role ?
+                                `<select class="sagSelect" disabled="true" onchange="saveSag(this)">`;
+                            for (let sag_id in sags) {
+                                const sag_label = sags[sag_id];
+                                const selected = sag_id == row.sag ?
                                     "selected" : "";
                                 result +=
-                                    `<option value='${system_role_id}' ${selected}>${system_role_label}</option>`;
+                                    `<option value='${sag_id}' ${selected}>${sag_label}</option>`;
                             }
                             result += `</select>`;
                             return result;
@@ -589,8 +590,8 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                     }
                 },
                 {
-                    title: 'Hidden Role',
-                    data: 'system_role'
+                    title: 'Hidden SAG',
+                    data: 'sag'
                 }
             ],
             createdRow: function(row, data, dataIndex) {
@@ -602,13 +603,13 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
             }, {
                 targets: [3],
                 createdCell: function(td, cellData, rowData, row, col) {
-                    $(td).attr('data-role', rowData.system_role);
+                    $(td).attr('data-sag', rowData.sag);
                 }
             }, {
                 targets: [4],
                 visible: false,
                 createdCell: function(td, cellData, rowData, row, col) {
-                    $(td).addClass('hidden_role_id');
+                    $(td).addClass('hidden_sag_id');
                 }
             }],
             dom: 'lftip',
@@ -642,7 +643,7 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
     <?php
 
 
-    } elseif ( $tab == "roles" ) {
+    } elseif ( $tab == "sags" ) {
         $displayTextForUserRights    = $module->getDisplayTextForRights();
         $allDisplayTextForUserRights = $module->getDisplayTextForRights(true);
 
@@ -657,7 +658,7 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
         quam blandit, vel faucibus turpis convallis. </p>
 
     <!-- Modal -->
-    <div class="modal" id="edit_role_popup" data-backdrop="static" data-keyboard="false"
+    <div class="modal" id="edit_sag_popup" data-backdrop="static" data-keyboard="false"
         aria-labelledby="staticBackdropLabel" aria-hidden="true"></div>
 
 
@@ -669,18 +670,18 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                 <button type="button" class="btn btn-primary btn-xs dropdown-toggle mr-2" data-toggle="dropdown"
                     data-bs-toggle="dropdown" aria-expanded="false">
                     <i class="fa-sharp fa-file-excel"></i>
-                    <span>Import or Export Roles</span>
+                    <span>Import or Export SAGs</span>
                     <span class="sr-only">Toggle Dropdown</span>
                 </button>
                 <ul class="dropdown-menu">
                     <li><a class="dropdown-item" onclick="exportRawCsv();"><i
-                                class="fa-sharp fa-regular fa-file-arrow-down fa-fw mr-1 text-info"></i>Export Roles
+                                class="fa-sharp fa-regular fa-file-arrow-down fa-fw mr-1 text-info"></i>Export SAGs
                             (raw)</a></li>
                     <li><a class="dropdown-item" onclick="exportCsv();"><i
-                                class="fa-sharp fa-regular fa-file-arrow-down fa-fw mr-1 text-success"></i>Export Roles
+                                class="fa-sharp fa-regular fa-file-arrow-down fa-fw mr-1 text-success"></i>Export SAGs
                             (labels)</a></li>
                     <li><a class="dropdown-item" onclick="importCsv();"><i
-                                class="fa-sharp fa-solid fa-file-arrow-up fa-fw mr-1 text-danger"></i>Import Roles</a>
+                                class="fa-sharp fa-solid fa-file-arrow-up fa-fw mr-1 text-danger"></i>Import SAGs</a>
                     </li>
                     <li><a class="dropdown-item" onclick="exportRawCsv(false);"><i
                                 class="fa-sharp fa-solid fa-download fa-fw mr-1 text-primary"></i>Download Import
@@ -688,38 +689,38 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                 </ul>
             </div>
             <div class="hidden">
-                <input type="file" accept="text/csv" class="form-control-file" id="importRolesFile">
+                <input type="file" accept="text/csv" class="form-control-file" id="importSagsFile">
             </div>
         </div>
         <div class="row ml-2">
-            <span><strong>Create new system user roles:</strong></span>
+            <span><strong>Create new Security Access Group:</strong></span>
         </div>
         <div class="row ml-2 mb-2 mt-1 justify-content-start">
             <div class="col-6 px-0">
-                <input id="newRoleName" class="form-control form-control-sm" type="text"
-                    placeholder="Enter new system role name">
+                <input id="newSagName" class="form-control form-control-sm" type="text"
+                    placeholder="Enter new SAG name">
             </div>
             <div class="col ml-1 px-0 justify-content-start">
-                <button class="btn btn-success btn-sm" id="addRoleButton" onclick="addNewRole();"
-                    title="Add a New System User Role">
+                <button class="btn btn-success btn-sm" id="addSagButton" onclick="addNewSag();"
+                    title="Add a New Security Access Group">
                     <i class="fa-kit fa-solid-tag-circle-plus fa-fw"></i>
-                    <span>Create Role</span>
+                    <span>Create SAG</span>
                 </button>
             </div>
         </div>
     </div>
 
 
-    <!-- Role Table -->
+    <!-- SAG Table -->
     <div class=" clear">
     </div>
-    <div id="roleTableWrapper" style="display: none; width: 100%;">
-        <table aria-label="Roles Table" id="roleTable" class="roleTable cell-border" style="width: 100%">
+    <div id="sagTableWrapper" style="display: none; width: 100%;">
+        <table aria-label="SAGs Table" id="sagTable" class="sagTable cell-border" style="width: 100%">
             <thead>
                 <tr style="vertical-align: bottom; text-align: center;">
                     <th>Order</th>
-                    <th data-key="role_name">Role</th>
-                    <th data-key="role_id">Role ID</th>
+                    <th data-key="sag_name">SAG Name</th>
+                    <th data-key="sag_id">SAG ID</th>
                     <?php foreach ( $allDisplayTextForUserRights as $key => $text ) {
                             echo "<th data-key='",
                                 \REDCap::escapeHtml($key),
@@ -746,13 +747,13 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
         timerProgressBar: true
     });
 
-    function openRoleEditor(url, role_id = "", role_name = "") {
-        const deleteRoleButtonCallback = function() {
+    function openSagEditor(url, sag_id = "", sag_name = "") {
+        const deleteSagButtonCallback = function() {
             Swal.fire({
-                title: 'Are you sure you want to delete this role?',
+                title: 'Are you sure you want to delete this SAG?',
                 icon: 'warning',
                 showCancelButton: true,
-                confirmButtonText: 'Delete Role',
+                confirmButtonText: 'Delete SAG',
                 customClass: {
                     confirmButton: 'btn btn-danger m-1',
                     cancelButton: 'btn btn-secondary m-1'
@@ -761,12 +762,12 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
             }).then((result) => {
                 if (result.isConfirmed) {
                     Swal.showLoading();
-                    $.post("<?= $module->framework->getUrl("ajax/deleteSystemRole.php") ?>", {
-                            role_id: role_id
+                    $.post("<?= $module->framework->getUrl("ajax/deleteSag.php") ?>", {
+                            sag_id: sag_id
                         })
                         .done(function(response) {
                             Toast.fire({
-                                    title: 'The role was deleted',
+                                    title: 'The SAG was deleted',
                                     icon: 'success'
                                 })
                                 .then(function() {
@@ -789,14 +790,14 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                 }
             });
         };
-        const copyRoleButtonCallback = function() {
-            const data = $("#SUR_Role_Setting").serializeObject();
+        const copySagButtonCallback = function() {
+            const data = $("#SAG_Setting").serializeObject();
             Swal.fire({
-                    title: 'What would you like the new role to be called?',
+                    title: 'What would you like the new SAG to be called?',
                     input: 'text',
-                    inputValue: `${data["role_name_edit"]} Copy`,
+                    inputValue: `${data["sag_name_edit"]} Copy`,
                     showCancelButton: true,
-                    confirmButtonText: 'Copy Role',
+                    confirmButtonText: 'Copy SAG',
                     customClass: {
                         confirmButton: 'btn btn-info m-1',
                         cancelButton: 'btn btn-secondary m-1'
@@ -805,14 +806,14 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                 })
                 .then(function(result) {
                     if (result.isConfirmed) {
-                        const role_name = result.value;
-                        data.role_name_edit = role_name;
-                        data.newRole = 1;
-                        $.post('<?= $module->framework->getUrl("ajax/editSystemRole.php") ?>', data)
+                        const sag_name = result.value;
+                        data.sag_name_edit = sag_name;
+                        data.newSag = 1;
+                        $.post('<?= $module->framework->getUrl("ajax/editSag.php") ?>', data)
                             .done(function(result) {
                                 Toast.fire({
                                         icon: 'success',
-                                        title: 'The role was copied'
+                                        title: 'The SAG was copied'
                                     })
                                     .then(function() {
                                         window.location.reload();
@@ -825,17 +826,17 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                     }
                 })
         };
-        const saveRoleChangesButtonCallback = function() {
-            $('input[name="role_name_edit"]').blur();
-            const role_name_edit = $('input[name="role_name_edit"]').val();
-            if (role_name_edit != '') {
-                const data = $("#SUR_Role_Setting").serializeObject();
-                data.role_id = role_id;
+        const saveSagChangesButtonCallback = function() {
+            $('input[name="sag_name_edit"]').blur();
+            const sag_name_edit = $('input[name="sag_name_edit"]').val();
+            if (sag_name_edit != '') {
+                const data = $("#SAG_Setting").serializeObject();
+                data.sag_id = sag_id;
                 $.post(url, data)
                     .done(function(response) {
                         Toast.fire({
                             icon: "success",
-                            title: `Role "${role_name_edit}" Successfully Saved`
+                            title: `SAG "${sag_name_edit}" Successfully Saved`
                         }).then(function() {
                             window.location.reload();
                         })
@@ -845,16 +846,16 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                     });
             }
         };
-        const saveNewRoleButtonCallback = function() {
-            $('input[name="role_name_edit"]').blur();
-            const role_name_edit = $('input[name="role_name_edit"]').val();
-            if (role_name_edit != '') {
-                const data = $("#SUR_Role_Setting").serializeObject();
+        const saveNewSagButtonCallback = function() {
+            $('input[name="sag_name_edit"]').blur();
+            const sag_name_edit = $('input[name="sag_name_edit"]').val();
+            if (sag_name_edit != '') {
+                const data = $("#SAG_Setting").serializeObject();
                 $.post(url, data)
                     .done(function(response) {
                         Toast.fire({
                             icon: "success",
-                            title: `Role Successfully Created`
+                            title: `SAG Successfully Created`
                         }).then(function() {
                             window.location.reload();
                         })
@@ -866,13 +867,13 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
         };
 
         $.get(url, {
-                role_id: role_id,
-                role_name: role_name
+                sag_id: sag_id,
+                sag_name: sag_name
             })
             .done(function(response) {
-                $("#edit_role_popup").html(response);
-                $("#edit_role_popup").on('shown.bs.modal', function(event) {
-                    $('input[name="role_name_edit"]').blur(function() {
+                $("#edit_sag_popup").html(response);
+                $("#edit_sag_popup").on('shown.bs.modal', function(event) {
+                    $('input[name="sag_name_edit"]').blur(function() {
                         $(this).val($(this).val().trim());
                         if ($(this).val() == '') {
                             Swal.fire({
@@ -884,49 +885,49 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                                     buttonsStyling: false
                                 })
                                 .then(() => {
-                                    $('input[name=role_name_edit]').focus();
+                                    $('input[name=sag_name_edit]').focus();
                                 })
                         }
                     });
-                    $('#SUR_Save').click(role_id == "" ? saveNewRoleButtonCallback :
-                        saveRoleChangesButtonCallback);
-                    if ($('#SUR_Copy')) $('#SUR_Copy').click(copyRoleButtonCallback);
-                    if ($('#SUR_Delete')) $('#SUR_Delete').click(deleteRoleButtonCallback);
+                    $('#SAG_Save').click(sag_id == "" ? saveNewSagButtonCallback :
+                        saveSagChangesButtonCallback);
+                    if ($('#SAG_Copy')) $('#SAG_Copy').click(copySagButtonCallback);
+                    if ($('#SAG_Delete')) $('#SAG_Delete').click(deleteSagButtonCallback);
                 })
-                $("#edit_role_popup").modal('show');
+                $("#edit_sag_popup").modal('show');
             })
             .fail(function(error) {
                 console.error(error.responseText)
             });
     }
 
-    function editRole(role_id, role_name) {
-        const url = "<?= $module->framework->getUrl("ajax/editSystemRole.php?newRole=false") ?>";
-        openRoleEditor(url, role_id, role_name);
+    function editSag(sag_id, sag_name) {
+        const url = "<?= $module->framework->getUrl("ajax/editSag.php?newSag=false") ?>";
+        openSagEditor(url, sag_id, sag_name);
     }
 
-    function addNewRole() {
-        $('#addRoleButton').blur();
-        const url = "<?= $module->framework->getUrl("ajax/editSystemRole.php?newRole=true") ?>";
-        const newRoleName = $('#newRoleName').val().trim();
-        if (newRoleName == "") {
+    function addNewSag() {
+        $('#addSagButton').blur();
+        const url = "<?= $module->framework->getUrl("ajax/editSag.php?newSag=true") ?>";
+        const newSagName = $('#newSagName').val().trim();
+        if (newSagName == "") {
             Toast.fire({
-                title: "You must specify a role name",
+                title: "You must specify a SAG name",
                 icon: "error",
                 showConfirmButton: false,
                 didClose: () => {
-                    $("#newRoleName").focus()
+                    $("#newSagName").focus()
                 }
             });
         } else {
-            openRoleEditor(url, "", newRoleName);
+            openSagEditor(url, "", newSagName);
         }
     }
 
     function formatNow() {
         const d = new Date();
-        return d.getFullYear() + '-' + (d.getMonth() + 1).toString().padStart(2, 0) + '-' + (d.getDate()).toString()
-            .padStart(2, 0)
+        return d.getFullYear() + '-' + (d.getMonth() + 1).toString().padStart(2, 0) +
+            '-' + (d.getDate()).toString().padStart(2, 0);
     }
 
     function exportRawCsv(includeData = true) {
@@ -936,8 +937,9 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
         const separator = ',';
         const extension = '.csv';
         const reBoundary = new RegExp(boundary, 'g');
-        const filename = (includeData ? 'SystemRoles_Raw_' + formatNow() : 'SystemRoles_Roles_ImportTemplate') +
-            extension;
+        const filename = (includeData ?
+            'SecurityAccessGroups_Raw_' + formatNow() :
+            'SecurityAccessGroups_ImportTemplate') + extension;
         let charset = document.characterSet || document.charset;
         if (charset) {
             charset = ';charset=' + charset;
@@ -956,7 +958,7 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
         };
 
         const rowSelector = includeData ? undefined : -1;
-        const data = $('#roleTable').DataTable().buttons.exportData({
+        const data = $('#sagTable').DataTable().buttons.exportData({
             format: {
                 header: function(html, col, node) {
                     const key = $(node).data('key');
@@ -1010,7 +1012,7 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
         const separator = ',';
         const extension = '.csv';
         const reBoundary = new RegExp(boundary, 'g');
-        const filename = 'SystemRoles_Labels_' + formatNow() + extension;
+        const filename = 'SecurityAccessGroups_Labels_' + formatNow() + extension;
         let charset = document.characterSet || document.charset;
         if (charset) {
             charset = ';charset=' + charset;
@@ -1028,7 +1030,7 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
             return s;
         };
 
-        const data = $('#roleTable').DataTable().buttons.exportData({
+        const data = $('#sagTable').DataTable().buttons.exportData({
             format: {
                 body: function(html, row, col, node) {
                     if (col === 0) {
@@ -1077,7 +1079,7 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
     }
 
     function importCsv() {
-        $('#importRolesFile').click();
+        $('#importSagsFile').click();
     }
 
     function handleFiles() {
@@ -1093,7 +1095,7 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
         const reader = new FileReader();
         reader.onload = (e) => {
             window.csv_file_contents = e.target.result;
-            $.post("<?= $module->framework->getUrl("ajax/importCsvRoles.php") ?>", {
+            $.post("<?= $module->framework->getUrl("ajax/importCsvSags.php") ?>", {
                     data: e.target.result
                 })
                 .done((response) => {
@@ -1118,7 +1120,7 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
         if (!window.csv_file_contents || window.csv_file_contents === "") {
             return;
         }
-        $.post("<?= $module->framework->getUrl("ajax/importCsvRoles.php") ?>", {
+        $.post("<?= $module->framework->getUrl("ajax/importCsvSags.php") ?>", {
                 data: window.csv_file_contents,
                 confirm: true
             })
@@ -1151,16 +1153,28 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
             })
     }
 
+    function hover() {
+        const thisNode = $(this);
+        const rowIdx = thisNode.attr('data-dt-row');
+        $("tr[data-dt-row='" + rowIdx + "'] td").addClass("highlight"); // shade only the hovered row
+    }
+
+    function dehover() {
+        const thisNode = $(this);
+        const rowIdx = thisNode.attr('data-dt-row');
+        $("tr[data-dt-row='" + rowIdx + "'] td").removeClass("highlight"); // shade only the hovered row
+    }
+
     $(document).ready(function() {
-        const importFileElement = document.getElementById("importRolesFile");
+        const importFileElement = document.getElementById("importSagsFile");
         importFileElement.addEventListener("change", handleFiles, false);
 
         const shieldcheck = '<i class="fa-solid fa-shield-check fa-xl" style="color: green;"></i>';
         const check = '<i class="fa-solid fa-check fa-xl" style="color: green;"></i>';
         const x = '<i class="fa-regular fa-xmark" style="color: #D00000;"></i>';
-        const table = $('#roleTable').DataTable({
+        const table = $('#sagTable').DataTable({
             ajax: {
-                url: '<?= $module->framework->getUrl("ajax/roles.php") ?>',
+                url: '<?= $module->framework->getUrl("ajax/sags.php") ?>',
                 method: 'POST'
             },
             deferRender: true,
@@ -1180,21 +1194,61 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                 selector: '.dt-rowReorder-grab'
             },
             initComplete: function() {
-                $('#roleTableWrapper').show();
-                setTimeout(() => {
-                    $(this).DataTable().stateRestore();
-                    $(this).DataTable().columns.adjust().draw();
-                }, 0);
-                const theseSettingsString = localStorage.getItem('DataTables_roleOrder');
+                $('#sagTableWrapper').show();
+                const table = this.api();
+
+
+                const theseSettingsString = localStorage.getItem('DataTables_sagOrder');
                 if (theseSettingsString) {
                     const theseSettings = JSON.parse(theseSettingsString);
                     table.rows().every(function(rowIdx, tableLoop, rowLoop) {
-                        const thisRoleId = table.cell(rowLoop, 2).data();
-                        const desiredIndex = theseSettings.indexOf(thisRoleId);
+                        const thisSagId = table.cell(rowLoop, 2).data();
+                        const desiredIndex = theseSettings.indexOf(thisSagId);
                         table.cell(rowLoop, 0).data(desiredIndex);
                     });
                     table.order([0, 'asc']).draw();
-                };
+                } else {
+                    const order = table.column(2).data().toArray();
+                    localStorage.setItem('DataTables_sagOrder', JSON.stringify(order));
+                }
+
+                table.on('draw', function() {
+                    $('.dataTable tbody tr').each((i, row) => {
+                        row.onmouseenter = hover;
+                        row.onmouseleave = dehover;
+                    });
+                });
+
+                table.on('row-reordered', function(e, diff, edit) {
+                    setTimeout(() => {
+                        const order = table.column(2).data().toArray();
+                        localStorage.setItem('DataTables_sagOrder', JSON.stringify(
+                            order));
+                    }, 0);
+                });
+
+                table.rows().every(function() {
+                    const rowNode = this.node();
+                    const rowIndex = this.index();
+                    $(rowNode).attr('data-dt-row', rowIndex);
+                });
+
+                $('.dataTable tbody tr').each((i, row) => {
+                    row.onmouseenter = hover;
+                    row.onmouseleave = dehover;
+                });
+
+                table.on('row-reorder', function(e, diff, edit) {
+                    const data = table.rows().data();
+                    const newOrder = [];
+                    for (let i = 0; i < data.length; i++) {
+                        newOrder.push(data[i][0]);
+                    }
+                });
+                setTimeout(() => {
+                    table.stateRestore();
+                    table.columns.adjust().draw();
+                }, 0);
             },
 
             columns: [{
@@ -1208,19 +1262,19 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                         if (type === 'display') {
                             const iclass =
                                 "fa-solid  fa-grip-dots-vertical mr-2 dt-rowReorder-grab text-secondary";
-                            const aclass = "SUR_roleLink text-primary";
+                            const aclass = "SagLink text-primary";
                             return `<div style="display: flex; align-items: center; white-space: nowrap;">` +
                                 `<i class="${iclass}"></i>` +
-                                `<a class="${aclass}" onclick="editRole('${row.role_id}')">${row.role_name}</a>` +
+                                `<a class="${aclass}" onclick="editSag('${row.sag_id}')">${row.sag_name}</a>` +
                                 `</div>`;
                         } else {
-                            return row.role_name;
+                            return row.sag_name;
                         }
                     }
                 },
                 {
-                    className: 'role-id-column user-select-all',
-                    data: 'role_id'
+                    className: 'sag-id-column user-select-all',
+                    data: 'sag_id'
                 },
                 {
                     className: 'dt-center',
@@ -1633,65 +1687,9 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
             }]
         });
 
-        table.on('draw', function() {
-            $('.dataTable tbody tr').each((i, row) => {
-                row.onmouseenter = hover;
-                row.onmouseleave = dehover;
-            });
-        });
-
-        table.on('row-reordered', function(e, diff, edit) {
-            setTimeout(() => {
-                const order = table.column(2).data().toArray();
-                localStorage.setItem('DataTables_roleOrder', JSON.stringify(order));
-            }, 0);
-        });
-
-        table.rows().every(function() {
-            const rowNode = this.node();
-            const rowIndex = this.index();
-            $(rowNode).attr('data-dt-row', rowIndex);
-        });
-
-        const theseSettingsString = localStorage.getItem('DataTables_roleOrder');
-        if (theseSettingsString) {
-            const theseSettings = JSON.parse(theseSettingsString);
-            table.rows().every(function(rowIdx, tableLoop, rowLoop) {
-                const thisRoleId = table.cell(rowLoop, 2).data();
-                const desiredIndex = theseSettings.indexOf(thisRoleId);
-                table.cell(rowLoop, 0).data(desiredIndex);
-            });
-            table.order([0, 'asc']).draw();
-        };
-
-        $('.dataTable tbody tr').each((i, row) => {
-            row.onmouseenter = hover;
-            row.onmouseleave = dehover;
-        });
-
-        table.on('row-reorder', function(e, diff, edit) {
-            const data = table.rows().data();
-            const newOrder = [];
-            for (let i = 0; i < data.length; i++) {
-                newOrder.push(data[i][0]);
-            }
-        });
-
-        function hover() {
-            const thisNode = $(this);
-            const rowIdx = thisNode.attr('data-dt-row');
-            $("tr[data-dt-row='" + rowIdx + "'] td").addClass("highlight"); // shade only the hovered row
-        }
-
-        function dehover() {
-            const thisNode = $(this);
-            const rowIdx = thisNode.attr('data-dt-row');
-            $("tr[data-dt-row='" + rowIdx + "'] td").removeClass("highlight"); // shade only the hovered row
-        }
-
-        $('#newRoleName').keyup(function(event) {
+        $('#newSagName').keyup(function(event) {
             if (event.which === 13) {
-                $('#addRoleButton').click();
+                $('#addSagButton').click();
             }
         });
         window.scroll(0, 0);
@@ -1701,4 +1699,4 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
     <?php
     }
     ?>
-</div> <!-- End SUR_Container -->
+</div> <!-- End SAG_Container -->

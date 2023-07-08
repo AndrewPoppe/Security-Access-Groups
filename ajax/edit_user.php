@@ -25,12 +25,13 @@ if ( in_array($submitAction, [ 'delete_user', 'add_role', 'delete_role', 'copy_r
 
 if ( in_array($submitAction, [ 'add_user', 'edit_user' ]) ) {
     $acceptableRights = $module->getAcceptableRights($user);
-    $sagId            = $module->getUserSystemRole($user);
-    $sag              = $module->getSystemRoleRightsById($sagId);
     $badRights        = $module->checkProposedRights($acceptableRights, $data);
     $currentRights    = $module->getCurrentRights($user, $pid);
     $requestedRights  = $module->filterPermissions($data);
     $errors           = !empty($badRights);
+
+    $sagId = $module->getUserSag($user);
+    $sag   = $module->getSagRightsById($sagId);
 
     // We ignore expired users, unless the request unexpires them
     $userExpired         = $module->isUserExpired($user, $module->getProjectId());
@@ -93,7 +94,7 @@ if ( in_array($submitAction, [ 'add_user', 'edit_user' ]) ) {
         require_once $scriptPath;
         ob_end_flush(); // End buffering and clean up
     } else {
-        echo json_encode([ 'error' => true, 'bad_rights' => [ "$user" => [ 'SAG' => $sag['role_name'], 'rights' => $badRights ] ] ]);
+        echo json_encode([ 'error' => true, 'bad_rights' => [ "$user" => [ 'SAG' => $sag['sag_name'], 'rights' => $badRights ] ] ]);
     }
     exit;
 }
@@ -108,15 +109,17 @@ if ( $submitAction === "edit_role" ) {
     foreach ( $usersInRole as $username ) {
         $acceptableRights = $module->getAcceptableRights($username);
         $theseBadRights   = $module->checkProposedRights($acceptableRights, $data);
-        $sagId            = $module->getUserSystemRole($username);
-        $sag              = $module->getSystemRoleRightsById($sagId);
+
+        $sagId = $module->getUserSag($username);
+        $sag   = $module->getSagRightsById($sagId);
 
         // We ignore expired users
         $userExpired = $module->isUserExpired($username, $module->getProjectId());
 
         if ( !empty($theseBadRights) && !$userExpired ) {
             $badRights[$username] = [
-                "SAG"    => $sag["role_name"],
+                "role"   => $role["role_name"],
+                "SAG"    => $sag["sag_name"],
                 "rights" => $theseBadRights
             ];
         }

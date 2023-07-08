@@ -18,8 +18,8 @@ if ( isset($_POST['csv_content']) && $_POST['csv_content'] != '' ) {
     $allCurrentRights = [];
     foreach ( $data as $key => $thisUser ) {
         $username = $thisUser['username'];
-        $sagId    = $module->getUserSystemRole($username);
-        $sag      = $module->getSystemRoleRightsById($sagId);
+        $sagId    = $module->getUserSag($username);
+        $sag      = $module->getSagRightsById($sagId);
 
         if ( isset($thisUser['forms']) && $thisUser['forms'] != '' ) {
             foreach ( explode(',', $thisUser['forms']) as $thisPair ) {
@@ -113,8 +113,8 @@ if ( isset($_POST['csv_content']) && $_POST['csv_content'] != '' ) {
         ob_end_flush(); // End buffering and clean up
     } else {
         $module->framework->log('User Rights Import: Bad rights found', [ 'bad rights' => json_encode($badRights) ]);
-        $_SESSION['SUR_imported']   = 'users';
-        $_SESSION['SUR_bad_rights'] = json_encode($badRights);
+        $_SESSION['SAG_imported']   = 'users';
+        $_SESSION['SAG_bad_rights'] = json_encode($badRights);
         redirect(APP_PATH_WEBROOT . 'UserRights/index.php?pid=' . PROJECT_ID);
     }
 }

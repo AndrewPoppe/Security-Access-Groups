@@ -5,7 +5,7 @@ namespace YaleREDCap\SecurityAccessGroups;
 require_once 'classes/APIHandler.php';
 require_once 'classes/Alerts.php';
 require_once 'classes/RightsChecker.php';
-require_once 'classes/RoleEditForm.php';
+require_once 'classes/SagEditForm.php';
 use ExternalModules\AbstractExternalModule;
 use ExternalModules\Framework;
 
@@ -16,15 +16,15 @@ use ExternalModules\Framework;
 class SecurityAccessGroups extends AbstractExternalModule
 {
 
-    public string $defaultRoleId = "role_Default";
-    public string $defaultRoleName = "Default Role";
+    public string $defaultSagId = "sag_Default";
+    public string $defaultSagName = "Default SAG";
     private array $defaultRights = [];
 
 
     public function __construct()
     {
         parent::__construct();
-        $this->defaultRights = $this->getSystemRoleRightsById($this->defaultRoleId);
+        $this->defaultRights = $this->getSagRightsById($this->defaultSagId);
     }
 
     public function redcap_every_page_before_render()
@@ -155,246 +155,246 @@ class SecurityAccessGroups extends AbstractExternalModule
     {
 
         ?>
-<script>
-$(function() {
+        <script>
+            $(function () {
 
-    <?php if ( isset($_SESSION['SUR_imported']) ) { ?>
-    window.import_type = '<?= $_SESSION['SUR_imported'] ?>';
-    window.import_errors = JSON.parse('<?= $_SESSION['SUR_bad_rights'] ?>');
-    <?php
-                    unset($_SESSION['SUR_imported']);
-                    unset($_SESSION['SUR_bad_rights']);
+                <?php if ( isset($_SESSION['SAG_imported']) ) { ?>
+                    window.import_type = '<?= $_SESSION['SAG_imported'] ?>';
+                    window.import_errors = JSON.parse('<?= $_SESSION['SAG_bad_rights'] ?>');
+                    <?php
+                    unset($_SESSION['SAG_imported']);
+                    unset($_SESSION['SAG_bad_rights']);
                 } ?>
 
-    function createRightsTable(bad_rights) {
-        return `<table class="table table-sm table-borderless table-hover w-50 mt-4 mx-auto" style="font-size:13px; cursor: default;"><tbody><tr><td>${bad_rights.join('</td></tr><tr><td>')}</td></tr></tbody></table>`;
-    }
-
-    function fixLinks() {
-        $('#importUserForm').attr('action', "<?= $this->getUrl("ajax/import_export_users.php") ?>");
-        $('#importUsersForm2').attr('action', "<?= $this->getUrl("ajax/import_export_users.php") ?>");
-        $('#importRoleForm').attr('action', "<?= $this->getUrl("ajax/import_export_roles.php") ?>");
-        $('#importRolesForm2').attr('action', "<?= $this->getUrl("ajax/import_export_roles.php") ?>");
-        $('#importUserRoleForm').attr('action',
-            "<?= $this->getUrl("ajax/import_export_roles.php?action=uploadMapping") ?>");
-        $('#importUserRoleForm2').attr('action',
-            "<?= $this->getUrl("ajax/import_export_roles.php?action=uploadMapping") ?>");
-    }
-
-    function checkImportErrors() {
-        if (window.import_type) {
-            let title = "You can't do that.";
-            let text = "";
-            if (window.import_type == "users") {
-                title = "You cannot import those users.";
-                text =
-                    `The following users included in the provided import file cannot have the following permissions granted to them due to their current SAG assignment:<br><table style="margin-top: 20px; width: 100%;"><thead style="border-bottom: 2px solid #666;"><tr><th>User</th><th>SAG</th><th>Permissions</th></tr></thead><tbody style="border-bottom: 1px solid black;">`;
-                const users = Object.keys(window.import_errors);
-                users.forEach((user) => {
-                    text +=
-                        `<tr style="border-top: 1px solid #666;"><td><strong>${user}</strong></td><td>${window.import_errors[user].SAG}</td><td>${window.import_errors[user].rights.join('<br>')}</td></tr>`;
-                });
-                text += `</tbody></table>`;
-            } else if (window.import_type == "roles") {
-                title = "You cannot import those roles.";
-                text =
-                    `The following roles have users assigned to them, and the following permissions cannot be granted for those users due to their current SAG assignment:<br><table style="margin-top: 20px; width: 100%; table-layout: fixed;"><thead style="border-bottom: 2px solid #666;"><tr><th>User Role</th><th>User</th><th>SAG</th><th COLSPAN=2>Permissions</th></tr></thead><tbody style="border-bottom: 1px solid black;">`;
-                const roles = Object.keys(window.import_errors);
-                roles.forEach((role) => {
-                    const users = Object.keys(window.import_errors[role]);
-                    users.forEach((user, index) => {
-                        const theseRights = window.import_errors[role][user];
-                        text +=
-                            `<tr style='border-top: 1px solid black;'><td><strong>${role}</strong></td><td><strong>${user}</strong></td><td>${theseRights.SAG}</td><td COLSPAN=2>${theseRights.rights.join('<br>')}</td></tr>`;
-                    });
-                })
-                text += `</tbody></table>`;
-            } else if (window.import_type == "roleassignments") {
-                title = "You cannot assign those users to those roles.";
-                text =
-                    `The following permissions cannot be granted for the following users due to their current SAG assignment:<br><table style="margin-top: 20px; width: 100%; table-layout: fixed;"><thead style="border-bottom: 2px solid #666;"><tr><th>User Role</th><th>User</th><th>SAG</th><th COLSPAN=2>Permissions</th></tr></thead><tbody style="border-bottom: 1px solid black;">`;
-                const roles = Object.keys(window.import_errors);
-                roles.forEach((role) => {
-                    const users = Object.keys(window.import_errors[role]);
-                    users.forEach((user, index) => {
-                        const theseRights = window.import_errors[role][user];
-                        text +=
-                            `<tr style='border-top: 1px solid black;'><td><strong>${role}</strong></td><td><strong>${user}</strong></td><td>${theseRights.SAG}</td><td COLSPAN=2>${theseRights.rights.join('<br>')}</td></tr>`;
-                    });
-                })
-                text += `</tbody></table>`;
-            }
-            Swal.fire({
-                icon: 'error',
-                title: title,
-                html: text,
-                width: '900px'
-            });
-        }
-    }
-
-    window.saveUserFormAjax = function() {
-        showProgress(1);
-        const permissions = $('form#user_rights_form').serializeObject();
-        console.log(permissions);
-        $.post('<?= $this->getUrl("ajax/edit_user.php?pid=$projectId") ?>', permissions, function(data) {
-            showProgress(0, 0);
-            try {
-                const result = JSON.parse(data);
-                if (!result.error || !result.bad_rights) {
-                    return;
+                function createRightsTable(bad_rights) {
+                    return `<table class="table table-sm table-borderless table-hover w-50 mt-4 mx-auto" style="font-size:13px; cursor: default;"><tbody><tr><td>${bad_rights.join('</td></tr><tr><td>')}</td></tr></tbody></table>`;
                 }
-                let title = "You can't do that.";
-                let text = "";
-                let users = Object.keys(result.bad_rights);
-                if (!result.role) {
-                    title = `You cannot grant those user rights to user "${users[0]}"`;
-                    text =
-                        `The user is currently assigned to the SAG: "<strong>${result.bad_rights[users[0]].SAG}</strong>"<br>The following permissions you are attempting to grant cannot be granted to users in that SAG:${createRightsTable(result.bad_rights[users[0]].rights)}`;
-                } else {
-                    title = `You cannot grant those rights to the role<br>"${result.role}"`;
-                    text =
-                        `The following users are assigned to that role, and the following permissions cannot be granted to them because of their current SAG assignment:<br><table style="margin-top: 20px; width: 100%;"><thead style="border-bottom: 2px solid #666;"><tr><th>User</th><th>SAG</th><th>Permissions</th></tr></thead><tbody style="border-bottom: 1px solid black;">`;
-                    users.forEach((user) => {
-                        text +=
-                            `<tr style="border-top: 1px solid #666;"><td><strong>${user}</strong></td><td>${result.bad_rights[user].SAG}</td><td>${result.bad_rights[user].rights.join('<br>')}</td></tr>`;
-                    });
-                    text += `</tbody></table>`;
-                }
-                Swal.fire({
-                    icon: 'error',
-                    title: title,
-                    html: text,
-                    width: '900px'
-                });
-                return;
-            } catch (error) {
-                if ($('#editUserPopup').hasClass('ui-dialog-content')) $('#editUserPopup').dialog(
-                    'destroy');
-                $('#user_rights_roles_table_parent').html(data);
-                simpleDialogAlt($('#user_rights_roles_table_parent div.userSaveMsg'), 1.7);
-                enablePageJS();
-                if ($('#copy_role_success').length) {
-                    setTimeout(function() {
-                        openAddUserPopup('', $('#copy_role_success').val());
-                    }, 1500);
-                }
-            }
-            fixLinks();
-        });
-    }
 
-    window.assignUserRole = function(username, role_id) {
-        showProgress(1);
-        checkIfuserRights(username, role_id, function(data) {
-            if (data == 1) {
-                console.log(username, role_id);
-                $.post('<?= $this->getUrl("ajax/assign_user.php?pid=$projectId") ?>', {
-                    username: username,
-                    role_id: role_id,
-                    notify_email_role: ($('#notify_email_role').prop('checked') ? 1 : 0),
-                    group_id: $('#user_dag').val()
-                }, function(data) {
-                    showProgress(0, 0);
-                    if (data == '') {
-                        alert(woops);
-                        return;
-                    }
-                    try {
-                        const result = JSON.parse(data);
-                        if (!result.error || !result.bad_rights) {
-                            return;
+                function fixLinks() {
+                    $('#importUserForm').attr('action', "<?= $this->getUrl("ajax/import_export_users.php") ?>");
+                    $('#importUsersForm2').attr('action', "<?= $this->getUrl("ajax/import_export_users.php") ?>");
+                    $('#importRoleForm').attr('action', "<?= $this->getUrl("ajax/import_export_roles.php") ?>");
+                    $('#importRolesForm2').attr('action', "<?= $this->getUrl("ajax/import_export_roles.php") ?>");
+                    $('#importUserRoleForm').attr('action',
+                        "<?= $this->getUrl("ajax/import_export_roles.php?action=uploadMapping") ?>");
+                    $('#importUserRoleForm2').attr('action',
+                        "<?= $this->getUrl("ajax/import_export_roles.php?action=uploadMapping") ?>");
+                }
+
+                function checkImportErrors() {
+                    if (window.import_type) {
+                        let title = "You can't do that.";
+                        let text = "";
+                        if (window.import_type == "users") {
+                            title = "You cannot import those users.";
+                            text =
+                                `The following users included in the provided import file cannot have the following permissions granted to them due to their current SAG assignment:<br><table style="margin-top: 20px; width: 100%;"><thead style="border-bottom: 2px solid #666;"><tr><th>User</th><th>SAG</th><th>Permissions</th></tr></thead><tbody style="border-bottom: 1px solid black;">`;
+                            const users = Object.keys(window.import_errors);
+                            users.forEach((user) => {
+                                text +=
+                                    `<tr style="border-top: 1px solid #666;"><td><strong>${user}</strong></td><td>${window.import_errors[user].SAG}</td><td>${window.import_errors[user].rights.join('<br>')}</td></tr>`;
+                            });
+                            text += `</tbody></table>`;
+                        } else if (window.import_type == "roles") {
+                            title = "You cannot import those roles.";
+                            text =
+                                `The following roles have users assigned to them, and the following permissions cannot be granted for those users due to their current SAG assignment:<br><table style="margin-top: 20px; width: 100%; table-layout: fixed;"><thead style="border-bottom: 2px solid #666;"><tr><th>User Role</th><th>User</th><th>SAG</th><th COLSPAN=2>Permissions</th></tr></thead><tbody style="border-bottom: 1px solid black;">`;
+                            const roles = Object.keys(window.import_errors);
+                            roles.forEach((role) => {
+                                const users = Object.keys(window.import_errors[role]);
+                                users.forEach((user, index) => {
+                                    const theseRights = window.import_errors[role][user];
+                                    text +=
+                                        `<tr style='border-top: 1px solid black;'><td><strong>${role}</strong></td><td><strong>${user}</strong></td><td>${theseRights.SAG}</td><td COLSPAN=2>${theseRights.rights.join('<br>')}</td></tr>`;
+                                });
+                            })
+                            text += `</tbody></table>`;
+                        } else if (window.import_type == "roleassignments") {
+                            title = "You cannot assign those users to those roles.";
+                            text =
+                                `The following permissions cannot be granted for the following users due to their current SAG assignment:<br><table style="margin-top: 20px; width: 100%; table-layout: fixed;"><thead style="border-bottom: 2px solid #666;"><tr><th>User Role</th><th>User</th><th>SAG</th><th COLSPAN=2>Permissions</th></tr></thead><tbody style="border-bottom: 1px solid black;">`;
+                            const roles = Object.keys(window.import_errors);
+                            roles.forEach((role) => {
+                                const users = Object.keys(window.import_errors[role]);
+                                users.forEach((user, index) => {
+                                    const theseRights = window.import_errors[role][user];
+                                    text +=
+                                        `<tr style='border-top: 1px solid black;'><td><strong>${role}</strong></td><td><strong>${user}</strong></td><td>${theseRights.SAG}</td><td COLSPAN=2>${theseRights.rights.join('<br>')}</td></tr>`;
+                                });
+                            })
+                            text += `</tbody></table>`;
                         }
-                        let users = Object.keys(result.bad_rights);
-                        const title =
-                            `You cannot assign user "${username}" to user role "${result.role}"`;
-                        const text =
-                            `The user is currently assigned to the SAG: "<strong>${result.bad_rights[users[0]].SAG}</strong>"<br>The following permissions allowed in user role "${result.role}" cannot be granted to users in that SAG:${createRightsTable(result.bad_rights[users[0]].rights)}`;
-
                         Swal.fire({
                             icon: 'error',
                             title: title,
                             html: text,
-                            width: '750px'
+                            width: '900px'
                         });
-                        return;
-                    } catch (error) {
-                        $('#user_rights_roles_table_parent').html(data);
+                    }
+                }
+
+                window.saveUserFormAjax = function () {
+                    showProgress(1);
+                    const permissions = $('form#user_rights_form').serializeObject();
+                    console.log(permissions);
+                    $.post('<?= $this->getUrl("ajax/edit_user.php?pid=$projectId") ?>', permissions, function (data) {
                         showProgress(0, 0);
-                        simpleDialogAlt($(
-                            '#user_rights_roles_table_parent div.userSaveMsg'), 1.7);
-                        enablePageJS();
-                        setTimeout(function() {
-                            if (role_id == '0') {
-                                simpleDialog(lang.rights_215, lang.global_03 + lang
-                                    .colon + ' ' + lang.rights_214);
+                        try {
+                            const result = JSON.parse(data);
+                            if (!result.error || !result.bad_rights) {
+                                return;
                             }
-                        }, 3200);
-                    }
-                    fixLinks();
-                });
-            } else {
-                showProgress(0, 0);
-                setTimeout(function() {
-                    simpleDialog(lang.rights_317, lang.global_03 + lang.colon + ' ' + lang
-                        .rights_316);
-                }, 500);
-            }
-            fixLinks();
-        });
-    }
-
-    window.setExpiration = function() {
-        $('#tooltipExpirationBtn').button('disable');
-        $('#tooltipExpiration').prop('disabled', true);
-        $('#tooltipExpirationCancel').hide();
-        $('#tooltipExpirationProgress').show();
-        $.post("<?= $this->getUrl('ajax/set_user_expiration.php?pid=' . $this->getProjectId()) ?>", {
-                username: $('#tooltipExpirationHiddenUsername').val(),
-                expiration: $('#tooltipExpiration').val()
-            },
-            function(data) {
-                console.log(data);
-                if (data == '0') {
-                    alert(woops);
-                    return;
-                }
-                try {
-                    const result = JSON.parse(data);
-                    if (!result.error || !result.bad_rights) {
-                        return;
-                    }
-                    const users = Object.keys(result.bad_rights);
-                    const title = `You cannot grant those user rights to user "${users[0]}"`;
-                    const text =
-                        `The user is currently assigned to the SAG: "<strong>${result.bad_rights[users[0]].SAG}</strong>"<br>The following permissions you are attempting to grant cannot be granted to users in that SAG:${createRightsTable(result.bad_rights[users[0]].rights)}`;
-
-                    Swal.fire({
-                        icon: 'error',
-                        title: title,
-                        html: text,
-                        width: '750px'
+                            let title = "You can't do that.";
+                            let text = "";
+                            let users = Object.keys(result.bad_rights);
+                            if (!result.role) {
+                                title = `You cannot grant those user rights to user "${users[0]}"`;
+                                text =
+                                    `The user is currently assigned to the SAG: "<strong>${result.bad_rights[users[0]].SAG}</strong>"<br>The following permissions you are attempting to grant cannot be granted to users in that SAG:${createRightsTable(result.bad_rights[users[0]].rights)}`;
+                            } else {
+                                title = `You cannot grant those rights to the role<br>"${result.role}"`;
+                                text =
+                                    `The following users are assigned to that role, and the following permissions cannot be granted to them because of their current SAG assignment:<br><table style="margin-top: 20px; width: 100%;"><thead style="border-bottom: 2px solid #666;"><tr><th>User</th><th>SAG</th><th>Permissions</th></tr></thead><tbody style="border-bottom: 1px solid black;">`;
+                                users.forEach((user) => {
+                                    text +=
+                                        `<tr style="border-top: 1px solid #666;"><td><strong>${user}</strong></td><td>${result.bad_rights[user].SAG}</td><td>${result.bad_rights[user].rights.join('<br>')}</td></tr>`;
+                                });
+                                text += `</tbody></table>`;
+                            }
+                            Swal.fire({
+                                icon: 'error',
+                                title: title,
+                                html: text,
+                                width: '900px'
+                            });
+                            return;
+                        } catch (error) {
+                            if ($('#editUserPopup').hasClass('ui-dialog-content')) $('#editUserPopup').dialog(
+                                'destroy');
+                            $('#user_rights_roles_table_parent').html(data);
+                            simpleDialogAlt($('#user_rights_roles_table_parent div.userSaveMsg'), 1.7);
+                            enablePageJS();
+                            if ($('#copy_role_success').length) {
+                                setTimeout(function () {
+                                    openAddUserPopup('', $('#copy_role_success').val());
+                                }, 1500);
+                            }
+                        }
+                        fixLinks();
                     });
-                    return;
-                } catch (error) {
-                    $('#user_rights_roles_table_parent').html(data);
-                    enablePageJS();
-                } finally {
-                    setTimeout(function() {
-                        $('#tooltipExpiration').prop('disabled', false);
-                        $('#tooltipExpirationBtn').button('enable');
-                        $('#tooltipExpirationCancel').show();
-                        $('#tooltipExpirationProgress').hide();
-                        $('#userClickExpiration').hide();
-                    }, 400);
                 }
+
+                window.assignUserRole = function (username, role_id) {
+                    showProgress(1);
+                    checkIfuserRights(username, role_id, function (data) {
+                        if (data == 1) {
+                            console.log(username, role_id);
+                            $.post('<?= $this->getUrl("ajax/assign_user.php?pid=$projectId") ?>', {
+                                username: username,
+                                role_id: role_id,
+                                notify_email_role: ($('#notify_email_role').prop('checked') ? 1 : 0),
+                                group_id: $('#user_dag').val()
+                            }, function (data) {
+                                showProgress(0, 0);
+                                if (data == '') {
+                                    alert(woops);
+                                    return;
+                                }
+                                try {
+                                    const result = JSON.parse(data);
+                                    if (!result.error || !result.bad_rights) {
+                                        return;
+                                    }
+                                    let users = Object.keys(result.bad_rights);
+                                    const title =
+                                        `You cannot assign user "${username}" to user role "${result.role}"`;
+                                    const text =
+                                        `The user is currently assigned to the SAG: "<strong>${result.bad_rights[users[0]].SAG}</strong>"<br>The following permissions allowed in user role "${result.role}" cannot be granted to users in that SAG:${createRightsTable(result.bad_rights[users[0]].rights)}`;
+
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: title,
+                                        html: text,
+                                        width: '750px'
+                                    });
+                                    return;
+                                } catch (error) {
+                                    $('#user_rights_roles_table_parent').html(data);
+                                    showProgress(0, 0);
+                                    simpleDialogAlt($(
+                                        '#user_rights_roles_table_parent div.userSaveMsg'), 1.7);
+                                    enablePageJS();
+                                    setTimeout(function () {
+                                        if (role_id == '0') {
+                                            simpleDialog(lang.rights_215, lang.global_03 + lang
+                                                .colon + ' ' + lang.rights_214);
+                                        }
+                                    }, 3200);
+                                }
+                                fixLinks();
+                            });
+                        } else {
+                            showProgress(0, 0);
+                            setTimeout(function () {
+                                simpleDialog(lang.rights_317, lang.global_03 + lang.colon + ' ' + lang
+                                    .rights_316);
+                            }, 500);
+                        }
+                        fixLinks();
+                    });
+                }
+
+                window.setExpiration = function () {
+                    $('#tooltipExpirationBtn').button('disable');
+                    $('#tooltipExpiration').prop('disabled', true);
+                    $('#tooltipExpirationCancel').hide();
+                    $('#tooltipExpirationProgress').show();
+                    $.post("<?= $this->getUrl('ajax/set_user_expiration.php?pid=' . $this->getProjectId()) ?>", {
+                        username: $('#tooltipExpirationHiddenUsername').val(),
+                        expiration: $('#tooltipExpiration').val()
+                    },
+                        function (data) {
+                            console.log(data);
+                            if (data == '0') {
+                                alert(woops);
+                                return;
+                            }
+                            try {
+                                const result = JSON.parse(data);
+                                if (!result.error || !result.bad_rights) {
+                                    return;
+                                }
+                                const users = Object.keys(result.bad_rights);
+                                const title = `You cannot grant those user rights to user "${users[0]}"`;
+                                const text =
+                                    `The user is currently assigned to the SAG: "<strong>${result.bad_rights[users[0]].SAG}</strong>"<br>The following permissions you are attempting to grant cannot be granted to users in that SAG:${createRightsTable(result.bad_rights[users[0]].rights)}`;
+
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: title,
+                                    html: text,
+                                    width: '750px'
+                                });
+                                return;
+                            } catch (error) {
+                                $('#user_rights_roles_table_parent').html(data);
+                                enablePageJS();
+                            } finally {
+                                setTimeout(function () {
+                                    $('#tooltipExpiration').prop('disabled', false);
+                                    $('#tooltipExpirationBtn').button('enable');
+                                    $('#tooltipExpirationCancel').show();
+                                    $('#tooltipExpirationProgress').hide();
+                                    $('#userClickExpiration').hide();
+                                }, 400);
+                            }
+                        });
+                }
+                fixLinks();
+                checkImportErrors();
             });
-    }
-    fixLinks();
-    checkImportErrors();
-});
-</script>
-<?php
+        </script>
+        <?php
     }
 
     public function redcap_module_project_enable($version, $projectId)
@@ -435,13 +435,13 @@ $(function() {
         rights.role_id,
         roles.unique_role_name,
         roles.role_name,
-        em.value as system_role
+        em.value as sag
         from redcap_user_rights rights
         left join redcap_user_roles roles
         on rights.role_id = roles.role_id
         left join redcap_user_information info
         on rights.username = info.username
-        LEFT JOIN redcap_external_module_settings em ON em.key = concat(rights.username,\'-role\')
+        LEFT JOIN redcap_external_module_settings em ON em.key = concat(rights.username,\'-sag\')
         where rights.project_id = ?';
         try {
             $result = $this->framework->query($sql, [ $projectId ]);
@@ -458,16 +458,16 @@ $(function() {
     public function getUsersWithBadRights($projectId)
     {
         $users     = $this->getBasicProjectUsers($projectId);
-        $roles     = $this->getAllSystemRoles(true);
+        $sags      = $this->getAllSags(true);
         $badRights = [];
         foreach ( $users as $user ) {
             $expiration            = $user["expiration"];
             $isExpired             = $expiration != "" && strtotime($expiration) < strtotime("today");
             $username              = $user["username"];
-            $acceptableRights      = $roles[$user["system_role"]]["permissions"];
+            $acceptableRights      = $sags[$user["sag"]]["permissions"];
             $currentRights         = $this->getCurrentRightsFormatted($username, $projectId);
             $bad                   = $this->checkProposedRights($acceptableRights, $currentRights);
-            $systemRoleName        = $roles[$user["system_role"]]["role_name"];
+            $sagName               = $sags[$user["sag"]]["sag_name"];
             $projectRoleUniqueName = $user["unique_role_name"];
             $projectRoleName       = $user["role_name"];
             $badRights[]           = [
@@ -476,8 +476,8 @@ $(function() {
                 "email"             => $user["user_email"],
                 "expiration"        => $expiration == "" ? "never" : $expiration,
                 "isExpired"         => $isExpired,
-                "system_role"       => $user["system_role"],
-                "system_role_name"  => $systemRoleName,
+                "sag"               => $user["sag"],
+                "sag_name"          => $sagName,
                 "project_role"      => $projectRoleUniqueName,
                 "project_role_name" => $projectRoleName,
                 "acceptable"        => $acceptableRights,
@@ -491,19 +491,19 @@ $(function() {
     public function getUsersWithBadRights2($projectId)
     {
         $users            = $this->getBasicProjectUsers($projectId);
-        $roles            = $this->getAllSystemRoles(true);
+        $sags             = $this->getAllSags(true);
         $allCurrentRights = $this->getAllCurrentRights($projectId);
         $badRights        = [];
         foreach ( $users as $user ) {
             $expiration            = $user['expiration'];
             $isExpired             = $expiration != '' && strtotime($expiration) < strtotime('today');
             $username              = $user['username'];
-            $systemRole            = $user['system_role'] ?? $this->defaultRoleId;
-            $systemRole            = array_key_exists($systemRole, $roles) ? $systemRole : $this->defaultRoleId;
-            $acceptableRights      = $roles[$systemRole]['permissions'];
+            $sag                   = $user['sag'] ?? $this->defaultSagId;
+            $sag                   = array_key_exists($sag, $sags) ? $sag : $this->defaultSagId;
+            $acceptableRights      = $sags[$sag]['permissions'];
             $currentRights         = $allCurrentRights[$username];
             $bad                   = $this->checkProposedRights2($acceptableRights, $currentRights);
-            $systemRoleName        = $roles[$systemRole]['role_name'];
+            $sagName               = $sags[$sag]['sag_name'];
             $projectRoleUniqueName = $user['unique_role_name'];
             $projectRoleName       = $user['role_name'];
             $badRights[]           = [
@@ -512,8 +512,8 @@ $(function() {
                 'email'             => $user['user_email'],
                 'expiration'        => $expiration == '' ? 'never' : $expiration,
                 'isExpired'         => $isExpired,
-                'system_role'       => $systemRole,
-                'system_role_name'  => $systemRoleName,
+                'sag'               => $sag,
+                'sag_name'          => $sagName,
                 'project_role'      => $projectRoleUniqueName,
                 'project_role_name' => $projectRoleName,
                 'acceptable'        => $acceptableRights,
@@ -706,7 +706,7 @@ $(function() {
         }
     }
 
-    public function getAllUserInfo($includeSystemRole = false) : ?array
+    public function getAllUserInfo($includeSag = false) : ?array
     {
         $sql = "SELECT username
         , user_email
@@ -725,12 +725,12 @@ $(function() {
         , user_expiration
         , user_sponsor
         , allow_create_db";
-        if ( $includeSystemRole ) {
-            $sql .= ", em.value as system_role";
+        if ( $includeSag ) {
+            $sql .= ", em.value as sag";
         }
         $sql .= " FROM redcap_user_information u";
-        if ( $includeSystemRole ) {
-            $sql .= " LEFT JOIN redcap_external_module_settings em ON em.key = concat(u.username,'-role')";
+        if ( $includeSag ) {
+            $sql .= " LEFT JOIN redcap_external_module_settings em ON em.key = concat(u.username,'-sag')";
         }
         try {
             $result   = $this->framework->query($sql, []);
@@ -759,9 +759,9 @@ $(function() {
 
     public function getAcceptableRights(string $username)
     {
-        $systemRoleId = $this->getUserSystemRole($username);
-        $systemRole   = $this->getSystemRoleRightsById($systemRoleId);
-        return json_decode($systemRole["permissions"], true);
+        $sagId = $this->getUserSag($username);
+        $sag   = $this->getSagRightsById($sagId);
+        return json_decode($sag["permissions"], true);
     }
 
     // E.g., from ["export-form-form1"=>"1", "export-form-form2"=>"1"] to "[form1,1][form2,1]"
@@ -843,7 +843,12 @@ $(function() {
         return !is_null($row["expiration"]) && strtotime($row["expiration"]) < strtotime("today");
     }
 
-    public function getRoleIdFromUniqueRoleName($uniqueRoleName)
+    /**
+     * Gets project role's ID from its unique role name
+     * @param string $uniqueRoleName
+     * @return string project role's ID
+     */
+    public function getRoleIdFromUniqueRoleName(string $uniqueRoleName)
     {
         $sql    = "SELECT role_id FROM redcap_user_roles WHERE unique_role_name = ?";
         $result = $this->framework->query($sql, [ $uniqueRoleName ]);
@@ -851,6 +856,11 @@ $(function() {
         return $this->framework->escape($row["role_id"]);
     }
 
+    /**
+     * Gets project role's unique role name from its ID
+     * @param mixed $roleId
+     * @return string project role's unique role name
+     */
     public function getUniqueRoleNameFromRoleId($roleId)
     {
         $sql    = "SELECT unique_role_name FROM redcap_user_roles WHERE role_id = ?";
@@ -908,21 +918,21 @@ $(function() {
         return strrev(preg_replace("/^.*v_/", "", strrev($this->framework->getModuleDirectoryName()), 1));
     }
 
-    private function setUserSystemRole($username, $roleId)
+    private function setUserSag($username, $sagId)
     {
-        $setting = $username . "-role";
-        $this->setSystemSetting($setting, $roleId);
+        $setting = $username . "-sag";
+        $this->setSystemSetting($setting, $sagId);
     }
 
-    public function getUserSystemRole($username)
+    public function getUserSag($username)
     {
-        $setting = $username . "-role";
-        $role    = $this->getSystemSetting($setting);
-        if ( empty($role) || !$this->systemRoleExists($role) ) {
-            $role = $this->defaultRoleId;
-            $this->setUserSystemRole($username, $role);
+        $setting = $username . "-sag";
+        $sag     = $this->getSystemSetting($setting);
+        if ( empty($sag) || !$this->sagExists($sag) ) {
+            $sag = $this->defaultSagId;
+            $this->setUserSag($username, $sag);
         }
-        return $role;
+        return $sag;
     }
 
     private function convertDataQualityResolution($rights)
@@ -956,12 +966,12 @@ $(function() {
         return json_encode($rights);
     }
 
-    public function throttleSaveSystemRole(string $roleId, string $roleName, string $permissions)
+    public function throttleSaveSag(string $roleId, string $roleName, string $permissions)
     {
         if ( !$this->throttle("message = ?", 'role', 3, 1) ) {
-            $this->saveSystemRole($roleId, $roleName, $permissions);
+            $this->saveSag($roleId, $roleName, $permissions);
         } else {
-            $this->log('saveSystemRole Throttled', [
+            $this->log('saveSag Throttled', [
                 "role_id"   => $roleId,
                 "role_name" => $roleName,
                 "user"      => $this->getUser()->getUsername()
@@ -970,73 +980,73 @@ $(function() {
     }
 
     /**
-     * @param string $roleId
-     * @param string $roleName
+     * @param string $sagId
+     * @param string $sagName
      * @param string $permissions - json-encoded string of user rights
      *
      * @return [type]
      */
-    public function saveSystemRole(string $roleId, string $roleName, string $permissions)
+    public function saveSag(string $sagId, string $sagName, string $permissions)
     {
         try {
             $permissionsConverted = $this->convertPermissions($permissions);
-            $this->log("role", [
-                "role_id"     => $roleId,
-                "role_name"   => $roleName,
+            $this->log("sag", [
+                "sag_id"      => $sagId,
+                "sag_name"    => $sagName,
                 "permissions" => $permissionsConverted,
                 "user"        => $this->getUser()->getUsername()
             ]);
             $this->framework->log("Saved SAG", [
-                "role_id"     => $roleId,
-                "role_name"   => $roleName,
+                "sag_id"      => $sagId,
+                "sag_name"    => $sagName,
                 "permissions" => $permissionsConverted
             ]);
         } catch ( \Throwable $e ) {
-            $this->log('Error saving system role', [
+            $this->log('Error saving SAG', [
                 "error"       => $e->getMessage(),
-                "role_id"     => $roleId,
-                "role_name"   => $roleName,
+                "sag_id"      => $sagId,
+                "sag_name"    => $sagName,
                 "permissions" => $permissionsConverted,
                 "user"        => $this->getUser()->getUsername()
             ]);
         }
     }
 
-    public function throttleUpdateSystemRole(string $roleId, string $roleName, string $permissions)
+    public function throttleUpdateSag(string $sagId, string $sagName, string $permissions)
     {
-        if ( !$this->throttle("message = 'updated system role'", [], 3, 1) ) {
-            $this->updateSystemRole($roleId, $roleName, $permissions);
+        if ( !$this->throttle("message = 'Updated SAG'", [], 3, 1) ) {
+            $this->updateSag($sagId, $sagName, $permissions);
         } else {
-            $this->log('updateSystemRole Throttled', [ "role_id" => $roleId, "role_name" => $roleName, "user" => $this->getUser()->getUsername() ]);
+            $this->log('updateSag Throttled', [ "sag_id" => $sagId, "sag_name" => $sagName, "user" => $this->getUser()->getUsername() ]);
         }
     }
 
-    public function updateSystemRole(string $roleId, string $roleName, string $permissions)
+    public function updateSag(string $sagId, string $sagName, string $permissions)
     {
         try {
             $permissionsConverted = $this->convertPermissions($permissions);
-            $sql1                 = "SELECT log_id WHERE message = 'role' AND role_id = ? AND project_id IS NULL";
-            $result1              = $this->framework->queryLogs($sql1, [ $roleId ]);
+            $sql1                 = "SELECT log_id WHERE message = 'sag' AND sag_id = ? AND project_id IS NULL";
+            $result1              = $this->framework->queryLogs($sql1, [ $sagId ]);
             $logId                = intval($result1->fetch_assoc()["log_id"]);
             if ( $logId === 0 ) {
-                throw new \Error('No role found with the specified id');
+                throw new \Error('No SAG found with the specified id');
             }
-            $params = [ "role_name" => $roleName, "permissions" => $permissionsConverted ];
+            $params = [ "sag_name" => $sagName, "permissions" => $permissionsConverted ];
             foreach ( $params as $name => $value ) {
                 $sql = "UPDATE redcap_external_modules_log_parameters SET value = ? WHERE log_id = ? AND name = ?";
                 $this->framework->query($sql, [ $value, $logId, $name ]);
             }
             $this->log('Updated SAG', [
-                'role_id'     => $roleId,
-                'role_name'   => $roleName,
+                'sag_id'      => $sagId,
+                'sag_name'    => $sagName,
                 'permissions' => $permissionsConverted,
                 "user"        => $this->getUser()->getUsername()
             ]);
         } catch ( \Throwable $e ) {
-            $this->log('Error updating system role', [
+            $this->log('Error updating SAG', [
                 'error'                 => $e->getMessage(),
-                'role_id'               => $roleId,
-                'role_name'             => $roleName,
+                'sag_id'                => $sagId,
+                'sag_name'              => $sagName,
                 'permissions_orig'      => $permissions,
                 'permissions_converted' => $permissionsConverted,
                 "user"                  => $this->getUser()->getUsername()
@@ -1044,102 +1054,102 @@ $(function() {
         }
     }
 
-    public function throttleDeleteSystemRole($roleId)
+    public function throttleDeleteSag($sagId)
     {
-        if ( !$this->throttle("message = 'deleted system role'", [], 2, 1) ) {
-            $this->deleteSystemRole($roleId);
+        if ( !$this->throttle("message = 'Deleted SAG'", [], 2, 1) ) {
+            $this->deleteSag($sagId);
         } else {
-            $this->log('deleteSystemRole Throttled', [ "role_id" => $roleId, "user" => $this->getUser()->getUsername() ]);
+            $this->log('deleteSag Throttled', [ "sag_id" => $sagId, "user" => $this->getUser()->getUsername() ]);
         }
     }
 
-    private function deleteSystemRole($roleId)
+    private function deleteSag($sagId)
     {
         try {
-            $result = $this->removeLogs("message = 'role' AND role_id = ? AND (project_id IS NULL OR project_id IS NOT NULL) ", [ $roleId ]);
+            $result = $this->removeLogs("message = 'sag' AND sag_id = ? AND (project_id IS NULL OR project_id IS NOT NULL) ", [ $sagId ]);
             $this->log('Deleted SAG', [
-                'user'    => $this->getUser()->getUsername(),
-                'role_id' => $roleId
+                'user'   => $this->getUser()->getUsername(),
+                'sag_id' => $sagId
             ]);
             return $result;
         } catch ( \Throwable $e ) {
-            $this->log('Error deleting system role', [ "error" => $e->getMessage(), "user" => $this->getUser()->getUsername(), "role_id" => $roleId ]);
+            $this->log('Error deleting SAG', [ "error" => $e->getMessage(), "user" => $this->getUser()->getUsername(), "sag_id" => $sagId ]);
         }
     }
 
-    public function getAllSystemRoles($parsePermissions = false)
+    public function getAllSags($parsePermissions = false)
     {
-        $sql    = 'SELECT MAX(log_id) AS \'log_id\' WHERE message = \'role\' AND (project_id IS NULL OR project_id IS NOT NULL) GROUP BY role_id';
+        $sql    = 'SELECT MAX(log_id) AS \'log_id\' WHERE message = \'sag\' AND (project_id IS NULL OR project_id IS NOT NULL) GROUP BY sag_id';
         $result = $this->framework->queryLogs($sql, []);
-        $roles  = [];
+        $sags   = [];
         while ( $row = $result->fetch_assoc() ) {
-            $logId             = $row['log_id'];
-            $sql2              = 'SELECT role_id, role_name, permissions WHERE (project_id IS NULL OR project_id IS NOT NULL) AND log_id = ?';
-            $result2           = $this->framework->queryLogs($sql2, [ $logId ]);
-            $role              = $result2->fetch_assoc();
-            $role['role_name'] = $this->framework->escape($role['role_name']);
+            $logId            = $row['log_id'];
+            $sql2             = 'SELECT sag_id, sag_name, permissions WHERE (project_id IS NULL OR project_id IS NOT NULL) AND log_id = ?';
+            $result2          = $this->framework->queryLogs($sql2, [ $logId ]);
+            $sag              = $result2->fetch_assoc();
+            $sag['role_name'] = $this->framework->escape($sag['sag_name']);
             if ( $parsePermissions ) {
-                $role['permissions']     = json_decode($role['permissions'], true);
-                $roles[$role['role_id']] = $role;
+                $sag['permissions']   = json_decode($sag['permissions'], true);
+                $sags[$sag['sag_id']] = $sag;
             } else {
-                $roles[] = $role;
+                $sags[] = $sag;
             }
         }
-        return $roles;
+        return $sags;
     }
 
-    private function setDefaultSystemRole()
+    private function setDefaultSag()
     {
-        $rights                   = $this->getDefaultRights();
-        $rights['role_id']        = $this->defaultRoleId;
-        $rights['role_name_edit'] = $this->defaultRoleName;
-        $rights['dataViewing']    = '3';
-        $rights['dataExport']     = '3';
-        $this->saveSystemRole($this->defaultRoleId, $this->defaultRoleName, json_encode($rights));
+        $rights                  = $this->getDefaultRights();
+        $rights['sag_id']        = $this->defaultSagId;
+        $rights['sag_name_edit'] = $this->defaultSagName;
+        $rights['dataViewing']   = '3';
+        $rights['dataExport']    = '3';
+        $this->saveSag($this->defaultSagId, $this->defaultSagName, json_encode($rights));
         return $rights;
     }
 
-    public function getSystemRoleRightsById($roleId)
+    public function getSagRightsById($sagId)
     {
-        if ( empty($roleId) ) {
-            $roleId = $this->defaultRoleId;
+        if ( empty($sagId) ) {
+            $sagId = $this->defaultSagId;
         }
-        $sql    = "SELECT role_id, role_name, permissions WHERE message = 'role' AND role_id = ? AND (project_id IS NULL OR project_id IS NOT NULL) ORDER BY log_id DESC LIMIT 1";
-        $result = $this->framework->queryLogs($sql, [ $roleId ]);
+        $sql    = "SELECT sag_id, sag_name, permissions WHERE message = 'sag' AND sag_id = ? AND (project_id IS NULL OR project_id IS NOT NULL) ORDER BY log_id DESC LIMIT 1";
+        $result = $this->framework->queryLogs($sql, [ $sagId ]);
         $rights = $result->fetch_assoc();
         if ( empty($rights) ) {
-            $roleId2 = $this->defaultRoleId;
-            $result2 = $this->framework->queryLogs($sql, [ $roleId2 ]);
+            $sagId2  = $this->defaultSagId;
+            $result2 = $this->framework->queryLogs($sql, [ $sagId2 ]);
             $rights  = $result2->fetch_assoc();
 
             if ( empty($rights) ) {
-                $rights = $this->setDefaultSystemRole();
+                $rights = $this->setDefaultSag();
             }
         }
         return $rights;
     }
 
-    public function systemRoleExists($roleId)
+    public function sagExists($sagId)
     {
-        if ( empty($roleId) ) {
+        if ( empty($sagId) ) {
             return false;
         }
-        foreach ( $this->getAllSystemRoles() as $role ) {
-            if ( $roleId == $role["role_id"] ) {
+        foreach ( $this->getAllSags() as $sag ) {
+            if ( $sagId == $sag["sag_id"] ) {
                 return true;
             }
         }
         return false;
     }
 
-    public function generateNewRoleId()
+    public function generateNewSagId()
     {
-        $newRoleId = "role_" . substr(md5(uniqid()), 0, 13);
+        $newSagId = "sag_" . substr(md5(uniqid()), 0, 13);
 
-        if ( $this->systemRoleExists($newRoleId) ) {
-            return $this->generateNewRoleId();
+        if ( $this->sagExists($newSagId) ) {
+            return $this->generateNewSagId();
         } else {
-            return $newRoleId;
+            return $newSagId;
         }
     }
 

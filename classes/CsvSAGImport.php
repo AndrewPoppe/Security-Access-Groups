@@ -44,7 +44,7 @@ class CsvSAGImport
     private function permissionsNamesAreClean($row)
     {
         foreach ( $row as $permission ) {
-            if ( $permission === 'role_name' || $permission === 'role_id' ) {
+            if ( $permission === 'sag_name' || $permission === 'sag_id' ) {
                 continue;
             }
             if ( !in_array($permission, $this->permissions, true) ) {
@@ -54,33 +54,33 @@ class CsvSAGImport
         }
     }
 
-    private function checkRoleName($roleName)
+    private function checkSagName($sagName)
     {
-        $roleName = htmlspecialchars(trim($roleName), ENT_QUOTES);
-        if ( empty($roleName) ) {
-            $this->errorMessages[] = 'One or more role name was invalid.';
+        $sagName = htmlspecialchars(trim($sagName), ENT_QUOTES);
+        if ( empty($sagName) ) {
+            $this->errorMessages[] = 'One or more SAG name was invalid.';
             $this->rowValid        = false;
         }
-        return $roleName;
+        return $sagName;
     }
 
-    private function checkRoleId($roleId)
+    private function checkSagId($sagId)
     {
-        $roleId = trim($roleId);
-        if ( empty($roleId) || !$this->module->systemRoleExists($roleId) ) {
-            $roleId = '[new]';
+        $sagId = trim($sagId);
+        if ( empty($sagId) || !$this->module->sagExists($sagId) ) {
+            $sagId = '[new]';
         }
-        return $roleId;
+        return $sagId;
     }
 
     public function contentsValid()
     {
         $this->header = $this->csvContents[0];
 
-        $roleNameIndex = array_search('role_name', $this->header, true);
-        $roleIdIndex   = array_search('role_id', $this->header, true);
-        if ( $roleNameIndex === false || $roleIdIndex === false ) {
-            $this->errorMessages[] = 'Input file did not contain \'role_name\' and/or \'role_id\' columns.';
+        $sagNameIndex = array_search('sag_name', $this->header, true);
+        $sagIdIndex   = array_search('sag_id', $this->header, true);
+        if ( $sagNameIndex === false || $sagIdIndex === false ) {
+            $this->errorMessages[] = 'Input file did not contain \'sag_name\' and/or \'sag_id\' columns.';
             return false;
         }
 
@@ -92,21 +92,21 @@ class CsvSAGImport
                 continue;
             }
 
-            $thisRoleName = $this->checkRoleName($row[$roleNameIndex]);
-            $thisRole     = $this->checkRoleId($row[$roleIdIndex]);
+            $thisSagName = $this->checkSagName($row[$sagNameIndex]);
+            $thisSag     = $this->checkSagId($row[$sagIdIndex]);
 
             if ( !$this->rowValid ) {
                 $this->valid = false;
             } else {
                 $this->cleanContents[] = [
-                    'role_name'   => $thisRoleName,
-                    'role_id'     => $thisRole,
+                    'sag_name'    => $thisSagName,
+                    'sag_id'      => $thisSag,
                     'permissions' => $this->parsePermissions($row)
                 ];
             }
         }
         if ( empty($this->cleanContents) ) {
-            $this->errorMessages[] = 'No valid roles were present in the import file.';
+            $this->errorMessages[] = 'No valid SAGs were present in the import file.';
             $this->valid           = false;
         }
 
@@ -127,30 +127,30 @@ class CsvSAGImport
         return $result;
     }
 
-    public function getRoleDefinitions()
+    public function getSagDefinitions()
     {
         $result = [];
         foreach ( $this->cleanContents as $row ) {
             $thisResult             = [];
-            $id                     = $row['role_id'];
-            $thisResult['existing'] = $this->module->systemRoleExists($id);
+            $id                     = $row['sag_id'];
+            $thisResult['existing'] = $this->module->sagExists($id);
             if ( $thisResult['existing'] ) {
-                $currentRole                = $this->module->getSystemRoleRightsById($id);
-                $currentRole['permissions'] = json_decode($currentRole['permissions'], true);
+                $currentSag                = $this->module->getSagRightsById($id);
+                $currentSag['permissions'] = json_decode($currentSag['permissions'], true);
             } else {
-                $currentRole = $row;
+                $currentSag = $row;
             }
-            $thisResult['role_id'] = $id;
+            $thisResult['sag_id']  = $id;
             $thisResult['changes'] = false;
-            if ( $row['role_name'] == $currentRole['role_name'] ) {
-                $thisResult['role_name'] = $row['role_name'];
+            if ( $row['sag_name'] == $currentSag['sag_name'] ) {
+                $thisResult['sag_name'] = $row['sag_name'];
             } else {
-                $thisResult['role_name'] = [ 'current' => $currentRole['role_name'], 'proposed' => $row['role_name'] ];
-                $thisResult['changes']   = true;
+                $thisResult['sag_name'] = [ 'current' => $currentSag['sag_name'], 'proposed' => $row['sag_name'] ];
+                $thisResult['changes']  = true;
             }
             $thisResult['permissions'] = [];
             foreach ( $this->permissions as $permission ) {
-                $current  = $currentRole['permissions'][$permission] ?? 0;
+                $current  = $currentSag['permissions'][$permission] ?? 0;
                 $proposed = $row['permissions'][$permission] ?? 0;
 
                 if ( $current == $proposed ) {
@@ -177,22 +177,22 @@ class CsvSAGImport
 
     public function getUpdateTable()
     {
-        $this->getRoleDefinitions();
+        $this->getSagDefinitions();
         $html = '<div class="modal fade">
             <div class="modal-lg modal-dialog modal-dialog-scrollable">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">Confirm role definitions</h5>
+                        <h5 class="modal-title">Confirm SAG definitions</h5>
                         <button type="button" class="btn-close align-self-center" data-bs-dismiss="modal" data-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
                     <div class="container mb-4 w-90" style="font-size:larger;">Examine the table of proposed changes below to verify it is correct.
-                    Only roles in highlighted rows will be affected.</div>
+                    Only SAGs in highlighted rows will be affected.</div>
                     <table class="table table-bordered">
                         <thead class="thead-dark">
                             <tr>
-                                <th>Role ID</th>
-                                <th>Role</th>';
+                                <th>SAG ID</th>
+                                <th>SAG</th>';
         foreach ( $this->permissions as $permission ) {
             $html .= '<th>' . $permission . '</th>';
         }
@@ -209,8 +209,8 @@ class CsvSAGImport
                 $nothingToDo = $row['changes'] ? false : $nothingToDo;
             }
             $html .= '<tr class="' . $rowClass . '">' .
-                $this->formatCell($row['role_id'], false) .
-                $this->formatCell($row['role_name'], false);
+                $this->formatCell($row['sag_id'], false) .
+                $this->formatCell($row['sag_name'], false);
             foreach ( $this->permissions as $permission ) {
                 $value = $row['permissions'][$permission];
                 $html .= $this->formatCell($value);
@@ -238,22 +238,22 @@ class CsvSAGImport
         $success = false;
         try {
             foreach ( $this->cleanContents as $row ) {
-                $roleName = $row['role_name'];
-                $role     = $row['role_id'];
-                if ( empty($roleName) ) {
+                $sagName = $row['sag_name'];
+                $sag     = $row['sag_id'];
+                if ( empty($sagName) ) {
                     continue;
                 }
-                if ( $this->module->systemRoleExists($role) ) {
-                    $this->module->updateSystemRole($role, $roleName, json_encode($row['permissions']));
+                if ( $this->module->sagExists($sag) ) {
+                    $this->module->updateSag($sag, $sagName, json_encode($row['permissions']));
                 } else {
-                    $role = $this->module->generateNewRoleId();
-                    $this->module->saveSystemRole($role, $roleName, json_encode($row['permissions']));
+                    $sag = $this->module->generateNewSagId();
+                    $this->module->saveSag($sag, $sagName, json_encode($row['permissions']));
                 }
             }
             $this->module->log('Imported SAGs from CSV');
             $success = true;
         } catch ( \Throwable $e ) {
-            $this->module->log('Error importing roles', [ 'error' => $e->getMessage() ]);
+            $this->module->log('Error importing SAGs', [ 'error' => $e->getMessage() ]);
         } finally {
             return $success;
         }

@@ -21,8 +21,8 @@ if ( isset($_POST['csv_content']) && $_POST['csv_content'] != '' ) {
         $badRights = [];
         foreach ( $data as $key => $this_assignment ) {
             $username       = $this_assignment['username'];
-            $sagId          = $module->getUserSystemRole($username);
-            $sag            = $module->getSystemRoleRightsById($sagId);
+            $sagId          = $module->getUserSag($username);
+            $sag            = $module->getSagRightsById($sagId);
             $uniqueRoleName = $this_assignment['unique_role_name'];
             if ( $uniqueRoleName == '' ) {
                 continue;
@@ -94,8 +94,8 @@ if ( isset($_POST['csv_content']) && $_POST['csv_content'] != '' ) {
             require_once $scriptPath;
             ob_end_flush(); // End buffering and clean up
         } else {
-            $_SESSION['SUR_imported']   = 'roleassignments';
-            $_SESSION['SUR_bad_rights'] = json_encode($badRights);
+            $_SESSION['SAG_imported']   = 'roleassignments';
+            $_SESSION['SAG_bad_rights'] = json_encode($badRights);
             redirect(APP_PATH_WEBROOT . 'UserRights/index.php?pid=' . PROJECT_ID);
         }
     } else {
@@ -130,8 +130,8 @@ if ( isset($_POST['csv_content']) && $_POST['csv_content'] != '' ) {
 
             $theseBadRights = [];
             foreach ( $usersInRole as $username ) {
-                $sagId            = $module->getUserSystemRole($username);
-                $sag              = $module->getSystemRoleRightsById($sagId);
+                $sagId            = $module->getUserSag($username);
+                $sag              = $module->getSagRightsById($sagId);
                 $acceptableRights = $module->getAcceptableRights($username);
                 $userBadRights    = $module->checkProposedRights($acceptableRights, $thisRole);
                 // We ignore expired users
@@ -221,8 +221,8 @@ if ( isset($_POST['csv_content']) && $_POST['csv_content'] != '' ) {
             require_once $scriptPath;
             ob_end_flush(); // End buffering and clean up
         } else {
-            $_SESSION['SUR_imported']   = 'roles';
-            $_SESSION['SUR_bad_rights'] = json_encode($badRights);
+            $_SESSION['SAG_imported']   = 'roles';
+            $_SESSION['SAG_bad_rights'] = json_encode($badRights);
             redirect(APP_PATH_WEBROOT . 'UserRights/index.php?pid=' . PROJECT_ID);
         }
     }

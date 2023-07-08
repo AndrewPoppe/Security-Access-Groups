@@ -13,18 +13,18 @@ if ( $_SERVER['REQUEST_METHOD'] !== 'POST' ) {
     exit;
 }
 
-$roles          = $module->getAllSystemRoles();
+$sags           = $module->getAllSags();
 $allPermissions = $module->getDisplayTextForRights(true);
 
-$rolesForTable = [];
-foreach ( $roles as $index => $role ) {
-    $role['index']       = $index;
-    $permissions         = json_decode($role['permissions'], true);
-    $role['permissions'] = [];
+$sagsForTable = [];
+foreach ( $sags as $index => $sag ) {
+    $sag['index']       = $index;
+    $permissions        = json_decode($sag['permissions'], true);
+    $sag['permissions'] = [];
     foreach ( $allPermissions as $permission => $displayText ) {
-        $role['permissions'][$permission] = $permissions[$permission] ?? null;
+        $sag['permissions'][$permission] = $permissions[$permission] ?? null;
     }
-    $rolesForTable[] = $role;
+    $sagsForTable[] = $sag;
 }
 
-echo json_encode([ 'data' => $rolesForTable ]);
+echo json_encode([ 'data' => $sagsForTable ]);

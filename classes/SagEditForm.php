@@ -2,40 +2,40 @@
 
 namespace YaleREDCap\SecurityAccessGroups;
 
-class RoleEditForm
+class SagEditForm
 {
     private $module;
     private $rights;
-    private $newRole;
-    private $roleName;
-    private $roleId;
+    private $newSag;
+    private $sagName;
+    private $sagId;
     private $lang;
     private $allRights;
     private $contextMessage;
     public function __construct(
-        SecurityAccessGroups $module, array $rights, bool $newRole,
-        $roleName = '',
-        $roleId = ''
+        SecurityAccessGroups $module, array $rights, bool $newSag,
+        $sagName = '',
+        $sagId = ''
     ) {
         global $lang;
         $this->module    = $module;
         $this->rights    = $rights;
-        $this->newRole   = $newRole;
-        $this->roleName  = $roleName;
-        $this->roleId    = $roleId;
+        $this->newSag    = $newSag;
+        $this->sagName   = $sagName;
+        $this->sagId     = $sagId;
         $this->lang      = $lang;
         $this->allRights = $this->module->getAllRights();
 
         $newMessage           = $lang['rights_159'];
         $existingMessage      = $lang['rights_157'];
-        $messageSuffix        = ' "<strong>' . \REDCap::escapeHtml($roleName) . '</strong>"';
-        $this->contextMessage = ($newRole ? $newMessage : $existingMessage) . $messageSuffix;
+        $messageSuffix        = ' "<strong>' . \REDCap::escapeHtml($sagName) . '</strong>"';
+        $this->contextMessage = ($newSag ? $newMessage : $existingMessage) . $messageSuffix;
     }
 
     public function getForm()
     {
         $this->getFormStart();
-        $this->getRoleNameField();
+        $this->getSagNameField();
         $this->getHighLevelPrivileges();
         $this->getProjectSetupDesign();
         $this->getUserRights();
@@ -69,7 +69,7 @@ class RoleEditForm
 
     private function getFormStart()
     {
-        $alertClass = $this->newRole ? "alert-success" : "alert-primary";
+        $alertClass = $this->newSag ? "alert-success" : "alert-primary";
         $label      = $this->lang['rights_431'];
         echo <<<"EOT"
         <div class="modal-xl modal-dialog modal-dialog-scrollable">
@@ -85,9 +85,9 @@ class RoleEditForm
                 <div style="text-align:center; margin: 15px 0;" class="fs14 alert $alertClass">
                     <i class="fa-solid fa-fw fa-user-tag"></i> $this->contextMessage
                 </div>
-                <form id="SUR_Role_Setting">
+                <form id="SAG_Setting">
                     <div class="hidden">
-                        <input name="newRole" value="$this->newRole">
+                        <input name="newSag" value="$this->newSag">
                     </div>
                     <div class="row">
                         <div class="col" style='width:475px;'>
@@ -99,18 +99,18 @@ class RoleEditForm
         EOT;
     }
 
-    private function getRoleNameField()
+    private function getSagNameField()
     {
-        $label    = $this->lang['rights_199'];
-        $roleName = $this->module->escape($this->roleName);
-        $hidden   = $this->newRole ? "hidden" : '';
+        $label   = $this->lang['rights_199'];
+        $sagName = $this->module->escape($this->sagName);
+        $hidden  = $this->newSag ? "hidden" : '';
         echo <<<"EOT"
-        <!-- EDIT ROLE NAME -->
+        <!-- EDIT SAG NAME -->
         <div class="SUR-form-row row $hidden">
             <div class="col" colspan='2'>
                 <i class="fa-solid fa-fw fa-id-card"></i>&nbsp;&nbsp;$label
-                <input type='text' value="$roleName"
-                    class='x-form-text x-form-field' name='role_name_edit'>
+                <input type='text' value="$sagName"
+                    class='x-form-text x-form-field' name='sag_name_edit'>
             </div>
         </div>
         EOT;
@@ -927,8 +927,8 @@ class RoleEditForm
     }
     private function getFormEnd()
     {
-        $buttonClass = $this->newRole ? 'btn-success' : 'btn-primary';
-        $label       = $this->newRole ? 'Save New Role' : 'Save Changes';
+        $buttonClass = $this->newSag ? 'btn-success' : 'btn-primary';
+        $label       = $this->newSag ? 'Save New SAG' : 'Save Changes';
         echo <<<"EOT"
                                 </div>
                             </div>
@@ -938,16 +938,16 @@ class RoleEditForm
             </form>
         </div>
         <div class="modal-footer">
-            <button id="SUR_Save" type="button"
+            <button id="SAG_Save" type="button"
                 class="btn $buttonClass">$label</button>
             <button id="SUR_Cancel" type="button" class="btn btn-secondary" data-bs-dismiss="modal"
                 data-dismiss="modal">Cancel
             </button>
         EOT;
-        if ( !$this->newRole ) {
+        if ( !$this->newSag ) {
             echo <<<"EOT"
-            <button id="SUR_Copy" type="button" class="btn btn-info btn-sm">Copy role</button>
-            <button id="SUR_Delete" type="button" class="btn btn-danger btn-sm">Delete role</button>
+            <button id="SAG_Copy" type="button" class="btn btn-info btn-sm">Copy SAG</button>
+            <button id="SAG_Delete" type="button" class="btn btn-danger btn-sm">Delete SAG</button>
             EOT;
         }
         echo <<<"EOT"

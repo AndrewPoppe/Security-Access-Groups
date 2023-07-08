@@ -15,7 +15,7 @@ if ( !$module->getUser()->isSuperUser() ) {
 }
 
 $username = filter_input(INPUT_POST, "username", FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-$role     = filter_input(INPUT_POST, "role", FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+$sag      = filter_input(INPUT_POST, "sag", FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 
 if ( empty($module->framework->getUser($username)->getEmail()) ) {
     http_response_code(400);
@@ -23,14 +23,14 @@ if ( empty($module->framework->getUser($username)->getEmail()) ) {
     exit;
 }
 
-if ( !$module->systemRoleExists($role) ) {
+if ( !$module->sagExists($sag) ) {
     http_response_code(400);
-    echo "Role not found";
+    echo "SAG not found";
     exit;
 }
 
 http_response_code(200);
-$setting = $username . "-role";
-$module->framework->setSystemSetting($setting, $role);
-$module->framework->log('Assigned SAG', [ 'user' => $username, 'role' => $role ]);
+$setting = $username . "-sag";
+$module->framework->setSystemSetting($setting, $sag);
+$module->framework->log('Assigned SAG', [ 'user' => $username, 'sag' => $sag ]);
 exit;

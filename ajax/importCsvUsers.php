@@ -28,7 +28,7 @@ if ( $contentsValid !== true ) {
     http_response_code(400);
     echo json_encode([
         "error" => $userImport->errorMessages,
-        "roles" => $userImport->badRoles,
+        "sags"  => $userImport->badSags,
         "users" => $userImport->badUsers
     ]);
     exit;
