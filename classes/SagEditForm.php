@@ -26,8 +26,8 @@ class SagEditForm
         $this->lang      = $lang;
         $this->allRights = $this->module->getAllRights();
 
-        $newMessage           = $lang['rights_159'];
-        $existingMessage      = $lang['rights_157'];
+        $newMessage           = 'Creating new Security Access Group';
+        $existingMessage      = 'Editing existing Security Access Group';
         $messageSuffix        = ' "<strong>' . \REDCap::escapeHtml($sagName) . '</strong>"';
         $this->contextMessage = ($newSag ? $newMessage : $existingMessage) . $messageSuffix;
     }
@@ -101,7 +101,7 @@ class SagEditForm
 
     private function getSagNameField()
     {
-        $label   = $this->lang['rights_199'];
+        $label   = 'SAG name:';
         $sagName = $this->module->escape($this->sagName);
         $hidden  = $this->newSag ? "hidden" : '';
         echo <<<"EOT"
