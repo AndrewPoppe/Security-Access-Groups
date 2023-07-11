@@ -117,7 +117,7 @@ class SecurityAccessGroups extends AbstractExternalModule
                     return $this->isModuleEnabled($prefix, $projectId);
                 });
             } else {
-                $projectIds = $this->getProjectsWithModuleEnabled();
+                $projectIds = $this->framework->getProjectsWithModuleEnabled();
             }
 
             foreach ( $projectIds as $localProjectId ) {
@@ -1431,5 +1431,77 @@ class SecurityAccessGroups extends AbstractExternalModule
             }
         }
         return true;
+    }
+
+    public function getProjectsWithNoncompliantUsers()
+    {
+        $enabledSystemwide = $this->framework->getSystemSetting('enabled');
+        $prefix            = $this->getModuleDirectoryPrefix();
+
+        if ( $enabledSystemwide ) {
+            $allProjectIds = $this->getAllProjectIds();
+            $projectIds    = array_filter($allProjectIds, function ($projectId) use ($prefix) {
+                return $this->isModuleEnabled($prefix, $projectId);
+            });
+        } else {
+            $projectIds = $this->framework->getProjectsWithModuleEnabled();
+        }
+
+        $projects = [];
+        foreach ( $projectIds as $projectId ) {
+            $discrepantRights = $this->getUsersWithBadRights2($projectId);
+            $users            = array_filter($discrepantRights, function ($user) {
+                return !empty($user['bad']);
+            });
+            if ( sizeof($users) > 0 ) {
+                $nonExpired  = array_filter($discrepantRights, function ($user) {
+                    return !empty($user['bad']) && !$user['isExpired'];
+                });
+                $thisProject = $this->framework->getProject($projectId);
+                $projects[]  = [
+                    "project_id"                       => $projectId,
+                    "project_title"                    => $thisProject->getTitle(),
+                    "users_with_bad_rights"            => array_values(array_map(function ($thisUser) {
+                        return [ "username" => $thisUser['username'], 'name' => $thisUser['name'], 'email' => $thisUser['email'] ];
+                    }, $users)),
+                    "nonexpired_users_with_bad_rights" => array_values(array_map(function ($thisUser) {
+                        return [ "username" => $thisUser['username'], 'name' => $thisUser['name'], 'email' => $thisUser['email'] ];
+                    }, $nonExpired))
+                ];
+            }
+        }
+        return $projects;
+    }
+
+    public function getAllUsersWithNoncompliantRights()
+    {
+        $enabledSystemwide = $this->framework->getSystemSetting('enabled');
+        $prefix            = $this->getModuleDirectoryPrefix();
+
+        if ( $enabledSystemwide ) {
+            $allProjectIds = $this->getAllProjectIds();
+            $projectIds    = array_filter($allProjectIds, function ($projectId) use ($prefix) {
+                return $this->isModuleEnabled($prefix, $projectId);
+            });
+        } else {
+            $projectIds = $this->framework->getProjectsWithModuleEnabled();
+        }
+
+        $users = [];
+        foreach ( $projectIds as $projectId ) {
+            $discrepantRights = $this->getUsersWithBadRights2($projectId);
+            foreach ( $discrepantRights as $user ) {
+                if ( !empty($user['bad']) ) {
+                    $users[$user['username']]['projects'][] = $projectId;
+                    $users[$user['username']]['username']   = $user['username'];
+                    $users[$user['username']]['name']       = $user['name'];
+                    $users[$user['username']]['email']      = $user['email'];
+                    if ( !$user['isExpired'] ) {
+                        $users[$user['username']]['projects_unexpired'][] = $projectId;
+                    }
+                }
+            }
+        }
+        return array_values($users);
     }
 }

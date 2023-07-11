@@ -27,12 +27,13 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
 <h4 style='color:#900; margin: 0 0 10px;'>
     <i class='fa-solid fa-users-between-lines'></i>&nbsp;<span>Security Access Groups</span>
 </h4>
-<p style='max-width:700px; margin-bottom:0;'>Security Access Groups (SAGs) are used to restrict which user rights a
-    REDCap user can be granted in a project. SAGs do not define the rights a user will have in a given project; rather,
-    they define the set of allowable rights the user is able to be granted. The Security Access Groups module must be
-    enabled in a project for the SAG to have an effect.</p>
-<div class="SAG_Container">
-    <div id="sub-nav" class="d-none d-sm-block mr-4 mb-0 ml-0">
+<p style='max-width:1000px; margin-bottom:0;font-size:14px;'>Security Access Groups (SAGs) are used to restrict which
+    user rights a REDCap user can be granted in a project. SAGs do not define the rights a user will have in a given
+    project; rather, they define the set of allowable rights the user is able to be granted. If a user is assigned to a
+    SAG that does not allow the Project Design right, then that user cannot have that user right granted in a project.
+    The Security Access Groups module must be enabled in a project for the SAG to have an effect.</p>
+<div class="SAG_Container" style="min-width: 900px;">
+    <div id="sub-nav" class="mr-4 mb-0 ml-0" style="min-width: 900px;">
         <ul>
             <li class="<?= $tab === "userlist" ? "active" : "" ?>">
                 <a href="<?= $module->framework->getUrl('system-settings.php?tab=userlist') ?>"
@@ -56,9 +57,9 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
         $sags = $module->getAllSags();
         ?>
 
-    <p style='margin:20px 0;max-width:700px;'>This table shows all users in the REDCap system and their current SAG
-        assignment. Use the <strong>Edit Users</strong> button to change a user's SAG assignment.
-        You may export the current list of SAG assignments or import a CSV file of assignments using the buttons below.
+    <p style='margin:20px 0;max-width:1000px;font-size:14px;'>This table shows all users in the REDCap system and their
+        current SAG assignment. Use the <strong>Edit Users</strong> button to change a user's SAG assignment. You may
+        export the current list of SAG assignments or import a CSV file of assignments using the buttons below.
     </p>
 
     <!-- Modals -->
@@ -97,7 +98,7 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
         </table>
     </div>
     <!-- Users Table -->
-    <div class="card card-body bg-light">
+    <div class="card card-body bg-light" style="min-width:700px;">
         <div class="toolbar2 d-flex flex-row justify-content-between mb-2">
             <div class="d-flex">
                 <button class="btn btn-danger btn-xs mr-1 editUsersButton" style="width: 8em;" data-editing="false"
@@ -635,9 +636,9 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
 
         ?>
 
-    <p style='margin:20px 0;max-width:700px;'>This table shows all the SAGs that currently exist in the system. A SAG
-        must be created here before it can be assigned to a user. The current list of SAGs can be exported as a CSV
-        file, and a CSV file can be imported to update existing SAGs or to create new SAGs.
+    <p style='margin:20px 0;max-width:1000px;font-size:14px;'>This table shows all the SAGs that currently exist in the
+        system. A SAG must be created here before it can be assigned to a user. The current list of SAGs can be exported
+        as a CSV file, and a CSV file can be imported to update existing SAGs or to create new SAGs.
     </p>
 
     <!-- Modal -->

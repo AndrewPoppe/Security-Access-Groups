@@ -35,8 +35,16 @@ if ( !$module->framework->getUser()->isSuperUser() ) {
     <div class="projhdr">
         <i class='fa-solid fa-users-between-lines'></i>&nbsp;<span>Security Access Groups</span>
     </div>
+    <div style="width:950px;max-width:950px;font-size:14px;" class="d-none d-md-block mt-3 mb-2">
+        Security Access Groups (SAGs) are used to restrict which user rights a REDCap user can be granted in a project.
+        SAGs do not define the rights a user will have in a given project; rather, they define the set of allowable
+        rights the user is able to be granted. SAGs are defined at the system level and are used in any project that has
+        this module enabled.
+        <br><br>
+        This page shows all alerts sent by the SAG module as well as all currently scheduled reminders.
+    </div>
     <div class="clearfix">
-        <div id="sub-nav" class="d-none d-sm-block mr-4 mb-0 ml-0">
+        <div id="sub-nav" class="mr-4 mb-0 ml-0" style="max-width: 1100px;">
             <ul>
                 <li>
                     <a href="<?= $module->framework->getUrl('project-status.php') ?>"
@@ -55,7 +63,7 @@ if ( !$module->framework->getUser()->isSuperUser() ) {
             </ul>
         </div>
     </div>
-    <div class="alertLogWrapper my-4 mr-3 card card-body bg-light" style="width: 1100px; display: none;">
+    <div class="alertLogWrapper mt-4 mr-3 card card-body bg-light" style="width: 1100px; display: none;">
         <table aria-label="alert log table" id="alertLogTable" class="border" style="width:100%;">
             <thead>
                 <tr style="background-color: #D7D7D7 !important;">
@@ -146,64 +154,64 @@ if ( !$module->framework->getUser()->isSuperUser() ) {
 </div>
 
 <script>
-console.log(performance.now());
-console.time('dt');
-var Toast = Swal.mixin({
-    toast: true,
-    position: 'middle',
-    iconColor: 'white',
-    customClass: {
-        popup: 'colored-toast'
-    },
-    showConfirmButton: false,
-    timer: 1500,
-    timerProgressBar: true
-});
+    console.log(performance.now());
+    console.time('dt');
+    var Toast = Swal.mixin({
+        toast: true,
+        position: 'middle',
+        iconColor: 'white',
+        customClass: {
+            popup: 'colored-toast'
+        },
+        showConfirmButton: false,
+        timer: 1500,
+        timerProgressBar: true
+    });
 
-function openAlertPreview(alert_id) {
-    $.post('<?= $module->framework->getUrl('ajax/alert-preview.php') ?>', {
+    function openAlertPreview(alert_id) {
+        $.post('<?= $module->framework->getUrl('ajax/alert-preview.php') ?>', {
             alert_id: alert_id
         })
-        .done(function(json) {
-            const data = JSON.parse(json);
-            createAlertPreviewModal(data);
-            Swal.close();
-        })
-        .fail(function(data) {
-            Swal.close();
-            Swal.fire({
-                title: 'There was an error loading the alert preview.',
-                html: data.responseText,
-                icon: 'error'
+            .done(function (json) {
+                const data = JSON.parse(json);
+                createAlertPreviewModal(data);
+                Swal.close();
             })
-        });
-}
-
-function createAlertPreviewModal(data) {
-    $('#alertPreviewModal .modal-body').html(data.table);
-    let title = 'Alert Preview - ';
-    if (data.alertType === "users") {
-        $('#alertPreviewModal .modal-header')[0].classList = 'modal-header bg-primary text-light';
-        title += 'User Alert';
-    } else if (data.alertType === "userRightsHolders") {
-        $('#alertPreviewModal .modal-header')[0].classList = 'modal-header bg-warning text-body';
-        title += 'User Rights Holder Alert';
-    } else if (data.alertType === "expiration") {
-        $('#alertPreviewModal .modal-header')[0].classList = 'modal-header bg-danger text-light';
-        title += 'User Expiration Alert';
+            .fail(function (data) {
+                Swal.close();
+                Swal.fire({
+                    title: 'There was an error loading the alert preview.',
+                    html: data.responseText,
+                    icon: 'error'
+                })
+            });
     }
-    if (data.reminder) {
-        title += " (Reminder)";
-        $('#alertPreviewModal .modal-body')[0].classList = 'modal-body bg-reminder';
-    } else {
-        $('#alertPreviewModal .modal-body')[0].classList = 'modal-body';
-    }
-    $('#alertPreviewModalLabel').text(title);
-    $('#alertPreviewModal').modal('show');
-}
 
-function deleteAlert(alert_id) {
-    Swal.fire({
+    function createAlertPreviewModal(data) {
+        $('#alertPreviewModal .modal-body').html(data.table);
+        let title = 'Alert Preview - ';
+        if (data.alertType === "users") {
+            $('#alertPreviewModal .modal-header')[0].classList = 'modal-header bg-primary text-light';
+            title += 'User Alert';
+        } else if (data.alertType === "userRightsHolders") {
+            $('#alertPreviewModal .modal-header')[0].classList = 'modal-header bg-warning text-body';
+            title += 'User Rights Holder Alert';
+        } else if (data.alertType === "expiration") {
+            $('#alertPreviewModal .modal-header')[0].classList = 'modal-header bg-danger text-light';
+            title += 'User Expiration Alert';
+        }
+        if (data.reminder) {
+            title += " (Reminder)";
+            $('#alertPreviewModal .modal-body')[0].classList = 'modal-body bg-reminder';
+        } else {
+            $('#alertPreviewModal .modal-body')[0].classList = 'modal-body';
+        }
+        $('#alertPreviewModalLabel').text(title);
+        $('#alertPreviewModal').modal('show');
+    }
+
+    function deleteAlert(alert_id) {
+        Swal.fire({
             title: 'Are you sure?',
             text: "You are about to delete this alert. This action cannot be undone.",
             icon: 'warning',
@@ -215,138 +223,138 @@ function deleteAlert(alert_id) {
             },
             buttonsStyling: false
         })
-        .then((result) => {
-            if (result.isConfirmed) {
-                $.post('<?= $module->framework->getUrl('ajax/delete-alert.php') ?>', {
+            .then((result) => {
+                if (result.isConfirmed) {
+                    $.post('<?= $module->framework->getUrl('ajax/delete-alert.php') ?>', {
                         alert_id: alert_id
                     })
-                    .done(function(json) {
-                        const data = JSON.parse(json);
-                        if (data) {
-                            Toast.fire({
-                                icon: 'success',
-                                title: 'Alert deleted successfully.'
-                            });
-                            $('#alertLogTable').DataTable().ajax.reload();
-                        } else {
+                        .done(function (json) {
+                            const data = JSON.parse(json);
+                            if (data) {
+                                Toast.fire({
+                                    icon: 'success',
+                                    title: 'Alert deleted successfully.'
+                                });
+                                $('#alertLogTable').DataTable().ajax.reload();
+                            } else {
+                                Swal.fire({
+                                    title: 'There was an error deleting the alert.',
+                                    html: data.message,
+                                    icon: 'error'
+                                })
+                            }
+                        })
+                        .fail(function (data) {
                             Swal.fire({
                                 title: 'There was an error deleting the alert.',
-                                html: data.message,
+                                html: data.responseText,
                                 icon: 'error'
                             })
-                        }
-                    })
-                    .fail(function(data) {
-                        Swal.fire({
-                            title: 'There was an error deleting the alert.',
-                            html: data.responseText,
-                            icon: 'error'
-                        })
-                    });
-            }
+                        });
+                }
+            });
+    }
+
+    function showPastAlerts() {
+        document.querySelector('#mindatetime')._flatpickr.clear();
+        document.querySelector('#maxdatetime')._flatpickr.setDate(new Date(), true);
+    }
+
+    function showFutureAlerts() {
+        document.querySelector('#maxdatetime')._flatpickr.clear();
+        document.querySelector('#mindatetime')._flatpickr.setDate(new Date(), true);
+    }
+
+    // Custom user function
+    function searchUsers() {
+        const users = $('#usersSelect').val() || [];
+        const dt = $('#alertLogTable').DataTable();
+        dt.columns(5).search(users.join('|'), true).draw();
+    }
+
+    $(document).ready(function () {
+        console.timeLog('dt', 'document ready');
+
+        $('#sub-nav').removeClass('d-none');
+
+
+        $(document).on('preXhr.dt', function (e, settings, json) {
+            console.timeLog('dt', 'ajax start')
         });
-}
+        $(document).on('xhr.dt', function (e, settings, json) {
+            console.timeLog('dt', 'ajax end')
+        });
 
-function showPastAlerts() {
-    document.querySelector('#mindatetime')._flatpickr.clear();
-    document.querySelector('#maxdatetime')._flatpickr.setDate(new Date(), true);
-}
+        // Custom range filtering function
+        $.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
 
-function showFutureAlerts() {
-    document.querySelector('#maxdatetime')._flatpickr.clear();
-    document.querySelector('#mindatetime')._flatpickr.setDate(new Date(), true);
-}
+            // Dates
+            const minDateTimeEl = document.querySelector('#mindatetime')._flatpickr;
+            const maxDateTimeEl = document.querySelector('#maxdatetime')._flatpickr;
 
-// Custom user function
-function searchUsers() {
-    const users = $('#usersSelect').val() || [];
-    const dt = $('#alertLogTable').DataTable();
-    dt.columns(5).search(users.join('|'), true).draw();
-}
+            if (typeof minDateTimeEl === 'undefined' || typeof maxDateTimeEl === 'undefined') {
+                return true;
+            }
 
-$(document).ready(function() {
-    console.timeLog('dt', 'document ready');
+            const minDateTime = minDateTimeEl.selectedDates[0]?.getTime() / 1000;
+            const maxDateTime = maxDateTimeEl.selectedDates[0]?.getTime() / 1000;
+            const sendDateTime = parseFloat(data[1]) || 0; // use data for the send time column
 
-    $('#sub-nav').removeClass('d-none');
+            if (
+                (isNaN(minDateTime) && isNaN(maxDateTime)) ||
+                (isNaN(minDateTime) && sendDateTime <= maxDateTime) ||
+                (minDateTime <= sendDateTime && isNaN(maxDateTime)) ||
+                (minDateTime <= sendDateTime && sendDateTime <= maxDateTime)
+            ) {
+                return true;
+            }
 
+            return false;
+        });
 
-    $(document).on('preXhr.dt', function(e, settings, json) {
-        console.timeLog('dt', 'ajax start')
-    });
-    $(document).on('xhr.dt', function(e, settings, json) {
-        console.timeLog('dt', 'ajax end')
-    });
+        // Custom alert type function
+        $.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
+            const alertTypes = $('#alertTypeSelect').val() || [];
+            if (alertTypes.length === 0) {
+                return true;
+            }
+            const thisAlertType = data[2];
+            return alertTypes.includes(thisAlertType);
+        });
 
-    // Custom range filtering function
-    $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
+        // Custom notification type function
+        $.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
+            const notificationTypes = $('#notificationTypeSelect').val() || [];
+            if (notificationTypes.length === 0) {
+                return true;
+            }
+            const thisNotificationType = String(data[3] === "Reminder");
+            return notificationTypes.includes(thisNotificationType);
+        });
 
-        // Dates
-        const minDateTimeEl = document.querySelector('#mindatetime')._flatpickr;
-        const maxDateTimeEl = document.querySelector('#maxdatetime')._flatpickr;
+        // Custom recipient function
+        $.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
+            const recipients = $('#recipientSelect').val() || [];
+            if (recipients.length === 0) {
+                return true;
+            }
+            const thisRecipient = String(data[6]);
+            return recipients.map(recipient => $(`<span>${recipient}</span>`).text()).includes(
+                thisRecipient);
+        });
 
-        if (typeof minDateTimeEl === 'undefined' || typeof maxDateTimeEl === 'undefined') {
-            return true;
-        }
-
-        const minDateTime = minDateTimeEl.selectedDates[0]?.getTime() / 1000;
-        const maxDateTime = maxDateTimeEl.selectedDates[0]?.getTime() / 1000;
-        const sendDateTime = parseFloat(data[1]) || 0; // use data for the send time column
-
-        if (
-            (isNaN(minDateTime) && isNaN(maxDateTime)) ||
-            (isNaN(minDateTime) && sendDateTime <= maxDateTime) ||
-            (minDateTime <= sendDateTime && isNaN(maxDateTime)) ||
-            (minDateTime <= sendDateTime && sendDateTime <= maxDateTime)
-        ) {
-            return true;
-        }
-
-        return false;
-    });
-
-    // Custom alert type function
-    $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
-        const alertTypes = $('#alertTypeSelect').val() || [];
-        if (alertTypes.length === 0) {
-            return true;
-        }
-        const thisAlertType = data[2];
-        return alertTypes.includes(thisAlertType);
-    });
-
-    // Custom notification type function
-    $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
-        const notificationTypes = $('#notificationTypeSelect').val() || [];
-        if (notificationTypes.length === 0) {
-            return true;
-        }
-        const thisNotificationType = String(data[3] === "Reminder");
-        return notificationTypes.includes(thisNotificationType);
-    });
-
-    // Custom recipient function
-    $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
-        const recipients = $('#recipientSelect').val() || [];
-        if (recipients.length === 0) {
-            return true;
-        }
-        const thisRecipient = String(data[6]);
-        return recipients.map(recipient => $(`<span>${recipient}</span>`).text()).includes(
-            thisRecipient);
-    });
-
-    $('#alertLogTable').DataTable({
-        ajax: {
-            url: "<?= $module->framework->getUrl('ajax/alerts.php') ?>",
-            type: 'POST'
-        },
-        deferRender: true,
-        columns: [{
+        $('#alertLogTable').DataTable({
+            ajax: {
+                url: "<?= $module->framework->getUrl('ajax/alerts.php') ?>",
+                type: 'POST'
+            },
+            deferRender: true,
+            columns: [{
                 data: 'id',
                 visible: true
             },
             {
-                data: function(row, type, set, meta) {
+                data: function (row, type, set, meta) {
                     if (type === 'display') {
                         let color = "";
                         let icon = "";
@@ -397,7 +405,7 @@ $(document).ready(function() {
             },
             {
                 className: 'dt-center',
-                data: function(row, type, set, meta) {
+                data: function (row, type, set, meta) {
                     if (type === 'display') {
                         let result = '';
                         if (row.alertType === 'users') {
@@ -422,7 +430,7 @@ $(document).ready(function() {
             },
             {
                 className: 'dt-center',
-                data: function(row, type, set, meta) {
+                data: function (row, type, set, meta) {
                     if (type === 'display') {
                         return row.reminder ?
                             `<span class="badge badge-pill bg-reminder border font-weight-normal default-cursor">` +
@@ -436,7 +444,7 @@ $(document).ready(function() {
             },
             {
                 className: 'dt-center',
-                data: function(row, type, set, meta) {
+                data: function (row, type, set, meta) {
                     if (type === 'filter') {
                         return row.subject + ' ' + row.body;
                     } else {
@@ -447,7 +455,7 @@ $(document).ready(function() {
                 }
             },
             {
-                data: function(row, type, set, meta) {
+                data: function (row, type, set, meta) {
                     const users = row['users'];
                     if (type === 'display') {
                         let result = [];
@@ -471,99 +479,99 @@ $(document).ready(function() {
                 data: 'status',
                 visible: false
             }
-        ],
-        responsive: false,
-        order: [
-            [1, 'desc']
-        ],
-        initComplete: function() {
-            console.timeLog('dt', 'dt init complete');
-            $('.timePicker').flatpickr({
-                enableTime: true,
-                dateFormat: "U",
-                altInput: true,
-                altFormat: "m/d/Y G:i K",
-                onChange: function(selectedDates, dateStr, instance) {
-                    const dt = $('#alertLogTable').DataTable();
+            ],
+            responsive: false,
+            order: [
+                [1, 'desc']
+            ],
+            initComplete: function () {
+                console.timeLog('dt', 'dt init complete');
+                $('.timePicker').flatpickr({
+                    enableTime: true,
+                    dateFormat: "U",
+                    altInput: true,
+                    altFormat: "m/d/Y G:i K",
+                    onChange: function (selectedDates, dateStr, instance) {
+                        const dt = $('#alertLogTable').DataTable();
+                        dt.draw();
+                    },
+                });
+
+
+                const dt = this.api();
+                const usersAll = dt.column(5).data().toArray();
+                const users = Array.from(new Set(usersAll.flat()));
+                const usersSelect = $('#usersSelect').select2({
+                    minimumResultsForSearch: 20,
+                    placeholder: "Filter users",
+                    allowClear: false
+                });
+                users.forEach(user => usersSelect.append(new Option(user, user, false, false)));
+                usersSelect.trigger('change');
+                usersSelect.on('change', searchUsers);
+
+                const recipientsAll = dt.column(6).data().toArray();
+                const recipients = Array.from(new Set(recipientsAll.flat()));
+                const recipientSelect = $('#recipientSelect').select2({
+                    minimumResultsForSearch: 20,
+                    placeholder: "Filter recipients",
+                    allowClear: false,
+                    templateResult: function (recipient) {
+                        return $(`<span>${recipient.text}</span>`);
+                    },
+                    templateSelection: function (recipient) {
+                        return $(
+                            `<span>${recipient.text.match('\<strong\>(.*)\<\/strong\>')[1]}</span>`
+                        );
+                    }
+                });
+                recipients.forEach(recipient => recipientSelect.append(new Option(recipient, recipient,
+                    false, false)));
+                recipientSelect.trigger('change');
+                recipientSelect.on('change', function () {
                     dt.draw();
-                },
-            });
+                });
 
+                const alertTypeSelect = $('#alertTypeSelect').select2({
+                    minimumResultsForSearch: 20,
+                    placeholder: "Filter alert types",
+                    allowClear: false
+                });
+                alertTypeSelect.on('change', function () {
+                    dt.draw();
+                });
 
-            const dt = this.api();
-            const usersAll = dt.column(5).data().toArray();
-            const users = Array.from(new Set(usersAll.flat()));
-            const usersSelect = $('#usersSelect').select2({
-                minimumResultsForSearch: 20,
-                placeholder: "Filter users",
-                allowClear: false
-            });
-            users.forEach(user => usersSelect.append(new Option(user, user, false, false)));
-            usersSelect.trigger('change');
-            usersSelect.on('change', searchUsers);
+                const notificationTypeSelect = $('#notificationTypeSelect').select2({
+                    minimumResultsForSearch: 20,
+                    placeholder: "Filter notification types",
+                    allowClear: false
+                });
+                notificationTypeSelect.on('change', function () {
+                    dt.draw();
+                });
 
-            const recipientsAll = dt.column(6).data().toArray();
-            const recipients = Array.from(new Set(recipientsAll.flat()));
-            const recipientSelect = $('#recipientSelect').select2({
-                minimumResultsForSearch: 20,
-                placeholder: "Filter recipients",
-                allowClear: false,
-                templateResult: function(recipient) {
-                    return $(`<span>${recipient.text}</span>`);
-                },
-                templateSelection: function(recipient) {
-                    return $(
-                        `<span>${recipient.text.match('\<strong\>(.*)\<\/strong\>')[1]}</span>`
-                    );
-                }
-            });
-            recipients.forEach(recipient => recipientSelect.append(new Option(recipient, recipient,
-                false, false)));
-            recipientSelect.trigger('change');
-            recipientSelect.on('change', function() {
-                dt.draw();
-            });
-
-            const alertTypeSelect = $('#alertTypeSelect').select2({
-                minimumResultsForSearch: 20,
-                placeholder: "Filter alert types",
-                allowClear: false
-            });
-            alertTypeSelect.on('change', function() {
-                dt.draw();
-            });
-
-            const notificationTypeSelect = $('#notificationTypeSelect').select2({
-                minimumResultsForSearch: 20,
-                placeholder: "Filter notification types",
-                allowClear: false
-            });
-            notificationTypeSelect.on('change', function() {
-                dt.draw();
-            });
-
-            $('.alertLogWrapper').show();
-            $('table#alertLogTable select').val(null).trigger('change');
-            dt.columns.adjust();
-            console.timeEnd('dt');
-            console.log(performance.now());
-        },
-        lengthMenu: [
-            [10, 25, 50, 100, -1],
-            [10, 25, 50, 100, "All"]
-        ],
-        language: {
-            search: "_INPUT_",
-            searchPlaceholder: "Search Alerts...",
-            search: "_INPUT_",
-            infoFiltered: " - filtered from _MAX_ total alerts",
-            emptyTable: "No alerts found in this project",
-            info: "Showing _START_ to _END_ of _TOTAL_ alerts",
-            infoEmpty: "Showing 0 to 0 of 0 alerts",
-            lengthMenu: "Show _MENU_ alerts",
-            loadingRecords: "Loading...",
-            zeroRecords: "No matching alerts found"
-        }
+                $('.alertLogWrapper').show();
+                $('table#alertLogTable select').val(null).trigger('change');
+                dt.columns.adjust();
+                console.timeEnd('dt');
+                console.log(performance.now());
+            },
+            lengthMenu: [
+                [10, 25, 50, 100, -1],
+                [10, 25, 50, 100, "All"]
+            ],
+            language: {
+                search: "_INPUT_",
+                searchPlaceholder: "Search Alerts...",
+                search: "_INPUT_",
+                infoFiltered: " - filtered from _MAX_ total alerts",
+                emptyTable: "No alerts found in this project",
+                info: "Showing _START_ to _END_ of _TOTAL_ alerts",
+                infoEmpty: "Showing 0 to 0 of 0 alerts",
+                lengthMenu: "Show _MENU_ alerts",
+                loadingRecords: "Loading...",
+                zeroRecords: "No matching alerts found"
+            }
+        });
     });
-});
 </script>
