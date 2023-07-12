@@ -169,6 +169,10 @@ if ( !$module->framework->getUser()->isSuperUser() ) {
         timerProgressBar: true
     });
 
+    function uniqueArray(a) {
+        return [...new Set(a.map(o => JSON.stringify(o)))].map(s => JSON.parse(s));
+    }
+
     function openAlertPreview(alert_id) {
         $.post('<?= $module->framework->getUrl('ajax/alert-preview.php') ?>', {
             alert_id: alert_id
@@ -339,9 +343,8 @@ if ( !$module->framework->getUser()->isSuperUser() ) {
             if (recipients.length === 0) {
                 return true;
             }
-            const thisRecipient = String(data[6]);
-            return recipients.map(recipient => $(`<span>${recipient}</span>`).text()).includes(
-                thisRecipient);
+            const thisRecipient = String(data[6]).replace(/&&&&&.*/, '');
+            return recipients.includes(thisRecipient);
         });
 
         $('#alertLogTable').DataTable({
@@ -465,18 +468,35 @@ if ( !$module->framework->getUser()->isSuperUser() ) {
                         for (let user of users) {
                             result.push(
                                 `<strong><a rel="noreferrer noopener" target="_blank" ` +
-                                `href="${root}/view_users.php?username=${user}">${user}</a></strong>`
+                                `href="${root}/view_users.php?username=${user.username}">${user.username}</a></strong> (${user.name})`
                             );
                         }
                         return result.join('<br>');
                     } else if (type === 'filter') {
-                        return users.join('&&&&&');
+                        let result = '';
+                        users.forEach(user => result +=
+                            `${user.username}&&&&&${user.name}&&&&&${user.email}`);
+                        return result;
                     } else {
                         return users;
                     }
                 },
             }, {
-                data: 'recipients',
+                data: function (row, type, set, meta) {
+                    const recipient = row['recipient'];
+                    if (type === 'display') {
+                        const root =
+                            `${app_path_webroot_full}redcap_v${redcap_version}/ControlCenter`;
+                        const url = `${root}/view_users.php?username=${recipient.username}`;
+                        return `<strong><a rel="noreferrer noopener" target="_blank" ` +
+                            `href="${url}">${recipient.username}</a></strong>` +
+                            ` (${recipient.user_firstname} ${recipient.user_lastname})` +
+                            `<br><a href="mailto:${recipient.user_email}">${recipient.user_email}</a>`;
+                    } else if (type === 'search' || type === 'filter') {
+                        return `${recipient.username}&&&&&${recipient.user_firstname} ${recipient.user_lastname}&&&&&${recipient.user_email}`;
+                    }
+                    return recipient;
+                },
             }, {
                 data: 'status',
                 visible: false
@@ -502,18 +522,28 @@ if ( !$module->framework->getUser()->isSuperUser() ) {
 
                 const dt = this.api();
                 const usersAll = dt.column(5).data().toArray();
-                const users = Array.from(new Set(usersAll.flat()));
+                const users = uniqueArray(usersAll.flatten());
                 const usersSelect = $('#usersSelect').select2({
                     minimumResultsForSearch: 20,
                     placeholder: "Filter users",
-                    allowClear: false
+                    allowClear: false,
+                    templateResult: function (user) {
+                        return $(`<span>${user.text}</span>`);
+                    },
+                    templateSelection: function (user) {
+                        return $(
+                            `<span>${user.id}</span>`
+                        );
+                    }
                 });
-                users.forEach(user => usersSelect.append(new Option(user, user, false, false)));
+                users.forEach(user => usersSelect.append(new Option(
+                    `<strong>${user.username}</strong> (${user.name})`,
+                    user.username, false, false)));
                 usersSelect.trigger('change');
                 usersSelect.on('change', searchUsers);
 
                 const recipientsAll = dt.column(6).data().toArray();
-                const recipients = Array.from(new Set(recipientsAll.flat()));
+                const recipients = uniqueArray(recipientsAll);
                 const recipientSelect = $('#recipientSelect').select2({
                     minimumResultsForSearch: 20,
                     placeholder: "Filter recipients",
@@ -523,12 +553,15 @@ if ( !$module->framework->getUser()->isSuperUser() ) {
                     },
                     templateSelection: function (recipient) {
                         return $(
-                            `<span>${recipient.text.match('\<strong\>(.*)\<\/strong\>')[1]}</span>`
+                            `<span>${recipient.id}</span>`
                         );
                     }
                 });
-                recipients.forEach(recipient => recipientSelect.append(new Option(recipient, recipient,
-                    false, false)));
+                recipients.forEach(recipient => recipientSelect.append(new Option(
+                    `<strong>${recipient.username}</strong> (${recipient.user_firstname} ${recipient.user_lastname})`,
+                    recipient.username,
+                    false, false
+                )));
                 recipientSelect.trigger('change');
                 recipientSelect.on('change', function () {
                     dt.draw();

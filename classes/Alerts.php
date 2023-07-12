@@ -1012,24 +1012,19 @@ function userExpirationUserRightsHoldersToggle(checked) {
             json_decode($alert['users'], true) :
             [ json_decode($alert['user'], true) ];
         foreach ( $usersArray as $user ) {
-            $users[] = \REDCap::escapeHtml($user['sag_user']);
+            $users[] = [
+                'username' => $user['sag_user'],
+                'name'     => $user['sag_user_fullname'],
+                'email'    => $user['sag_user_email']
+            ];
         }
-        return $users;
+        return $this->module->framework->escape($users);
     }
 
-    private function getAlertRecipients($alert)
+    private function getAlertRecipient($alert)
     {
-        $recipients      = '';
-        $recipientsArray = isset($alert['recipients']) ?
-            json_decode($alert['recipients'], true) :
-            [ $alert['recipient'] ];
-        foreach ( $recipientsArray as $key => $recipient ) {
-            $recipients .= ($key == array_key_first($recipientsArray)) ? '' : '<br>';
-            $thisRecipient      = \REDCap::escapeHtml($recipient);
-            $thisRecipientEmail = $this->module->framework->getUser($thisRecipient)->getEmail();
-            $recipients .= '<strong>' . $thisRecipient . '</strong> (' . $thisRecipientEmail . ')';
-        }
-        return $recipients;
+        $thisRecipient      = \REDCap::escapeHtml($alert['recipient']);
+        return $this->module->getUserInfo($thisRecipient);
     }
 
     /**
@@ -1048,7 +1043,7 @@ function userExpirationUserRightsHoldersToggle(checked) {
         foreach ( $rawAlerts as $row ) {
             $thisAlert       = [];
             $users           = $this->getAlertUsers($row);
-            $recipients      = $this->getAlertRecipients($row);
+            $recipient      = $this->getAlertRecipient($row);
             $thisAlert['id'] = \REDCap::escapeHtml($row['log_id']);
             if ( $row['Type'] === 'ALERT' ) {
                 $thisAlert['sendTime'] = $row['sentTimestamp'];
@@ -1060,7 +1055,7 @@ function userExpirationUserRightsHoldersToggle(checked) {
             $thisAlert['sendTime']   = \REDCap::escapeHtml($thisAlert['sendTime']);
             $thisAlert['alertType']  = \REDCap::escapeHtml($row['Alert Type']);
             $thisAlert['users']      = $users;
-            $thisAlert['recipients'] = $recipients;
+            $thisAlert['recipient'] = $recipient;
             $thisAlert['status']     = \REDCap::escapeHtml($row['status']) ?? '';
             $thisAlert['to']         = $row['recipientAddress'];
             $thisAlert['from']       = \REDCap::escapeHtml($row['fromEmail']);
