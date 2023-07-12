@@ -49,6 +49,13 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                     Security Access Groups
                 </a>
             </li>
+            <li>
+                <a href="<?= $module->framework->getUrl('system-reports.php') ?>"
+                    style="font-size:13px;color:#393733;padding:7px 9px;">
+                    <i class="fa-solid fa-memo"></i>
+                    Reports
+                </a>
+            </li>
         </ul>
     </div>
     <div class="clear"></div>
@@ -528,9 +535,9 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                     title: 'Username',
                     data: function(row, type, set, meta) {
                         if (type === 'display') {
-                            const root = `${app_path_webroot_full}${app_path_webroot}`;
+                            const root = `${app_path_webroot_full}redcap_v${redcap_version}`;
                             const href =
-                                `${root}ControlCenter/view_users.php?username=${row.username}`;
+                                `${root}/ControlCenter/view_users.php?username=${row.username}`;
                             const attrs = `target="_blank" rel="noopener noreferrer"`;
                             return `<a class="user-link" href="${href}" ${attrs}>${row.username}</a>`;
                         } else {

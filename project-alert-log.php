@@ -40,8 +40,6 @@ if ( !$module->framework->getUser()->isSuperUser() ) {
         SAGs do not define the rights a user will have in a given project; rather, they define the set of allowable
         rights the user is able to be granted. SAGs are defined at the system level and are used in any project that has
         this module enabled.
-        <br><br>
-        This page shows all alerts sent by the SAG module as well as all currently scheduled reminders.
     </div>
     <div class="clearfix">
         <div id="sub-nav" class="mr-4 mb-0 ml-0" style="max-width: 1100px;">
@@ -62,6 +60,9 @@ if ( !$module->framework->getUser()->isSuperUser() ) {
                 </li>
             </ul>
         </div>
+    </div>
+    <div class="mt-4">
+        This page shows all alerts sent by the SAG module as well as all currently scheduled reminders.
     </div>
     <div class="alertLogWrapper mt-4 mr-3 card card-body bg-light" style="width: 1100px; display: none;">
         <table aria-label="alert log table" id="alertLogTable" class="border" style="width:100%;">
@@ -459,7 +460,8 @@ if ( !$module->framework->getUser()->isSuperUser() ) {
                     const users = row['users'];
                     if (type === 'display') {
                         let result = [];
-                        const root = app_path_webroot_full + app_path_webroot + 'ControlCenter';
+                        const root =
+                            `${app_path_webroot_full}redcap_v${redcap_version}/ControlCenter`;
                         for (let user of users) {
                             result.push(
                                 `<strong><a rel="noreferrer noopener" target="_blank" ` +

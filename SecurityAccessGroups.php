@@ -1492,12 +1492,19 @@ class SecurityAccessGroups extends AbstractExternalModule
             $discrepantRights = $this->getUsersWithBadRights2($projectId);
             foreach ( $discrepantRights as $user ) {
                 if ( !empty($user['bad']) ) {
-                    $users[$user['username']]['projects'][] = $projectId;
+                    $thisProject                            = $this->framework->getProject($projectId);
+                    $users[$user['username']]['projects'][] = [
+                        "project_id"    => $projectId,
+                        "project_title" => $thisProject->getTitle()
+                    ];
                     $users[$user['username']]['username']   = $user['username'];
                     $users[$user['username']]['name']       = $user['name'];
                     $users[$user['username']]['email']      = $user['email'];
                     if ( !$user['isExpired'] ) {
-                        $users[$user['username']]['projects_unexpired'][] = $projectId;
+                        $users[$user['username']]['projects_unexpired'][] = [
+                            "project_id"    => $projectId,
+                            "project_title" => $thisProject->getTitle()
+                        ];
                     }
                 }
             }

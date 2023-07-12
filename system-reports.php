@@ -56,7 +56,7 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
             <li class="active">
                 <a href="<?= $module->framework->getUrl('system-reports.php') ?>"
                     style="font-size:13px;color:#393733;padding:7px 9px;">
-                    <i class="fa-solid fa-user-tag"></i>
+                    <i class="fa-solid fa-memo"></i>
                     Reports
                 </a>
             </li>
@@ -66,19 +66,16 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
 
 
 
-    <p style='margin:20px 0;max-width:1000px;font-size:14px;'>Select a report type from the dropdown below. The report
+    <p style='margin-top: 20px; margin-bottom: 10px; max-width:1000px;font-size:14px;'>Select a report type from the
+        dropdown below. The
+        report
         will be generated and displayed in a table below. You can then export the report to Excel by clicking the
         Export button.
     </p>
 
-    <!-- Modal -->
-    <div class="modal" id="edit_sag_popup" data-backdrop="static" data-keyboard="false"
-        aria-labelledby="staticBackdropLabel" aria-hidden="true"></div>
-
-
     <!-- Controls Container -->
     <div class="dropdown">
-        <button type="button" class="btn btn-primary btn-xs dropdown-toggle mr-2" data-toggle="dropdown"
+        <button type="button" class="btn btn-primary btn-xs border dropdown-toggle mr-2" data-toggle="dropdown"
             data-bs-toggle="dropdown" aria-expanded="false">
             <i class="fa-sharp fa-file-excel"></i>
             <span>Select Report Type</span>
@@ -86,23 +83,25 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
         </button>
         <ul class="dropdown-menu">
             <li><a class="dropdown-item" onclick="showUserTable();"><i
-                        class="fa-sharp fa-regular fa-file-arrow-down fa-fw mr-1 text-info"></i>Users with
+                        class="fa-solid fa-users fa-fw mr-1 text-danger"></i>Users with
                     Noncompliant Rights</a></li>
             <li><a class="dropdown-item" onclick="showProjectTable();"><i
-                        class="fa-sharp fa-regular fa-file-arrow-down fa-fw mr-1 text-success"></i>Projects with
+                        class="fa-sharp fa-solid fa-rectangle-history-circle-user fa-fw mr-1 text-successrc"></i>Projects
+                    with
                     Noncompliant Users</a></li>
         </ul>
     </div>
-
     <!-- SAG Table -->
     <div class=" clear">
     </div>
-    <div id="projectTableWrapper" style="display: none; width: 100%;">
+    <div id="projectTableWrapper" class="mt-3" style="display: none; width: 100%;">
         <table aria-label="Projects Table" id="SUR-System-Table" class="projectTable cell-border" style="width: 100%">
             <thead>
                 <tr>
                     <th>Project ID</th>
                     <th>Project Name</th>
+                    <th></th>
+                    <th></th>
                     <th></th>
                     <th></th>
                     <th></th>
@@ -113,15 +112,19 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
             </tbody>
         </table>
     </div>
-    <div id="userTableWrapper" style="display: none; width: 100%;">
+    <div id="userTableWrapper" class="mt-3" style="display: none; width: 100%;">
         <table aria-label="Users Table" id="SUR-System-Table" class="userTable cell-border" style="width: 100%">
             <thead>
                 <tr>
                     <th>Username</th>
                     <th>Name</th>
                     <th>Email</th>
-                    <th>Projects with Noncompliant Rights (non-expired)</th>
-                    <th>Projects with Noncompliant Rights (all)</th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
@@ -134,160 +137,6 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
     }
     </style>
     <script>
-    function formatNow() {
-        const d = new Date();
-        return d.getFullYear() + '-' + (d.getMonth() + 1).toString().padStart(2, 0) +
-            '-' + (d.getDate()).toString().padStart(2, 0);
-    }
-
-    function exportRawCsv(includeData = true) {
-        const newLine = navigator.userAgent.match(/Windows/) ? '\r\n' : '\n';
-        const escapeChar = '"';
-        const boundary = '"';
-        const separator = ',';
-        const extension = '.csv';
-        const reBoundary = new RegExp(boundary, 'g');
-        const filename = (includeData ?
-            'SecurityAccessGroups_Raw_' + formatNow() :
-            'SecurityAccessGroups_ImportTemplate') + extension;
-        let charset = document.characterSet || document.charset;
-        if (charset) {
-            charset = ';charset=' + charset;
-        }
-        const join = function(a) {
-            let s = '';
-            for (let i = 0, ien = a.length; i < ien; i++) {
-                if (i > 0) {
-                    s += separator;
-                }
-                s += boundary ?
-                    boundary + ('' + a[i]).replace(reBoundary, escapeChar + boundary) + boundary :
-                    a[i];
-            }
-            return s;
-        };
-
-        const rowSelector = includeData ? undefined : -1;
-        const data = $('#sagTable').DataTable().buttons.exportData({
-            format: {
-                header: function(html, col, node) {
-                    const key = $(node).data('key');
-                    return key;
-                },
-                body: function(html, row, col, node) {
-                    if (col === 0) {
-                        return;
-                    } else if (col === 1) {
-                        return $(html).text();
-                    } else if (col === 2) {
-                        return html;
-                    } else {
-                        const value = $(node).data('value');
-                        return value == '' ? 0 : value;
-                    }
-                }
-            },
-            customizeData: function(data) {
-                data.header.shift();
-                data.body.forEach(row => row.shift());
-                return data;
-            },
-            rows: rowSelector,
-            columns: 'export:name'
-        });
-
-        const header = join(data.header) + newLine;
-        const footer = data.footer ? newLine + join(data.footer) : '';
-        const body = [];
-        for (let i = 0, ien = data.body.length; i < ien; i++) {
-            body.push(join(data.body[i]));
-        }
-
-        const result = {
-            str: header + body.join(newLine) + footer,
-            rows: body.length
-        };
-
-        $.fn.dataTable.fileSave(new Blob([result.str], {
-                type: 'text/csv' + charset
-            }),
-            filename,
-            true);
-    }
-
-    function exportCsv() {
-        const newLine = navigator.userAgent.match(/Windows/) ? '\r\n' : '\n';
-        const escapeChar = '"';
-        const boundary = '"';
-        const separator = ',';
-        const extension = '.csv';
-        const reBoundary = new RegExp(boundary, 'g');
-        const filename = 'SecurityAccessGroups_Labels_' + formatNow() + extension;
-        let charset = document.characterSet || document.charset;
-        if (charset) {
-            charset = ';charset=' + charset;
-        }
-        const join = function(a) {
-            let s = '';
-            for (let i = 0, ien = a.length; i < ien; i++) {
-                if (i > 0) {
-                    s += separator;
-                }
-                s += boundary ?
-                    boundary + ('' + a[i]).replace(reBoundary, escapeChar + boundary) + boundary :
-                    a[i];
-            }
-            return s;
-        };
-
-        const data = $('#sagTable').DataTable().buttons.exportData({
-            format: {
-                body: function(html, row, col, node) {
-                    if (col === 0) {
-                        return;
-                    } else if (col === 1) {
-                        return $(html).text();
-                    } else if (col === 2) {
-                        return html;
-                    } else {
-                        let result = $(node).text();
-                        if (result == '') {
-                            const value = $(node).data('value');
-                            result = value == '' ? 0 : value;
-                        } else {
-                            result = String(html).replace(/<br>|<br\/>/g, '\n').replace(/&amp;/g, '&');
-                        }
-                        return result;
-                    }
-                }
-            },
-            customizeData: function(data) {
-                data.header.shift();
-                data.body.forEach(row => row.shift());
-                return data;
-            },
-            columns: 'export:name'
-        });
-
-        const header = join(data.header) + newLine;
-        const footer = data.footer ? newLine + join(data.footer) : '';
-        const body = [];
-        for (let i = 0, ien = data.body.length; i < ien; i++) {
-            body.push(join(data.body[i]));
-        }
-
-        const result = {
-            str: header + body.join(newLine) + footer,
-            rows: body.length
-        };
-
-        $.fn.dataTable.fileSave(new Blob([result.str], {
-                type: 'text/csv' + charset
-            }),
-            filename,
-            true);
-    }
-
     function hover() {
         const thisNode = $(this);
         const rowIdx = thisNode.attr('data-dt-row');
@@ -360,44 +209,70 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
                     row.onmouseenter = hover;
                     row.onmouseleave = dehover;
                 });
+                $('div.dt-buttons button').removeClass('dt-button');
             },
             buttons: [{
                 extend: 'excelHtml5',
-                text: 'Export Excel',
+                text: '<span style="font-size: .875rem;"><i class="fa-sharp fa-solid fa-file-excel fa-fw"></i>Export Excel</span>',
                 exportOptions: {
-                    columns: [0, 1, 2, 3, 4, 5]
-                }
+                    columns: [0, 1, 2, 4, 5, 7]
+                },
+                className: 'btn btn-sm btn-success border mb-1',
             }],
             dom: 'lBrtip',
 
             columns: [{
                     title: "PID",
-                    data: "project_id"
+                    data: function(row, type, set, meta) {
+                        if (type === 'display') {
+                            const pid = row.project_id;
+                            const projectUrl =
+                                `${app_path_webroot_full}redcap_v${redcap_version}/ExternalModules/?prefix=<?= $module->getModuleDirectoryPrefix() ?>&page=project-status&pid=${pid}`;
+                            return `<strong><a target="_blank" rel="noreferrer noopener" href="${projectUrl}">${pid}</a></strong>`;
+                        } else {
+                            return row.project_id;
+                        }
+                    }
                 },
                 {
                     title: "Project Name",
                     data: "project_title"
                 },
                 {
-                    title: "Noncompliant Users (non-expired)",
+                    title: "Count of Noncompliant Users (non-expired)",
                     data: function(row, type, set, meta) {
                         if (type === 'display') {
-                            return row.nonexpired_users_with_bad_rights.length;
+                            const users = row.nonexpired_users_with_bad_rights;
+                            const usersString = JSON.stringify(users);
+                            return '<a href="javascript:void(0)" onclick=\'makeUserTable(\`' +
+                                usersString + '\`);\'>' + users.length + '</a>';
                         } else {
                             return row.nonexpired_users_with_bad_rights;
                         }
                     }
                 },
                 {
-                    title: "Noncompliant Users (non-expired) - List",
+                    title: "Noncompliant Users (non-expired)",
                     data: function(row, type, set, meta) {
                         const users = row.nonexpired_users_with_bad_rights ?? [];
-                        return users.map(user => user.username).join(', ');
+                        return users.map(user => {
+                            const url =
+                                `${app_path_webroot_full}redcap_v${redcap_version}/ControlCenter/view_users.php?username=${user.username}`;
+                            return `<a target="_blank" rel="noreferrer noopener" href="${url}">${user.username}</a>`;
+                        }).join('<br>');
                     },
                     visible: true
                 },
                 {
-                    title: "Noncompliant Users (all)",
+                    title: "Noncompliant Users (non-expired)",
+                    data: function(row, type, set, meta) {
+                        const users = row.nonexpired_users_with_bad_rights ?? [];
+                        return users.map(user => user.username).join(', ');
+                    },
+                    visible: false
+                },
+                {
+                    title: "Count of Noncompliant Users (all)",
                     data: function(row, type, set, meta) {
                         if (type === 'display') {
                             const users = row.users_with_bad_rights;
@@ -410,15 +285,30 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
                     }
                 },
                 {
-                    title: "Noncompliant Users (all) - List",
+                    title: "Noncompliant Users (all)",
                     data: function(row, type, set, meta) {
                         const users = row.users_with_bad_rights ?? [];
-                        return users.map(user => user.username).join(', ');
+                        return users.map(user => {
+                            const url =
+                                `${app_path_webroot_full}redcap_v${redcap_version}/ControlCenter/view_users.php?username=${user.username}`;
+                            return `<a target="_blank" rel="noreferrer noopener" href="${url}">${user.username}</a>`;
+                        }).join('<br>');
                     },
                     visible: true
+                },
+                {
+                    title: "Noncompliant Users (all)",
+                    data: function(row, type, set, meta) {
+                        const users = row.users_with_bad_rights ?? [];
+                        return users.map(user => user.username).join(", ");
+                    },
+                    visible: false
                 }
             ],
-            columnDefs: []
+            columnDefs: [{
+                "className": "dt-center dt-head-center",
+                "targets": "_all"
+            }],
         });
     }
 
@@ -457,11 +347,27 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
                     row.onmouseenter = hover;
                     row.onmouseleave = dehover;
                 });
+                $('div.dt-buttons button').removeClass('dt-button');
             },
-
+            buttons: [{
+                extend: 'excelHtml5',
+                text: '<i class="fa-sharp fa-solid fa-file-excel"></i> Export Excel',
+                exportOptions: {
+                    columns: [0, 1, 2, 3, 5, 6, 8]
+                },
+                className: 'btn btn-sm btn-success border mb-1',
+            }],
+            dom: 'lBrtip',
             columns: [{
                     title: "Username",
-                    data: "username"
+                    data: function(row, type, set, meta) {
+                        if (type === 'display') {
+                            const url =
+                                `${app_path_webroot_full}redcap_v${redcap_version}/ControlCenter/view_users.php?username=${row.username}`;
+                            return `<strong><a target="_blank" rel="noreferrer noopener" href="${url}">${row.username}</a></strong>`;
+                        }
+                        return row.username;
+                    }
                 },
                 {
                     title: "Name",
@@ -469,10 +375,15 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
                 },
                 {
                     title: "Email",
-                    data: "email"
+                    data: function(row, type, set, meta) {
+                        if (type === 'display') {
+                            return '<a href="mailto:' + row.email + '">' + row.email + '</a>';
+                        }
+                        return row.email;
+                    }
                 },
                 {
-                    title: "Projects with Noncompliant Rights (non-expired)",
+                    title: "Count of Projects granting Noncompliant Rights to this User (non-expired)",
                     data: function(row, type, set, meta) {
                         if (type === 'display') {
                             const projects = row.projects_unexpired ?? [];
@@ -483,24 +394,64 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
                     }
                 },
                 {
-                    title: "Projects with Noncompliant Rights (all)",
+                    title: "Projects granting Noncompliant Rights to this User (non-expired)",
+                    data: function(row, type, set, meta) {
+                        const projects = row.projects_unexpired ?? [];
+                        return projects.map(project => {
+                            const pid = project.project_id;
+                            const projectUrl =
+                                `${app_path_webroot_full}redcap_v${redcap_version}/ExternalModules/?prefix=<?= $module->getModuleDirectoryPrefix() ?>&page=project-status&pid=${pid}`;
+                            const projectTitle = project.project_title.replaceAll('"', '');
+                            return `<a target="_blank" rel="noreferrer noopener" href="${projectUrl}" title="${projectTitle}">PID: ${pid}</a>`;
+                        }).join("<br>");
+                    },
+                },
+                {
+                    title: "Projects granting Noncompliant Rights to this User (non-expired)",
+                    data: function(row, type, set, meta) {
+                        const projects = row.projects_unexpired ?? [];
+                        return projects.map(project => project.project_id).join(", ");
+                    },
+                    visible: false
+                },
+                {
+                    title: "Count of Projects granting Noncompliant Rights to this User (all)",
                     data: function(row, type, set, meta) {
                         if (type === 'display') {
                             return row.projects.length;
                         } else {
                             return row.projects;
                         }
-
                     }
+                },
+                {
+                    title: "Projects granting Noncompliant Rights to this User (all)",
+                    data: function(row, type, set, meta) {
+                        const projects = row.projects ?? [];
+                        return projects.map(project => {
+                            const pid = project.project_id;
+                            const projectUrl =
+                                `${app_path_webroot_full}redcap_v${redcap_version}/ExternalModules/?prefix=<?= $module->getModuleDirectoryPrefix() ?>&page=project-status&pid=${pid}`;
+                            const projectTitle = project.project_title.replaceAll('"', '');
+                            return `<a target="_blank" rel="noreferrer noopener" href="${projectUrl}" title="${projectTitle}">PID: ${pid}</a>`;
+                        }).join("<br>");
+                    },
+                },
+                {
+                    title: "Projects granting Noncompliant Rights to this User (all)",
+                    data: function(row, type, set, meta) {
+                        const projects = row.projects ?? [];
+                        return projects.map(project => project.project_id).join(", ");
+                    },
+                    visible: false
                 }
-            ]
+            ],
+            columnDefs: [{
+                "className": "dt-center dt-head-center",
+                "targets": "_all"
+            }],
         });
     }
-
-    $(document).ready(function() {
-
-
-    });
     </script>
 
 </div> <!-- End SAG_Container -->
