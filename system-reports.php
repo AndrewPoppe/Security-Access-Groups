@@ -10,8 +10,9 @@ if ( !$module->framework->getUser()->isSuperUser() ) {
 require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
 
 ?>
-<link href="<?= $module->framework->getUrl('lib/DataTables/datatables.min.css') ?>" rel="stylesheet" />
-<script src="<?= $module->framework->getUrl('lib/DataTables/datatables.min.js') ?>"></script>
+<link href="https://cdn.datatables.net/v/dt/jszip-3.10.1/dt-1.13.5/b-2.4.1/b-html5-2.4.1/datatables.min.css"
+    rel="stylesheet" />
+<script src="https://cdn.datatables.net/v/dt/jszip-3.10.1/dt-1.13.5/b-2.4.1/b-html5-2.4.1/datatables.min.js"></script>
 
 <script defer src="<?= $module->framework->getUrl('assets/fontawesome/js/regular.min.js') ?>"></script>
 <script defer src="<?= $module->framework->getUrl('assets/fontawesome/js/sharp-regular.min.js') ?>"></script>
@@ -65,9 +66,9 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
 
 
 
-    <p style='margin:20px 0;max-width:1000px;font-size:14px;'>This table shows all the SAGs that currently exist in the
-        system. A SAG must be created here before it can be assigned to a user. The current list of SAGs can be exported
-        as a CSV file, and a CSV file can be imported to update existing SAGs or to create new SAGs.
+    <p style='margin:20px 0;max-width:1000px;font-size:14px;'>Select a report type from the dropdown below. The report
+        will be generated and displayed in a table below. You can then export the report to Excel by clicking the
+        Export button.
     </p>
 
     <!-- Modal -->
@@ -102,8 +103,10 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
                 <tr>
                     <th>Project ID</th>
                     <th>Project Name</th>
-                    <th>Nonexpired Users with Noncompliant Rights</th>
-                    <th>All Users with Noncompliant Rights</th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
@@ -125,6 +128,11 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
             </tbody>
         </table>
     </div>
+    <style>
+    div.dt-buttons {
+        float: right;
+    }
+    </style>
     <script>
     function formatNow() {
         const d = new Date();
@@ -353,6 +361,14 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
                     row.onmouseleave = dehover;
                 });
             },
+            buttons: [{
+                extend: 'excelHtml5',
+                text: 'Export Excel',
+                exportOptions: {
+                    columns: [0, 1, 2, 3, 4, 5]
+                }
+            }],
+            dom: 'lBrtip',
 
             columns: [{
                     title: "PID",
@@ -373,6 +389,14 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
                     }
                 },
                 {
+                    title: "Noncompliant Users (non-expired) - List",
+                    data: function(row, type, set, meta) {
+                        const users = row.nonexpired_users_with_bad_rights ?? [];
+                        return users.map(user => user.username).join(', ');
+                    },
+                    visible: true
+                },
+                {
                     title: "Noncompliant Users (all)",
                     data: function(row, type, set, meta) {
                         if (type === 'display') {
@@ -384,6 +408,14 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
                         return row.users_with_bad_rights;
 
                     }
+                },
+                {
+                    title: "Noncompliant Users (all) - List",
+                    data: function(row, type, set, meta) {
+                        const users = row.users_with_bad_rights ?? [];
+                        return users.map(user => user.username).join(', ');
+                    },
+                    visible: true
                 }
             ],
             columnDefs: []
@@ -461,8 +493,7 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
 
                     }
                 }
-            ],
-            columnDefs: []
+            ]
         });
     }
 
