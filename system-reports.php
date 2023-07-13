@@ -101,7 +101,7 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
     <!-- SAG Table -->
     <div class=" clear">
     </div>
-    <div id="projectTableWrapper" class="mt-3" style="display: none; width: 100%;">
+    <div id="projectTableWrapper" class="mt-3 card p-3" style="display: none; width: 100%;">
         <h5 id="projectTableTitle"></h5>
         <table aria-label="Projects Table" id="SUR-System-Table" class="projectTable cell-border" style="width: 100%">
             <thead>
@@ -150,7 +150,7 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
             </tbody>
         </table>
     </div>
-    <div id="userTableWrapper" class="mt-3" style="display: none; width: 100%;">
+    <div id="userTableWrapper" class="mt-3 card p-3" style="display: none; width: 100%;">
         <h5 id="userTableTitle"></h5>
         <table aria-label="Users Table" id="SUR-System-Table" class="userTable cell-border" style="width: 100%">
             <caption>Users with Noncompliant Rights</caption>
