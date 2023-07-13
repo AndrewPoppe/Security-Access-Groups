@@ -13,6 +13,7 @@ if ( $_SERVER['REQUEST_METHOD'] !== 'POST' ) {
     exit;
 }
 
-$users = $module->getAllUsersWithNoncompliantRights();
+$includeExpired = filter_input(INPUT_POST, 'includeExpired', FILTER_VALIDATE_BOOL) ?? false;
+$users          = $module->getAllUsersWithNoncompliantRights($includeExpired);
 
 echo json_encode([ 'data' => $users ]);

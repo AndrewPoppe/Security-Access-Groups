@@ -13,6 +13,7 @@ if ( $_SERVER['REQUEST_METHOD'] !== 'POST' ) {
     exit;
 }
 
-$projects = $module->getProjectsWithNoncompliantUsers();
+$includeExpired = filter_input(INPUT_POST, 'includeExpired', FILTER_VALIDATE_BOOL) ?? false;
+$projects       = $module->getProjectsWithNoncompliantUsers($includeExpired);
 
 echo json_encode([ 'data' => $projects ]);
