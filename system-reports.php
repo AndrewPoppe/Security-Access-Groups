@@ -191,6 +191,11 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
     .select2-search__field {
         width: 100% !important;
     }
+
+    div.dataTables_filter {
+        margin-top: 4px;
+        margin-right: 10px;
+    }
     </style>
     <script>
     function hover() {
@@ -354,7 +359,7 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
                     },
                     className: 'btn btn-sm btn-success border mb-1',
                 }],
-                dom: 'lBrtip',
+                dom: 'lBftip',
 
                 columns: [{
                         title: "PID",
@@ -544,7 +549,7 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
                 },
                 className: 'btn btn-sm btn-success border mb-1',
             }],
-            dom: 'lBrtip',
+            dom: 'lBfrtip',
             columns: [{
                     title: "User",
                     data: function(row, type, set, meta) {
