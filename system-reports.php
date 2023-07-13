@@ -137,13 +137,13 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
                     </th>
                 </tr>
                 <tr>
-                    <th>Project ID</th>
-                    <th>Project Name</th>
-                    <th></th>
-                    <th></th>
-                    <th></th>
-                    <th></th>
-                    <th></th>
+                    <th scope="col">Project ID</th>
+                    <th scope="col">Project Name</th>
+                    <th scope="col"></th>
+                    <th scope="col"></th>
+                    <th scope="col"></th>
+                    <th scope="col"></th>
+                    <th scope="col"></th>
                 </tr>
             </thead>
             <tbody>
@@ -187,15 +187,15 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
                     </th>
                 </tr>
                 <tr>
-                    <th>Username</th>
-                    <th>Name</th>
-                    <th>Email</th>
-                    <th></th>
-                    <th></th>
-                    <th></th>
-                    <th></th>
-                    <th></th>
-                    <th></th>
+                    <th scope="col">Username</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Email</th>
+                    <th scope="col"></th>
+                    <th scope="col"></th>
+                    <th scope="col"></th>
+                    <th scope="col"></th>
+                    <th scope="col"></th>
+                    <th scope="col"></th>
                 </tr>
             </thead>
             <tbody>
