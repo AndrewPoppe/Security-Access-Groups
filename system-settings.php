@@ -539,7 +539,7 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                             const href =
                                 `${root}/ControlCenter/view_users.php?username=${row.username}`;
                             const attrs = `target="_blank" rel="noopener noreferrer"`;
-                            return `<a class="user-link" href="${href}" ${attrs}>${row.username}</a>`;
+                            return `<strong><a href="${href}" ${attrs}>${row.username}</a></strong>`;
                         } else {
                             return row.username;
                         }

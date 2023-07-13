@@ -578,11 +578,13 @@ input.timePicker {
     background-color: white !important;
 }
 
-table#alertLogTable ::placeholder {
+table#alertLogTable ::placeholder,
+table#SUR-System-Table ::placeholder {
     opacity: 1 !important;
 }
 
-table#alertLogTable .select2-container--default.select2-container--focus .select2-selection--multiple {
+table#alertLogTable .select2-container--default.select2-container--focus .select2-selection--multiple,
+table#SUR-System-Table .select2-container--default.select2-container--focus .select2-selection--multiple {
     color: #495057;
     background-color: #fff;
     border-color: #80bdff;
@@ -590,7 +592,8 @@ table#alertLogTable .select2-container--default.select2-container--focus .select
     box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
 }
 
-table#alertLogTable .select2-container--default .select2-selection--multiple {
+table#alertLogTable .select2-container--default .select2-selection--multiple,
+table#SUR-System-Table .select2-container--default .select2-selection--multiple {
     border: 1px solid #ced4da;
     font-size: 14px;
 }
@@ -614,4 +617,10 @@ tr.selected>* {
 
 .infoButton:hover {
     color: #138496 !important;
+}
+
+.userTable .select2-selection--multiple,
+.projectTable .select2-selection--multiple {
+    overflow: hidden !important;
+    height: auto !important;
 }

@@ -115,10 +115,38 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
     <div id="userTableWrapper" class="mt-3" style="display: none; width: 100%;">
         <table aria-label="Users Table" id="SUR-System-Table" class="userTable cell-border" style="width: 100%">
             <thead>
+                <tr style="background-color: #D7D7D7 !important;">
+                    <th class="font-weight-normal" scope="col" colspan="10" style="border-bottom: none;">
+                        <div class="container px-0">
+                            <div class="row">
+                                <div class="col px-4">
+                                    <div class="row pt-2 pb-1">
+                                        <select class="form-control" id="projectsNonexpiredSelect" multiple="multiple">
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col px-4" style="border-left: 1px solid #ccc">
+                                    <div class="row pt-2 pb-1">
+                                        <select class="form-control" id="projectsAllSelect" multiple="multiple">
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col px-4" style="border-left: 1px solid #ccc">
+                                    <div class="row pt-2 pb-1">
+                                        <select class="form-control" id="rightsSelect" multiple="multiple">
+                                            <option></option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </th>
+                </tr>
                 <tr>
                     <th>Username</th>
                     <th>Name</th>
                     <th>Email</th>
+                    <th></th>
                     <th></th>
                     <th></th>
                     <th></th>
@@ -132,270 +160,378 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
         </table>
     </div>
     <style>
-    div.dt-buttons {
-        float: right;
-    }
+        div.dt-buttons {
+            float: right;
+        }
     </style>
     <script>
-    function hover() {
-        const thisNode = $(this);
-        const rowIdx = thisNode.attr('data-dt-row');
-        $("tr[data-dt-row='" + rowIdx + "'] td").addClass("highlight"); // shade only the hovered row
-    }
+        function hover() {
+            const thisNode = $(this);
+            const rowIdx = thisNode.attr('data-dt-row');
+            $("tr[data-dt-row='" + rowIdx + "'] td").addClass("highlight"); // shade only the hovered row
+        }
 
-    function dehover() {
-        const thisNode = $(this);
-        const rowIdx = thisNode.attr('data-dt-row');
-        $("tr[data-dt-row='" + rowIdx + "'] td").removeClass("highlight"); // shade only the hovered row
-    }
+        function dehover() {
+            const thisNode = $(this);
+            const rowIdx = thisNode.attr('data-dt-row');
+            $("tr[data-dt-row='" + rowIdx + "'] td").removeClass("highlight"); // shade only the hovered row
+        }
 
-    function makeUserTable(usersString) {
-        let tableString =
-            '<table class=\"table table-sm table-bordered\"><thead><tr><th>Username</th><th>Name</th><th>Email</th></tr></thead><tbody>';
-        JSON.parse(usersString).forEach(user => {
-            tableString += '<tr><td>' + user.username + '</td><td>' + user.name + '</td><td>' + user.email +
-                '</td></tr>';
-        });
-        tableString += '</tbody></table>';
-        return Swal.fire({
-            title: 'Users with Noncompliant Rights',
-            html: tableString,
-            width: '700px',
-            showConfirmButton: false,
-        });
-    }
-
-    function clearTables() {
-        $('.dataTables_filter').remove();
-        $('.dataTables_length').remove();
-        $('.dataTables_info').remove();
-        $('.dataTables_paginate').remove();
-        $('.dataTable').DataTable().destroy();
-    }
-
-    function showProjectTable() {
-        clearTables();
-        $('#userTableWrapper').hide();
-        if ($('#projectTableWrapper').is(':hidden')) {
-            Swal.fire({
-                title: 'Loading...',
-                didOpen: () => {
-                    Swal.showLoading()
-                }
+        function makeUserTable(usersString) {
+            let tableString =
+                '<table class=\"table table-sm table-bordered\"><thead><tr><th>Username</th><th>Name</th><th>Email</th></tr></thead><tbody>';
+            JSON.parse(usersString).forEach(user => {
+                tableString += '<tr><td>' + user.username + '</td><td>' + user.name + '</td><td>' + user.email +
+                    '</td></tr>';
+            });
+            tableString += '</tbody></table>';
+            return Swal.fire({
+                title: 'Users with Noncompliant Rights',
+                html: tableString,
+                width: '700px',
+                showConfirmButton: false,
             });
         }
 
-        const table = $('#SUR-System-Table.projectTable').DataTable({
-            ajax: {
-                url: '<?= $module->framework->getUrl("ajax/projectsWithNoncompliantUsers.php") ?>',
-                method: 'POST'
-            },
-            deferRender: true,
-            "processing": true,
-            initComplete: function() {
-                $('#userTableWrapper').hide();
-                $('#projectTableWrapper').show();
-                Swal.close();
-                const table = this.api();
+        function clearTables() {
+            $('.dataTables_filter').remove();
+            $('.dataTables_length').remove();
+            $('.dataTables_info').remove();
+            $('.dataTables_paginate').remove();
+            $('.dt-buttons').remove();
+            $('.dataTable').DataTable().destroy();
+        }
 
-                table.on('draw', function() {
+        function showProjectTable() {
+            clearTables();
+            $('#userTableWrapper').hide();
+            $('#projectTableWrapper').hide();
+            if ($('#projectTableWrapper').is(':hidden')) {
+                Swal.fire({
+                    title: 'Loading...',
+                    didOpen: () => {
+                        Swal.showLoading()
+                    }
+                });
+            }
+            const table = $('#SUR-System-Table.projectTable')
+                .DataTable({
+                    ajax: {
+                        url: '<?= $module->framework->getUrl("ajax/projectsWithNoncompliantUsers.php") ?>',
+                        method: 'POST'
+                    },
+                    deferRender: true,
+                    initComplete: function () {
+                        $('#projectTableWrapper').show();
+                        Swal.close();
+                        const table = this.api();
+
+                        table.on('draw', function () {
+                            $('.dataTable tbody tr').each((i, row) => {
+                                row.onmouseenter = hover;
+                                row.onmouseleave = dehover;
+                            });
+                        });
+
+                        $('.dataTable tbody tr').each((i, row) => {
+                            row.onmouseenter = hover;
+                            row.onmouseleave = dehover;
+                        });
+                        $('div.dt-buttons button').removeClass('dt-button');
+                    },
+                    buttons: [{
+                        extend: 'excelHtml5',
+                        text: '<span style="font-size: .875rem;"><i class="fa-sharp fa-solid fa-file-excel fa-fw"></i>Export Excel</span>',
+                        exportOptions: {
+                            columns: [0, 1, 2, 4, 5, 7]
+                        },
+                        className: 'btn btn-sm btn-success border mb-1',
+                    }],
+                    dom: 'lBrtip',
+
+                    columns: [{
+                        title: "PID",
+                        data: function (row, type, set, meta) {
+                            if (type === 'display') {
+                                const pid = row.project_id;
+                                const projectUrl =
+                                    `${app_path_webroot_full}redcap_v${redcap_version}/ExternalModules/?prefix=<?= $module->getModuleDirectoryPrefix() ?>&page=project-status&pid=${pid}`;
+                                return `<strong><a target="_blank" rel="noreferrer noopener" href="${projectUrl}">${pid}</a></strong>`;
+                            } else {
+                                return row.project_id;
+                            }
+                        }
+                    },
+                    {
+                        title: "Project Name",
+                        data: "project_title"
+                    },
+                    {
+                        title: "Count of Noncompliant Users (non-expired)",
+                        data: function (row, type, set, meta) {
+                            if (type === 'display') {
+                                const users = row.nonexpired_users_with_bad_rights;
+                                const usersString = JSON.stringify(users);
+                                return '<a href="javascript:void(0)" onclick=\'makeUserTable(\`' +
+                                    usersString + '\`);\'>' + users.length + '</a>';
+                            } else {
+                                return row.nonexpired_users_with_bad_rights;
+                            }
+                        }
+                    },
+                    {
+                        title: "Noncompliant Users (non-expired)",
+                        data: function (row, type, set, meta) {
+                            const users = row.nonexpired_users_with_bad_rights ?? [];
+                            return users.map(user => {
+                                const url =
+                                    `${app_path_webroot_full}redcap_v${redcap_version}/ControlCenter/view_users.php?username=${user.username}`;
+                                return `<a target="_blank" rel="noreferrer noopener" href="${url}">${user.username}</a>`;
+                            }).join('<br>');
+                        },
+                        visible: true
+                    },
+                    {
+                        title: "Noncompliant Users (non-expired)",
+                        data: function (row, type, set, meta) {
+                            const users = row.nonexpired_users_with_bad_rights ?? [];
+                            return users.map(user => user.username).join(', ');
+                        },
+                        visible: false
+                    },
+                    {
+                        title: "Count of Noncompliant Users (all)",
+                        data: function (row, type, set, meta) {
+                            if (type === 'display') {
+                                const users = row.users_with_bad_rights;
+                                const usersString = JSON.stringify(users);
+                                return '<a href="javascript:void(0)" onclick=\'makeUserTable(\`' +
+                                    usersString + '\`);\'>' + users.length + '</a>';
+                            }
+                            return row.users_with_bad_rights;
+
+                        }
+                    },
+                    {
+                        title: "Noncompliant Users (all)",
+                        data: function (row, type, set, meta) {
+                            const users = row.users_with_bad_rights ?? [];
+                            return users.map(user => {
+                                const url =
+                                    `${app_path_webroot_full}redcap_v${redcap_version}/ControlCenter/view_users.php?username=${user.username}`;
+                                return `<a target="_blank" rel="noreferrer noopener" href="${url}">${user.username}</a>`;
+                            }).join('<br>');
+                        },
+                        visible: true
+                    },
+                    {
+                        title: "Noncompliant Users (all)",
+                        data: function (row, type, set, meta) {
+                            const users = row.users_with_bad_rights ?? [];
+                            return users.map(user => user.username).join(", ");
+                        },
+                        visible: false
+                    }
+                    ],
+                    columnDefs: [{
+                        "className": "dt-center dt-head-center",
+                        "targets": "_all"
+                    }],
+                });
+        }
+
+        // Custom project (nonexpired) function
+        $.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
+            if (!$('.userTable').is(':visible')) {
+                return true;
+            }
+            const projects = $('#projectsNonexpiredSelect').val() || [];
+            if (projects.length === 0) {
+                return true;
+            }
+            const projectsNonexpired = data[5].split(',').map(str => trim(str));
+            return projects.some(project => projectsNonexpired.includes(project));
+        });
+
+        // Custom project (all) function
+        $.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
+            if (!$('.userTable').is(':visible')) {
+                return true;
+            }
+            const projects = $('#projectsAllSelect').val() || [];
+            if (projects.length === 0) {
+                return true;
+            }
+            const projectsAll = data[8].split(',').map(str => trim(str));
+            return projects.some(project => projectsAll.includes(project));
+        });
+
+        // Custom rights function
+        $.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
+            if (!$('.userTable').is(':visible')) {
+                return true;
+            }
+            const rights = $('#rightsSelect').val() || [];
+            if (rights.length === 0) {
+                return true;
+            }
+            const rightsAll = data[9].split('&&&&&').map(str => trim(str));
+            console.log(data, rights);
+            return rights.some(right => rightsAll.includes(right));
+        });
+
+        function showUserTable() {
+            clearTables();
+            $('#projectTableWrapper').hide();
+            $('#userTableWrapper').hide();
+            if ($('#userTableWrapper').is(':hidden')) {
+                Swal.fire({
+                    title: 'Loading...',
+                    didOpen: () => {
+                        Swal.showLoading()
+                    }
+                });
+            }
+            const table = $('#SUR-System-Table.userTable').DataTable({
+                ajax: {
+                    url: '<?= $module->framework->getUrl("ajax/usersWithNoncompliantRights.php") ?>',
+                    method: 'POST'
+                },
+                deferRender: true,
+                initComplete: function () {
+                    $('#projectTableWrapper').hide();
+                    $('#userTableWrapper').show();
+                    Swal.close();
+                    const table = this.api();
+
+                    // Project filter (nonexpired)
+                    const projectsNonexpired = table.column(5).data().toArray().join().split(',').map(str =>
+                        Number(
+                            str)).filter(pid => pid)
+                    const projectsNonexpiredUnique = Array.from(new Set(projectsNonexpired));
+                    const projectsNonexpiredSelect = $('#projectsNonexpiredSelect').select2({
+                        minimumResultsForSearch: 20,
+                        placeholder: "Filter Non-expired projects...",
+                        allowClear: true,
+                        templateResult: function (pid) {
+                            return $(`<span>PID: ${pid.text}</span>`);
+                        }
+                    });
+                    projectsNonexpiredUnique.forEach(pid => projectsNonexpiredSelect.append(new Option(
+                        pid, pid, false, false)));
+                    projectsNonexpiredSelect.trigger('change');
+                    projectsNonexpiredSelect.on('change', () => {
+                        table.draw();
+                        $('.select2-search__field').width('100%');
+                    });
+
+                    // Project filter (all)
+                    const projectsAll = table.column(5).data().toArray().join().split(',').map(str => Number(
+                        str)).filter(pid => pid)
+                    const projectsAllUnique = Array.from(new Set(projectsAll));
+                    const projectsAllSelect = $('#projectsAllSelect').select2({
+                        minimumResultsForSearch: 20,
+                        placeholder: "Filter All projects...",
+                        templateResult: function (pid) {
+                            return $(`<span>PID: ${pid.text}</span>`);
+                        }
+                    });
+                    projectsAllUnique.forEach(pid => projectsAllSelect.append(new Option(
+                        pid, pid, false, false)));
+                    projectsAllSelect.trigger('change');
+                    projectsAllSelect.on('change', () => {
+                        table.draw();
+                        $('.select2-search__field').width('100%');
+                    });
+
+                    // Rights filter
+                    const rights = table.column(9).data().toArray().join('&&&&&').split('&&&&&').map(str =>
+                        trim(str));
+                    const rightsUnique = Array.from(new Set(rights));
+                    const rightsSelect = $('#rightsSelect').select2({
+                        minimumResultsForSearch: 20,
+                        placeholder: "Filter Rights...",
+                        templateResult: function (right) {
+                            return $(`<span>${right.text}</span>`);
+                        }
+                    });
+                    rightsUnique.forEach(right => rightsSelect.append(new Option(
+                        right, right, false, false)));
+                    rightsSelect.trigger('change');
+                    rightsSelect.on('change', () => {
+                        table.draw();
+                        $('.select2-search__field').width('100%');
+                    });
+
+                    table.on('draw', function () {
+                        $('.dataTable tbody tr').each((i, row) => {
+                            row.onmouseenter = hover;
+                            row.onmouseleave = dehover;
+                        });
+                    });
+
                     $('.dataTable tbody tr').each((i, row) => {
                         row.onmouseenter = hover;
                         row.onmouseleave = dehover;
                     });
-                });
-
-                $('.dataTable tbody tr').each((i, row) => {
-                    row.onmouseenter = hover;
-                    row.onmouseleave = dehover;
-                });
-                $('div.dt-buttons button').removeClass('dt-button');
-            },
-            buttons: [{
-                extend: 'excelHtml5',
-                text: '<span style="font-size: .875rem;"><i class="fa-sharp fa-solid fa-file-excel fa-fw"></i>Export Excel</span>',
-                exportOptions: {
-                    columns: [0, 1, 2, 4, 5, 7]
+                    table.columns.adjust().draw();
+                    $('div.dt-buttons button').removeClass('dt-button');
+                    $('.select2-search__field').width('100%');
                 },
-                className: 'btn btn-sm btn-success border mb-1',
-            }],
-            dom: 'lBrtip',
-
-            columns: [{
-                    title: "PID",
-                    data: function(row, type, set, meta) {
-                        if (type === 'display') {
-                            const pid = row.project_id;
-                            const projectUrl =
-                                `${app_path_webroot_full}redcap_v${redcap_version}/ExternalModules/?prefix=<?= $module->getModuleDirectoryPrefix() ?>&page=project-status&pid=${pid}`;
-                            return `<strong><a target="_blank" rel="noreferrer noopener" href="${projectUrl}">${pid}</a></strong>`;
-                        } else {
-                            return row.project_id;
-                        }
-                    }
-                },
-                {
-                    title: "Project Name",
-                    data: "project_title"
-                },
-                {
-                    title: "Count of Noncompliant Users (non-expired)",
-                    data: function(row, type, set, meta) {
-                        if (type === 'display') {
-                            const users = row.nonexpired_users_with_bad_rights;
-                            const usersString = JSON.stringify(users);
-                            return '<a href="javascript:void(0)" onclick=\'makeUserTable(\`' +
-                                usersString + '\`);\'>' + users.length + '</a>';
-                        } else {
-                            return row.nonexpired_users_with_bad_rights;
-                        }
-                    }
-                },
-                {
-                    title: "Noncompliant Users (non-expired)",
-                    data: function(row, type, set, meta) {
-                        const users = row.nonexpired_users_with_bad_rights ?? [];
-                        return users.map(user => {
-                            const url =
-                                `${app_path_webroot_full}redcap_v${redcap_version}/ControlCenter/view_users.php?username=${user.username}`;
-                            return `<a target="_blank" rel="noreferrer noopener" href="${url}">${user.username}</a>`;
-                        }).join('<br>');
+                buttons: [{
+                    extend: 'excelHtml5',
+                    text: '<i class="fa-sharp fa-solid fa-file-excel"></i> Export Excel',
+                    exportOptions: {
+                        columns: [11, 1, 2, 3, 5, 6, 8, 10]
                     },
-                    visible: true
-                },
-                {
-                    title: "Noncompliant Users (non-expired)",
-                    data: function(row, type, set, meta) {
-                        const users = row.nonexpired_users_with_bad_rights ?? [];
-                        return users.map(user => user.username).join(', ');
-                    },
-                    visible: false
-                },
-                {
-                    title: "Count of Noncompliant Users (all)",
-                    data: function(row, type, set, meta) {
-                        if (type === 'display') {
-                            const users = row.users_with_bad_rights;
-                            const usersString = JSON.stringify(users);
-                            return '<a href="javascript:void(0)" onclick=\'makeUserTable(\`' +
-                                usersString + '\`);\'>' + users.length + '</a>';
-                        }
-                        return row.users_with_bad_rights;
-
-                    }
-                },
-                {
-                    title: "Noncompliant Users (all)",
-                    data: function(row, type, set, meta) {
-                        const users = row.users_with_bad_rights ?? [];
-                        return users.map(user => {
-                            const url =
-                                `${app_path_webroot_full}redcap_v${redcap_version}/ControlCenter/view_users.php?username=${user.username}`;
-                            return `<a target="_blank" rel="noreferrer noopener" href="${url}">${user.username}</a>`;
-                        }).join('<br>');
-                    },
-                    visible: true
-                },
-                {
-                    title: "Noncompliant Users (all)",
-                    data: function(row, type, set, meta) {
-                        const users = row.users_with_bad_rights ?? [];
-                        return users.map(user => user.username).join(", ");
-                    },
-                    visible: false
-                }
-            ],
-            columnDefs: [{
-                "className": "dt-center dt-head-center",
-                "targets": "_all"
-            }],
-        });
-    }
-
-    function showUserTable() {
-        clearTables();
-        $('#projectTableWrapper').hide();
-        if ($('#userTableWrapper').is(':hidden')) {
-            Swal.fire({
-                title: 'Loading...',
-                didOpen: () => {
-                    Swal.showLoading()
-                }
-            });
-        }
-        const table = $('#SUR-System-Table.userTable').DataTable({
-            ajax: {
-                url: '<?= $module->framework->getUrl("ajax/usersWithNoncompliantRights.php") ?>',
-                method: 'POST'
-            },
-            deferRender: true,
-            "processing": true,
-            initComplete: function() {
-                $('#projectTableWrapper').hide();
-                $('#userTableWrapper').show();
-                Swal.close();
-                const table = this.api();
-
-                table.on('draw', function() {
-                    $('.dataTable tbody tr').each((i, row) => {
-                        row.onmouseenter = hover;
-                        row.onmouseleave = dehover;
-                    });
-                });
-
-                $('.dataTable tbody tr').each((i, row) => {
-                    row.onmouseenter = hover;
-                    row.onmouseleave = dehover;
-                });
-                $('div.dt-buttons button').removeClass('dt-button');
-            },
-            buttons: [{
-                extend: 'excelHtml5',
-                text: '<i class="fa-sharp fa-solid fa-file-excel"></i> Export Excel',
-                exportOptions: {
-                    columns: [0, 1, 2, 3, 5, 6, 8]
-                },
-                className: 'btn btn-sm btn-success border mb-1',
-            }],
-            dom: 'lBrtip',
-            columns: [{
-                    title: "Username",
-                    data: function(row, type, set, meta) {
+                    className: 'btn btn-sm btn-success border mb-1',
+                }],
+                dom: 'lBrtip',
+                columns: [{
+                    title: "User",
+                    data: function (row, type, set, meta) {
                         if (type === 'display') {
                             const url =
                                 `${app_path_webroot_full}redcap_v${redcap_version}/ControlCenter/view_users.php?username=${row.username}`;
-                            return `<strong><a target="_blank" rel="noreferrer noopener" href="${url}">${row.username}</a></strong>`;
+                            return `<strong><a target="_blank" rel="noreferrer noopener" href="${url}">${row.username}</a></strong>` +
+                                `<br><small>${row.name}</small>` +
+                                `<br><small><a href="mailto:${row.email}">${row.email}</a></small>`;
                         }
                         return row.username;
-                    }
+                    },
+                    width: '20%'
                 },
                 {
                     title: "Name",
-                    data: "name"
+                    data: "name",
+                    visible: false
                 },
                 {
                     title: "Email",
-                    data: function(row, type, set, meta) {
+                    data: function (row, type, set, meta) {
                         if (type === 'display') {
                             return '<a href="mailto:' + row.email + '">' + row.email + '</a>';
                         }
                         return row.email;
-                    }
+                    },
+                    visible: false
                 },
                 {
                     title: "Count of Projects granting Noncompliant Rights to this User (non-expired)",
-                    data: function(row, type, set, meta) {
+                    data: function (row, type, set, meta) {
                         if (type === 'display') {
                             const projects = row.projects_unexpired ?? [];
                             return projects.length;
                         } else {
                             return row.projects_unexpired ?? [];
                         }
-                    }
+                    },
+                    width: '10%',
+                    visible: true
                 },
                 {
                     title: "Projects granting Noncompliant Rights to this User (non-expired)",
-                    data: function(row, type, set, meta) {
+                    data: function (row, type, set, meta) {
                         const projects = row.projects_unexpired ?? [];
                         return projects.map(project => {
                             const pid = project.project_id;
@@ -405,10 +541,11 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
                             return `<a target="_blank" rel="noreferrer noopener" href="${projectUrl}" title="${projectTitle}">PID: ${pid}</a>`;
                         }).join("<br>");
                     },
+                    width: '10%'
                 },
                 {
                     title: "Projects granting Noncompliant Rights to this User (non-expired)",
-                    data: function(row, type, set, meta) {
+                    data: function (row, type, set, meta) {
                         const projects = row.projects_unexpired ?? [];
                         return projects.map(project => project.project_id).join(", ");
                     },
@@ -416,17 +553,19 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
                 },
                 {
                     title: "Count of Projects granting Noncompliant Rights to this User (all)",
-                    data: function(row, type, set, meta) {
+                    data: function (row, type, set, meta) {
                         if (type === 'display') {
                             return row.projects.length;
                         } else {
                             return row.projects;
                         }
-                    }
+                    },
+                    width: '10%',
+                    visible: true
                 },
                 {
                     title: "Projects granting Noncompliant Rights to this User (all)",
-                    data: function(row, type, set, meta) {
+                    data: function (row, type, set, meta) {
                         const projects = row.projects ?? [];
                         return projects.map(project => {
                             const pid = project.project_id;
@@ -436,22 +575,45 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
                             return `<a target="_blank" rel="noreferrer noopener" href="${projectUrl}" title="${projectTitle}">PID: ${pid}</a>`;
                         }).join("<br>");
                     },
+                    width: '10%'
                 },
                 {
                     title: "Projects granting Noncompliant Rights to this User (all)",
-                    data: function(row, type, set, meta) {
+                    data: function (row, type, set, meta) {
                         const projects = row.projects ?? [];
                         return projects.map(project => project.project_id).join(", ");
                     },
                     visible: false
+                },
+                {
+                    title: 'Noncompliant Rights',
+                    data: function (row, type, set, meta) {
+                        if (type === "display") {
+                            return row.bad_rights.join('<br>');
+                        }
+                        return row.bad_rights.join('&&&&&');
+                    },
+                    width: '40%'
+                },
+                {
+                    title: 'Noncompliant Rights',
+                    data: function (row, type, set, meta) {
+                        return row.bad_rights.join(', ');
+                    },
+                    visible: false
+                },
+                {
+                    title: 'Username',
+                    data: 'username',
+                    visible: false
                 }
-            ],
-            columnDefs: [{
-                "className": "dt-center dt-head-center",
-                "targets": "_all"
-            }],
-        });
-    }
+                ],
+                columnDefs: [{
+                    "className": "dt-center dt-head-center",
+                    "targets": "_all"
+                }],
+            });
+        }
     </script>
 
 </div> <!-- End SAG_Container -->
