@@ -619,8 +619,7 @@ tr.selected>* {
     color: #138496 !important;
 }
 
-.userTable .select2-selection--multiple,
-.projectTable .select2-selection--multiple {
+.tableWrapper .select2-selection--multiple {
     overflow: hidden !important;
     height: auto !important;
 }

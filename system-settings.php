@@ -1683,8 +1683,10 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
                 $('#addSagButton').click();
             }
         });
-        window.scroll(0, 0);
     });
+    if ('scrollRestoration' in history) {
+        history.scrollRestoration = 'manual';
+    }
     </script>
 
     <?php

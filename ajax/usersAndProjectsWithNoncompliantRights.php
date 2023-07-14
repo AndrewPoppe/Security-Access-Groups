@@ -14,6 +14,6 @@ if ( $_SERVER['REQUEST_METHOD'] !== 'POST' ) {
 }
 
 $includeExpired = filter_input(INPUT_POST, 'includeExpired', FILTER_VALIDATE_BOOL) ?? false;
-$results        = $module->getProjectsWithNoncompliantUsers($includeExpired);
+$results        = $module->getAllUsersAndProjectsWithNoncompliantRights($includeExpired);
 
 echo json_encode([ 'data' => $results ]);
