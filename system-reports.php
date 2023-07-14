@@ -69,11 +69,68 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
 
 
     <p style='margin-top: 20px; margin-bottom: 10px; max-width:1000px;font-size:14px;'>Select a report type from the
-        dropdown below. The
-        report
-        will be generated and displayed in a table below. You can then export the report to Excel by clicking the
-        Export button.
+        dropdown below. The report will be generated and displayed in a table below. You can then export the report to
+        Excel by clicking the <em>Export Excel</em> button.
+
+    <div class="collapse collapse-group-1 show" id="helpLinkContainer">
+        <button class="btn btn-link p-0" data-target=".collapse-group-1" aria-controls="helpLinkContainer help"
+            data-toggle="collapse"><small id="helpLinkText">More...</small></button>
+    </div>
     </p>
+    <div id="help" class="collapse collapse-group-1 mb-2">
+        <span></span>
+        <strong><i class="fa-light fa-users fa-fw mr-1 text-danger"></i>Users with Noncompliant Rights
+            (non-expired)</strong>
+        <br>
+        This report lists all users who are assigned to a SAG that does not allow the user to be granted all of the
+        rights they currently have in a project. This report only includes users if they are not currently expired
+        in the project(s).
+        <br>
+        <br>
+        <strong><i class="fa-solid fa-users fa-fw mr-1 text-danger"></i>Users with Noncompliant Rights
+            (all)</strong>
+        <br>
+        This report lists all users who are assigned to a SAG that does not allow the user to be granted all of the
+        rights they currently have in a project. This report includes all users, regardless of whether they are
+        currently expired in the project(s).
+        <br>
+        <br>
+        <strong><i class="fa-sharp fa-light fa-rectangle-history-circle-user fa-fw mr-1 text-successrc"></i>Projects
+            with Noncompliant Rights (non-expired)</strong>
+        <br>
+        This report lists all projects that have at least one user who is assigned to a SAG that does not allow the
+        user to be granted all of the rights they currently have in the project. This report only includes users
+        who have a non-expired user account.
+        <br>
+        <br>
+        <strong><i class="fa-sharp fa-solid fa-rectangle-history-circle-user fa-fw mr-1 text-successrc"></i>Projects
+            with Noncompliant Rights (all)</strong>
+        <br>
+        This report lists all projects that have at least one user who is assigned to a SAG that does not allow the
+        user to be granted all of the rights they currently have in the project. This report includes all users,
+        regardless of whether their user account is expired.
+        <br>
+        <br>
+        <strong><i class="fa-sharp fa-light fa-rectangle-list fa-fw mr-1 text-info"></i>Users and Projects with
+            Noncompliant Rights (non-expired)</strong>
+        <br>
+        This report lists every user and project combination in which the user is assigned to a SAG that does not
+        allow the user to be granted all of the rights they currently have in the project. This report only
+        includes users who are not currently expired in the project.
+        <br>
+        <br>
+        <strong><i class="fa-sharp fa-solid fa-rectangle-list fa-fw mr-1 text-info"></i>Users and Projects with
+            Noncompliant Rights (all)</strong>
+        <br>
+        This report lists every user and project combination in which the user is assigned to a SAG that does not
+        allow the user to be granted all of the rights they currently have in the project. This report includes
+        all users, regardless of whether they are currently expired in the project.
+        <br>
+        <br>
+        <button class="btn btn-link p-0" data-target=".collapse-group-1" aria-controls="helpLinkContainer help"
+            data-toggle="collapse"><small id="helpLinkText">Less...</small></button>
+        </span>
+    </div>
 
     <!-- Controls Container -->
     <div class="dropdown">
@@ -92,16 +149,16 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
                     Noncompliant Rights (all)</a></li>
             <li><a class="dropdown-item" onclick="showProjectTable(false);"><i
                         class="fa-sharp fa-light fa-rectangle-history-circle-user fa-fw mr-1 text-successrc"></i>Projects
-                    with Noncompliant Users (non-expired)</a></li>
+                    with Noncompliant Rights (non-expired)</a></li>
             <li><a class="dropdown-item" onclick="showProjectTable(true);"><i
                         class="fa-sharp fa-solid fa-rectangle-history-circle-user fa-fw mr-1 text-successrc"></i>Projects
-                    with Noncompliant Users (all)</a></li>
+                    with Noncompliant Rights (all)</a></li>
             <li><a class="dropdown-item" onclick="showUserAndProjectTable(false);"><i
                         class="fa-sharp fa-light fa-rectangle-list fa-fw mr-1 text-info"></i>Users
-                    and Projects with Noncompliant Users (non-expired)</a></li>
+                    and Projects with Noncompliant Rights (non-expired)</a></li>
             <li><a class="dropdown-item" onclick="showUserAndProjectTable(true);"><i
                         class="fa-sharp fa-solid fa-rectangle-list fa-fw mr-1 text-info"></i>Users
-                    and Projects with Noncompliant Users (all)</a></li>
+                    and Projects with Noncompliant Rights (all)</a></li>
         </ul>
     </div>
     <!-- SAG Table -->
@@ -438,7 +495,7 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
     function showProjectTable(includeExpired) {
         clearTables();
         $('.tableWrapper').hide();
-        $('#projectTableTitle').text('Projects with Noncompliant Users' + (includeExpired ?
+        $('#projectTableTitle').text('Projects with Noncompliant Rights' + (includeExpired ?
             ' (including expired users)' :
             ' (excluding expired users)'));
         if ($('#projectTableWrapper').is(':hidden')) {
@@ -452,7 +509,7 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
         const table = $('#SUR-System-Table.projectTable')
             .DataTable({
                 ajax: {
-                    url: '<?= $module->framework->getUrl("ajax/projectsWithNoncompliantUsers.php") ?>',
+                    url: '<?= $module->framework->getUrl("ajax/projectsWithNoncompliantRights.php") ?>',
                     method: 'POST',
                     data: {
                         includeExpired: includeExpired
@@ -460,6 +517,7 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
                 },
                 deferRender: true,
                 initComplete: function() {
+                    console.log('initComplete');
                     $('#projectTableWrapper').show();
                     Swal.close();
                     const table = this.api();
@@ -577,7 +635,7 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
                         columns: [5, 6, 1, 7, 8, 9, 10]
                     },
                     className: 'btn btn-sm btn-success border mb-1',
-                    title: 'ProjectsWithNoncompliantUsers' + (includeExpired ? '_all_' : '_nonexpired_') +
+                    title: 'ProjectsWithNoncompliantRights' + (includeExpired ? '_all_' : '_nonexpired_') +
                         moment().format('YYYY-MM-DD_HHmmss'),
                 }],
                 dom: 'lBftip',
