@@ -94,6 +94,7 @@ if ( in_array($submitAction, [ 'add_user', 'edit_user' ]) ) {
         require_once $scriptPath;
         ob_end_flush(); // End buffering and clean up
     } else {
+        http_response_code(403);
         echo json_encode([ 'error' => true, 'bad_rights' => [ "$user" => [ 'SAG' => $sag['sag_name'], 'rights' => $badRights ] ] ]);
     }
     exit;
@@ -178,6 +179,7 @@ if ( $submitAction === "edit_role" ) {
         require_once $scriptPath;
         ob_end_flush(); // End buffering and clean up
     } else {
+        http_response_code(403);
         echo json_encode([ "error" => true, "bad_rights" => $badRights, "role" => $data["role_name"] ]);
     }
     exit;

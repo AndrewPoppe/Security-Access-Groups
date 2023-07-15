@@ -37,5 +37,6 @@ if ( $errors === false ) {
     require_once $scriptPath;
     exit;
 } else {
-    echo json_encode([ "error" => true, "bad_rights" => [ "$username" => [ "SAG" => $sag["role_name"], "rights" => $badRights ] ] ]);
+    http_response_code(403);
+    echo json_encode([ "error" => true, "bad_rights" => [ "$username" => [ "SAG" => $sag["sag_name"], "rights" => $badRights ] ] ]);
 }
