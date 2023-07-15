@@ -166,14 +166,14 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
                             <div class="row">
                                 <div class="col px-4">
                                     <div class="row pt-2 pb-1 pl-1">
-                                        <select style="width:100%" class="form-control projectTableSelect"
+                                        <select style="width:100%" class="form-control projectTableSelect tableSelect"
                                             id="usersSelectProject" multiple="multiple">
                                         </select>
                                     </div>
                                 </div>
                                 <div class="col px-4" style="border-left: 1px solid #ccc">
                                     <div class="row pt-2 pb-1 pr-1">
-                                        <select style="width:100%" class="form-control projectTableSelect"
+                                        <select style="width:100%" class="form-control projectTableSelect tableSelect"
                                             id="sagsSelectProject" multiple="multiple">
                                             <option></option>
                                         </select>
@@ -181,7 +181,7 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
                                 </div>
                                 <div class="col px-4" style="border-left: 1px solid #ccc">
                                     <div class="row pt-2 pb-1">
-                                        <select style="width:100%" class="form-control projectTableSelect"
+                                        <select style="width:100%" class="form-control projectTableSelect tableSelect"
                                             id="projectsSelectProject" multiple="multiple">
                                             <option></option>
                                         </select>
@@ -189,7 +189,7 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
                                 </div>
                                 <div class="col px-4" style="border-left: 1px solid #ccc">
                                     <div class="row pt-2 pb-1 pr-1">
-                                        <select style="width:100%" class="form-control projectTableSelect"
+                                        <select style="width:100%" class="form-control projectTableSelect tableSelect"
                                             id="rightsSelectProject" multiple="multiple">
                                             <option></option>
                                         </select>
@@ -238,14 +238,14 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
                             <div class="row">
                                 <div class="col px-4">
                                     <div class="row pt-2 pb-1 pl-1">
-                                        <select style="width:100%" class="form-control userTableSelect"
+                                        <select style="width:100%" class="form-control userTableSelect tableSelect"
                                             id="projectsSelectUser" multiple="multiple">
                                         </select>
                                     </div>
                                 </div>
                                 <div class="col px-4" style="border-left: 1px solid #ccc">
                                     <div class="row pt-2 pb-1 pr-1">
-                                        <select style="width:100%" class="form-control userTableSelect"
+                                        <select style="width:100%" class="form-control userTableSelect tableSelect"
                                             id="sagsSelectUser" multiple="multiple">
                                             <option></option>
                                         </select>
@@ -253,7 +253,7 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
                                 </div>
                                 <div class="col px-4" style="border-left: 1px solid #ccc">
                                     <div class="row pt-2 pb-1">
-                                        <select style="width:100%" class="form-control userTableSelect"
+                                        <select style="width:100%" class="form-control userTableSelect tableSelect"
                                             id="usersSelectUser" multiple="multiple">
                                             <option></option>
                                         </select>
@@ -261,7 +261,7 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
                                 </div>
                                 <div class="col px-4" style="border-left: 1px solid #ccc">
                                     <div class="row pt-2 pb-1 pr-1">
-                                        <select style="width:100%" class="form-control userTableSelect"
+                                        <select style="width:100%" class="form-control userTableSelect tableSelect"
                                             id="rightsSelectUser" multiple="multiple">
                                             <option></option>
                                         </select>
@@ -315,14 +315,14 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
                             <div class="row">
                                 <div class="col px-4">
                                     <div class="row pt-2 pb-1 pl-1">
-                                        <select style="width:100%" class="form-control allTableSelect"
+                                        <select style="width:100%" class="form-control allTableSelect tableSelect"
                                             id="projectsSelectAll" multiple="multiple">
                                         </select>
                                     </div>
                                 </div>
                                 <div class="col px-4" style="border-left: 1px solid #ccc">
                                     <div class="row pt-2 pb-1 pr-1">
-                                        <select style="width:100%" class="form-control allTableSelect"
+                                        <select style="width:100%" class="form-control allTableSelect tableSelect"
                                             id="sagsSelectAll" multiple="multiple">
                                             <option></option>
                                         </select>
@@ -330,7 +330,7 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
                                 </div>
                                 <div class="col px-4" style="border-left: 1px solid #ccc">
                                     <div class="row pt-2 pb-1">
-                                        <select style="width:100%" class="form-control allTableSelect"
+                                        <select style="width:100%" class="form-control allTableSelect tableSelect"
                                             id="usersSelectAll" multiple="multiple">
                                             <option></option>
                                         </select>
@@ -338,7 +338,7 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
                                 </div>
                                 <div class="col px-4" style="border-left: 1px solid #ccc">
                                     <div class="row pt-2 pb-1 pr-1">
-                                        <select style="width:100%" class="form-control allTableSelect"
+                                        <select style="width:100%" class="form-control allTableSelect tableSelect"
                                             id="rightsSelectAll" multiple="multiple">
                                             <option></option>
                                         </select>
@@ -429,6 +429,7 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
         $('.dataTables_paginate').remove();
         $('.dt-buttons').remove();
         $('.dataTable').DataTable().destroy();
+        $('.tableSelect').empty();
     }
 
     // Projects - filter user function
@@ -640,17 +641,17 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
                             const projectTitle = row.project_title.replaceAll('"', '');
                             return `<strong><a target="_blank" rel="noreferrer noopener" href="${projectUrl}">PID: ${pid}</a></strong><br>${projectTitle}`;
                         },
-                        //width: '5%'
+                        width: '20%'
                     },
                     {
-                        title: "Count of Noncompliant Users",
+                        title: "Count of Users",
                         data: function(row, type, set, meta) {
                             const users = row.users_with_bad_rights;
                             const usersString = JSON.stringify(users);
                             return '<a href="javascript:void(0)" onclick=\'makeUserTable(\`' +
                                 usersString + '\`);\'>' + users.length + '</a>';
                         },
-                        //width: '10%'
+                        width: '5%'
                     },
                     {
                         title: "Noncompliant Users",
@@ -663,7 +664,7 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
                                     ` (${user.name})`;
                             }).join('<br>');
                         },
-                        //width: '15%'
+                        width: '20%'
                     },
                     {
                         title: "Security Access Groups",
@@ -673,7 +674,7 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
                                 return `<strong>${sag.sag_name}</strong> <small>${sag.sag}</small>`;
                             }).join('<br>');
                         },
-                        //width: '10%'
+                        width: '20%'
                     },
                     {
                         title: "Noncompliant Rights",
@@ -683,7 +684,7 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
                             }
                             return row.bad_rights.join('&&&&&');
                         },
-                        //width: '50%'
+                        width: '35%'
                     },
                     {
                         title: "Project ID",
