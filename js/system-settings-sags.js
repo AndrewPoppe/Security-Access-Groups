@@ -181,7 +181,7 @@ function formatNow() {
         '-' + (d.getDate()).toString().padStart(2, 0);
 }
 
-function join(a) {
+function join(a, separator, boundary, escapeChar, reBoundary) {
     let s = '';
     for (let i = 0, ien = a.length; i < ien; i++) {
         if (i > 0) {
@@ -238,11 +238,11 @@ function exportRawCsv(includeData = true) {
         columns: 'export:name'
     });
 
-    const header = join(data.header) + newLine;
-    const footer = data.footer ? newLine + join(data.footer) : '';
+    const header = join(data.header, separator, boundary, escapeChar, reBoundary) + newLine;
+    const footer = data.footer ? newLine + join(data.footer, separator, boundary, escapeChar, reBoundary) : '';
     const body = [];
     for (let i = 0, ien = data.body.length; i < ien; i++) {
-        body.push(join(data.body[i]));
+        body.push(join(data.body[i], separator, boundary, escapeChar, reBoundary));
     }
 
     const result = {
@@ -299,11 +299,11 @@ function exportCsv() {
         columns: 'export:name'
     });
 
-    const header = join(data.header) + newLine;
-    const footer = data.footer ? newLine + join(data.footer) : '';
+    const header = join(data.header, separator, boundary, escapeChar, reBoundary) + newLine;
+    const footer = data.footer ? newLine + join(data.footer, separator, boundary, escapeChar, reBoundary) : '';
     const body = [];
     for (let i = 0, ien = data.body.length; i < ien; i++) {
-        body.push(join(data.body[i]));
+        body.push(join(data.body[i], separator, boundary, escapeChar, reBoundary));
     }
 
     const result = {
