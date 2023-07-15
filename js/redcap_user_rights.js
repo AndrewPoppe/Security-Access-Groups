@@ -95,7 +95,7 @@ $(function () {
                         if (!result.error || !result.bad_rights) {
                             return;
                         }
-                        let title = "You can't do that.";
+                        let title;
                         let text = "";
                         let users = Object.keys(result.bad_rights);
                         if (!result.role) {

@@ -181,8 +181,21 @@ function formatNow() {
         '-' + (d.getDate()).toString().padStart(2, 0);
 }
 
+function join(a) {
+    let s = '';
+    for (let i = 0, ien = a.length; i < ien; i++) {
+        if (i > 0) {
+            s += separator;
+        }
+        s += boundary ?
+            boundary + ('' + a[i]).replace(reBoundary, escapeChar + boundary) + boundary :
+            a[i];
+    }
+    return s;
+};
+
 function exportRawCsv(includeData = true) {
-    const newLine = navigator.userAgent.match(/Windows/) ? '\r\n' : '\n';
+    const newLine = /Windows/.exec(navigator.userAgent) ? '\r\n' : '\n';
     const escapeChar = '"';
     const boundary = '"';
     const separator = ',';
@@ -191,22 +204,10 @@ function exportRawCsv(includeData = true) {
     const filename = (includeData ?
         'SecurityAccessGroups_Raw_' + formatNow() :
         'SecurityAccessGroups_ImportTemplate') + extension;
-    let charset = document.characterSet || document.charset;
+    let charset = document.characterSet;
     if (charset) {
         charset = ';charset=' + charset;
     }
-    const join = function (a) {
-        let s = '';
-        for (let i = 0, ien = a.length; i < ien; i++) {
-            if (i > 0) {
-                s += separator;
-            }
-            s += boundary ?
-                boundary + ('' + a[i]).replace(reBoundary, escapeChar + boundary) + boundary :
-                a[i];
-        }
-        return s;
-    };
 
     const rowSelector = includeData ? undefined : -1;
     const data = $('#sagTable').DataTable().buttons.exportData({
@@ -257,29 +258,17 @@ function exportRawCsv(includeData = true) {
 }
 
 function exportCsv() {
-    const newLine = navigator.userAgent.match(/Windows/) ? '\r\n' : '\n';
+    const newLine = /Windows/.exec(navigator.userAgent) ? '\r\n' : '\n';
     const escapeChar = '"';
     const boundary = '"';
     const separator = ',';
     const extension = '.csv';
     const reBoundary = new RegExp(boundary, 'g');
     const filename = 'SecurityAccessGroups_Labels_' + formatNow() + extension;
-    let charset = document.characterSet || document.charset;
+    let charset = document.characterSet;
     if (charset) {
         charset = ';charset=' + charset;
     }
-    const join = function (a) {
-        let s = '';
-        for (let i = 0, ien = a.length; i < ien; i++) {
-            if (i > 0) {
-                s += separator;
-            }
-            s += boundary ?
-                boundary + ('' + a[i]).replace(reBoundary, escapeChar + boundary) + boundary :
-                a[i];
-        }
-        return s;
-    };
 
     const data = $('#sagTable').DataTable().buttons.exportData({
         format: {
@@ -339,7 +328,7 @@ function handleFiles() {
     }
     const file = this.files[0];
 
-    if (!file.type === "text/csv") {
+    if (!(file.type === "text/csv")) {
         return;
     }
 
@@ -376,7 +365,7 @@ function confirmImport() {
         confirm: true
     })
         .done((response) => {
-            if (response == true) {
+            if (response) {
                 Swal.fire({
                     icon: 'success',
                     html: "Successfully imported Security Access Group definitions.",
@@ -436,7 +425,7 @@ $(document).ready(function () {
     const shieldcheck = '<i class="fa-solid fa-shield-check fa-xl" style="color: green;"></i>';
     const check = '<i class="fa-solid fa-check fa-xl" style="color: green;"></i>';
     const x = '<i class="fa-regular fa-xmark" style="color: #D00000;"></i>';
-    const table = $('#sagTable').DataTable({
+    $('#sagTable').DataTable({
         ajax: {
             url: '{{SAGS_URL}}',
             method: 'POST'
@@ -445,7 +434,6 @@ $(document).ready(function () {
         searching: false,
         info: false,
         paging: false,
-        rowReorder: true,
         ordering: true,
         fixedHeader: false,
         fixedColumns: true,
@@ -502,13 +490,6 @@ $(document).ready(function () {
                 row.onmouseleave = dehover;
             });
 
-            table.on('row-reorder', function (e, diff, edit) {
-                const data = table.rows().data();
-                const newOrder = [];
-                for (let i = 0; i < data.length; i++) {
-                    newOrder.push(data[i][0]);
-                }
-            });
             setTimeout(() => {
                 table.stateRestore();
                 table.columns.adjust().draw();

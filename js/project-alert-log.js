@@ -68,22 +68,9 @@ function deleteAlert(alert_id) {
                     .done(function (json) {
                         const data = JSON.parse(json);
                         if (data) {
-                            // Toast.fire({
-                            //     icon: 'success',
-                            //     title: 'Alert deleted successfully.'
-                            // });
-                            Swal.fire({
-                                'icon': 'success',
-                                'title': 'Alert deleted successfully.',
-                                toast: true,
-                                position: 'middle',
-                                iconColor: 'white',
-                                customClass: {
-                                    popup: 'colored-toast'
-                                },
-                                showConfirmButton: false,
-                                timer: 1500,
-                                timerProgressBar: true
+                            Toast.fire({
+                                icon: 'success',
+                                title: 'Alert deleted successfully.'
                             });
                             $('#alertLogTable').DataTable().ajax.reload();
                         } else {
@@ -216,7 +203,6 @@ $(document).ready(function () {
                 if (type === 'display') {
                     let color = "";
                     let icon = "";
-                    let sent = false;
                     let deleteButton = "";
 
                     if (row.reminder && moment.now() > (row.sendTime * 1000)) {
@@ -453,7 +439,6 @@ $(document).ready(function () {
         language: {
             search: "_INPUT_",
             searchPlaceholder: "Search Alerts...",
-            search: "_INPUT_",
             infoFiltered: " - filtered from _MAX_ total alerts",
             emptyTable: "No alerts found in this project",
             info: "Showing _START_ to _END_ of _TOTAL_ alerts",

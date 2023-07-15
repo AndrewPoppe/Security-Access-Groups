@@ -492,26 +492,12 @@ async function replaceKeywordsPreviewUserRightsHolders(text) {
 async function previewEmailUserExpiration($emailContainer) {
     const id = $emailContainer.find('textarea.emailBody').prop('id');
     const content = tinymce.get(id).getContent();
-    const replacedContent = await replaceKeywordsPreviewUserExpiration(content);
+    const replacedContent = await replaceKeywordsPreview(content);
     $('#emailPreview div.modal-body').html(replacedContent);
     $emailContainer.closest('.modal').css('z-index', 1039);
     $('#emailPreview').modal('show');
     $('#emailPreview').on('hidden.bs.modal', function (event) {
         $emailContainer.closest('.modal').css('z-index', 1050);
-    });
-}
-
-async function replaceKeywordsPreviewUserExpiration(text) {
-    const data = {
-        'sag_user': 'robin123',
-        'sag_user_fullname': 'Robin Jones',
-        'sag_user_email': 'robin.jones@email.com',
-        'sag_user_rights': ['Project Design and Setup', 'User Rights', 'Create Records']
-    };
-
-    return $.post('{{REPLACE_SMART_VARIABLES_URL}}', {
-        text: text,
-        data: data
     });
 }
 
@@ -727,7 +713,7 @@ $(document).ready(function () {
                 const hasDiscrepancy = row.bad.length > 0;
                 if (hasDiscrepancy) {
                     let rows = '';
-                    for (rightI in row.bad) {
+                    for (const rightI in row.bad) {
                         const right = row.bad[rightI];
                         rows +=
                             `<tr style='cursor: default;'><td><span>${right}</span></td></tr>`;
@@ -787,7 +773,6 @@ $(document).ready(function () {
             api.rows({
                 page: 'current'
             }).every(function (rowIdx, tableLoop, rowLoop) {
-                const data = this.data();
                 const row = api.row(rowIdx);
                 const rowNode = row.node();
                 const checkbox = $(rowNode).find('input[type="checkbox"]');

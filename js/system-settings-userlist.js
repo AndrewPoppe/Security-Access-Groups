@@ -65,33 +65,32 @@ function handleCsvExport() {
     }
 }
 
+function join(a) {
+    let s = '';
+    for (let i = 0, ien = a.length; i < ien; i++) {
+        if (i > 0) {
+            s += separator;
+        }
+        s += boundary ?
+            boundary + ('' + a[i]).replace(reBoundary, escapeChar + boundary) + boundary :
+            a[i];
+    }
+    return s;
+};
+
 function exportCsv(useFilter = false) {
     const dt = $('#SUR-System-Table').DataTable();
-    const newLine = navigator.userAgent.match(/Windows/) ? '\r\n' : '\n';
+    const newLine = /Windows/.exec(navigator.userAgent) ? '\r\n' : '\n';
     const escapeChar = '"';
     const boundary = '"';
     const separator = ',';
     const extension = '.csv';
     const reBoundary = new RegExp(boundary, 'g');
     const filename = 'SecurityAccessGroups_Users_' + (useFilter ? 'FILTERED_' : '') + formatNow() + extension;
-    let charset = document.characterSet || document.charset;
+    let charset = document.characterSet;
     if (charset) {
         charset = ';charset=' + charset;
     }
-    const join = function (a) {
-        let s = '';
-        for (let i = 0, ien = a.length; i < ien; i++) {
-            if (i > 0) {
-                s += separator;
-            }
-            s += boundary ?
-                boundary + ('' + a[i]).replace(reBoundary, escapeChar + boundary) +
-                boundary :
-                a[i];
-        }
-        return s;
-    };
-
 
     const useSearch = useFilter ? 'applied' : 'none';
     const allData = dt.rows({
@@ -156,7 +155,7 @@ function handleFiles() {
     }
     const file = this.files[0];
 
-    if (!file.type === "text/csv") {
+    if (!(file.type === "text/csv")) {
         return;
     }
 
@@ -206,10 +205,7 @@ function handleFiles() {
                 } catch (error) {
                     console.error(error);
                 }
-            })
-            .always(() => {
-                //Swal.fire("Sorry", "That feature is not yet implemented.");
-            })
+            });
     };
     reader.readAsText(file);
 }
@@ -224,7 +220,7 @@ function confirmImport() {
         confirm: true
     })
         .done((response) => {
-            if (response == true) {
+            if (response) {
                 Swal.fire({
                     icon: 'success',
                     html: "Successfully imported assignments.",
@@ -253,29 +249,18 @@ function confirmImport() {
 }
 
 function downloadTemplate() {
-    const newLine = navigator.userAgent.match(/Windows/) ? '\r\n' : '\n';
+    const newLine = /Windows/.exec(navigator.userAgent) ? '\r\n' : '\n';
     const escapeChar = '"';
     const boundary = '"';
     const separator = ',';
     const extension = '.csv';
     const reBoundary = new RegExp(boundary, 'g');
     const filename = 'SecurityAccessGroups_Users_ImportTemplate' + extension;
-    let charset = document.characterSet || document.charset;
+    let charset = document.characterSet;
     if (charset) {
         charset = ';charset=' + charset;
     }
-    const join = function (a) {
-        let s = '';
-        for (let i = 0, ien = a.length; i < ien; i++) {
-            if (i > 0) {
-                s += separator;
-            }
-            s += boundary ?
-                boundary + ('' + a[i]).replace(reBoundary, escapeChar + boundary) + boundary :
-                a[i];
-        }
-        return s;
-    };
+
     const data = $('#templateTable').DataTable().buttons.exportData();
     const header = join(data.header) + newLine;
     const footer = data.footer ? newLine + join(data.footer) : '';
@@ -365,7 +350,7 @@ $(document).ready(function () {
 
     const importFileElement = document.getElementById("importUsersFile");
     importFileElement.addEventListener("change", handleFiles, false);
-    const dt = $('#SUR-System-Table').DataTable({
+    $('#SUR-System-Table').DataTable({
         ajax: {
             url: '{{USERS_URL}}',
             type: 'POST'

@@ -12,7 +12,7 @@ function dehover() {
 
 function makeUserTable(usersString) {
     let tableString =
-        '<table class=\"table table-sm table-bordered\"><thead><tr><th>Username</th><th>Name</th><th>Email</th><th>Security Access Group</th></tr></thead><tbody>';
+        '<table class="table table-sm table-bordered"><thead><tr><th>Username</th><th>Name</th><th>Email</th><th>Security Access Group</th></tr></thead><tbody>';
     JSON.parse(usersString).forEach(user => {
         tableString +=
             `<tr><td>${user.username}</td><td>${user.name}</td><td>${user.email}</td><td><strong>${user.sag}</strong><br><small>${user.sag_name}</small></td></tr>`;
@@ -21,7 +21,7 @@ function makeUserTable(usersString) {
     return Swal.fire({
         title: 'Users with Noncompliant Rights',
         html: tableString,
-        width: '700px',
+        width: '900px',
         showConfirmButton: false,
     });
 }
@@ -52,244 +52,243 @@ function showProjectTable(includeExpired) {
             }
         });
     }
-    const table = $('#SUR-System-Table.projectTable')
-        .DataTable({
-            ajax: {
-                url: '{{PROJECTS_WITH_BAD_RIGHTS_URL}}',
-                method: 'POST',
-                data: {
-                    includeExpired: includeExpired
+    $('#SUR-System-Table.projectTable').DataTable({
+        ajax: {
+            url: '{{PROJECTS_WITH_BAD_RIGHTS_URL}}',
+            method: 'POST',
+            data: {
+                includeExpired: includeExpired
+            }
+        },
+        deferRender: true,
+        initComplete: function () {
+            $('#projectTableWrapper').show();
+            Swal.close();
+            const table = this.api();
+            const data = table.data().toArray();
+
+            // Users filter
+            const usersSelect = $('#usersSelectProject').select2({
+                placeholder: "Filter users...",
+                templateResult: function (user) {
+                    return $(`<span>${user.text}</span>`);
+                },
+                templateSelection: function (user) {
+                    return $(`<span>${user.id}</span>`);
                 }
-            },
-            deferRender: true,
-            initComplete: function () {
-                $('#projectTableWrapper').show();
-                Swal.close();
-                const table = this.api();
-                const data = table.data().toArray();
+            });
 
-                // Users filter
-                const usersSelect = $('#usersSelectProject').select2({
-                    placeholder: "Filter users...",
-                    templateResult: function (user) {
-                        return $(`<span>${user.text}</span>`);
-                    },
-                    templateSelection: function (user) {
-                        return $(`<span>${user.id}</span>`);
+            // SAGs filter
+            const sagsSelect = $('#sagsSelectProject').select2({
+                placeholder: "Filter SAGs...",
+                templateResult: function (sag) {
+                    return $(`<span>${sag.text}</span>`);
+                },
+                templateSelection: function (sag) {
+                    return $(`<span>${sag.text}</span>`);
+                }
+            });
+
+            // Projects filter
+            const projectsSelect = $('#projectsSelectProject').select2({
+                placeholder: "Filter projects...",
+                templateResult: function (project) {
+                    return $(`<span>${project.text}</span>`);
+                },
+                templateSelection: function (project) {
+                    return $(`<span>PID: ${project.id}</span>`);
+                }
+            });
+
+            // Rights filter
+            const rightsSelect = $('#rightsSelectProject').select2({
+                placeholder: "Filter rights...",
+                templateResult: function (right) {
+                    return $(`<span>${right.text}</span>`);
+                }
+            });
+
+            data.forEach(row => {
+                // Users
+                row.users_with_bad_rights.forEach(user => {
+                    const userid = user.username;
+                    if (!usersSelect.find(`option[value='${userid}']`).length) {
+                        const text = `<strong>${userid}</strong> (${user.name})`;
+                        usersSelect.append(new Option(text, userid, false, false));
                     }
                 });
 
-                // SAGs filter
-                sagsSelect = $('#sagsSelectProject').select2({
-                    placeholder: "Filter SAGs...",
-                    templateResult: function (sag) {
-                        return $(`<span>${sag.text}</span>`);
-                    },
-                    templateSelection: function (sag) {
-                        return $(`<span>${sag.text}</span>`);
-                    }
-                });
-
-                // Projects filter
-                const projectsSelect = $('#projectsSelectProject').select2({
-                    placeholder: "Filter projects...",
-                    templateResult: function (project) {
-                        return $(`<span>${project.text}</span>`);
-                    },
-                    templateSelection: function (project) {
-                        return $(`<span>PID: ${project.id}</span>`);
-                    }
-                });
-
-                // Rights filter
-                const rightsSelect = $('#rightsSelectProject').select2({
-                    placeholder: "Filter rights...",
-                    templateResult: function (right) {
-                        return $(`<span>${right.text}</span>`);
-                    }
-                });
-
+                // SAGs
                 data.forEach(row => {
-                    // Users
-                    row.users_with_bad_rights.forEach(user => {
-                        const userid = user.username;
-                        if (!usersSelect.find(`option[value='${userid}']`).length) {
-                            const text = `<strong>${userid}</strong> (${user.name})`;
-                            usersSelect.append(new Option(text, userid, false, false));
-                        }
-                    });
-
-                    // SAGs
-                    data.forEach(row => {
-                        row.sags.forEach(sag => {
-                            const sagId = sag.sag;
-                            if (!sagsSelect.find(`option[value='${sagId}']`)
-                                .length) {
-                                const text =
-                                    `<strong>${sag.sag_name}</strong> <small>${sagId}</small>`;
-                                sagsSelect.append(new Option(text, sagId, false,
-                                    false));
-                            }
-                        });
-                    });
-
-                    // Projects
-                    data.forEach(row => {
-                        const pid = row.project_id;
-                        if (!projectsSelect.find(`option[value='${pid}']`).length) {
+                    row.sags.forEach(sag => {
+                        const sagId = sag.sag;
+                        if (!sagsSelect.find(`option[value='${sagId}']`)
+                            .length) {
                             const text =
-                                `<strong>PID:${pid}</strong> <small>${row.project_title}</small>`;
-                            projectsSelect.append(new Option(text, pid, false, false));
+                                `<strong>${sag.sag_name}</strong> <small>${sagId}</small>`;
+                            sagsSelect.append(new Option(text, sagId, false,
+                                false));
                         }
                     });
-
-                    // Rights
-                    data.forEach(row => {
-                        row.bad_rights.forEach(right => {
-                            if (!rightsSelect.find(`option[value='${right}']`)
-                                .length) {
-                                rightsSelect.append(new Option(right, right, false,
-                                    false));
-                            }
-                        });
-                    });
                 });
 
-                $('.projectTableSelect').trigger('change');
-                $('.projectTableSelect').on('change', () => table.draw());
-
-
-                table.on('draw', function () {
-                    $('.dataTable tbody tr').each((i, row) => {
-                        row.onmouseenter = hover;
-                        row.onmouseleave = dehover;
-                    });
+                // Projects
+                data.forEach(row => {
+                    const pid = row.project_id;
+                    if (!projectsSelect.find(`option[value='${pid}']`).length) {
+                        const text =
+                            `<strong>PID:${pid}</strong> <small>${row.project_title}</small>`;
+                        projectsSelect.append(new Option(text, pid, false, false));
+                    }
                 });
 
+                // Rights
+                data.forEach(row => {
+                    row.bad_rights.forEach(right => {
+                        if (!rightsSelect.find(`option[value='${right}']`)
+                            .length) {
+                            rightsSelect.append(new Option(right, right, false,
+                                false));
+                        }
+                    });
+                });
+            });
+
+            $('.projectTableSelect').trigger('change');
+            $('.projectTableSelect').on('change', () => table.draw());
+
+
+            table.on('draw', function () {
                 $('.dataTable tbody tr').each((i, row) => {
                     row.onmouseenter = hover;
                     row.onmouseleave = dehover;
                 });
-                $('div.dt-buttons button').removeClass('dt-button');
-                table.columns.adjust().draw();
-            },
-            buttons: [{
-                extend: 'excelHtml5',
-                text: '<span style="font-size: .875rem;"><i class="fa-sharp fa-solid fa-file-excel fa-fw"></i>Export Excel</span>',
-                exportOptions: {
-                    columns: [5, 6, 1, 7, 8, 9, 10]
-                },
-                className: 'btn btn-sm btn-success border mb-1',
-                title: 'ProjectsWithNoncompliantRights' + (includeExpired ? '_all_' : '_nonexpired_') +
-                    moment().format('YYYY-MM-DD_HHmmss'),
-            }],
-            dom: 'lBftip',
+            });
 
-            columns: [{
-                title: "Project",
-                data: function (row, type, set, meta) {
-                    const pid = row.project_id;
-                    const projectUrl =
-                        `${app_path_webroot_full}redcap_v${redcap_version}/ExternalModules/?prefix={{MODULE_DIRECTORY_PREFIX}}&page=project-status&pid=${pid}`;
-                    const projectTitle = row.project_title.replaceAll('"', '');
-                    return `<strong><a target="_blank" rel="noreferrer noopener" href="${projectUrl}">PID: ${pid}</a></strong><br>${projectTitle}`;
-                },
-                width: '20%'
+            $('.dataTable tbody tr').each((i, row) => {
+                row.onmouseenter = hover;
+                row.onmouseleave = dehover;
+            });
+            $('div.dt-buttons button').removeClass('dt-button');
+            table.columns.adjust().draw();
+        },
+        buttons: [{
+            extend: 'excelHtml5',
+            text: '<span style="font-size: .875rem;"><i class="fa-sharp fa-solid fa-file-excel fa-fw"></i>Export Excel</span>',
+            exportOptions: {
+                columns: [5, 6, 1, 7, 8, 9, 10]
             },
-            {
-                title: "Count of Users",
-                data: function (row, type, set, meta) {
-                    const users = row.users_with_bad_rights;
-                    const usersString = JSON.stringify(users);
-                    return '<a href="javascript:void(0)" onclick=\'makeUserTable(\`' +
-                        usersString + '\`);\'>' + users.length + '</a>';
-                },
-                width: '5%'
+            className: 'btn btn-sm btn-success border mb-1',
+            title: 'ProjectsWithNoncompliantRights' + (includeExpired ? '_all_' : '_nonexpired_') +
+                moment().format('YYYY-MM-DD_HHmmss'),
+        }],
+        dom: 'lBftip',
+
+        columns: [{
+            title: "Project",
+            data: function (row, type, set, meta) {
+                const pid = row.project_id;
+                const projectUrl =
+                    `${app_path_webroot_full}redcap_v${redcap_version}/ExternalModules/?prefix={{MODULE_DIRECTORY_PREFIX}}&page=project-status&pid=${pid}`;
+                const projectTitle = row.project_title.replaceAll('"', '');
+                return `<strong><a target="_blank" rel="noreferrer noopener" href="${projectUrl}">PID: ${pid}</a></strong><br>${projectTitle}`;
             },
-            {
-                title: "Noncompliant Users",
-                data: function (row, type, set, meta) {
-                    const users = row.users_with_bad_rights ?? [];
-                    return users.map(user => {
-                        const url =
-                            `${app_path_webroot_full}redcap_v${redcap_version}/ControlCenter/view_users.php?username=${user.username}`;
-                        return `<strong><a target="_blank" rel="noreferrer noopener" href="${url}">${user.username}</a></strong>` +
-                            ` (${user.name})`;
-                    }).join('<br>');
-                },
-                width: '20%'
+            width: '20%'
+        },
+        {
+            title: "Count of Users",
+            data: function (row, type, set, meta) {
+                const users = row.users_with_bad_rights;
+                const usersString = JSON.stringify(users);
+                return '<a href="javascript:void(0)" onclick=\'makeUserTable(`' +
+                    usersString + '`);\'>' + users.length + '</a>';
             },
-            {
-                title: "Security Access Groups",
-                data: function (row, type, set, meta) {
-                    const sags = row.sags ?? [];
-                    return sags.map(sag => {
-                        return `<strong>${sag.sag_name}</strong> <small>${sag.sag}</small>`;
-                    }).join('<br>');
-                },
-                width: '20%'
+            width: '5%'
+        },
+        {
+            title: "Noncompliant Users",
+            data: function (row, type, set, meta) {
+                const users = row.users_with_bad_rights ?? [];
+                return users.map(user => {
+                    const url =
+                        `${app_path_webroot_full}redcap_v${redcap_version}/ControlCenter/view_users.php?username=${user.username}`;
+                    return `<strong><a target="_blank" rel="noreferrer noopener" href="${url}">${user.username}</a></strong>` +
+                        ` (${user.name})`;
+                }).join('<br>');
             },
-            {
-                title: "Noncompliant Rights",
-                data: function (row, type, set, meta) {
-                    if (type === 'display') {
-                        return row.bad_rights.join('<br>');
-                    }
-                    return row.bad_rights.join('&&&&&');
-                },
-                width: '35%'
+            width: '20%'
+        },
+        {
+            title: "Security Access Groups",
+            data: function (row, type, set, meta) {
+                const sags = row.sags ?? [];
+                return sags.map(sag => {
+                    return `<strong>${sag.sag_name}</strong> <small>${sag.sag}</small>`;
+                }).join('<br>');
             },
-            {
-                title: "Project ID",
-                data: "project_id",
-                visible: false
+            width: '20%'
+        },
+        {
+            title: "Noncompliant Rights",
+            data: function (row, type, set, meta) {
+                if (type === 'display') {
+                    return row.bad_rights.join('<br>');
+                }
+                return row.bad_rights.join('&&&&&');
             },
-            {
-                title: "Project Title",
-                data: "project_title",
-                visible: false
+            width: '35%'
+        },
+        {
+            title: "Project ID",
+            data: "project_id",
+            visible: false
+        },
+        {
+            title: "Project Title",
+            data: "project_title",
+            visible: false
+        },
+        {
+            title: "Noncompliant Users",
+            data: function (row, type, set, meta) {
+                const users = row.users_with_bad_rights ?? [];
+                return users.map(user => user.username).join(", ");
             },
-            {
-                title: "Noncompliant Users",
-                data: function (row, type, set, meta) {
-                    const users = row.users_with_bad_rights ?? [];
-                    return users.map(user => user.username).join(", ");
-                },
-                visible: false
+            visible: false
+        },
+        {
+            title: "SAG IDs",
+            data: function (row, type, set, meta) {
+                const sags = row.sags ?? [];
+                return sags.map(sag => sag.sag).join(", ");
             },
-            {
-                title: "SAG IDs",
-                data: function (row, type, set, meta) {
-                    const sags = row.sags ?? [];
-                    return sags.map(sag => sag.sag).join(", ");
-                },
-                visible: false
+            visible: false
+        },
+        {
+            title: "SAG Names",
+            data: function (row, type, set, meta) {
+                const sags = row.sags ?? [];
+                return sags.map(sag => sag.sag_name).join(", ");
             },
-            {
-                title: "SAG Names",
-                data: function (row, type, set, meta) {
-                    const sags = row.sags ?? [];
-                    return sags.map(sag => sag.sag_name).join(", ");
-                },
-                visible: false
+            visible: false
+        },
+        {
+            title: "Noncompliant Rights",
+            data: function (row, type, set, meta) {
+                return row.bad_rights.join(', ');
             },
-            {
-                title: "Noncompliant Rights",
-                data: function (row, type, set, meta) {
-                    return row.bad_rights.join(', ');
-                },
-                visible: false
-            }
-            ],
-            columnDefs: [{
-                "className": "dt-center dt-head-center",
-                "targets": "_all"
-            }],
-            language: {
-                searchPlaceholder: "Search...",
-                search: "",
-            }
-        });
+            visible: false
+        }
+        ],
+        columnDefs: [{
+            "className": "dt-center dt-head-center",
+            "targets": "_all"
+        }],
+        language: {
+            searchPlaceholder: "Search...",
+            search: "",
+        }
+    });
 }
 
 // Users Table
@@ -306,7 +305,7 @@ function showUserTable(includeExpired) {
             }
         });
     }
-    const table = $('#SUR-System-Table.userTable').DataTable({
+    $('#SUR-System-Table.userTable').DataTable({
         ajax: {
             url: '{{USERS_WITH_BAD_RIGHTS_URL}}',
             method: 'POST',
@@ -565,7 +564,7 @@ function showUserAndProjectTable(includeExpired) {
             }
         });
     }
-    const table = $('#SUR-System-Table.allTable').DataTable({
+    $('#SUR-System-Table.allTable').DataTable({
         ajax: {
             url: '{{USERS_AND_PROJECTS_WITH_BAD_RIGHTS_URL}}',
             method: 'POST',
