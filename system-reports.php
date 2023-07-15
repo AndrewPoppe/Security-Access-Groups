@@ -68,17 +68,14 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
 
 
 
-    <p style='margin-top: 20px; margin-bottom: 10px; max-width:1000px;font-size:14px;'>Select a report type from the
+    <div style='margin-top: 20px; margin-bottom: 0px; max-width:1000px;font-size:14px;'>Select a report type from the
         dropdown below. The report will be generated and displayed in a table below. You can then export the report to
         Excel by clicking the <em>Export Excel</em> button.
-
-    <div class="collapse collapse-group-1 show" id="helpLinkContainer">
-        <button class="btn btn-link p-0" data-target=".collapse-group-1" aria-controls="helpLinkContainer help"
-            data-toggle="collapse"><small id="helpLinkText">More...</small></button>
     </div>
-    </p>
+    <button class="btn btn-link btn-xs p-0" data-target=".collapse-group-1" aria-controls="helpLinkContainer help"
+        data-toggle="collapse"
+        onclick="this.textContent=this.textContent === 'More...' ? 'Less...' : 'More...';">More...</button>
     <div id="help" class="collapse collapse-group-1 mb-2">
-        <span></span>
         <strong><i class="fa-light fa-users fa-fw mr-1 text-danger"></i>Users with Noncompliant Rights
             (non-expired)</strong>
         <br>
@@ -125,15 +122,10 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
         This report lists every user and project combination in which the user is assigned to a SAG that does not
         allow the user to be granted all of the rights they currently have in the project. This report includes
         all users, regardless of whether they are currently expired in the project.
-        <br>
-        <br>
-        <button class="btn btn-link p-0" data-target=".collapse-group-1" aria-controls="helpLinkContainer help"
-            data-toggle="collapse"><small id="helpLinkText">Less...</small></button>
-        </span>
     </div>
 
     <!-- Controls Container -->
-    <div class="dropdown">
+    <div class="dropdown mt-2">
         <button type="button" class="btn btn-primary btn-xs border dropdown-toggle mr-2" data-toggle="dropdown"
             data-bs-toggle="dropdown" aria-expanded="false">
             <i class="fa-sharp fa-file-excel"></i>
@@ -441,7 +433,7 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
 
     // Projects - filter user function
     $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
-        if (!$('.projectTable').is(':visible')) {
+        if (!settings.nTable.getAttribute('class').includes('projectTable')) {
             return true;
         }
         const users = $('#usersSelectProject').val() || [];
@@ -454,7 +446,7 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
 
     // Projects - filter sag function
     $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
-        if (!$('.projectTable').is(':visible')) {
+        if (!settings.nTable.getAttribute('class').includes('projectTable')) {
             return true;
         }
         const sags = $('#sagsSelectProject').val() || [];
@@ -467,7 +459,7 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
 
     // Projects - filter projects function
     $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
-        if (!$('.projectTable').is(':visible')) {
+        if (!settings.nTable.getAttribute('class').includes('projectTable')) {
             return true;
         }
         const projects = $('#projectsSelectProject').val() || [];
@@ -480,7 +472,7 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
 
     // Projects - filter rights function
     $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
-        if (!$('.projectTable').is(':visible')) {
+        if (!settings.nTable.getAttribute('class').includes('projectTable')) {
             return true;
         }
         const rights = $('#rightsSelectProject').val() || [];
@@ -517,7 +509,6 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
                 },
                 deferRender: true,
                 initComplete: function() {
-                    console.log('initComplete');
                     $('#projectTableWrapper').show();
                     Swal.close();
                     const table = this.api();
@@ -533,19 +524,6 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
                             return $(`<span>${user.id}</span>`);
                         }
                     });
-                    data.forEach(row => {
-                        row.users_with_bad_rights.forEach(user => {
-                            const id = user.username;
-                            if (!usersSelect.find(`option[value='${id}']`).length) {
-                                const text = `<strong>${user.username}</strong> (${user.name})`;
-                                usersSelect.append(new Option(text, id, false, false));
-                            }
-                        });
-                    });
-                    usersSelect.trigger('change');
-                    usersSelect.on('change', () => {
-                        table.draw();
-                    });
 
                     // SAGs filter
                     sagsSelect = $('#sagsSelectProject').select2({
@@ -556,20 +534,6 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
                         templateSelection: function(sag) {
                             return $(`<span>${sag.text}</span>`);
                         }
-                    });
-                    data.forEach(row => {
-                        row.sags.forEach(sag => {
-                            const id = sag.sag;
-                            if (!sagsSelect.find(`option[value='${id}']`).length) {
-                                const text =
-                                    `<strong>${sag.sag_name}</strong> <small>${sag.sag}</small>`;
-                                sagsSelect.append(new Option(text, id, false, false));
-                            }
-                        });
-                    });
-                    sagsSelect.trigger('change');
-                    sagsSelect.on('change', () => {
-                        table.draw();
                     });
 
                     // Projects filter
@@ -582,18 +546,6 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
                             return $(`<span>PID: ${project.id}</span>`);
                         }
                     });
-                    data.forEach(row => {
-                        const id = row.project_id;
-                        if (!projectsSelect.find(`option[value='${id}']`).length) {
-                            const text =
-                                `<strong>PID:${row.project_id}</strong> <small>${row.project_title}</small>`;
-                            projectsSelect.append(new Option(text, id, false, false));
-                        }
-                    })
-                    projectsSelect.trigger('change');
-                    projectsSelect.on('change', () => {
-                        table.draw();
-                    });
 
                     // Rights filter
                     const rightsSelect = $('#rightsSelectProject').select2({
@@ -602,17 +554,62 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
                             return $(`<span>${right.text}</span>`);
                         }
                     });
+
                     data.forEach(row => {
-                        row.bad_rights.forEach(right => {
-                            if (!rightsSelect.find(`option[value='${right}']`).length) {
-                                rightsSelect.append(new Option(right, right, false, false));
+                        // Users
+                        row.users_with_bad_rights.forEach(user => {
+                            const userid = user.username;
+                            if (!usersSelect.find(`option[value='${userid}']`).length) {
+                                const text = `<strong>${userid}</strong> (${user.name})`;
+                                usersSelect.append(new Option(text, userid, false, false));
                             }
                         });
+
+                        // SAGs
+                        data.forEach(row => {
+                            row.sags.forEach(sag => {
+                                const sagId = sag.sag;
+                                if (!sagsSelect.find(`option[value='${sagId}']`)
+                                    .length) {
+                                    const text =
+                                        `<strong>${sag.sag_name}</strong> <small>${sagId}</small>`;
+                                    sagsSelect.append(new Option(text, sagId, false,
+                                        false));
+                                }
+                            });
+                        });
+
+                        // Projects
+                        data.forEach(row => {
+                            const pid = row.project_id;
+                            if (!projectsSelect.find(`option[value='${pid}']`).length) {
+                                const text =
+                                    `<strong>PID:${pid}</strong> <small>${row.project_title}</small>`;
+                                projectsSelect.append(new Option(text, pid, false, false));
+                            }
+                        });
+
+                        // Rights
+                        data.forEach(row => {
+                            row.bad_rights.forEach(right => {
+                                if (!rightsSelect.find(`option[value='${right}']`)
+                                    .length) {
+                                    rightsSelect.append(new Option(right, right, false,
+                                        false));
+                                }
+                            });
+                        });
                     });
+
+                    usersSelect.trigger('change');
+                    usersSelect.on('change', () => table.draw());
+                    sagsSelect.trigger('change');
+                    sagsSelect.on('change', () => table.draw());
+                    projectsSelect.trigger('change');
+                    projectsSelect.on('change', () => table.draw());
                     rightsSelect.trigger('change');
-                    rightsSelect.on('change', () => {
-                        table.draw();
-                    });
+                    rightsSelect.on('change', () => table.draw());
+
 
                     table.on('draw', function() {
                         $('.dataTable tbody tr').each((i, row) => {
@@ -740,6 +737,10 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
                     "className": "dt-center dt-head-center",
                     "targets": "_all"
                 }],
+                language: {
+                    searchPlaceholder: "Search...",
+                    search: "",
+                }
             });
     }
 
@@ -752,7 +753,7 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
 
     // Users - user filter function
     $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
-        if (!$('.userTable').is(':visible')) {
+        if (!settings.nTable.getAttribute('class').includes('userTable')) {
             return true;
         }
         const users = $('#usersSelectUser').val() || [];
@@ -765,7 +766,7 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
 
     // Users - sag filter function
     $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
-        if (!$('.userTable').is(':visible')) {
+        if (!settings.nTable.getAttribute('class').includes('userTable')) {
             return true;
         }
         const sags = $('#sagsSelectUser').val() || [];
@@ -778,7 +779,7 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
 
     // Users - project filter function
     $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
-        if (!$('.userTable').is(':visible')) {
+        if (!settings.nTable.getAttribute('class').includes('userTable')) {
             return true;
         }
         const projects = $('#projectsSelectUser').val() || [];
@@ -791,7 +792,7 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
 
     // Users - rights filter function
     $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
-        if (!$('.userTable').is(':visible')) {
+        if (!settings.nTable.getAttribute('class').includes('userTable')) {
             return true;
         }
         const rights = $('#rightsSelectUser').val() || [];
@@ -842,18 +843,6 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
                     }
                 });
 
-                data.forEach(row => {
-                    const id = row.username;
-                    if (!usersSelect.find(`option[value='${id}']`).length) {
-                        const text = `<strong>${row.username}</strong> (${row.name})`;
-                        usersSelect.append(new Option(text, id, false, false));
-                    }
-                });
-                usersSelect.trigger('change');
-                usersSelect.on('change', () => {
-                    table.draw();
-                });
-
                 // SAG filter
                 const sagsSelect = $('#sagsSelectUser').select2({
                     placeholder: "Filter SAGs...",
@@ -864,19 +853,6 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
                         return $(`<span>${sag.text}</span>`);
                     }
                 });
-
-                data.forEach(row => {
-                    const id = row.sag;
-                    if (!sagsSelect.find(`option[value='${id}']`).length) {
-                        const text = `<strong>${row.sag}</strong> ${row.sag_name}`;
-                        sagsSelect.append(new Option(text, id, false, false));
-                    }
-                });
-                sagsSelect.trigger('change');
-                sagsSelect.on('change', () => {
-                    table.draw();
-                });
-
                 // Project filter
                 const projectsSelect = $('#projectsSelectUser').select2({
                     placeholder: "Filter projects...",
@@ -887,8 +863,30 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
                         return $(`<span>PID: ${pid.id}</span>`);
                     }
                 });
+                // Rights filter
+                const rightsSelect = $('#rightsSelectUser').select2({
+                    placeholder: "Filter rights...",
+                    templateResult: function(right) {
+                        return $(`<span>${right.text}</span>`);
+                    }
+                });
 
                 data.forEach(row => {
+                    // Users
+                    const userid = row.username;
+                    if (!usersSelect.find(`option[value='${userid}']`).length) {
+                        const text = `<strong>${userid}</strong> (${row.name})`;
+                        usersSelect.append(new Option(text, userid, false, false));
+                    }
+
+                    // SAGs
+                    const sag = row.sag;
+                    if (!sagsSelect.find(`option[value='${sag}']`).length) {
+                        const text = `<strong>${sag}</strong> ${row.sag_name}`;
+                        sagsSelect.append(new Option(text, sag, false, false));
+                    }
+
+                    // Projects
                     row.projects.forEach(project => {
                         const pid = project.project_id;
                         if (!projectsSelect.find(`option[value='${pid}']`).length) {
@@ -897,35 +895,25 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
                             projectsSelect.append(new Option(text, pid, false, false));
                         }
                     });
-                });
-                projectsSelect.trigger('change');
-                projectsSelect.on('change', () => {
-                    table.draw();
+
+                    // Rights
+                    row.bad_rights.forEach(right => {
+                        if (!rightsSelect.find(`option[value='${right}']`).length) {
+                            rightsSelect.append(new Option(right, right, false, false));
+                        }
+                    });
                 });
 
-                // Rights filter
-                const rights = table.column(6).data().toArray().join('&&&&&').split('&&&&&')
-                    .map(
-                        str =>
-                        trim(str));
-                const rightsUnique = Array.from(new Set(rights));
-                const rightsSelect = $('#rightsSelectUser').select2({
-                    placeholder: "Filter rights...",
-                    templateResult: function(right) {
-                        return $(`<span>${right.text}</span>`);
-                    }
-                });
-                rightsUnique.forEach(right => {
-                    if (!rightsSelect.find(`option[value='${right}']`).length) {
-                        rightsSelect.append(new Option(right, right, false, false));
-                    }
-                });
+
+                usersSelect.trigger('change');
+                usersSelect.on('change', () => table.draw());
+                sagsSelect.trigger('change');
+                sagsSelect.on('change', () => table.draw());
+                projectsSelect.trigger('change');
+                projectsSelect.on('change', () => table.draw());
                 rightsSelect.trigger('change');
-                rightsSelect
-                    .on(
-                        'change', () => {
-                            table.draw();
-                        });
+                rightsSelect.on('change', () => table.draw());
+
 
                 table.on('draw', function() {
                     $('.dataTable tbody tr').each((i, row) => {
@@ -1072,6 +1060,10 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
                 "className": "dt-center dt-head-center",
                 "targets": "_all"
             }],
+            language: {
+                searchPlaceholder: "Search...",
+                search: "",
+            }
         });
     }
 
@@ -1081,7 +1073,7 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
 
     // Users and Projects - user filter function
     $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
-        if (!$('.allTable').is(':visible')) {
+        if (!settings.nTable.getAttribute('class').includes('allTable')) {
             return true;
         }
         const users = $('#usersSelectAll').val() || [];
@@ -1094,7 +1086,7 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
 
     // Users and Projects - sag filter function
     $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
-        if (!$('.allTable').is(':visible')) {
+        if (!settings.nTable.getAttribute('class').includes('allTable')) {
             return true;
         }
         const sags = $('#sagsSelectAll').val() || [];
@@ -1107,7 +1099,7 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
 
     // Users and Projects - project filter function
     $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
-        if (!$('.allTable').is(':visible')) {
+        if (!settings.nTable.getAttribute('class').includes('allTable')) {
             return true;
         }
         const projects = $('#projectsSelectAll').val() || [];
@@ -1120,7 +1112,7 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
 
     // Users and Projects - rights filter function
     $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
-        if (!$('.allTable').is(':visible')) {
+        if (!settings.nTable.getAttribute('class').includes('allTable')) {
             return true;
         }
         const rights = $('#rightsSelectAll').val() || [];
@@ -1133,6 +1125,7 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
 
     // Users and Projects Table
     function showUserAndProjectTable(includeExpired) {
+        console.time();
         clearTables();
         $('.tableWrapper').hide();
         $('#allTableTitle').text('Users and Projects with Noncompliant Rights' + (includeExpired ?
@@ -1171,18 +1164,6 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
                         return $(`<span>${user.id}</span>`);
                     }
                 });
-                data.forEach(row => {
-                    const id = row.username;
-                    if (!usersSelect.find(`option[value='${id}']`).length) {
-                        const text = `<strong>${row.username}</strong> (${row.name})`;
-                        usersSelect.append(new Option(text, id, false,
-                            false));
-                    }
-                });
-                usersSelect.trigger('change');
-                usersSelect.on('change', () => {
-                    table.draw();
-                });
 
                 // SAG filter
                 const sagsSelect = $('#sagsSelectAll').select2({
@@ -1193,17 +1174,6 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
                     templateSelection: function(sag) {
                         return $(`<span>${sag.text}</span>`);
                     }
-                });
-                data.forEach(row => {
-                    const id = row.sag;
-                    if (!sagsSelect.find(`option[value='${id}']`).length) {
-                        const text = `<strong>${id}</strong> ${row.sag_name}`;
-                        sagsSelect.append(new Option(text, id, false, false));
-                    }
-                });
-                sagsSelect.trigger('change');
-                sagsSelect.on('change', () => {
-                    table.draw();
                 });
 
                 // Project filter
@@ -1216,19 +1186,6 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
                         return $(`<span>PID: ${pid.id}</span>`);
                     }
                 });
-                data.forEach(row => {
-                    const id = row.project_id;
-                    if (!projectsSelect.find(`option[value='${id}']`).length) {
-                        const text = `<strong>PID:${id}</strong> ${row.project_title}`;
-                        projectsSelect.append(
-                            new Option(text, id, false, false)
-                        );
-                    }
-                });
-                projectsSelect.trigger('change');
-                projectsSelect.on('change', () => {
-                    table.draw();
-                });
 
                 // Rights filter
                 const rightsSelect = $('#rightsSelectAll').select2({
@@ -1237,18 +1194,47 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
                         return $(`<span>${right.text}</span>`);
                     }
                 });
-                const allRights = data.map(row => row.bad_rights).flatten();
-                const allRightsUnique = Array.from(new Set(allRights));
-                allRightsUnique.forEach(right => {
-                    const id = right;
-                    if (!rightsSelect.find(`option[value='${id}']`).length) {
-                        rightsSelect.append(new Option(right, right, false, false));
+
+                data.forEach(row => {
+                    // Users
+                    const userid = row.username;
+                    if (!usersSelect.find(`option[value='${userid}']`).length) {
+                        const text = `<strong>${row.username}</strong> (${row.name})`;
+                        usersSelect.append(new Option(text, userid, false,
+                            false));
                     }
+
+                    // SAGs
+                    const sag = row.sag;
+                    if (!sagsSelect.find(`option[value='${sag}']`).length) {
+                        const text = `<strong>${sag}</strong> ${row.sag_name}`;
+                        sagsSelect.append(new Option(text, sag, false, false));
+                    }
+
+                    // Projects
+                    const pid = row.project_id;
+                    if (!projectsSelect.find(`option[value='${pid}']`).length) {
+                        const text = `<strong>PID:${pid}</strong> ${row.project_title}`;
+                        projectsSelect.append(
+                            new Option(text, pid, false, false)
+                        );
+                    }
+                    // Rights
+                    row.bad_rights.forEach(right => {
+                        if (!rightsSelect.find(`option[value='${right}']`).length) {
+                            rightsSelect.append(new Option(right, right, false, false));
+                        }
+                    });
                 });
+                usersSelect.trigger('change');
+                usersSelect.on('change', () => table.draw());
+                sagsSelect.trigger('change');
+                sagsSelect.on('change', () => table.draw());
+                projectsSelect.trigger('change');
+                projectsSelect.on('change', () => table.draw());
                 rightsSelect.trigger('change');
-                rightsSelect.on('change', () => {
-                    table.draw();
-                });
+                rightsSelect.on('change', () => table.draw());
+
 
                 table.on('draw', function() {
                     $('.dataTable tbody tr').each((i, row) => {
@@ -1263,6 +1249,7 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
                 });
                 table.columns.adjust().draw();
                 $('div.dt-buttons button').removeClass('dt-button');
+                console.timeEnd();
             },
             buttons: [{
                 extend: 'excelHtml5',
@@ -1372,6 +1359,10 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
                 "className": "dt-center dt-head-center",
                 "targets": "_all"
             }],
+            language: {
+                searchPlaceholder: "Search...",
+                search: "",
+            }
         });
     }
     if ('scrollRestoration' in history) {
