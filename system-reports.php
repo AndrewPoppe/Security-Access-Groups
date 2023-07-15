@@ -166,31 +166,31 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
                             <div class="row">
                                 <div class="col px-4">
                                     <div class="row pt-2 pb-1 pl-1">
-                                        <select style="width:100%" class="form-control" id="usersSelectProject"
-                                            multiple="multiple">
+                                        <select style="width:100%" class="form-control projectTableSelect"
+                                            id="usersSelectProject" multiple="multiple">
                                         </select>
                                     </div>
                                 </div>
                                 <div class="col px-4" style="border-left: 1px solid #ccc">
                                     <div class="row pt-2 pb-1 pr-1">
-                                        <select style="width:100%" class="form-control" id="sagsSelectProject"
-                                            multiple="multiple">
+                                        <select style="width:100%" class="form-control projectTableSelect"
+                                            id="sagsSelectProject" multiple="multiple">
                                             <option></option>
                                         </select>
                                     </div>
                                 </div>
                                 <div class="col px-4" style="border-left: 1px solid #ccc">
                                     <div class="row pt-2 pb-1">
-                                        <select style="width:100%" class="form-control" id="projectsSelectProject"
-                                            multiple="multiple">
+                                        <select style="width:100%" class="form-control projectTableSelect"
+                                            id="projectsSelectProject" multiple="multiple">
                                             <option></option>
                                         </select>
                                     </div>
                                 </div>
                                 <div class="col px-4" style="border-left: 1px solid #ccc">
                                     <div class="row pt-2 pb-1 pr-1">
-                                        <select style="width:100%" class="form-control" id="rightsSelectProject"
-                                            multiple="multiple">
+                                        <select style="width:100%" class="form-control projectTableSelect"
+                                            id="rightsSelectProject" multiple="multiple">
                                             <option></option>
                                         </select>
                                     </div>
@@ -238,31 +238,31 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
                             <div class="row">
                                 <div class="col px-4">
                                     <div class="row pt-2 pb-1 pl-1">
-                                        <select style="width:100%" class="form-control" id="projectsSelectUser"
-                                            multiple="multiple">
+                                        <select style="width:100%" class="form-control userTableSelect"
+                                            id="projectsSelectUser" multiple="multiple">
                                         </select>
                                     </div>
                                 </div>
                                 <div class="col px-4" style="border-left: 1px solid #ccc">
                                     <div class="row pt-2 pb-1 pr-1">
-                                        <select style="width:100%" class="form-control" id="sagsSelectUser"
-                                            multiple="multiple">
+                                        <select style="width:100%" class="form-control userTableSelect"
+                                            id="sagsSelectUser" multiple="multiple">
                                             <option></option>
                                         </select>
                                     </div>
                                 </div>
                                 <div class="col px-4" style="border-left: 1px solid #ccc">
                                     <div class="row pt-2 pb-1">
-                                        <select style="width:100%" class="form-control" id="usersSelectUser"
-                                            multiple="multiple">
+                                        <select style="width:100%" class="form-control userTableSelect"
+                                            id="usersSelectUser" multiple="multiple">
                                             <option></option>
                                         </select>
                                     </div>
                                 </div>
                                 <div class="col px-4" style="border-left: 1px solid #ccc">
                                     <div class="row pt-2 pb-1 pr-1">
-                                        <select style="width:100%" class="form-control" id="rightsSelectUser"
-                                            multiple="multiple">
+                                        <select style="width:100%" class="form-control userTableSelect"
+                                            id="rightsSelectUser" multiple="multiple">
                                             <option></option>
                                         </select>
                                     </div>
@@ -315,31 +315,31 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
                             <div class="row">
                                 <div class="col px-4">
                                     <div class="row pt-2 pb-1 pl-1">
-                                        <select style="width:100%" class="form-control" id="projectsSelectAll"
-                                            multiple="multiple">
+                                        <select style="width:100%" class="form-control allTableSelect"
+                                            id="projectsSelectAll" multiple="multiple">
                                         </select>
                                     </div>
                                 </div>
                                 <div class="col px-4" style="border-left: 1px solid #ccc">
                                     <div class="row pt-2 pb-1 pr-1">
-                                        <select style="width:100%" class="form-control" id="sagsSelectAll"
-                                            multiple="multiple">
+                                        <select style="width:100%" class="form-control allTableSelect"
+                                            id="sagsSelectAll" multiple="multiple">
                                             <option></option>
                                         </select>
                                     </div>
                                 </div>
                                 <div class="col px-4" style="border-left: 1px solid #ccc">
                                     <div class="row pt-2 pb-1">
-                                        <select style="width:100%" class="form-control" id="usersSelectAll"
-                                            multiple="multiple">
+                                        <select style="width:100%" class="form-control allTableSelect"
+                                            id="usersSelectAll" multiple="multiple">
                                             <option></option>
                                         </select>
                                     </div>
                                 </div>
                                 <div class="col px-4" style="border-left: 1px solid #ccc">
                                     <div class="row pt-2 pb-1 pr-1">
-                                        <select style="width:100%" class="form-control" id="rightsSelectAll"
-                                            multiple="multiple">
+                                        <select style="width:100%" class="form-control allTableSelect"
+                                            id="rightsSelectAll" multiple="multiple">
                                             <option></option>
                                         </select>
                                     </div>
@@ -601,14 +601,8 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
                         });
                     });
 
-                    usersSelect.trigger('change');
-                    usersSelect.on('change', () => table.draw());
-                    sagsSelect.trigger('change');
-                    sagsSelect.on('change', () => table.draw());
-                    projectsSelect.trigger('change');
-                    projectsSelect.on('change', () => table.draw());
-                    rightsSelect.trigger('change');
-                    rightsSelect.on('change', () => table.draw());
+                    $('.projectTableSelect').trigger('change');
+                    $('.projectTableSelect').on('change', () => table.draw());
 
 
                     table.on('draw', function() {
@@ -904,15 +898,8 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
                     });
                 });
 
-
-                usersSelect.trigger('change');
-                usersSelect.on('change', () => table.draw());
-                sagsSelect.trigger('change');
-                sagsSelect.on('change', () => table.draw());
-                projectsSelect.trigger('change');
-                projectsSelect.on('change', () => table.draw());
-                rightsSelect.trigger('change');
-                rightsSelect.on('change', () => table.draw());
+                $('.userTableSelect').trigger('change');
+                $('.userTableSelect').on('change', () => table.draw());
 
 
                 table.on('draw', function() {
@@ -1226,14 +1213,9 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
                         }
                     });
                 });
-                usersSelect.trigger('change');
-                usersSelect.on('change', () => table.draw());
-                sagsSelect.trigger('change');
-                sagsSelect.on('change', () => table.draw());
-                projectsSelect.trigger('change');
-                projectsSelect.on('change', () => table.draw());
-                rightsSelect.trigger('change');
-                rightsSelect.on('change', () => table.draw());
+
+                $('.allTableSelect').trigger('change');
+                $('.allTableSelect').on('change', () => table.draw());
 
 
                 table.on('draw', function() {
