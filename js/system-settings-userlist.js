@@ -65,7 +65,7 @@ function handleCsvExport() {
     }
 }
 
-function join(a) {
+function join(a, separator, boundary, escapeChar, reBoundary) {
     let s = '';
     for (let i = 0, ien = a.length; i < ien; i++) {
         if (i > 0) {
@@ -125,11 +125,11 @@ function exportCsv(useFilter = false) {
         }
     });
 
-    const header = join(data.header) + newLine;
-    const footer = data.footer ? newLine + join(data.footer) : '';
+    const header = join(data.header, separator, boundary, escapeChar, reBoundary) + newLine;
+    const footer = data.footer ? newLine + join(data.footer, separator, boundary, escapeChar, reBoundary) : '';
     const body = [];
     for (let i = 0, ien = data.body.length; i < ien; i++) {
-        body.push(join(data.body[i]));
+        body.push(join(data.body[i], separator, boundary, escapeChar, reBoundary));
     }
 
     const result = {
@@ -155,7 +155,7 @@ function handleFiles() {
     }
     const file = this.files[0];
 
-    if (!(file.type === "text/csv")) {
+    if (file.type !== "text/csv") {
         return;
     }
 
@@ -262,11 +262,11 @@ function downloadTemplate() {
     }
 
     const data = $('#templateTable').DataTable().buttons.exportData();
-    const header = join(data.header) + newLine;
-    const footer = data.footer ? newLine + join(data.footer) : '';
+    const header = join(data.header, separator, boundary, escapeChar, reBoundary) + newLine;
+    const footer = data.footer ? newLine + join(data.footer, separator, boundary, escapeChar, reBoundary) : '';
     const body = [];
     for (let i = 0, ien = data.body.length; i < ien; i++) {
-        body.push(join(data.body[i]));
+        body.push(join(data.body[i], separator, boundary, escapeChar, reBoundary));
     }
     const result = {
         str: header + body.join(newLine) + footer,

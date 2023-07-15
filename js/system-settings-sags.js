@@ -328,7 +328,7 @@ function handleFiles() {
     }
     const file = this.files[0];
 
-    if (!(file.type === "text/csv")) {
+    if (file.type !== "text/csv") {
         return;
     }
 
