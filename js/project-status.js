@@ -489,18 +489,6 @@ async function replaceKeywordsPreviewUserRightsHolders(text) {
     });
 }
 
-async function previewEmailUserExpiration($emailContainer) {
-    const id = $emailContainer.find('textarea.emailBody').prop('id');
-    const content = tinymce.get(id).getContent();
-    const replacedContent = await replaceKeywordsPreview(content);
-    $('#emailPreview div.modal-body').html(replacedContent);
-    $emailContainer.closest('.modal').css('z-index', 1039);
-    $('#emailPreview').modal('show');
-    $('#emailPreview').on('hidden.bs.modal', function (event) {
-        $emailContainer.closest('.modal').css('z-index', 1050);
-    });
-}
-
 function handleDisplayUsersButton(allUsersVisible) {
     if (allUsersVisible) {
         $('#displayUsersButton').addClass('btn-outline-secondary').removeClass('btn-secondary');
