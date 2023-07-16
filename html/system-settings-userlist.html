@@ -1,0 +1,79 @@
+<p style='margin:20px 0;max-width:1000px;font-size:14px;'>This table shows all users in the REDCap system and their
+    current SAG assignment. Use the <strong>Edit Users</strong> button to change a user's SAG assignment. You may
+    export the current list of SAG assignments or import a CSV file of assignments using the buttons below.
+</p>
+
+<!-- Modals -->
+<div id="loading" class="modal">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-body p-4 text-center">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="sr-only">Loading...</span>
+                </div>
+                <div class="mt-2">Loading...</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Table Controls -->
+<div class="hidden">
+    <input type="file" accept="text/csv" class="form-control-file" id="importUsersFile">
+    <table aria-label="template table" id="templateTable">
+        <thead>
+            <tr>
+                <th>username</th>
+                <th>sag_id</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{SAG_ROWS}}
+        </tbody>
+    </table>
+</div>
+<!-- Users Table -->
+<div class="card card-body bg-light" style="min-width:700px;">
+    <div class="toolbar2 d-flex flex-row justify-content-between mb-2">
+        <div class="d-flex">
+            <button class="btn btn-danger btn-xs mr-1 editUsersButton" style="width: 8em;" data-editing="false"
+                onclick="toggleEditMode(event);">
+                <i class="fa-sharp fa-user-pen"></i>
+                <span>Edit Users</span>
+            </button>
+            <div class="d-flex dropdown">
+                <button type="button" class="btn btn-primary btn-xs dropdown-toggle mr-2" data-toggle="dropdown"
+                    data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fa-sharp fa-file-excel mr-1"></i>
+                    <span>Import or Export User Assignments</span>
+                    <span class="sr-only">Toggle Dropdown</span>
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" onclick="handleCsvExport();"><i
+                                class="fa-sharp fa-regular fa-file-arrow-down fa-fw mr-1 text-success">
+                            </i>Export User Assignments</a></li>
+                    <li><a class="dropdown-item" onclick="importCsv();"><i
+                                class="fa-sharp fa-solid fa-file-arrow-up fa-fw mr-1 text-danger"></i>Import User
+                            Assignments</a></li>
+                    <li><a class="dropdown-item" onclick="downloadTemplate();"><i
+                                class="fa-sharp fa-solid fa-download fa-fw mr-1 text-primary"></i>Download Import
+                            Template</a></li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+    <table aria-label='Users Table' id='SUR-System-Table' class="compact cell-border border">
+        <thead>
+            <tr>
+                <th data-id="username" class="py-3">Username</th>
+                <th data-id="name" class="py-3">Name</th>
+                <th data-id="email" class="py-3">Email</th>
+                <th data-id="sag" class="py-3">SAG Name</th>
+                <th data-id="sag_id" class="py-3">SAG ID</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>

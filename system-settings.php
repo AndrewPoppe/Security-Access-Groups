@@ -58,99 +58,18 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
             </li>
         </ul>
     </div>
-    <div class="clear"></div>
+    <div class='clear'></div>
 
-    <?php if ( $tab == "userlist" ) {
-        $sags = $module->getAllSags();
-        ?>
+    <?php if ( $tab == 'userlist' ) {
+        $sags    = $module->getAllSags();
+        $sagRows = '';
+        foreach ( $sags as $index => $sag ) {
+            $sagId   = \REDCap::escapeHtml($sag['sag_id']);
+            $sagRows .= '<tr><td>example_user_' . (intval($index) + 1) . '</td><td>' . $sagId . '</td></tr>';
+        }
+        $userListHtml = file_get_contents($module->framework->getSafePath('html/system-settings-userlist.html'));
+        $userListHtml = str_replace('{{SAG_ROWS}}', $sagRows, $userListHtml);
 
-        <p style='margin:20px 0;max-width:1000px;font-size:14px;'>This table shows all users in the REDCap system and their
-            current SAG assignment. Use the <strong>Edit Users</strong> button to change a user's SAG assignment. You may
-            export the current list of SAG assignments or import a CSV file of assignments using the buttons below.
-        </p>
-
-        <!-- Modals -->
-        <div id="loading" class="modal">
-            <div class="modal-dialog modal-dialog-centered" role="document">
-                <div class="modal-content">
-                    <div class="modal-body p-4 text-center">
-                        <div class="spinner-border text-primary" role="status">
-                            <span class="sr-only">Loading...</span>
-                        </div>
-                        <div class="mt-2">Loading...</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Table Controls -->
-        <div class="hidden">
-            <input type="file" accept="text/csv" class="form-control-file" id="importUsersFile">
-            <table aria-label="template table" id="templateTable">
-                <thead>
-                    <tr>
-                        <th>username</th>
-                        <th>sag_id</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ( $sags as $index => $sag ) {
-                        echo "<tr><td>example_user_",
-                            (intval($index) + 1),
-                            "</td><td>",
-                            \REDCap::escapeHtml($sag["sag_id"]),
-                            "</td></tr>";
-                    } ?>
-                </tbody>
-            </table>
-        </div>
-        <!-- Users Table -->
-        <div class="card card-body bg-light" style="min-width:700px;">
-            <div class="toolbar2 d-flex flex-row justify-content-between mb-2">
-                <div class="d-flex">
-                    <button class="btn btn-danger btn-xs mr-1 editUsersButton" style="width: 8em;" data-editing="false"
-                        onclick="toggleEditMode(event);">
-                        <i class="fa-sharp fa-user-pen"></i>
-                        <span>Edit Users</span>
-                    </button>
-                    <div class="d-flex dropdown">
-                        <button type="button" class="btn btn-primary btn-xs dropdown-toggle mr-2" data-toggle="dropdown"
-                            data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="fa-sharp fa-file-excel mr-1"></i>
-                            <span>Import or Export User Assignments</span>
-                            <span class="sr-only">Toggle Dropdown</span>
-                        </button>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" onclick="handleCsvExport();"><i
-                                        class="fa-sharp fa-regular fa-file-arrow-down fa-fw mr-1 text-success">
-                                    </i>Export User Assignments</a></li>
-                            <li><a class="dropdown-item" onclick="importCsv();"><i
-                                        class="fa-sharp fa-solid fa-file-arrow-up fa-fw mr-1 text-danger"></i>Import User
-                                    Assignments</a></li>
-                            <li><a class="dropdown-item" onclick="downloadTemplate();"><i
-                                        class="fa-sharp fa-solid fa-download fa-fw mr-1 text-primary"></i>Download Import
-                                    Template</a></li>
-                        </ul>
-                    </div>
-
-                </div>
-            </div>
-            <table aria-label='Users Table' id='SUR-System-Table' class="compact cell-border border">
-                <thead>
-                    <tr>
-                        <th data-id="username" class="py-3">Username</th>
-                        <th data-id="name" class="py-3">Name</th>
-                        <th data-id="email" class="py-3">Email</th>
-                        <th data-id="sag" class="py-3">SAG Name</th>
-                        <th data-id="sag_id" class="py-3">SAG ID</th>
-                    </tr>
-                </thead>
-                <tbody>
-                </tbody>
-            </table>
-        </div>
-
-        <?php
         $basicSags = [];
         foreach ( $sags as $sag ) {
             $basicSags[$sag["sag_id"]] = $sag["sag_name"];
@@ -163,98 +82,23 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
         $js = str_replace('{{ASSIGN_SAG_URL}}', $module->framework->getUrl('ajax/assignSag.php'), $js);
         $js = str_replace('{{USERS_URL}}', $module->framework->getUrl('ajax/users.php'), $js);
         $js = str_replace('{{DEFAULT_SAG_ID}}', $module->defaultSagId, $js);
-        echo '<script type="text/javascript">' . $js . '</script>';
 
+        echo $userListHtml;
+        echo '<script type="text/javascript">' . $js . '</script>';
 
     } elseif ( $tab == "sags" ) {
         $displayTextForUserRights    = $module->getDisplayTextForRights();
         $allDisplayTextForUserRights = $module->getDisplayTextForRights(true);
+        $headers                     = '';
+        foreach ( $allDisplayTextForUserRights as $key => $text ) {
+            $dataKey = \REDCap::escapeHtml($key);
+            $value   = \REDCap::escapeHtml($text);
+            $headers .= "<th data-key='" . $dataKey . "' class='dt-head-center'>" . $value . "</th>";
+        }
 
-        ?>
+        $sagsHtml = file_get_contents($module->framework->getSafePath('html/system-settings-sags.html'));
+        $sagsHtml = str_replace('{{HEADERS}}', $headers, $sagsHtml);
 
-        <p style='margin:20px 0;max-width:1000px;font-size:14px;'>This table shows all the SAGs that currently exist in the
-            system. A SAG must be created here before it can be assigned to a user. The current list of SAGs can be exported
-            as a CSV file, and a CSV file can be imported to update existing SAGs or to create new SAGs.
-        </p>
-
-        <!-- Modal -->
-        <div class="modal" id="edit_sag_popup" data-backdrop="static" data-keyboard="false"
-            aria-labelledby="staticBackdropLabel" aria-hidden="true"></div>
-
-
-        <!-- Controls Container -->
-        <div class="container ml-0 mt-2 mb-3 px-0"
-            style="background-color: #eee; max-width: 550px; border: 1px solid #ccc;">
-            <div class="d-flex flex-row justify-content-end my-1">
-                <div class="dropdown">
-                    <button type="button" class="btn btn-primary btn-xs dropdown-toggle mr-2" data-toggle="dropdown"
-                        data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="fa-sharp fa-file-excel"></i>
-                        <span>Import or Export SAGs</span>
-                        <span class="sr-only">Toggle Dropdown</span>
-                    </button>
-                    <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" onclick="exportRawCsv();"><i
-                                    class="fa-sharp fa-regular fa-file-arrow-down fa-fw mr-1 text-info"></i>Export SAGs
-                                (raw)</a></li>
-                        <li><a class="dropdown-item" onclick="exportCsv();"><i
-                                    class="fa-sharp fa-regular fa-file-arrow-down fa-fw mr-1 text-success"></i>Export SAGs
-                                (labels)</a></li>
-                        <li><a class="dropdown-item" onclick="importCsv();"><i
-                                    class="fa-sharp fa-solid fa-file-arrow-up fa-fw mr-1 text-danger"></i>Import SAGs</a>
-                        </li>
-                        <li><a class="dropdown-item" onclick="exportRawCsv(false);"><i
-                                    class="fa-sharp fa-solid fa-download fa-fw mr-1 text-primary"></i>Download Import
-                                Template</a></li>
-                    </ul>
-                </div>
-                <div class="hidden">
-                    <input type="file" accept="text/csv" class="form-control-file" id="importSagsFile">
-                </div>
-            </div>
-            <div class="row ml-2">
-                <span><strong>Create new Security Access Group:</strong></span>
-            </div>
-            <div class="row ml-2 mb-2 mt-1 justify-content-start">
-                <div class="col-6 px-0">
-                    <input id="newSagName" class="form-control form-control-sm" type="text"
-                        placeholder="Enter new SAG name">
-                </div>
-                <div class="col ml-1 px-0 justify-content-start">
-                    <button class="btn btn-success btn-sm" id="addSagButton" onclick="addNewSag();"
-                        title="Add a New Security Access Group">
-                        <i class="fa-kit fa-solid-tag-circle-plus fa-fw"></i>
-                        <span>Create SAG</span>
-                    </button>
-                </div>
-            </div>
-        </div>
-
-
-        <!-- SAG Table -->
-        <div class=" clear">
-        </div>
-        <div id="sagTableWrapper" style="display: none; width: 100%;">
-            <table aria-label="SAGs Table" id="sagTable" class="sagTable cell-border" style="width: 100%">
-                <thead>
-                    <tr style="vertical-align: bottom; text-align: center;">
-                        <th>Order</th>
-                        <th data-key="sag_name">SAG Name</th>
-                        <th data-key="sag_id">SAG ID</th>
-                        <?php foreach ( $allDisplayTextForUserRights as $key => $text ) {
-                            echo "<th data-key='",
-                                \REDCap::escapeHtml($key),
-                                "' class='dt-head-center'>",
-                                \REDCap::escapeHtml($text),
-                                "</th>";
-                        } ?>
-                    </tr>
-                </thead>
-                <tbody>
-                </tbody>
-            </table>
-        </div>
-        <?php
         $js = file_get_contents($module->framework->getSafePath('js/system-settings-sags.js'));
         $js = str_replace('{{DELETE_SAG_URL}}', $module->framework->getUrl('ajax/deleteSag.php'), $js);
         $js = str_replace('{{EDIT_SAG_URL}}', $module->framework->getUrl('ajax/editSag.php'), $js);
@@ -263,6 +107,8 @@ $tab = filter_input(INPUT_GET, "tab", FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? "us
         $js = str_replace('{{EDIT_SAG_TRUE_URL}}', $module->framework->getUrl('ajax/editSag.php?newSag=true'), $js);
         $js = str_replace('{{IMPORT_CSV_SAGS_URL}}', $module->framework->getUrl('ajax/importCsvSags.php'), $js);
         $js = str_replace('{{SAGS_URL}}', $module->framework->getUrl('ajax/sags.php'), $js);
+
+        echo $sagsHtml;
         echo '<script type="text/javascript">', $js, '</script>';
     }
     ?>

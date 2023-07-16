@@ -347,8 +347,7 @@ if ( !$module->framework->getUser()->isSuperUser() ) {
     </div>
 </div>
 <?php
-$project_id    = $module->framework->getProjectId();
-$adminUsername = $module->framework->getUser()->getUsername();
+$project_id = $module->framework->getProjectId();
 
 $userSql       = 'SELECT COUNT(username) FROM redcap_user_rights WHERE project_id = ?';
 $usersResult   = $module->framework->query($userSql, [ $project_id ]);
@@ -367,7 +366,6 @@ if ( $usersCount <= $userThreshold ) {
         ],
     ]);
 }
-
 
 $js = file_get_contents($module->framework->getSafePath('js/project-status.js'));
 $js = str_replace('{{CONFIG}}', $config, $js);
@@ -390,8 +388,8 @@ $js = str_replace('{{SAG_CSS_URL}}', $module->framework->getUrl('SecurityAccessG
 echo '<script type="text/javascript">' . $js . '</script>';
 
 $Alerts = new Alerts($module);
-$Alerts->getUserEmailModal($adminUsername);
-$Alerts->getUserRightsHoldersEmailModal($adminUsername);
-$Alerts->getUserExpirationModal($adminUsername);
+$Alerts->getUserEmailModal();
+$Alerts->getUserRightsHoldersEmailModal();
+$Alerts->getUserExpirationModal();
 $Alerts->getEmailPreviewModal();
 ?>

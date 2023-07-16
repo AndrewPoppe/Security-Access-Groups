@@ -42,14 +42,14 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
     <div id="sub-nav" class="mr-4 mb-0 ml-0" style="min-width: 900px;">
         <ul>
             <li>
-                <a href="<?= $module->framework->getUrl('system-settings.php?tab=userlist') ?>"
+                <a href="<?= $module->framework->getUrl('system-settings-userlist.php') ?>"
                     style="font-size:13px;color:#393733;padding:7px 9px;">
                     <i class="fa-solid fa-users"></i>
                     Users
                 </a>
             </li>
             <li>
-                <a href="<?= $module->framework->getUrl('system-settings.php?tab=sags') ?>"
+                <a href="<?= $module->framework->getUrl('system-settings-sags.php') ?>"
                     style="font-size:13px;color:#393733;padding:7px 9px;">
                     <i class="fa-solid fa-user-tag"></i>
                     Security Access Groups

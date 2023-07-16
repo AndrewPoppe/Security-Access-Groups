@@ -117,7 +117,7 @@
                 "key": "system-settings",
                 "name": "Security Access Groups",
                 "icon": "fa-solid  fa-users-between-lines",
-                "url": "system-settings.php",
+                "url": "system-settings-userlist.php",
                 "show-header-and-footer": true
             }
         ]

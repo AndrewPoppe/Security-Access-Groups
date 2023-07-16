@@ -1,0 +1,74 @@
+<p style='margin:20px 0;max-width:1000px;font-size:14px;'>This table shows all the SAGs that currently exist in the
+    system. A SAG must be created here before it can be assigned to a user. The current list of SAGs can be exported
+    as a CSV file, and a CSV file can be imported to update existing SAGs or to create new SAGs.
+</p>
+
+<!-- Modal -->
+<div class="modal" id="edit_sag_popup" data-backdrop="static" data-keyboard="false"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true"></div>
+
+
+<!-- Controls Container -->
+<div class="container ml-0 mt-2 mb-3 px-0" style="background-color: #eee; max-width: 550px; border: 1px solid #ccc;">
+    <div class="d-flex flex-row justify-content-end my-1">
+        <div class="dropdown">
+            <button type="button" class="btn btn-primary btn-xs dropdown-toggle mr-2" data-toggle="dropdown"
+                data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="fa-sharp fa-file-excel"></i>
+                <span>Import or Export SAGs</span>
+                <span class="sr-only">Toggle Dropdown</span>
+            </button>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item" onclick="exportRawCsv();"><i
+                            class="fa-sharp fa-regular fa-file-arrow-down fa-fw mr-1 text-info"></i>Export SAGs
+                        (raw)</a></li>
+                <li><a class="dropdown-item" onclick="exportCsv();"><i
+                            class="fa-sharp fa-regular fa-file-arrow-down fa-fw mr-1 text-success"></i>Export SAGs
+                        (labels)</a></li>
+                <li><a class="dropdown-item" onclick="importCsv();"><i
+                            class="fa-sharp fa-solid fa-file-arrow-up fa-fw mr-1 text-danger"></i>Import SAGs</a>
+                </li>
+                <li><a class="dropdown-item" onclick="exportRawCsv(false);"><i
+                            class="fa-sharp fa-solid fa-download fa-fw mr-1 text-primary"></i>Download Import
+                        Template</a></li>
+            </ul>
+        </div>
+        <div class="hidden">
+            <input type="file" accept="text/csv" class="form-control-file" id="importSagsFile">
+        </div>
+    </div>
+    <div class="row ml-2">
+        <span><strong>Create new Security Access Group:</strong></span>
+    </div>
+    <div class="row ml-2 mb-2 mt-1 justify-content-start">
+        <div class="col-6 px-0">
+            <input id="newSagName" class="form-control form-control-sm" type="text" placeholder="Enter new SAG name">
+        </div>
+        <div class="col ml-1 px-0 justify-content-start">
+            <button class="btn btn-success btn-sm" id="addSagButton" onclick="addNewSag();"
+                title="Add a New Security Access Group">
+                <i class="fa-kit fa-solid-tag-circle-plus fa-fw"></i>
+                <span>Create SAG</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+
+<!-- SAG Table -->
+<div class=" clear">
+</div>
+<div id="sagTableWrapper" style="display: none; width: 100%;">
+    <table aria-label="SAGs Table" id="sagTable" class="sagTable cell-border" style="width: 100%">
+        <thead>
+            <tr style="vertical-align: bottom; text-align: center;">
+                <th>Order</th>
+                <th data-key="sag_name">SAG Name</th>
+                <th data-key="sag_id">SAG ID</th>
+                {{HEADERS}}
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
