@@ -6,6 +6,7 @@ require_once 'classes/APIHandler.php';
 require_once 'classes/Alerts.php';
 require_once 'classes/RightsChecker.php';
 require_once 'classes/SagEditForm.php';
+require_once 'classes/AjaxHandler.php';
 use ExternalModules\AbstractExternalModule;
 use ExternalModules\Framework;
 
@@ -1349,49 +1350,22 @@ class SecurityAccessGroups extends AbstractExternalModule
 
     public function redcap_module_ajax($action, $payload, $project_id, $record, $instrument, $event_id, $repeat_instance, $survey_hash, $response_id, $survey_queue_hash, $page, $page_full, $user_id, $group_id)
     {
-        // These are the only actions that are allowed for non-admins
-        if ( $action === 'editUser' ) {
-            return 'no';
-        }
-
-        // These actions require admin privileges
-        if ( !$this->framework->getUser()->isSuperUser() ) {
-            http_response_code(403);
-            return;
-        }
-
-
-        if ( $action === 'getAlerts' ) {
-
-            // TODO: log this, and all other ajax calls
-            // TODO: make sure request is valid. Check instrument?
-
-            $alerts      = new Alerts($this);
-            $alertsArray = $alerts->getAlerts();
-            return json_encode(
-                array(
-                    'data' => $alertsArray
-                )
-            );
-        }
-        return $this->framework->log("redcap_module_ajax", [
-            'data' =>
-            json_encode([
-                'action2'            => $action,
-                'payload2'           => $payload,
-                'project_id2'        => $project_id,
-                'record2'            => $record,
-                'instrument2'        => $instrument,
-                'event_id2'          => $event_id,
-                'repeat_instance2'   => $repeat_instance,
-                'survey_hash2'       => $survey_hash,
-                'response_id2'       => $response_id,
-                'survey_queue_hash2' => $survey_queue_hash,
-                'page2'              => $page,
-                'page_full2'         => $page_full,
-                'user_id2'           => $user_id,
-                'group_id2'          => $group_id
-            ], JSON_PRETTY_PRINT)
+        $ajaxHandler = new AjaxHandler($this, [
+            'action'            => $action,
+            'payload'           => $payload,
+            'project_id'        => $project_id,
+            'record'            => $record,
+            'instrument'        => $instrument,
+            'event_id'          => $event_id,
+            'repeat_instance'   => $repeat_instance,
+            'survey_hash'       => $survey_hash,
+            'response_id'       => $response_id,
+            'survey_queue_hash' => $survey_queue_hash,
+            'page'              => $page,
+            'page_full'         => $page_full,
+            'user_id'           => $user_id,
+            'group_id'          => $group_id
         ]);
+        return $ajaxHandler->handleAjax();
     }
 }

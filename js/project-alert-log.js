@@ -9,21 +9,24 @@ function uniqueArray(a) {
 }
 
 function openAlertPreview(alert_id) {
-    $.post('{{ALERT_PREVIEW_URL}}', {
-        alert_id: alert_id
-    })
-        .done(function (json) {
+    Swal.fire({
+        title: 'Loading...',
+        didOpen: () => {
+            Swal.showLoading()
+        }
+    });
+    module.ajax('getAlert', { alert_id: alert_id })
+        .then(function (json) {
+            Swal.close();
             const data = JSON.parse(json);
+            console.log(alert_id, data);
             createAlertPreviewModal(data);
-            Swal.close();
         })
-        .fail(function (data) {
-            Swal.close();
+        .catch(function (data) {
             Swal.fire({
                 title: 'There was an error loading the alert preview.',
-                html: data.responseText,
                 icon: 'error'
-            })
+            });
         });
 }
 
@@ -193,7 +196,7 @@ $(document).ready(function () {
 
     $('#alertLogTable').DataTable({
         ajax: function (data, callback, settings) {
-            module.ajax('getAlerts', [])
+            module.ajax('getAlerts')
                 .then(response => {
                     callback(JSON.parse(response))
                 })

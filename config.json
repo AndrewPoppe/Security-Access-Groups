@@ -133,6 +133,7 @@
     ],
     "enable-every-page-hooks-on-system-pages": true,
     "auth-ajax-actions": [
+        "getAlert",
         "getAlerts"
     ],
     "no-auth-pages": [],
