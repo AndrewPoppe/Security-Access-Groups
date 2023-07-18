@@ -1,3 +1,5 @@
+const module = __MODULE__;
+
 console.log(performance.now());
 console.time('dt');
 const config = JSON.parse('{{CONFIG}}');
@@ -131,8 +133,10 @@ function sendEmailAlerts() {
     emailFormContents.alertType = 'users';
     emailFormContents.users = getAlertUserInfo();
 
-    $.post("{{SEND_ALERTS_URL}}", emailFormContents)
-        .done(response => {
+    console.log('ok');
+    module.ajax('sendAlerts', { config: emailFormContents })
+        .then(response => {
+            console.log('success', response);
             const multiple = emailFormContents.users.length > 1;
             Toast.fire({
                 title: 'The alert' + (multiple ? "s were " : " was ") +
@@ -140,7 +144,8 @@ function sendEmailAlerts() {
                 icon: 'success'
             });
         })
-        .fail(error => {
+        .catch(error => {
+            console.error(error);
             Toast.fire({
                 title: 'There was an error sending the alert.',
                 icon: 'error'

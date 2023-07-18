@@ -2,11 +2,16 @@
 
 namespace YaleREDCap\SecurityAccessGroups;
 
-require_once 'classes/APIHandler.php';
+require_once 'classes/AjaxException.php';
+require_once 'classes/AjaxHandler.php';
+require_once 'classes/Alert.php';
 require_once 'classes/Alerts.php';
+require_once 'classes/APIHandler.php';
+require_once 'classes/CsvSAGImport.php';
+require_once 'classes/CsvUserImport.php';
 require_once 'classes/RightsChecker.php';
 require_once 'classes/SagEditForm.php';
-require_once 'classes/AjaxHandler.php';
+require_once 'classes/TextReplacer.php';
 use ExternalModules\AbstractExternalModule;
 use ExternalModules\Framework;
 

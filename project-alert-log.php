@@ -85,11 +85,13 @@ if ( !$module->framework->getUser()->isSuperUser() ) {
                                     </div>
                                     <div class="row pl-4 py-2">
                                         <div class="col">
-                                            <button class="btn btn-xs btn-success" onclick="showPastAlerts()">View past
+                                            <button class="btn btn-xs btn-success"
+                                                onclick="module.showPastAlerts()">View past
                                                 alerts</button>
                                         </div>
                                         <div class="col">
-                                            <button class="btn btn-xs btn-primaryrc" onclick="showFutureAlerts()">View
+                                            <button class="btn btn-xs btn-primaryrc"
+                                                onclick="module.showFutureAlerts()">View
                                                 future alerts</button>
                                         </div>
                                     </div>
@@ -153,12 +155,9 @@ if ( !$module->framework->getUser()->isSuperUser() ) {
         </div>
     </div>
 </div>
-<?= $module->framework->initializeJavascriptModuleObject() ?>
 <?php
+echo $module->framework->initializeJavascriptModuleObject();
 $js = file_get_contents($module->framework->getSafePath('js/project-alert-log.js'));
-$js = str_replace('{{ALERT_PREVIEW_URL}}', $module->framework->getUrl('ajax/alert-preview.php'), $js);
-$js = str_replace('{{DELETE_ALERT_URL}}', $module->framework->getUrl("ajax/delete-alert.php"), $js);
-$js = str_replace('{{ALERTS_URL}}', $module->framework->getUrl('ajax/alerts.php'), $js);
 $js = str_replace('__MODULE__', $module->framework->getJavascriptModuleObjectName(), $js);
 echo '<script type="text/javascript">' . $js . '</script>';
 ?>

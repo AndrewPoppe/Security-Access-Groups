@@ -4,7 +4,7 @@ namespace YaleREDCap\SecurityAccessGroups;
 
 /** @var SecurityAccessGroups $module */
 
-require_once $module->framework->getSafePath('classes/Alerts.php');
+//require_once $module->framework->getSafePath('classes/Alerts.php');
 
 if ( !$module->framework->getUser()->isSuperUser() ) {
     http_response_code(401);
@@ -366,7 +366,7 @@ if ( $usersCount <= $userThreshold ) {
         ],
     ]);
 }
-
+echo $module->framework->initializeJavascriptModuleObject();
 $js = file_get_contents($module->framework->getSafePath('js/project-status.js'));
 $js = str_replace('{{CONFIG}}', $config, $js);
 $js = str_replace('{{USER_EMAIL_BODY_TEMPLATE_URL}}', $module->getSystemSetting('user-email-body-template') ?? "", $js);
@@ -382,9 +382,9 @@ $js = str_replace('{{USER_EXPIRATION_EMAIL_SUBJECT_TEMPLATE_URL}}', $module->get
 $js = str_replace('{{USER_EXPIRATION_USER_RIGHTS_HOLDERS_EMAIL_BODY_TEMPLATE_URL}}', $module->getSystemSetting('user-expiration-user-rights-holders-email-body-template') ?? "", $js);
 $js = str_replace('{{USER_EXPIRATION_USER_RIGHTS_HOLDERS_EMAIL_SUBJECT_TEMPLATE_URL}}', $module->getSystemSetting('user-expiration-user-rights-holders-email-subject-template') ?? "", $js);
 $js = str_replace('{{EXPIRE_USERS_URL}}', $module->framework->getUrl('ajax/expireUsers.php'), $js);
-$js = str_replace('{{SEND_ALERTS_URL}}', $module->framework->getUrl('ajax/sendAlerts.php'), $js);
 $js = str_replace('{{REPLACE_SMART_VARIABLES_URL}}', $module->framework->getUrl('ajax/replaceSmartVariables.php'), $js);
 $js = str_replace('{{SAG_CSS_URL}}', $module->framework->getUrl('SecurityAccessGroups.css'), $js);
+$js = str_replace('__MODULE__', $module->framework->getJavascriptModuleObjectName(), $js);
 echo '<script type="text/javascript">' . $js . '</script>';
 
 $Alerts = new Alerts($module);

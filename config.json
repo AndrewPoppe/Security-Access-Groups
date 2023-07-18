@@ -133,8 +133,10 @@
     ],
     "enable-every-page-hooks-on-system-pages": true,
     "auth-ajax-actions": [
+        "deleteAlert",
         "getAlert",
-        "getAlerts"
+        "getAlerts",
+        "sendAlerts"
     ],
     "no-auth-pages": [],
     "framework-version": 12,

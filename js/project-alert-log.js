@@ -4,11 +4,11 @@ const module = __MODULE__;
 console.log(performance.now());
 console.time('dt');
 
-function uniqueArray(a) {
+module.uniqueArray = function (a) {
     return [...new Set(a.map(o => JSON.stringify(o)))].map(s => JSON.parse(s));
 }
 
-function openAlertPreview(alert_id) {
+module.openAlertPreview = function (alert_id) {
     Swal.fire({
         title: 'Loading...',
         didOpen: () => {
@@ -19,8 +19,7 @@ function openAlertPreview(alert_id) {
         .then(function (json) {
             Swal.close();
             const data = JSON.parse(json);
-            console.log(alert_id, data);
-            createAlertPreviewModal(data);
+            module.createAlertPreviewModal(data);
         })
         .catch(function (data) {
             Swal.fire({
@@ -30,7 +29,7 @@ function openAlertPreview(alert_id) {
         });
 }
 
-function createAlertPreviewModal(data) {
+module.createAlertPreviewModal = function (data) {
     $('#alertPreviewModal .modal-body').html(data.table);
     let title = 'Alert Preview - ';
     if (data.alertType === "users") {
@@ -53,7 +52,7 @@ function createAlertPreviewModal(data) {
     $('#alertPreviewModal').modal('show');
 }
 
-function deleteAlert(alert_id) {
+module.deleteAlert = function (alert_id) {
     Swal.fire({
         title: 'Are you sure?',
         text: "You are about to delete this alert. This action cannot be undone.",
@@ -68,10 +67,8 @@ function deleteAlert(alert_id) {
     })
         .then((result) => {
             if (result.isConfirmed) {
-                $.post('{{DELETE_ALERT_URL}}', {
-                    alert_id: alert_id
-                })
-                    .done(function (json) {
+                module.ajax('deleteAlert', { alert_id: alert_id })
+                    .then(function (json) {
                         const data = JSON.parse(json);
                         if (data) {
                             Toast.fire({
@@ -87,7 +84,7 @@ function deleteAlert(alert_id) {
                             })
                         }
                     })
-                    .fail(function (data) {
+                    .catch(function (data) {
                         Swal.fire({
                             title: 'There was an error deleting the alert.',
                             html: data.responseText,
@@ -98,19 +95,19 @@ function deleteAlert(alert_id) {
         });
 }
 
-function showPastAlerts() {
+module.showPastAlerts = function () {
     document.querySelector('#mindatetime')._flatpickr.clear();
     document.querySelector('#maxdatetime')._flatpickr.setDate(new Date(), true);
 }
 
-function showFutureAlerts() {
+module.showFutureAlerts = function () {
     document.querySelector('#maxdatetime')._flatpickr.clear();
     document.querySelector('#mindatetime')._flatpickr.setDate(new Date(), true);
 }
 
 // Custom user function
-function searchUsers() {
-    const users = $('#usersSelect').val() || [];
+module.searchUsers = function () {
+    users = $('#usersSelect').val() || [];
     const dt = $('#alertLogTable').DataTable();
     dt.columns(5).search(users.join('|'), true).draw();
 }
@@ -248,7 +245,7 @@ $(document).ready(function () {
                             `<i class="fa-regular fa-circle fa-stack-1x text-dark"></i></span>`;
                         deleteButton = sent ? "" :
                             `<a class='deleteAlertButton' href='javascript:;' ` +
-                            `onclick='deleteAlert(${row.id});'>` +
+                            `onclick='module.deleteAlert(${row.id});'>` +
                             `<i class='fa-solid fa-xmark text-danger' title="Delete alert"></i></a>`;
                     }
                     const formattedDate = moment(row.sendTime * 1000).format(
@@ -305,7 +302,7 @@ $(document).ready(function () {
                     return row.subject + ' ' + row.body;
                 } else {
                     return `<button class='btn btn-xs btn-outline-info' ` +
-                        `onclick='openAlertPreview("${row.id}");'>` +
+                        `onclick='module.openAlertPreview("${row.id}");'>` +
                         `<i class="fa-solid fa-envelope"></i> View</button>`;
                 }
             }
@@ -375,7 +372,7 @@ $(document).ready(function () {
 
             const dt = this.api();
             const usersAll = dt.column(5).data().toArray();
-            const users = uniqueArray(usersAll.flatten());
+            const users = module.uniqueArray(usersAll.flatten());
             const usersSelect = $('#usersSelect').select2({
                 minimumResultsForSearch: 20,
                 placeholder: "Filter users",
@@ -393,10 +390,10 @@ $(document).ready(function () {
                 `<strong>${user.username}</strong> (${user.name})`,
                 user.username, false, false)));
             usersSelect.trigger('change');
-            usersSelect.on('change', searchUsers);
+            usersSelect.on('change', module.searchUsers);
 
             const recipientsAll = dt.column(6).data().toArray();
-            const recipients = uniqueArray(recipientsAll);
+            const recipients = module.uniqueArray(recipientsAll);
             const recipientSelect = $('#recipientSelect').select2({
                 minimumResultsForSearch: 20,
                 placeholder: "Filter recipients",
