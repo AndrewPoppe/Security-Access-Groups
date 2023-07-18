@@ -132,6 +132,9 @@
         }
     ],
     "enable-every-page-hooks-on-system-pages": true,
+    "auth-ajax-actions": [
+        "getAlerts"
+    ],
     "no-auth-pages": [],
     "framework-version": 12,
     "compatibility": {

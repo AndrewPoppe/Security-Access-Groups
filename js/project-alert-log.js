@@ -1,3 +1,6 @@
+
+const module = __MODULE__;
+
 console.log(performance.now());
 console.time('dt');
 
@@ -189,9 +192,15 @@ $(document).ready(function () {
     });
 
     $('#alertLogTable').DataTable({
-        ajax: {
-            url: '{{ALERTS_URL}}',
-            type: 'POST'
+        ajax: function (data, callback, settings) {
+            module.ajax('getAlerts', [])
+                .then(response => {
+                    callback(JSON.parse(response))
+                })
+                .catch(error => {
+                    console.error(error);
+                    callback({ data: [] });
+                });
         },
         deferRender: true,
         columns: [{

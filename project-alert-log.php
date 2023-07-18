@@ -153,10 +153,12 @@ if ( !$module->framework->getUser()->isSuperUser() ) {
         </div>
     </div>
 </div>
+<?= $module->framework->initializeJavascriptModuleObject() ?>
 <?php
 $js = file_get_contents($module->framework->getSafePath('js/project-alert-log.js'));
 $js = str_replace('{{ALERT_PREVIEW_URL}}', $module->framework->getUrl('ajax/alert-preview.php'), $js);
 $js = str_replace('{{DELETE_ALERT_URL}}', $module->framework->getUrl("ajax/delete-alert.php"), $js);
 $js = str_replace('{{ALERTS_URL}}', $module->framework->getUrl('ajax/alerts.php'), $js);
+$js = str_replace('__MODULE__', $module->framework->getJavascriptModuleObjectName(), $js);
 echo '<script type="text/javascript">' . $js . '</script>';
 ?>
