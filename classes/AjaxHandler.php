@@ -16,6 +16,7 @@ class AjaxHandler
         'getAlert',
         'getAlerts',
         'getProjectUsers',
+        'importCsvUsers',
         'replacePlaceholders',
         'sendAlerts'
     ];
@@ -64,6 +65,8 @@ class AjaxHandler
             $result = $this->getAlerts();
         } elseif ( $action === 'getProjectUsers' ) {
             $result = $this->getProjectUsers();
+        } elseif ( $action === 'importCsvUsers' ) {
+            $result = $this->importCsvUsers();
         } elseif ( $action === 'replacePlaceholders' ) {
             $result = $this->replacePlaceholders();
         } elseif ( $action === 'sendAlerts' ) {
@@ -271,5 +274,35 @@ class AjaxHandler
         $projectId        = $this->params['project_id'];
         $discrepantRights = $this->module->getUsersWithBadRights2($projectId);
         return json_encode([ 'data' => $discrepantRights ]);
+    }
+
+    private function importCsvUsers()
+    {
+        $userImport = new CsvUserImport($this->module, $this->params['payload']['data']);
+        $userImport->parseCsvString();
+
+        $contentsValid = $userImport->contentsValid();
+        if ( $contentsValid !== true ) {
+            return json_encode([
+                'status' => 'error',
+                'data' => [
+                    "error" => $userImport->errorMessages,
+                    "sags"  => $userImport->badSags,
+                    "users" => $userImport->badUsers
+                ]
+            ]);
+        }
+
+        if ( filter_var($this->params['payload']['confirm'], FILTER_VALIDATE_BOOLEAN) ) {
+            return json_encode([
+                'status' => 'ok',
+                'data' => $userImport->import()
+            ]);
+        } else {
+            return json_encode([
+                'status' => 'ok',
+                'data' => $userImport->getUpdateTable()
+            ]);
+        }
     }
 }

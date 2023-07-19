@@ -1,6 +1,6 @@
+const module = __MODULE__;
+
 window.sags = JSON.parse('{{SAGS_JSON}}');
-
-
 
 function formatNow() {
     const d = new Date();
@@ -149,11 +149,40 @@ function importCsv() {
     $('#importUsersFile').click();
 }
 
+function handleImportError(errorData) {
+    let body = errorData.error.join('<br>') + "<div class='container'>";
+    if (errorData.users.length) {
+        body +=
+            "<div class='row justify-content-center m-2'>" +
+            "<table><thead><tr><th>Username</th></tr></thead><tbody>";
+        errorData.users.forEach((user) => {
+            body += `<tr><td>${user}</td></tr>`;
+        });
+        body += "</tbody></table></div>";
+    }
+    if (errorData.sags.length) {
+        body +=
+            "<div class='row justify-content-center m-2'>" +
+            "<table><thead><tr><th>SAG ID</th></tr></thead><tbody>";
+        errorData.sags.forEach((sag) => {
+            body += `<tr><td>${sag}</td></tr>`;
+        });
+        body += "</tbody></table></div>";
+    }
+    body += "</div>";
+    Swal.fire({
+        title: 'Error',
+        html: body,
+        icon: 'error'
+    });
+}
+
 function handleFiles() {
     if (this.files.length !== 1) {
         return;
     }
     const file = this.files[0];
+    this.value = null;
 
     if (file.type !== "text/csv") {
         return;
@@ -164,47 +193,20 @@ function handleFiles() {
 
     const reader = new FileReader();
     reader.onload = (e) => {
-        window.csv_file_contents = e.target.result;
-        $.post("{{IMPORT_CSV_USERS_URL}}", {
-            data: window.csv_file_contents
-        })
-            .done((response) => {
+        module.csv_file_contents = e.target.result;
+        module.ajax('importCsvUsers', { data: module.csv_file_contents })
+            .then((response) => {
                 Swal.close();
-                $(response).modal('show');
-            })
-            .fail((error) => {
-                Swal.close();
-                try {
-                    console.error(JSON.parse(error.responseText).error);
-                    const response = JSON.parse(error.responseText);
-                    let body = response.error.join('<br>') + "<div class='container'>";
-                    if (response.users.length) {
-                        body +=
-                            "<div class='row justify-content-center m-2'>" +
-                            "<table><thead><tr><th>Username</th></tr></thead><tbody>";
-                        response.users.forEach((user) => {
-                            body += `<tr><td>${user}</td></tr>`;
-                        });
-                        body += "</tbody></table></div>";
-                    }
-                    if (response.sags.length) {
-                        body +=
-                            "<div class='row justify-content-center m-2'>" +
-                            "<table><thead><tr><th>SAG ID</th></tr></thead><tbody>";
-                        response.sags.forEach((sag) => {
-                            body += `<tr><td>${sag}</td></tr>`;
-                        });
-                        body += "</tbody></table></div>";
-                    }
-                    body += "</div>";
-                    Swal.fire({
-                        title: 'Error',
-                        html: body,
-                        icon: 'error'
-                    });
-                } catch (error) {
-                    console.error(error);
+                const result = JSON.parse(response);
+                if (result.status != 'error') {
+                    $(result.data).modal('show');
+                } else {
+                    handleImportError(result.data);
                 }
+            })
+            .catch((error) => {
+                Swal.close();
+                console.error(error);
             });
     };
     reader.readAsText(file);
@@ -212,11 +214,11 @@ function handleFiles() {
 
 function confirmImport() {
     $('.modal').modal('hide');
-    if (!window.csv_file_contents || window.csv_file_contents === "") {
+    if (!module.csv_file_contents || module.csv_file_contents === "") {
         return;
     }
     $.post("{{IMPORT_CSV_USERS_URL}}", {
-        data: window.csv_file_contents,
+        data: module.csv_file_contents,
         confirm: true
     })
         .done((response) => {

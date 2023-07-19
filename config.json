@@ -138,6 +138,7 @@
         "getAlert",
         "getAlerts",
         "getProjectUsers",
+        "importCsvUsers",
         "replacePlaceholders",
         "sendAlerts"
     ],

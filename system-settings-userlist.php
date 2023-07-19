@@ -71,21 +71,21 @@ if ( !$module->framework->getUser()->isSuperUser() ) {
     }
     $userListHtml = file_get_contents($module->framework->getSafePath('html/system-settings-userlist.html'));
     $userListHtml = str_replace('{{SAG_ROWS}}', $sagRows, $userListHtml);
+    echo $userListHtml;
+    echo $module->framework->initializeJavascriptModuleObject();
 
     $basicSags = [];
     foreach ( $sags as $sag ) {
         $basicSags[$sag["sag_id"]] = $sag["sag_name"];
     }
     $basicSagsJson = json_encode($basicSags);
+    $js            = file_get_contents($module->framework->getSafePath('js/system-settings-userlist.js'));
+    $js            = str_replace('{{SAGS_JSON}}', $basicSagsJson, $js);
+    $js            = str_replace('{{ASSIGN_SAG_URL}}', $module->framework->getUrl('ajax/assignSag.php'), $js);
+    $js            = str_replace('{{USERS_URL}}', $module->framework->getUrl('ajax/users.php'), $js);
+    $js            = str_replace('{{DEFAULT_SAG_ID}}', $module->defaultSagId, $js);
+    $js            = str_replace('__MODULE__', $module->framework->getJavascriptModuleObjectName(), $js);
 
-    $js = file_get_contents($module->framework->getSafePath('js/system-settings-userlist.js'));
-    $js = str_replace('{{SAGS_JSON}}', $basicSagsJson, $js);
-    $js = str_replace('{{IMPORT_CSV_USERS_URL}}', $module->framework->getUrl('ajax/importCsvUsers.php'), $js);
-    $js = str_replace('{{ASSIGN_SAG_URL}}', $module->framework->getUrl('ajax/assignSag.php'), $js);
-    $js = str_replace('{{USERS_URL}}', $module->framework->getUrl('ajax/users.php'), $js);
-    $js = str_replace('{{DEFAULT_SAG_ID}}', $module->defaultSagId, $js);
-
-    echo $userListHtml;
     echo '<script type="text/javascript">' . $js . '</script>';
     ?>
 </div> <!-- End SAG_Container -->
