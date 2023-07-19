@@ -2,7 +2,24 @@ const module = __MODULE__;
 
 console.log(performance.now());
 console.time('dt');
-const config = JSON.parse('{{CONFIG}}');
+let config;
+try {
+    config = JSON.parse('{{CONFIG}}');
+} catch {
+    config = {
+        ajax: function (data, callback, settings) {
+            module.ajax('getProjectUsers')
+                .then(response => {
+                    callback(JSON.parse(response));
+                })
+                .catch(error => {
+                    console.error(error);
+                    callback({ data: [] });
+                });
+        }
+    }
+}
+
 function handleCheckboxes(el) {
     const dt = $('#discrepancy-table').DataTable();
     const checked = $(el).prop('checked');
@@ -443,10 +460,7 @@ async function replaceKeywordsPreview(text) {
         'sag_user_rights': ['Project Design and Setup', 'User Rights', 'Create Records']
     };
 
-    return $.post('{{REPLACE_SMART_VARIABLES_URL}}', {
-        text: text,
-        data: data
-    });
+    return module.ajax('replacePlaceholders', { text: text, data: data });
 }
 
 async function previewEmailUserRightsHolders($emailContainer) {
@@ -488,10 +502,7 @@ async function replaceKeywordsPreviewUserRightsHolders(text) {
         ]
     };
 
-    return $.post('{{REPLACE_SMART_VARIABLES_URL}}', {
-        text: text,
-        data: data
-    });
+    return module.ajax('replacePlaceholders', { text: text, data: data });
 }
 
 function handleDisplayUsersButton(allUsersVisible) {

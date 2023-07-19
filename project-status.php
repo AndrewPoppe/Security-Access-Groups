@@ -352,17 +352,12 @@ $usersResult   = $module->framework->query($userSql, [ $project_id ]);
 $usersCount    = intval($usersResult->fetch_assoc()["COUNT(username)"]);
 $userThreshold = 5000;
 if ( $usersCount <= $userThreshold ) {
-    $userData = json_encode($module->getUsersWithBadRights2($project_id));
+    $userData = $module->getUsersWithBadRights2($project_id);
     $config   = json_encode([
-        'data' => json_decode($userData)
+        'data' => $userData
     ]);
 } else {
-    $config = json_encode([
-        'ajax' => [
-            'url'  => $module->framework->getUrl("ajax/projectUsers.php"),
-            'type' => 'POST'
-        ],
-    ]);
+    $config = '';
 }
 echo $module->framework->initializeJavascriptModuleObject();
 $js = file_get_contents($module->framework->getSafePath('js/project-status.js'));
@@ -379,7 +374,6 @@ $js = str_replace('{{USER_EXPIRATION_EMAIL_BODY_TEMPLATE}}', $module->getSystemS
 $js = str_replace('{{USER_EXPIRATION_EMAIL_SUBJECT_TEMPLATE}}', $module->getSystemSetting('user-expiration-email-subject-template') ?? "", $js);
 $js = str_replace('{{USER_EXPIRATION_USER_RIGHTS_HOLDERS_EMAIL_BODY_TEMPLATE}}', $module->getSystemSetting('user-expiration-user-rights-holders-email-body-template') ?? "", $js);
 $js = str_replace('{{USER_EXPIRATION_USER_RIGHTS_HOLDERS_EMAIL_SUBJECT_TEMPLATE}}', $module->getSystemSetting('user-expiration-user-rights-holders-email-subject-template') ?? "", $js);
-$js = str_replace('{{REPLACE_SMART_VARIABLES_URL}}', $module->framework->getUrl('ajax/replaceSmartVariables.php'), $js);
 $js = str_replace('__MODULE__', $module->framework->getJavascriptModuleObjectName(), $js);
 echo '<script type="text/javascript">' . $js . '</script>';
 

@@ -137,6 +137,8 @@
         "expireUsers",
         "getAlert",
         "getAlerts",
+        "getProjectUsers",
+        "replacePlaceholders",
         "sendAlerts"
     ],
     "no-auth-pages": [],

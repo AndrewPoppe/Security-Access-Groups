@@ -10,7 +10,15 @@ class AjaxHandler
     private array $params;
     private string $action;
     private static array $generalActions = [];
-    private static array $adminActions = [ 'deleteAlert', 'expireUsers', 'getAlert', 'getAlerts', 'sendAlerts' ];
+    private static array $adminActions = [
+        'deleteAlert',
+        'expireUsers',
+        'getAlert',
+        'getAlerts',
+        'getProjectUsers',
+        'replacePlaceholders',
+        'sendAlerts'
+    ];
 
     public function __construct(SecurityAccessGroups $module, array $params)
     {
@@ -54,6 +62,10 @@ class AjaxHandler
             $result = $this->getAlert();
         } elseif ( $action === 'getAlerts' ) {
             $result = $this->getAlerts();
+        } elseif ( $action === 'getProjectUsers' ) {
+            $result = $this->getProjectUsers();
+        } elseif ( $action === 'replacePlaceholders' ) {
+            $result = $this->replacePlaceholders();
         } elseif ( $action === 'sendAlerts' ) {
             $result = $this->sendAlerts();
         }
@@ -112,6 +124,16 @@ class AjaxHandler
                 'data' => $alertsArray
             )
         );
+    }
+
+    private function replacePlaceholders()
+    {
+        $textReplacer = new TextReplacer(
+            $this->module,
+            $this->params['payload']['text'],
+            $this->params['payload']['data'] ?? []
+        );
+        return $textReplacer->replaceText();
     }
 
     private function sendAlerts()
@@ -242,7 +264,12 @@ class AjaxHandler
             http_response_code(500);
             return "Error setting Expiration Date";
         }
-        http_response_code(200);
-        return;
+    }
+
+    private function getProjectUsers()
+    {
+        $projectId        = $this->params['project_id'];
+        $discrepantRights = $this->module->getUsersWithBadRights2($projectId);
+        return json_encode([ 'data' => $discrepantRights ]);
     }
 }
