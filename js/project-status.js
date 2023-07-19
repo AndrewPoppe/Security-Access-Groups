@@ -22,16 +22,16 @@ function openEmailUsersModal() {
 }
 
 function populateDefaultEmailUserModal() {
-    const emailBodyTemplate = `{{USER_EMAIL_BODY_TEMPLATE_URL}}`;
+    const emailBodyTemplate = `{{USER_EMAIL_BODY_TEMPLATE}}`;
     tinymce.get('emailBody').setContent(emailBodyTemplate);
 
-    const emailSubjectTemplate = `{{USER_EMAIL_SUBJECT_TEMPLATE_URL}}`;
+    const emailSubjectTemplate = `{{USER_EMAIL_SUBJECT_TEMPLATE}}`;
     $('#emailSubject').val(emailSubjectTemplate);
 
-    const reminderBodyTemplate = `{{USER_REMINDER_EMAIL_BODY_TEMPLATE_URL}}`;
+    const reminderBodyTemplate = `{{USER_REMINDER_EMAIL_BODY_TEMPLATE}}`;
     tinymce.get('reminderBody').setContent(reminderBodyTemplate);
 
-    const reminderSubjectTemplate = `{{USER_REMINDER_EMAIL_SUBJECT_TEMPLATE_URL}}`;
+    const reminderSubjectTemplate = `{{USER_REMINDER_EMAIL_SUBJECT_TEMPLATE}}`;
     $('#reminderSubject').val(reminderSubjectTemplate);
 }
 
@@ -43,16 +43,16 @@ function openEmailUserRightsHoldersModal() {
 }
 
 function populateDefaultEmailUserRightsHoldersModal() {
-    const emailBodyTemplate = `{{USER_RIGHTS_HOLDERS_EMAIL_BODY_TEMPLATE_URL}}`;
+    const emailBodyTemplate = `{{USER_RIGHTS_HOLDERS_EMAIL_BODY_TEMPLATE}}`;
     tinymce.get('emailBody-UserRightsHolders').setContent(emailBodyTemplate);
 
-    const emailSubjectTemplate = `{{USER_RIGHTS_HOLDERS_EMAIL_SUBJECT_TEMPLATE_URL}}`;
+    const emailSubjectTemplate = `{{USER_RIGHTS_HOLDERS_EMAIL_SUBJECT_TEMPLATE}}`;
     $('#emailSubject-UserRightsHolders').val(emailSubjectTemplate);
 
-    const reminderBodyTemplate = `{{USER_RIGHTS_HOLDERS_REMINDER_EMAIL_BODY_TEMPLATE_URL}}`;
+    const reminderBodyTemplate = `{{USER_RIGHTS_HOLDERS_REMINDER_EMAIL_BODY_TEMPLATE}}`;
     tinymce.get('reminderBody-UserRightsHolders').setContent(reminderBodyTemplate);
 
-    const reminderSubjectTemplate = `{{USER_RIGHTS_HOLDERS_REMINDER_EMAIL_SUBJECT_TEMPLATE_URL}}`;
+    const reminderSubjectTemplate = `{{USER_RIGHTS_HOLDERS_REMINDER_EMAIL_SUBJECT_TEMPLATE}}`;
     $('#reminderSubject-UserRightsHolders').val(reminderSubjectTemplate);
 }
 
@@ -72,17 +72,17 @@ function openExpireUsersModal() {
 }
 
 function populateDefaultExpireUsersModal() {
-    const userEmailBodyTemplate = `{{USER_EXPIRATION_EMAIL_BODY_TEMPLATE_URL}}`;
+    const userEmailBodyTemplate = `{{USER_EXPIRATION_EMAIL_BODY_TEMPLATE}}`;
     tinymce.get('emailBody-userExpiration').setContent(userEmailBodyTemplate);
 
     const userEmailSubjectTemplate =
-        `{{USER_EXPIRATION_EMAIL_SUBJECT_TEMPLATE_URL}}`;
+        `{{USER_EXPIRATION_EMAIL_SUBJECT_TEMPLATE}}`;
     $('#emailSubject-userExpiration').val(userEmailSubjectTemplate);
 
-    const userRightsHolderEmailBodyTemplate = `{{USER_EXPIRATION_USER_RIGHTS_HOLDERS_EMAIL_BODY_TEMPLATE_URL}}`;
+    const userRightsHolderEmailBodyTemplate = `{{USER_EXPIRATION_USER_RIGHTS_HOLDERS_EMAIL_BODY_TEMPLATE}}`;
     tinymce.get('emailBody-userExpiration-UserRightsHolders').setContent(userRightsHolderEmailBodyTemplate);
 
-    const userRightsHolderEmailSubjectTemplate = `{{USER_EXPIRATION_USER_RIGHTS_HOLDERS_EMAIL_SUBJECT_TEMPLATE_URL}}`;
+    const userRightsHolderEmailSubjectTemplate = `{{USER_EXPIRATION_USER_RIGHTS_HOLDERS_EMAIL_SUBJECT_TEMPLATE}}`;
     $('#emailSubject-userExpiration-UserRightsHolders').val(userRightsHolderEmailSubjectTemplate);
 }
 
@@ -100,12 +100,12 @@ function getSelectedUsers() {
 
 async function expireUsers() {
     const users = getSelectedUsers();
-    await $.post("{{EXPIRE_USERS_URL}}", {
+    await module.ajax('expireUsers', {
         users: users.map(userRow => userRow["username"]),
-        delayDays: $('#delayDays-expiration').val(),
+        delayDays: $('#delayDays-expiration').val()
     })
-        .fail(function (error) {
-            console.error(error.responseText);
+        .catch(function (error) {
+            console.error(error);
             Swal.fire({
                 title: 'Error',
                 html: error.responseText,
@@ -133,10 +133,8 @@ function sendEmailAlerts() {
     emailFormContents.alertType = 'users';
     emailFormContents.users = getAlertUserInfo();
 
-    console.log('ok');
     module.ajax('sendAlerts', { config: emailFormContents })
         .then(response => {
-            console.log('success', response);
             const multiple = emailFormContents.users.length > 1;
             Toast.fire({
                 title: 'The alert' + (multiple ? "s were " : " was ") +
@@ -229,8 +227,8 @@ function sendEmailAlerts_UserRightsHolders() {
     emailFormContents.users = getAlertUserInfo();
     emailFormContents.recipients = getUserRightsHolderAlertRecipients('emailUserRightsHoldersForm');
 
-    $.post("{{SEND_ALERTS_URL}}", emailFormContents)
-        .done(response => {
+    module.ajax('sendAlerts', { config: emailFormContents })
+        .then(response => {
             const multiple = emailFormContents.recipients.length > 1;
             Toast.fire({
                 title: 'The alert' + (multiple ? "s were " : " was ") +
@@ -238,7 +236,8 @@ function sendEmailAlerts_UserRightsHolders() {
                 icon: 'success'
             });
         })
-        .fail(error => {
+        .catch(error => {
+            console.error(error);
             Toast.fire({
                 title: 'There was an error sending the alert.',
                 icon: 'error'
@@ -332,17 +331,18 @@ function expireUsersAndSendAlerts() {
                     window.location.reload();
                 });
         } else {
-            $.post("{{SEND_ALERTS_URL}}", formContents)
-                .done(response => {
+            module.ajax('sendAlerts', { config: formContents })
+                .then(response => {
                     Toast.fire({
-                        title: 'The user' + (users.length > 1 ? "s were " : " was ") +
-                            'successfully expired.',
+                        title: 'The alert' + (users.length > 1 ? "s were " : " was ") +
+                            'successfully sent.',
                         icon: 'success'
                     });
                 })
-                .fail(error => {
+                .catch(error => {
+                    console.error(error);
                     Toast.fire({
-                        title: 'There was an error.',
+                        title: 'There was an error sending the alert.',
                         icon: 'error'
                     });
                 });
@@ -530,7 +530,7 @@ function initTinyMCE() {
         toolbar2: 'bullist numlist | outdent indent | table tableprops tablecellprops | ' +
             'forecolor backcolor | searchreplace code removeformat | fullscreen',
         contextmenu: "copy paste | link inserttable | cell row column deletetable",
-        content_css: "{{SAG_CSS_URL}}",
+        content_css: module.getUrl('SecurityAccessGroups.css', false),
         relative_urls: false,
         convert_urls: false,
         convert_fonts_to_spans: true,

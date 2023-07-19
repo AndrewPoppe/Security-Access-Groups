@@ -26,7 +26,6 @@ if ( $_SERVER['REQUEST_METHOD'] === 'POST' ) {
 
 // We're asking for the add/edit SAG form contents
 if ( $_SERVER['REQUEST_METHOD'] === 'GET' ) {
-    //require_once $module->getSafePath('classes/SagEditForm.php');
     $newSag  = filter_input(INPUT_GET, 'newSag', FILTER_VALIDATE_BOOLEAN);
     $sagId   = filter_input(INPUT_GET, 'sag_id', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
     $sagName = filter_input(INPUT_GET, 'sag_name', FILTER_SANITIZE_FULL_SPECIAL_CHARS);

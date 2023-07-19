@@ -2,30 +2,32 @@
 
 namespace YaleREDCap\SecurityAccessGroups;
 
+use AjaxException;
+
 class AjaxHandler
 {
     private SecurityAccessGroups $module;
     private array $params;
+    private string $action;
     private static array $generalActions = [];
-    private static array $adminActions = [ 'deleteAlert', 'getAlert', 'getAlerts', '' ];
+    private static array $adminActions = [ 'deleteAlert', 'expireUsers', 'getAlert', 'getAlerts', 'sendAlerts' ];
 
     public function __construct(SecurityAccessGroups $module, array $params)
     {
         $this->module = $module;
         $this->params = $this->module->framework->escape($params);
+        $this->action = $this->module->framework->escape($this->params['action']);
     }
 
     public function handleAjax()
     {
-        if ( in_array($this->params['action'], self::$generalActions, true) ) {
+        if ( in_array($this->action, self::$generalActions, true) ) {
             return $this->handleGeneralAjax();
-        } elseif ( in_array($this->params['action'], self::$adminActions, true) ) {
-            $this->module->framework->log(1);
+        } elseif ( in_array($this->action, self::$adminActions, true) ) {
             return $this->handleAdminAjax();
         } else {
             http_response_code(400);
-            throw new \Exception("Invalid action: {$this->params['action']}");
-            return null;
+            throw new AjaxException("Invalid action: {$this->action}");
         }
 
     }
@@ -37,22 +39,22 @@ class AjaxHandler
 
     private function handleAdminAjax()
     {
-        $this->module->framework->log(2);
         if ( !$this->module->framework->getUser()->isSuperUser() ) {
             http_response_code(403);
             return [ 'data' => [] ];
         }
 
-        $action = $this->params['action'];
+        $action = $this->action;
         $result = null;
-        if ( $action === 'getAlert' ) {
+        if ( $action === 'deleteAlert' ) {
+            $result = $this->deleteAlert();
+        } elseif ( $action === 'expireUsers' ) {
+            $result = $this->expireUsers();
+        } elseif ( $action === 'getAlert' ) {
             $result = $this->getAlert();
         } elseif ( $action === 'getAlerts' ) {
             $result = $this->getAlerts();
-        } elseif ( $action === 'deleteAlert' ) {
-            $result = $this->deleteAlert();
         } elseif ( $action === 'sendAlerts' ) {
-            $this->module->framework->log(3);
             $result = $this->sendAlerts();
         }
         return $result;
@@ -61,7 +63,7 @@ class AjaxHandler
     private function logAjax()
     {
         return $this->module->framework->log("redcap_module_ajax", [
-            'action'            => $this->params['action'],
+            'action'            => $this->action,
             'payload'           => json_encode($this->params['payload']),
             'project_id'        => $this->params['project_id'],
             'record'            => $this->params['record'],
@@ -114,9 +116,6 @@ class AjaxHandler
 
     private function sendAlerts()
     {
-        $this->module->framework->log(4);
-
-        $this->logAjax();
         $data = filter_var_array($this->params['payload']['config'], [
             'alertType'                                         => FILTER_SANITIZE_FULL_SPECIAL_CHARS,
             'displayFromName'                                   => FILTER_SANITIZE_FULL_SPECIAL_CHARS,
@@ -180,5 +179,70 @@ class AjaxHandler
             $data['error'] = $error;
         }
         return json_encode($data);
+    }
+
+    // Users
+
+    private function expireUsers()
+    {
+        $users     = $this->module->framework->escape($this->params['payload']['users']);
+        $delayDays = intval($this->params['payload']['delayDays']);
+
+        $this->module->framework->log('Requested to expire users', [
+            "users"     => json_encode($users),
+            "delayDays" => $delayDays
+        ]);
+
+        $error            = false;
+        $badUsers         = [];
+        $project          = $this->module->framework->getProject();
+        $projectUsers     = $project->getUsers();
+        $projectUsernames = array_map(function ($user) {
+            return $user->getUsername();
+        }, $projectUsers);
+
+        // Check users exist in the project
+        foreach ( $users as $user ) {
+            if ( !in_array($user, $projectUsernames, true) ) {
+                $error      = true;
+                $badUsers[] = $user;
+            }
+        }
+
+        if ( $error ) {
+            http_response_code(400);
+            return json_encode($badUsers);
+        }
+
+        // Expire users
+        try {
+            $expiration = date('Y-m-d', strtotime(($delayDays - 1) . " days"));
+            foreach ( $users as $user ) {
+                $project->setRights($user, [ "expiration" => $expiration ]);
+                $this->module->framework->log('Set Expiration Date', [ "user" => $user, "expiration" => $expiration ]);
+                $dataValues = "user = $user\nexpiration date = $expiration";
+                \Logging::logEvent(
+                    '',
+                    "redcap_user_rights",
+                    "UPDATE",
+                    $user,
+                    $dataValues,
+                    'Edit user expiration',
+                    "",
+                    "",
+                    "",
+                    true,
+                    null,
+                    null,
+                    false
+                );
+            }
+        } catch ( \Throwable $e ) {
+            $this->module->framework->log('Error setting Expiration Date', [ "user" => $user, "expiration" => $expiration, "error" => $e->getMessage() ]);
+            http_response_code(500);
+            return "Error setting Expiration Date";
+        }
+        http_response_code(200);
+        return;
     }
 }

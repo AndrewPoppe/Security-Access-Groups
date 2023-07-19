@@ -134,6 +134,7 @@
     "enable-every-page-hooks-on-system-pages": true,
     "auth-ajax-actions": [
         "deleteAlert",
+        "expireUsers",
         "getAlert",
         "getAlerts",
         "sendAlerts"
