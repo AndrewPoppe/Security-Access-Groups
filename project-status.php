@@ -309,13 +309,14 @@ if ( !$module->framework->getUser()->isSuperUser() ) {
                     </div>
                 </div>
             </div>
-            <button type="button" class="btn btn-xs btn-primary action" onclick="openEmailUsersModal();" disabled><i
-                    class="fa-sharp fa-regular fa-envelope"></i> Email User(s)</button>
-            <button type="button" class="btn btn-xs btn-warning action" onclick="openEmailUserRightsHoldersModal();"
-                disabled><i class="fa-kit fa-sharp-regular-envelope-circle-exclamation"></i> Email User Rights
+            <button type="button" class="btn btn-xs btn-primary action" onclick="module.openEmailUsersModal();"
+                disabled><i class="fa-sharp fa-regular fa-envelope"></i> Email User(s)</button>
+            <button type="button" class="btn btn-xs btn-warning action"
+                onclick="module.openEmailUserRightsHoldersModal();" disabled><i
+                    class="fa-kit fa-sharp-regular-envelope-circle-exclamation"></i> Email User Rights
                 Holders</button>
-            <button type="button" class="btn btn-xs btn-danger action" onclick="openExpireUsersModal();" disabled><i
-                    class="fa-regular fa-user-xmark fa-fw"></i> Expire User(s)</button>
+            <button type="button" class="btn btn-xs btn-danger action" onclick="module.openExpireUsersModal();"
+                disabled><i class="fa-regular fa-user-xmark fa-fw"></i> Expire User(s)</button>
             <div class="btn-group" role="group">
                 <i class="fa-solid fa-circle-info fa-lg align-self-center text-info infoButton" style="cursor:pointer;"
                     onclick="$('#infoModal').modal('show');">
@@ -327,7 +328,7 @@ if ( !$module->framework->getUser()->isSuperUser() ) {
                 <thead class="text-center" style="background-color:#ececec">
                     <tr>
                         <th style="vertical-align: middle !important;"><input style="display:block; margin: 0 auto;"
-                                type="checkbox" onchange="handleCheckboxes(this);"></input>
+                                type="checkbox" onchange="module.handleCheckboxes(this);"></input>
                         </th>
                         <th>Username</th>
                         <th>Name</th>

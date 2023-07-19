@@ -107,7 +107,7 @@ module.showFutureAlerts = function () {
 
 // Custom user function
 module.searchUsers = function () {
-    users = $('#usersSelect').val() || [];
+    const users = $('#usersSelect').val() || [];
     const dt = $('#alertLogTable').DataTable();
     dt.columns(5).search(users.join('|'), true).draw();
 }
