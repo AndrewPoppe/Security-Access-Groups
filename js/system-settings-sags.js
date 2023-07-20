@@ -1,6 +1,6 @@
 const module = __MODULE__;
 
-function openSagEditor(sag_id = "", sag_name = "", newSag = false) {
+module.openSagEditor = function (sag_id = "", sag_name = "", newSag = false) {
     const deleteSagButtonCallback = function () {
         Swal.fire({
             title: 'Are you sure you want to delete this SAG?',
@@ -22,10 +22,7 @@ function openSagEditor(sag_id = "", sag_name = "", newSag = false) {
                             Toast.fire({
                                 title: 'The SAG was deleted',
                                 icon: 'success'
-                            })
-                                .then(function () {
-                                    window.location.reload();
-                                });
+                            }).then(() => window.location.reload());
                         } else {
                             Swal.fire({
                                 title: 'Error',
@@ -180,11 +177,11 @@ function openSagEditor(sag_id = "", sag_name = "", newSag = false) {
         });
 }
 
-function editSag(sag_id, sag_name) {
-    openSagEditor(sag_id, sag_name, false);
+module.editSag = function (sag_id, sag_name) {
+    module.openSagEditor(sag_id, sag_name, false);
 }
 
-function addNewSag() {
+module.addNewSag = function () {
     $('#addSagButton').blur();
     const newSagName = $('#newSagName').val().trim();
     if (newSagName == "") {
@@ -197,17 +194,17 @@ function addNewSag() {
             }
         });
     } else {
-        openSagEditor("", newSagName, true);
+        module.openSagEditor("", newSagName, true);
     }
 }
 
-function formatNow() {
+module.formatNow = function () {
     const d = new Date();
     return d.getFullYear() + '-' + (d.getMonth() + 1).toString().padStart(2, 0) +
         '-' + (d.getDate()).toString().padStart(2, 0);
 }
 
-function join(a, separator, boundary, escapeChar, reBoundary) {
+module.join = function (a, separator, boundary, escapeChar, reBoundary) {
     let s = '';
     for (let i = 0, ien = a.length; i < ien; i++) {
         if (i > 0) {
@@ -220,7 +217,7 @@ function join(a, separator, boundary, escapeChar, reBoundary) {
     return s;
 };
 
-function exportRawCsv(includeData = true) {
+module.exportRawCsv = function (includeData = true) {
     const newLine = /Windows/.exec(navigator.userAgent) ? '\r\n' : '\n';
     const escapeChar = '"';
     const boundary = '"';
@@ -228,7 +225,7 @@ function exportRawCsv(includeData = true) {
     const extension = '.csv';
     const reBoundary = new RegExp(boundary, 'g');
     const filename = (includeData ?
-        'SecurityAccessGroups_Raw_' + formatNow() :
+        'SecurityAccessGroups_Raw_' + module.formatNow() :
         'SecurityAccessGroups_ImportTemplate') + extension;
     let charset = document.characterSet;
     if (charset) {
@@ -236,7 +233,7 @@ function exportRawCsv(includeData = true) {
     }
 
     const rowSelector = includeData ? undefined : -1;
-    const data = $('#sagTable').DataTable().buttons.exportData({
+    const data = module.dt.buttons.exportData({
         format: {
             header: function (html, col, node) {
                 const key = $(node).data('key');
@@ -264,11 +261,11 @@ function exportRawCsv(includeData = true) {
         columns: 'export:name'
     });
 
-    const header = join(data.header, separator, boundary, escapeChar, reBoundary) + newLine;
-    const footer = data.footer ? newLine + join(data.footer, separator, boundary, escapeChar, reBoundary) : '';
+    const header = module.join(data.header, separator, boundary, escapeChar, reBoundary) + newLine;
+    const footer = data.footer ? newLine + module.join(data.footer, separator, boundary, escapeChar, reBoundary) : '';
     const body = [];
     for (let i = 0, ien = data.body.length; i < ien; i++) {
-        body.push(join(data.body[i], separator, boundary, escapeChar, reBoundary));
+        body.push(module.join(data.body[i], separator, boundary, escapeChar, reBoundary));
     }
 
     const result = {
@@ -283,20 +280,20 @@ function exportRawCsv(includeData = true) {
         true);
 }
 
-function exportCsv() {
+module.exportCsv = function () {
     const newLine = /Windows/.exec(navigator.userAgent) ? '\r\n' : '\n';
     const escapeChar = '"';
     const boundary = '"';
     const separator = ',';
     const extension = '.csv';
     const reBoundary = new RegExp(boundary, 'g');
-    const filename = 'SecurityAccessGroups_Labels_' + formatNow() + extension;
+    const filename = 'SecurityAccessGroups_Labels_' + module.formatNow() + extension;
     let charset = document.characterSet;
     if (charset) {
         charset = ';charset=' + charset;
     }
 
-    const data = $('#sagTable').DataTable().buttons.exportData({
+    const data = module.dt.buttons.exportData({
         format: {
             body: function (html, row, col, node) {
                 if (col === 0) {
@@ -325,11 +322,11 @@ function exportCsv() {
         columns: 'export:name'
     });
 
-    const header = join(data.header, separator, boundary, escapeChar, reBoundary) + newLine;
-    const footer = data.footer ? newLine + join(data.footer, separator, boundary, escapeChar, reBoundary) : '';
+    const header = module.join(data.header, separator, boundary, escapeChar, reBoundary) + newLine;
+    const footer = data.footer ? newLine + module.join(data.footer, separator, boundary, escapeChar, reBoundary) : '';
     const body = [];
     for (let i = 0, ien = data.body.length; i < ien; i++) {
-        body.push(join(data.body[i], separator, boundary, escapeChar, reBoundary));
+        body.push(module.join(data.body[i], separator, boundary, escapeChar, reBoundary));
     }
 
     const result = {
@@ -344,11 +341,11 @@ function exportCsv() {
         true);
 }
 
-function importCsv() {
+module.importCsv = function () {
     $('#importSagsFile').click();
 }
 
-function handleFiles() {
+module.handleFiles = function () {
     if (this.files.length !== 1) {
         return;
     }
@@ -384,7 +381,7 @@ function handleFiles() {
     reader.readAsText(file);
 }
 
-function confirmImport() {
+module.confirmImport = function () {
     $('.modal').modal('hide');
     if (!window.csv_file_contents || window.csv_file_contents === "") {
         return;
@@ -421,13 +418,13 @@ function confirmImport() {
         });
 }
 
-function hover() {
+module.hover = function () {
     const thisNode = $(this);
     const rowIdx = thisNode.attr('data-dt-row');
     $("tr[data-dt-row='" + rowIdx + "'] td").addClass("highlight"); // shade only the hovered row
 }
 
-function dehover() {
+module.dehover = function () {
     const thisNode = $(this);
     const rowIdx = thisNode.attr('data-dt-row');
     $("tr[data-dt-row='" + rowIdx + "'] td").removeClass("highlight"); // shade only the hovered row
@@ -448,12 +445,12 @@ $(document).ready(function () {
     });
 
     const importFileElement = document.getElementById("importSagsFile");
-    importFileElement.addEventListener("change", handleFiles, false);
+    importFileElement.addEventListener("change", module.handleFiles, false);
 
     const shieldcheck = '<i class="fa-solid fa-shield-check fa-xl" style="color: green;"></i>';
     const check = '<i class="fa-solid fa-check fa-xl" style="color: green;"></i>';
     const x = '<i class="fa-regular fa-xmark" style="color: #D00000;"></i>';
-    $('#sagTable').DataTable({
+    module.dt = $('#sagTable').DataTable({
         ajax: function (data, callback, settings) {
             module.ajax('getSags')
                 .then((response) => {
@@ -500,8 +497,8 @@ $(document).ready(function () {
 
             table.on('draw', function () {
                 $('.dataTable tbody tr').each((i, row) => {
-                    row.onmouseenter = hover;
-                    row.onmouseleave = dehover;
+                    row.onmouseenter = module.hover;
+                    row.onmouseleave = module.dehover;
                 });
             });
 
@@ -520,8 +517,8 @@ $(document).ready(function () {
             });
 
             $('.dataTable tbody tr').each((i, row) => {
-                row.onmouseenter = hover;
-                row.onmouseleave = dehover;
+                row.onmouseenter = module.hover;
+                row.onmouseleave = module.dehover;
             });
 
             setTimeout(() => {
@@ -544,7 +541,7 @@ $(document).ready(function () {
                     const aclass = "SagLink text-primary";
                     return `<div style="display: flex; align-items: center; white-space: nowrap;">` +
                         `<i class="${iclass}"></i>` +
-                        `<a class="${aclass}" onclick="editSag('${row.sag_id}')">${row.sag_name}</a>` +
+                        `<a class="${aclass}" onclick="module.editSag('${row.sag_id}')">${row.sag_name}</a>` +
                         `</div>`;
                 } else {
                     return row.sag_name;

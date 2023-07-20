@@ -223,7 +223,7 @@ class CsvSAGImport
                 </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal" data-bs-dismiss="modal">Cancel</button>
-                        <button type="button" class="btn btn-primary" onclick="confirmImport()" ' .
+                        <button type="button" class="btn btn-primary" onclick="module.confirmImport()" ' .
             ($nothingToDo ? 'title="There are no changes to make" disabled' : '') .
             '>Confirm</button>
                     </div>
