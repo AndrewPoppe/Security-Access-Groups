@@ -18,8 +18,11 @@ class AjaxHandler
         'expireUsers',
         'getAlert',
         'getAlerts',
+        'getProjectReport',
         'getProjectUsers',
         'getSags',
+        'getUserReport',
+        'getUserAndProjectReport',
         'getUsers',
         'importCsvSags',
         'importCsvUsers',
@@ -55,62 +58,14 @@ class AjaxHandler
     private function handleAdminAjax()
     {
         if ( !$this->module->framework->getUser()->isSuperUser() ) {
-            http_response_code(403);
-            return [ 'data' => [] ];
+            throw new AjaxException("User is not a super user", 403);
         }
 
-        $action = $this->action;
-        $result = null;
-        if ( $action === 'assignSag' ) {
-            $result = $this->assignSag();
-        } elseif ( $action === 'deleteAlert' ) {
-            $result = $this->deleteAlert();
-        } elseif ( $action === 'deleteSag' ) {
-            $result = $this->deleteSag();
-        } elseif ( $action === 'editSag' ) {
-            $result = $this->editSag();
-        } elseif ( $action === 'expireUsers' ) {
-            $result = $this->expireUsers();
-        } elseif ( $action === 'getAlert' ) {
-            $result = $this->getAlert();
-        } elseif ( $action === 'getAlerts' ) {
-            $result = $this->getAlerts();
-        } elseif ( $action === 'getProjectUsers' ) {
-            $result = $this->getProjectUsers();
-        } elseif ( $action === 'getSags' ) {
-            $result = $this->getSags();
-        } elseif ( $action === 'getUsers' ) {
-            $result = $this->getUsers();
-        } elseif ( $action === 'importCsvSags' ) {
-            $result = $this->importCsvSags();
-        } elseif ( $action === 'importCsvUsers' ) {
-            $result = $this->importCsvUsers();
-        } elseif ( $action === 'replacePlaceholders' ) {
-            $result = $this->replacePlaceholders();
-        } elseif ( $action === 'sendAlerts' ) {
-            $result = $this->sendAlerts();
+        // Redundant check, but it makes me feel better
+        if ( in_array($this->action, self::$adminActions, true) ) {
+            $action = $this->action;
+            return $this->$action();
         }
-        return $result;
-    }
-
-    private function logAjax()
-    {
-        return $this->module->framework->log("redcap_module_ajax", [
-            'action'            => $this->action,
-            'payload'           => json_encode($this->params['payload']),
-            'project_id'        => $this->params['project_id'],
-            'record'            => $this->params['record'],
-            'instrument'        => $this->params['instrument'],
-            'event_id'          => $this->params['event_id'],
-            'repeat_instance'   => $this->params['repeat_instance'],
-            'survey_hash'       => $this->params['survey_hash'],
-            'response_id'       => $this->params['response_id'],
-            'survey_queue_hash' => $this->params['survey_queue_hash'],
-            'page'              => $this->params['page'],
-            'page_full'         => $this->params['page_full'],
-            'user_id'           => $this->params['user_id'],
-            'group_id'          => $this->params['group_id']
-        ]);
     }
 
     // Alerts
@@ -222,6 +177,29 @@ class AjaxHandler
             $data['error'] = $error;
         }
         return json_encode($data);
+    }
+
+    // Reports
+
+    private function getProjectReport()
+    {
+        $includeExpired = filter_var($this->params['payload']['includeExpired'], FILTER_VALIDATE_BOOL) ?? false;
+        $results        = $this->module->getProjectsWithNoncompliantUsers($includeExpired);
+        return json_encode([ 'data' => $results ]);
+    }
+
+    private function getUserReport()
+    {
+        $includeExpired = filter_var($this->params['payload']['includeExpired'], FILTER_VALIDATE_BOOL) ?? false;
+        $users          = $this->module->getAllUsersWithNoncompliantRights($includeExpired);
+        return json_encode([ 'data' => $users ]);
+    }
+
+    private function getUserAndProjectReport()
+    {
+        $includeExpired = filter_var($this->params['payload']['includeExpired'], FILTER_VALIDATE_BOOL) ?? false;
+        $results        = $this->module->getAllUsersAndProjectsWithNoncompliantRights($includeExpired);
+        return json_encode([ 'data' => $results ]);
     }
 
     // SAGs

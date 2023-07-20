@@ -405,8 +405,8 @@ $(document).ready(function () {
                 } else {
                     let result =
                         `<select class="sagSelect" disabled="true" onchange="module.saveSag(this)">`;
-                    for (let sag_id in sags) {
-                        const sag_label = sags[sag_id];
+                    for (let sag_id in module.sags) {
+                        const sag_label = module.sags[sag_id];
                         const selected = sag_id == row.sag ?
                             "selected" : "";
                         result +=
