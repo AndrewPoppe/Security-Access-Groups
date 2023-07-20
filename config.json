@@ -133,11 +133,13 @@
     ],
     "enable-every-page-hooks-on-system-pages": true,
     "auth-ajax-actions": [
+        "assignSag",
         "deleteAlert",
         "expireUsers",
         "getAlert",
         "getAlerts",
         "getProjectUsers",
+        "getUsers",
         "importCsvUsers",
         "replacePlaceholders",
         "sendAlerts"

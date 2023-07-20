@@ -20,9 +20,8 @@ try {
 }
 
 module.handleCheckboxes = function (el) {
-    const dt = $('#discrepancy-table').DataTable();
     const checked = $(el).prop('checked');
-    dt.rows(function (idx, data, node) {
+    module.dt.rows(function (idx, data, node) {
         return data.bad.length > 0
     }, {
         search: 'applied'
@@ -609,7 +608,7 @@ $(document).ready(function () {
         console.timeLog('dt', 'ajax end')
     });
 
-    const dt = $('table.discrepancy-table').DataTable(Object.assign(module.config, {
+    module.dt = $('table.discrepancy-table').DataTable(Object.assign(module.config, {
         select: {
             style: 'multi',
             selector: 'td:first-child input[type="checkbox"]'
@@ -854,7 +853,7 @@ $(document).ready(function () {
         const allChecked = expiredChecked && nonExpiredChecked && discrepantChecked &&
             nonDiscrepantChecked;
         module.handleDisplayUsersButton(allChecked);
-        dt.columns(0).search(searchTerm, true).draw();
+        module.dt.columns(0).search(searchTerm, true).draw();
         module.handleActionButtons();
     });
 });

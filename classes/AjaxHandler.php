@@ -11,11 +11,13 @@ class AjaxHandler
     private string $action;
     private static array $generalActions = [];
     private static array $adminActions = [
+        'assignSag',
         'deleteAlert',
         'expireUsers',
         'getAlert',
         'getAlerts',
         'getProjectUsers',
+        'getUsers',
         'importCsvUsers',
         'replacePlaceholders',
         'sendAlerts'
@@ -55,7 +57,9 @@ class AjaxHandler
 
         $action = $this->action;
         $result = null;
-        if ( $action === 'deleteAlert' ) {
+        if ( $action === 'assignSag' ) {
+            $result = $this->assignSag();
+        } elseif ( $action === 'deleteAlert' ) {
             $result = $this->deleteAlert();
         } elseif ( $action === 'expireUsers' ) {
             $result = $this->expireUsers();
@@ -65,6 +69,8 @@ class AjaxHandler
             $result = $this->getAlerts();
         } elseif ( $action === 'getProjectUsers' ) {
             $result = $this->getProjectUsers();
+        } elseif ( $action === 'getUsers' ) {
+            $result = $this->getUsers();
         } elseif ( $action === 'importCsvUsers' ) {
             $result = $this->importCsvUsers();
         } elseif ( $action === 'replacePlaceholders' ) {
@@ -208,6 +214,34 @@ class AjaxHandler
 
     // Users
 
+    private function assignSag()
+    {
+        $username = filter_var($this->params['payload']['username'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $sag      = filter_var($this->params['payload']['sag'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+
+        if ( empty($this->module->framework->getUser($username)->getEmail()) ) {
+            return json_encode([
+                'status'  => 'error',
+                'message' => 'Username not found'
+            ]);
+        }
+
+        if ( !$this->module->sagExists($sag) ) {
+            return json_encode([
+                'status'  => 'error',
+                'message' => 'SAG not found'
+            ]);
+        }
+
+        $setting = $username . "-sag";
+        $this->module->framework->setSystemSetting($setting, $sag);
+        $this->module->framework->log('Assigned SAG', [ 'user' => $username, 'sag' => $sag ]);
+        return json_encode([
+            'status'  => 'ok',
+            'message' => 'SAG assigned'
+        ]);
+    }
+
     private function expireUsers()
     {
         $users     = $this->module->framework->escape($this->params['payload']['users']);
@@ -276,6 +310,12 @@ class AjaxHandler
         return json_encode([ 'data' => $discrepantRights ]);
     }
 
+    private function getUsers()
+    {
+        $users = $this->module->getAllUserInfo(true);
+        return json_encode([ 'data' => $users ]);
+    }
+
     private function importCsvUsers()
     {
         $userImport = new CsvUserImport($this->module, $this->params['payload']['data']);
@@ -285,7 +325,7 @@ class AjaxHandler
         if ( $contentsValid !== true ) {
             return json_encode([
                 'status' => 'error',
-                'data' => [
+                'data'   => [
                     "error" => $userImport->errorMessages,
                     "sags"  => $userImport->badSags,
                     "users" => $userImport->badUsers
@@ -296,12 +336,12 @@ class AjaxHandler
         if ( filter_var($this->params['payload']['confirm'], FILTER_VALIDATE_BOOLEAN) ) {
             return json_encode([
                 'status' => 'ok',
-                'data' => $userImport->import()
+                'data'   => $userImport->import()
             ]);
         } else {
             return json_encode([
                 'status' => 'ok',
-                'data' => $userImport->getUpdateTable()
+                'data'   => $userImport->getUpdateTable()
             ]);
         }
     }
