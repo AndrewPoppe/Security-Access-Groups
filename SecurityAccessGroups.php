@@ -2,10 +2,16 @@
 
 namespace YaleREDCap\SecurityAccessGroups;
 
-require_once 'classes/APIHandler.php';
+require_once 'classes/AjaxException.php';
+require_once 'classes/AjaxHandler.php';
+require_once 'classes/Alert.php';
 require_once 'classes/Alerts.php';
+require_once 'classes/APIHandler.php';
+require_once 'classes/CsvSAGImport.php';
+require_once 'classes/CsvUserImport.php';
 require_once 'classes/RightsChecker.php';
 require_once 'classes/SagEditForm.php';
+require_once 'classes/TextReplacer.php';
 use ExternalModules\AbstractExternalModule;
 use ExternalModules\Framework;
 
@@ -740,7 +746,7 @@ class SecurityAccessGroups extends AbstractExternalModule
 
     public function throttleSaveSag(string $roleId, string $roleName, string $permissions)
     {
-        if ( !$this->throttle("message = ?", 'role', 3, 1) ) {
+        if ( !$this->framework->throttle("message = ?", [ 'sag' ], 3, 1) ) {
             $this->saveSag($roleId, $roleName, $permissions);
         } else {
             $this->log('saveSag Throttled', [
@@ -1345,5 +1351,26 @@ class SecurityAccessGroups extends AbstractExternalModule
             }
         }
         return $allResults;
+    }
+
+    public function redcap_module_ajax($action, $payload, $project_id, $record, $instrument, $event_id, $repeat_instance, $survey_hash, $response_id, $survey_queue_hash, $page, $page_full, $user_id, $group_id)
+    {
+        $ajaxHandler = new AjaxHandler($this, [
+            'action'            => $action,
+            'payload'           => $payload,
+            'project_id'        => $project_id,
+            'record'            => $record,
+            'instrument'        => $instrument,
+            'event_id'          => $event_id,
+            'repeat_instance'   => $repeat_instance,
+            'survey_hash'       => $survey_hash,
+            'response_id'       => $response_id,
+            'survey_queue_hash' => $survey_queue_hash,
+            'page'              => $page,
+            'page_full'         => $page_full,
+            'user_id'           => $user_id,
+            'group_id'          => $group_id
+        ]);
+        return $ajaxHandler->handleAjax();
     }
 }

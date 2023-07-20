@@ -1,4 +1,6 @@
-function openSagEditor(url, sag_id = "", sag_name = "") {
+const module = __MODULE__;
+
+module.openSagEditor = function (sag_id = "", sag_name = "", newSag = false) {
     const deleteSagButtonCallback = function () {
         Swal.fire({
             title: 'Are you sure you want to delete this SAG?',
@@ -13,31 +15,29 @@ function openSagEditor(url, sag_id = "", sag_name = "") {
         }).then((result) => {
             if (result.isConfirmed) {
                 Swal.showLoading();
-                $.post("{{DELETE_SAG_URL}}", {
-                    sag_id: sag_id
-                })
-                    .done(function (response) {
-                        Toast.fire({
-                            title: 'The SAG was deleted',
-                            icon: 'success'
-                        })
-                            .then(function () {
-                                window.location.reload();
+                module.ajax('deleteSag', { sag_id: sag_id })
+                    .then((response) => {
+                        const result = JSON.parse(response);
+                        if (result.status != 'error') {
+                            Toast.fire({
+                                title: 'The SAG was deleted',
+                                icon: 'success'
+                            }).then(() => window.location.reload());
+                        } else {
+                            Swal.fire({
+                                title: 'Error',
+                                html: result.message,
+                                icon: 'error',
+                                customClass: {
+                                    confirmButton: 'btn btn-primary',
+                                },
+                                buttonsStyling: false
                             });
+                        }
                     })
-                    .fail(function (error) {
-                        console.error(error.responseText);
-                        Swal.fire({
-                            title: 'Error',
-                            html: error.responseText,
-                            icon: 'error',
-                            customClass: {
-                                confirmButton: 'btn btn-primary',
-                            },
-                            buttonsStyling: false
-                        });
-                    })
-                    .always(function () { });
+                    .catch((error) => {
+                        console.error(error);
+                    });
             }
         });
     };
@@ -60,20 +60,27 @@ function openSagEditor(url, sag_id = "", sag_name = "") {
                     const sag_name = result.value;
                     data.sag_name_edit = sag_name;
                     data.newSag = 1;
-                    $.post('{{EDIT_SAG_URL}}', data)
-                        .done(function (result) {
-                            Toast.fire({
-                                icon: 'success',
-                                title: 'The SAG was copied'
-                            })
-                                .then(function () {
+                    data.subaction = 'save';
+                    module.ajax('editSag', data)
+                        .then((response) => {
+                            const result = JSON.parse(response);
+                            if (result.status != 'error') {
+                                Toast.fire({
+                                    icon: "success",
+                                    title: `SAG Successfully Copied`
+                                }).then(function () {
                                     window.location.reload();
                                 });
+                            } else {
+                                Toast.fire({
+                                    icon: "error",
+                                    title: `Error Copying SAG`
+                                });
+                            }
                         })
-                        .fail(function (result) {
-                            console.error(result.responseText);
-                        })
-                        .always(function () { });
+                        .catch((error) => {
+                            console.error(error);
+                        });
                 }
             })
     };
@@ -83,17 +90,27 @@ function openSagEditor(url, sag_id = "", sag_name = "") {
         if (sag_name_edit != '') {
             const data = $("#SAG_Setting").serializeObject();
             data.sag_id = sag_id;
-            $.post(url, data)
-                .done(function (response) {
-                    Toast.fire({
-                        icon: "success",
-                        title: `SAG "${sag_name_edit}" Successfully Saved`
-                    }).then(function () {
-                        window.location.reload();
-                    })
+            data.newSag = newSag;
+            data.subaction = 'save';
+            module.ajax('editSag', data)
+                .then((response) => {
+                    const result = JSON.parse(response);
+                    if (result.status != 'error') {
+                        Toast.fire({
+                            icon: "success",
+                            title: `SAG "${sag_name_edit}" Successfully Saved`
+                        }).then(function () {
+                            window.location.reload();
+                        });
+                    } else {
+                        Toast.fire({
+                            icon: "error",
+                            title: `Error Saving SAG "${sag_name_edit}"`
+                        });
+                    }
                 })
-                .fail(function (error) {
-                    console.error(error.responseText);
+                .catch((error) => {
+                    console.error(error);
                 });
         }
     };
@@ -102,27 +119,35 @@ function openSagEditor(url, sag_id = "", sag_name = "") {
         const sag_name_edit = $('input[name="sag_name_edit"]').val();
         if (sag_name_edit != '') {
             const data = $("#SAG_Setting").serializeObject();
-            $.post(url, data)
-                .done(function (response) {
-                    Toast.fire({
-                        icon: "success",
-                        title: `SAG Successfully Created`
-                    }).then(function () {
-                        window.location.reload();
-                    })
+            data.newSag = newSag;
+            data.subaction = 'save';
+            module.ajax('editSag', data)
+                .then((response) => {
+                    const result = JSON.parse(response);
+                    if (result.status != 'error') {
+                        Toast.fire({
+                            icon: "success",
+                            title: `SAG Successfully Created`
+                        }).then(function () {
+                            window.location.reload();
+                        });
+                    } else {
+                        Toast.fire({
+                            icon: "error",
+                            title: `Error Creating SAG`
+                        });
+                    }
                 })
-                .fail(function (error) {
-                    console.error(error.responseText);
+                .catch((error) => {
+                    console.error(error);
                 });
         }
     };
 
-    $.get(url, {
-        sag_id: sag_id,
-        sag_name: sag_name
-    })
-        .done(function (response) {
-            $("#edit_sag_popup").html(response);
+    module.ajax('editSag', { subaction: 'get', sag_id: sag_id, sag_name: sag_name, newSag: newSag })
+        .then((response) => {
+            const form = JSON.parse(response).form;
+            $("#edit_sag_popup").html(form);
             $("#edit_sag_popup").on('shown.bs.modal', function (event) {
                 $('input[name="sag_name_edit"]').blur(function () {
                     $(this).val($(this).val().trim());
@@ -147,19 +172,17 @@ function openSagEditor(url, sag_id = "", sag_name = "") {
             })
             $("#edit_sag_popup").modal('show');
         })
-        .fail(function (error) {
-            console.error(error.responseText)
+        .catch(function (error) {
+            console.error(error);
         });
 }
 
-function editSag(sag_id, sag_name) {
-    const url = "{{EDIT_SAG_FALSE_URL}}";
-    openSagEditor(url, sag_id, sag_name);
+module.editSag = function (sag_id, sag_name) {
+    module.openSagEditor(sag_id, sag_name, false);
 }
 
-function addNewSag() {
+module.addNewSag = function () {
     $('#addSagButton').blur();
-    const url = "{{EDIT_SAG_TRUE_URL}}";
     const newSagName = $('#newSagName').val().trim();
     if (newSagName == "") {
         Toast.fire({
@@ -171,17 +194,17 @@ function addNewSag() {
             }
         });
     } else {
-        openSagEditor(url, "", newSagName);
+        module.openSagEditor("", newSagName, true);
     }
 }
 
-function formatNow() {
+module.formatNow = function () {
     const d = new Date();
     return d.getFullYear() + '-' + (d.getMonth() + 1).toString().padStart(2, 0) +
         '-' + (d.getDate()).toString().padStart(2, 0);
 }
 
-function join(a, separator, boundary, escapeChar, reBoundary) {
+module.join = function (a, separator, boundary, escapeChar, reBoundary) {
     let s = '';
     for (let i = 0, ien = a.length; i < ien; i++) {
         if (i > 0) {
@@ -194,7 +217,7 @@ function join(a, separator, boundary, escapeChar, reBoundary) {
     return s;
 };
 
-function exportRawCsv(includeData = true) {
+module.exportRawCsv = function (includeData = true) {
     const newLine = /Windows/.exec(navigator.userAgent) ? '\r\n' : '\n';
     const escapeChar = '"';
     const boundary = '"';
@@ -202,7 +225,7 @@ function exportRawCsv(includeData = true) {
     const extension = '.csv';
     const reBoundary = new RegExp(boundary, 'g');
     const filename = (includeData ?
-        'SecurityAccessGroups_Raw_' + formatNow() :
+        'SecurityAccessGroups_Raw_' + module.formatNow() :
         'SecurityAccessGroups_ImportTemplate') + extension;
     let charset = document.characterSet;
     if (charset) {
@@ -210,7 +233,7 @@ function exportRawCsv(includeData = true) {
     }
 
     const rowSelector = includeData ? undefined : -1;
-    const data = $('#sagTable').DataTable().buttons.exportData({
+    const data = module.dt.buttons.exportData({
         format: {
             header: function (html, col, node) {
                 const key = $(node).data('key');
@@ -238,11 +261,11 @@ function exportRawCsv(includeData = true) {
         columns: 'export:name'
     });
 
-    const header = join(data.header, separator, boundary, escapeChar, reBoundary) + newLine;
-    const footer = data.footer ? newLine + join(data.footer, separator, boundary, escapeChar, reBoundary) : '';
+    const header = module.join(data.header, separator, boundary, escapeChar, reBoundary) + newLine;
+    const footer = data.footer ? newLine + module.join(data.footer, separator, boundary, escapeChar, reBoundary) : '';
     const body = [];
     for (let i = 0, ien = data.body.length; i < ien; i++) {
-        body.push(join(data.body[i], separator, boundary, escapeChar, reBoundary));
+        body.push(module.join(data.body[i], separator, boundary, escapeChar, reBoundary));
     }
 
     const result = {
@@ -257,20 +280,20 @@ function exportRawCsv(includeData = true) {
         true);
 }
 
-function exportCsv() {
+module.exportCsv = function () {
     const newLine = /Windows/.exec(navigator.userAgent) ? '\r\n' : '\n';
     const escapeChar = '"';
     const boundary = '"';
     const separator = ',';
     const extension = '.csv';
     const reBoundary = new RegExp(boundary, 'g');
-    const filename = 'SecurityAccessGroups_Labels_' + formatNow() + extension;
+    const filename = 'SecurityAccessGroups_Labels_' + module.formatNow() + extension;
     let charset = document.characterSet;
     if (charset) {
         charset = ';charset=' + charset;
     }
 
-    const data = $('#sagTable').DataTable().buttons.exportData({
+    const data = module.dt.buttons.exportData({
         format: {
             body: function (html, row, col, node) {
                 if (col === 0) {
@@ -299,11 +322,11 @@ function exportCsv() {
         columns: 'export:name'
     });
 
-    const header = join(data.header, separator, boundary, escapeChar, reBoundary) + newLine;
-    const footer = data.footer ? newLine + join(data.footer, separator, boundary, escapeChar, reBoundary) : '';
+    const header = module.join(data.header, separator, boundary, escapeChar, reBoundary) + newLine;
+    const footer = data.footer ? newLine + module.join(data.footer, separator, boundary, escapeChar, reBoundary) : '';
     const body = [];
     for (let i = 0, ien = data.body.length; i < ien; i++) {
-        body.push(join(data.body[i], separator, boundary, escapeChar, reBoundary));
+        body.push(module.join(data.body[i], separator, boundary, escapeChar, reBoundary));
     }
 
     const result = {
@@ -318,15 +341,16 @@ function exportCsv() {
         true);
 }
 
-function importCsv() {
+module.importCsv = function () {
     $('#importSagsFile').click();
 }
 
-function handleFiles() {
+module.handleFiles = function () {
     if (this.files.length !== 1) {
         return;
     }
     const file = this.files[0];
+    this.value = null;
 
     if (file.type !== "text/csv") {
         return;
@@ -335,37 +359,38 @@ function handleFiles() {
     const reader = new FileReader();
     reader.onload = (e) => {
         window.csv_file_contents = e.target.result;
-        $.post("{{IMPORT_CSV_SAGS_URL}}", {
-            data: e.target.result
-        })
-            .done((response) => {
-                $(response).modal('show');
+
+        module.ajax('importCsvSags', { data: e.target.result })
+            .then((response) => {
+                const result = JSON.parse(response);
+                if (result.status != 'error') {
+                    $(result.table).modal('show');
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: "Error importing CSV",
+                        html: result.message,
+                        showConfirmButton: false
+                    });
+                }
             })
-            .fail((error) => {
-                const errorText = JSON.parse(error.responseText) ?? {};
-                const message = errorText.error;
-                Swal.fire({
-                    icon: 'error',
-                    title: "Error importing CSV",
-                    html: message,
-                    showConfirmButton: false
-                });
+            .catch((error) => {
+                console.error(error);
             });
     };
     reader.readAsText(file);
 }
 
-function confirmImport() {
+module.confirmImport = function () {
     $('.modal').modal('hide');
     if (!window.csv_file_contents || window.csv_file_contents === "") {
         return;
     }
-    $.post("{{IMPORT_CSV_SAGS_URL}}", {
-        data: window.csv_file_contents,
-        confirm: true
-    })
-        .done((response) => {
-            if (response) {
+
+    module.ajax('importCsvSags', { data: window.csv_file_contents, confirm: true })
+        .then((response) => {
+            const result = JSON.parse(response);
+            if (result.status != 'error') {
                 Swal.fire({
                     icon: 'success',
                     html: "Successfully imported Security Access Group definitions.",
@@ -384,22 +409,22 @@ function confirmImport() {
                 });
             }
         })
-        .fail((error) => {
+        .catch((error) => {
             Toast.fire({
                 icon: 'error',
                 html: "Error importing CSV"
             });
-            console.error(error.responseText);
-        })
+            console.error(error);
+        });
 }
 
-function hover() {
+module.hover = function () {
     const thisNode = $(this);
     const rowIdx = thisNode.attr('data-dt-row');
     $("tr[data-dt-row='" + rowIdx + "'] td").addClass("highlight"); // shade only the hovered row
 }
 
-function dehover() {
+module.dehover = function () {
     const thisNode = $(this);
     const rowIdx = thisNode.attr('data-dt-row');
     $("tr[data-dt-row='" + rowIdx + "'] td").removeClass("highlight"); // shade only the hovered row
@@ -420,15 +445,21 @@ $(document).ready(function () {
     });
 
     const importFileElement = document.getElementById("importSagsFile");
-    importFileElement.addEventListener("change", handleFiles, false);
+    importFileElement.addEventListener("change", module.handleFiles, false);
 
     const shieldcheck = '<i class="fa-solid fa-shield-check fa-xl" style="color: green;"></i>';
     const check = '<i class="fa-solid fa-check fa-xl" style="color: green;"></i>';
     const x = '<i class="fa-regular fa-xmark" style="color: #D00000;"></i>';
-    $('#sagTable').DataTable({
-        ajax: {
-            url: '{{SAGS_URL}}',
-            method: 'POST'
+    module.dt = $('#sagTable').DataTable({
+        ajax: function (data, callback, settings) {
+            module.ajax('getSags')
+                .then((response) => {
+                    callback(JSON.parse(response));
+                })
+                .catch((error) => {
+                    console.error(error);
+                    callback({ data: [] });
+                });
         },
         deferRender: true,
         searching: false,
@@ -466,8 +497,8 @@ $(document).ready(function () {
 
             table.on('draw', function () {
                 $('.dataTable tbody tr').each((i, row) => {
-                    row.onmouseenter = hover;
-                    row.onmouseleave = dehover;
+                    row.onmouseenter = module.hover;
+                    row.onmouseleave = module.dehover;
                 });
             });
 
@@ -486,8 +517,8 @@ $(document).ready(function () {
             });
 
             $('.dataTable tbody tr').each((i, row) => {
-                row.onmouseenter = hover;
-                row.onmouseleave = dehover;
+                row.onmouseenter = module.hover;
+                row.onmouseleave = module.dehover;
             });
 
             setTimeout(() => {
@@ -510,7 +541,7 @@ $(document).ready(function () {
                     const aclass = "SagLink text-primary";
                     return `<div style="display: flex; align-items: center; white-space: nowrap;">` +
                         `<i class="${iclass}"></i>` +
-                        `<a class="${aclass}" onclick="editSag('${row.sag_id}')">${row.sag_name}</a>` +
+                        `<a class="${aclass}" onclick="module.editSag('${row.sag_id}')">${row.sag_name}</a>` +
                         `</div>`;
                 } else {
                     return row.sag_name;

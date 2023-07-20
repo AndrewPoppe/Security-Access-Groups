@@ -37,7 +37,7 @@
     <div class="toolbar2 d-flex flex-row justify-content-between mb-2">
         <div class="d-flex">
             <button class="btn btn-danger btn-xs mr-1 editUsersButton" style="width: 8em;" data-editing="false"
-                onclick="toggleEditMode(event);">
+                onclick="module.toggleEditMode(event);">
                 <i class="fa-sharp fa-user-pen"></i>
                 <span>Edit Users</span>
             </button>
@@ -49,13 +49,13 @@
                     <span class="sr-only">Toggle Dropdown</span>
                 </button>
                 <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" onclick="handleCsvExport();"><i
+                    <li><a class="dropdown-item" onclick="module.handleCsvExport();"><i
                                 class="fa-sharp fa-regular fa-file-arrow-down fa-fw mr-1 text-success">
                             </i>Export User Assignments</a></li>
-                    <li><a class="dropdown-item" onclick="importCsv();"><i
+                    <li><a class="dropdown-item" onclick="module.importCsv();"><i
                                 class="fa-sharp fa-solid fa-file-arrow-up fa-fw mr-1 text-danger"></i>Import User
                             Assignments</a></li>
-                    <li><a class="dropdown-item" onclick="downloadTemplate();"><i
+                    <li><a class="dropdown-item" onclick="module.downloadTemplate();"><i
                                 class="fa-sharp fa-solid fa-download fa-fw mr-1 text-primary"></i>Download Import
                             Template</a></li>
                 </ul>

@@ -34,44 +34,46 @@ class SagEditForm
 
     public function getForm()
     {
-        $this->getFormStart();
-        $this->getSagNameField();
-        $this->getHighLevelPrivileges();
-        $this->getProjectSetupDesign();
-        $this->getUserRights();
-        $this->getDataAccessGroups();
-        $this->getOtherPrivileges();
-        $this->getMycapMobileApp();
-        $this->getSurveyDistTool();
-        $this->getAlerts();
-        $this->getCalendar();
-        $this->getReports();
-        $this->getStatsAndCharts();
-        $this->getDoubleDataEntry();
-        $this->getDataImportTool();
-        $this->getDataComparisonTool();
-        $this->getLogging();
-        $this->getFileRepository();
-        $this->getRandomization();
-        $this->getDataQuality();
-        $this->getDataQualityResolution();
-        $this->getAPI();
-        $this->getDDPorCDIS();
-        $this->getDTS();
-        $this->getMobileApp();
-        $this->getRecordRights();
-        $this->getLockRecords();
-        $this->getFormMiddle();
-        $this->getDataViewing();
-        $this->getDataExport();
-        $this->getFormEnd();
+        $formContents = '';
+        $formContents .= $this->getFormStart();
+        $formContents .= $this->getSagNameField();
+        $formContents .= $this->getHighLevelPrivileges();
+        $formContents .= $this->getProjectSetupDesign();
+        $formContents .= $this->getUserRights();
+        $formContents .= $this->getDataAccessGroups();
+        $formContents .= $this->getOtherPrivileges();
+        $formContents .= $this->getMycapMobileApp();
+        $formContents .= $this->getSurveyDistTool();
+        $formContents .= $this->getAlerts();
+        $formContents .= $this->getCalendar();
+        $formContents .= $this->getReports();
+        $formContents .= $this->getStatsAndCharts();
+        $formContents .= $this->getDoubleDataEntry();
+        $formContents .= $this->getDataImportTool();
+        $formContents .= $this->getDataComparisonTool();
+        $formContents .= $this->getLogging();
+        $formContents .= $this->getFileRepository();
+        $formContents .= $this->getRandomization();
+        $formContents .= $this->getDataQuality();
+        $formContents .= $this->getDataQualityResolution();
+        $formContents .= $this->getAPI();
+        $formContents .= $this->getDDPorCDIS();
+        $formContents .= $this->getDTS();
+        $formContents .= $this->getMobileApp();
+        $formContents .= $this->getRecordRights();
+        $formContents .= $this->getLockRecords();
+        $formContents .= $this->getFormMiddle();
+        $formContents .= $this->getDataViewing();
+        $formContents .= $this->getDataExport();
+        $formContents .= $this->getFormEnd();
+        return $formContents;
     }
 
     private function getFormStart()
     {
         $alertClass = $this->newSag ? "alert-success" : "alert-primary";
         $label      = $this->lang['rights_431'];
-        echo <<<"EOT"
+        return <<<"EOT"
         <div class="modal-xl modal-dialog modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header" style="background-color: #e9e9e9; padding-top: 0.5rem; padding-bottom: 0.5rem;">
@@ -104,7 +106,7 @@ class SagEditForm
         $label   = 'SAG name:';
         $sagName = $this->module->escape($this->sagName);
         $hidden  = $this->newSag ? "hidden" : '';
-        echo <<<"EOT"
+        return <<<"EOT"
         <!-- EDIT SAG NAME -->
         <div class="SUR-form-row row $hidden">
             <div class="col" colspan='2'>
@@ -119,7 +121,7 @@ class SagEditForm
     private function getHighLevelPrivileges()
     {
         $label = $this->lang['rights_299'];
-        echo <<<"EOT"
+        return <<<"EOT"
         <!-- HIGHEST LEVEL PRIVILEGES -->
         <hr>
         <div class="SUR-form-row row">
@@ -135,7 +137,7 @@ class SagEditForm
         if ( isset($this->allRights['design']) ) {
             $label   = $this->lang['rights_135'];
             $checked = $this->rights['design'] == 1 ? 'checked' : '';
-            echo <<<"EOT"
+            return <<<"EOT"
             <!-- Project Setup/Design -->
             <div class="SUR-form-row row">
                 <div class="col">
@@ -154,7 +156,7 @@ class SagEditForm
         if ( isset($this->allRights['user_rights']) ) {
             $label   = $this->lang['app_05'];
             $checked = $this->rights['user_rights'] == 1 ? 'checked' : '';
-            echo <<<"EOT"
+            return <<<"EOT"
             <!-- User Rights -->
             <div class="SUR-form-row row">
                 <div class="col">
@@ -173,7 +175,7 @@ class SagEditForm
         if ( isset($this->allRights['data_access_groups']) ) {
             $label   = $this->lang['global_22'];
             $checked = $this->rights['data_access_groups'] == 1 ? 'checked' : '';
-            echo <<<"EOT"
+            return <<<"EOT"
             <!--Data Access Groups -->
             <div class="SUR-form-row row">
                 <div class="col">
@@ -189,7 +191,7 @@ class SagEditForm
     private function getOtherPrivileges()
     {
         $label = $this->lang['rights_300'];
-        echo <<<"EOT"
+        return <<<"EOT"
         <!-- OTHER PRIVILEGES -->
         <hr>
         <div class="SUR-form-row row">
@@ -205,7 +207,7 @@ class SagEditForm
             $label   = $this->lang['rights_437'];
             $checked = $this->rights['mycap_participants'] == 1 ? 'checked' : '';
             $imgPath = APP_PATH_IMAGES . "mycap_logo_black.png";
-            echo <<<"EOT"
+            return <<<"EOT"
             <!-- MyCap Mobile App -->
             <div class="SUR-form-row row">
                 <div class="col">
@@ -224,7 +226,7 @@ class SagEditForm
         if ( isset($this->allRights['participants']) ) {
             $label   = $this->lang['app_24'];
             $checked = $this->rights['participants'] == 1 ? 'checked' : '';
-            echo <<<"EOT"
+            return <<<"EOT"
             <!-- Survey Distribution Tool -->
             <div class="SUR-form-row row">
                 <div class="col">
@@ -245,7 +247,7 @@ class SagEditForm
         if ( isset($this->allRights['alerts']) ) {
             $label   = $this->lang['global_154'];
             $checked = $this->rights['alerts'] == 1 ? 'checked' : '';
-            echo <<<"EOT"
+            return <<<"EOT"
             <!-- Alerts -->
             <div class="SUR-form-row row">
                 <div class="col">
@@ -265,7 +267,7 @@ class SagEditForm
             $label1  = $this->lang['app_08'];
             $label2  = $this->lang['rights_357'];
             $checked = $this->rights['calendar'] == 1 ? 'checked' : '';
-            echo <<<"EOT"
+            return <<<"EOT"
             <!-- Calendar -->
             <div class="SUR-form-row row">
                 <div class="col">
@@ -285,7 +287,7 @@ class SagEditForm
             $label1  = $this->lang['rights_356'];
             $label2  = $this->lang['report_builder_130'];
             $checked = $this->rights['reports'] == 1 ? 'checked' : '';
-            echo <<<"EOT"
+            return <<<"EOT"
             <!-- Reports -->
             <div class="SUR-form-row row">
                 <div class="col">
@@ -304,7 +306,7 @@ class SagEditForm
         if ( isset($this->allRights['graphical']) ) {
             $label   = $this->lang['report_builder_78'];
             $checked = $this->rights['graphical'] == 1 ? 'checked' : '';
-            echo <<<"EOT"
+            return <<<"EOT"
             <!-- Graphical Data View & Stats -->
             <div class="SUR-form-row row">
                 <div class="col">
@@ -328,7 +330,7 @@ class SagEditForm
             $checked1 = $this->rights['double_data'] == 0 ? 'checked' : '';
             $checked2 = $this->rights['double_data'] == 1 ? 'checked' : '';
             $checked3 = $this->rights['double_data'] == 2 ? 'checked' : '';
-            echo <<<"EOT"
+            return <<<"EOT"
             <div class="SUR-form-row row">
                 <div class="col mt-1">
                     <i class="fa-solid fa-fw fa-users"></i>&nbsp;&nbsp;$label1
@@ -359,7 +361,7 @@ class SagEditForm
         if ( isset($this->allRights['data_import_tool']) ) {
             $label   = $this->lang['app_01'];
             $checked = $this->rights['data_import_tool'] == 1 ? 'checked' : '';
-            echo <<<"EOT"
+            return <<<"EOT"
             <div class="SUR-form-row row">
                 <div class="col">
                     <i class="fa-solid fa-fw fa-file-import"></i>&nbsp;&nbsp;$label
@@ -376,7 +378,7 @@ class SagEditForm
         if ( isset($this->allRights['data_comparison_tool']) ) {
             $label   = $this->lang['app_02'];
             $checked = $this->rights['data_comparison_tool'] == 1 ? 'checked' : '';
-            echo <<<"EOT"
+            return <<<"EOT"
             <div class="SUR-form-row row">
                 <div class="col">
                     <i class="fa-solid fa-fw fa-not-equal"></i>&nbsp;&nbsp;$label
@@ -393,7 +395,7 @@ class SagEditForm
         if ( isset($this->allRights['data_logging']) ) {
             $label   = $this->lang['app_07'];
             $checked = $this->rights['data_logging'] == 1 ? 'checked' : '';
-            echo <<<"EOT"
+            return <<<"EOT"
             <div class="SUR-form-row row">
                 <div class="col">
                     <i class="fa-solid fa-fw fa-receipt"></i>&nbsp;&nbsp;$label
@@ -410,7 +412,7 @@ class SagEditForm
         if ( isset($this->allRights['file_repository']) ) {
             $label   = $this->lang['app_04'];
             $checked = $this->rights['file_repository'] == 1 ? 'checked' : '';
-            echo <<<"EOT"
+            return <<<"EOT"
             <div class="SUR-form-row row">
                 <div class="col">
                     <i class="fa-solid fa-fw fa-folder-open"></i>&nbsp;&nbsp;$label
@@ -432,7 +434,7 @@ class SagEditForm
             $checked1 = $this->rights['random_setup'] == 1 ? 'checked' : '';
             $checked2 = $this->rights['random_dashboard'] == 1 ? 'checked' : '';
             $checked3 = $this->rights['random_perform'] == 1 ? 'checked' : '';
-            echo <<<"EOT"
+            return <<<"EOT"
             <div class="SUR-form-row row">
                 <div class="col mt-1">
                     <i class="fa-solid fa-fw fa-random"></i>&nbsp;&nbsp;$label1
@@ -469,7 +471,7 @@ class SagEditForm
             $label3   = $this->lang['dataqueries_41'];
             $checked1 = $this->rights['data_quality_design'] == 1 ? 'checked' : '';
             $checked2 = $this->rights['data_quality_execute'] == 1 ? 'checked' : '';
-            echo <<<"EOT"
+            return <<<"EOT"
             <div class="SUR-form-row row">
                 <div class="col mt-1">
                     <i
@@ -501,7 +503,7 @@ class SagEditForm
             $checked2 = $this->rights['data_quality_resolution_open'] == 1 ? 'checked' : '';
             $checked3 = $this->rights['data_quality_resolution_respond'] == 1 ? 'checked' : '';
             $checked4 = $this->rights['data_quality_resolution_close'] == 1 ? 'checked' : '';
-            echo <<<"EOT"
+            return <<<"EOT"
             <div class="SUR-form-row row">
                 <div class="col mt-1">
                     <i
@@ -554,7 +556,7 @@ class SagEditForm
             $label3   = $this->lang['rights_314'];
             $checked1 = $this->rights['api_export'] == 1 ? 'checked' : '';
             $checked2 = $this->rights['api_import'] == 1 ? 'checked' : '';
-            echo <<<"EOT"
+            return <<<"EOT"
             <div class="SUR-form-row row">
                 <div class="col mt-1">
                     <i
@@ -581,7 +583,7 @@ class SagEditForm
             $label2   = $this->lang['ws_20'];
             $checked1 = $this->rights['realtime_webservice_mapping'] == 1 ? 'checked' : '';
             $checked2 = $this->rights['realtime_webservice_adjudicate'] == 1 ? 'checked' : '';
-            echo <<<"EOT"
+            return <<<"EOT"
             <div class="SUR-form-row row">
                 <div class="col mt-1">
                     <div>
@@ -611,7 +613,7 @@ class SagEditForm
         } else {
             $val1 = $this->rights['realtime_webservice_mapping'];
             $val2 = $this->rights['realtime_webservice_adjudicate'];
-            echo <<<"EOT"
+            return <<<"EOT"
             <!-- Hide input fields to maintain values if setting is disabled at project level -->
             <input type="hidden" name="realtime_webservice_mapping" value="$val1">
             <input type="hidden" name="realtime_webservice_adjudicate" value="$val2">
@@ -624,7 +626,7 @@ class SagEditForm
         if ( isset($this->allRights['dts']) ) {
             $label   = $this->lang['rights_132'];
             $checked = $this->rights['dts'] == 1 ? 'checked' : '';
-            echo <<<"EOT"
+            return <<<"EOT"
         <div class="SUR-form-row row">
         <div class="col" valign="top">
             <div>
@@ -650,7 +652,7 @@ class SagEditForm
             $label4   = $this->lang['rights_306'];
             $checked1 = $this->rights['mobile_app'] == 1 ? 'checked' : '';
             $checked2 = $this->rights['mobile_app_download_data'] == 1 ? 'checked' : '';
-            echo <<<"EOT"
+            return <<<"EOT"
             <hr>
             <div class="SUR-form-row row">
                 <div class="col section-header" colspan='2'>$label1</div>
@@ -684,7 +686,7 @@ class SagEditForm
     private function getRecordRights()
     {
         $label1 = $this->lang['rights_119'];
-        echo <<<"EOT"
+        $result = <<<"EOT"
         <hr>
         <div class="SUR-form-row row">
             <div class="col section-header" colspan='2'>$label1</div>
@@ -693,7 +695,7 @@ class SagEditForm
         if ( isset($this->allRights['record_create']) ) {
             $label   = $this->lang['rights_99'];
             $checked = $this->rights['record_create'] == 1 ? 'checked' : '';
-            echo <<<"EOT"
+            $result .= <<<"EOT"
             <div class="SUR-form-row row">
                 <div class="col">
                     <i class="fa-solid fa-fw fa-plus-square"></i>&nbsp;&nbsp;$label
@@ -707,7 +709,7 @@ class SagEditForm
         if ( isset($this->allRights['record_rename']) ) {
             $label   = $this->lang['rights_100'];
             $checked = $this->rights['record_rename'] == 1 ? 'checked' : '';
-            echo <<<"EOT"
+            $result .= <<<"EOT"
             <div class="SUR-form-row row">
                 <div class="col">
                     <i class="fa-solid fa-fw fa-exchange-alt"></i>&nbsp;&nbsp;$label
@@ -721,7 +723,7 @@ class SagEditForm
         if ( isset($this->allRights['record_delete']) ) {
             $label   = $this->lang['rights_101'];
             $checked = $this->rights['record_delete'] == 1 ? 'checked' : '';
-            echo <<<"EOT"
+            $result .= <<<"EOT"
             <div class="SUR-form-row row">
                 <div class="col">
                     <i class="fa-solid fa-fw fa-minus-square"></i>&nbsp;&nbsp;$label
@@ -732,12 +734,13 @@ class SagEditForm
             </div>
             EOT;
         }
+        return $result;
     }
 
     private function getLockRecords()
     {
-        $label = $this->lang['rights_130'];
-        echo <<<"EOT"
+        $label  = $this->lang['rights_130'];
+        $result = <<<"EOT"
         <hr>
         <div class="SUR-form-row row">
             <div class="col section-header" colspan='2'>$label</div>
@@ -746,7 +749,7 @@ class SagEditForm
         if ( isset($this->allRights['lock_record_customize']) ) {
             $label   = $this->lang['app_11'];
             $checked = $this->rights['lock_record_customize'] == 1 ? 'checked' : '';
-            echo <<<"EOT"
+            $result .= <<<"EOT"
             <div class="SUR-form-row row">
                 <div class="col">
                     <div>
@@ -769,7 +772,7 @@ class SagEditForm
             $checked1 = $this->rights['lock_record'] == 0 ? 'checked' : '';
             $checked2 = $this->rights['lock_record'] == 1 ? 'checked' : '';
             $checked3 = $this->rights['lock_record'] == 2 ? 'checked' : '';
-            echo <<<"EOT"
+            $result .= <<<"EOT"
             <div class="SUR-form-row row">
                 <div class="col mt-1">
                     <div>
@@ -803,7 +806,7 @@ class SagEditForm
         if ( isset($this->allRights['lock_record_multiform']) ) {
             $label   = $this->lang['rights_370'];
             $checked = $this->rights['lock_record_multiform'] == 1 ? 'checked' : '';
-            echo <<<"EOT"
+            $result .= <<<"EOT"
             <div class="SUR-form-row row">
                 <div class="col">
                     <div>
@@ -818,12 +821,13 @@ class SagEditForm
             </div>
             EOT;
         }
+        return $result;
     }
     private function getFormMiddle()
     {
         $label1 = $this->lang['data_export_tool_291'];
         $label2 = $this->lang['rights_429'];
-        echo <<<"EOT"
+        return <<<"EOT"
                     </table>
                 </div>
             </div>
@@ -854,7 +858,7 @@ class SagEditForm
         $checked2 = $this->rights['dataViewing'] == 1 ? 'checked' : '';
         $checked3 = $this->rights['dataViewing'] == 2 ? 'checked' : '';
         $checked4 = $this->rights['dataViewing'] == 3 ? 'checked' : '';
-        echo <<<"EOT"
+        return <<<"EOT"
         <div class="col">
             <div class='fs13 pb-2 font-weight-bold'>$label1</div>
             <div class="form-check">
@@ -895,7 +899,7 @@ class SagEditForm
         $checked2 = $this->rights['dataExport'] == 1 ? 'checked' : '';
         $checked3 = $this->rights['dataExport'] == 2 ? 'checked' : '';
         $checked4 = $this->rights['dataExport'] == 3 ? 'checked' : '';
-        echo <<<"EOT"
+        return <<<"EOT"
         <div class="col" style='color:#B00000;'>
             <div class='fs13 pb-2 font-weight-bold'>$label1</div>
             <div class="form-check">
@@ -929,7 +933,7 @@ class SagEditForm
     {
         $buttonClass = $this->newSag ? 'btn-success' : 'btn-primary';
         $label       = $this->newSag ? 'Save New SAG' : 'Save Changes';
-        echo <<<"EOT"
+        $result      = <<<"EOT"
                                 </div>
                             </div>
                         </div>
@@ -945,15 +949,16 @@ class SagEditForm
             </button>
         EOT;
         if ( !$this->newSag ) {
-            echo <<<"EOT"
+            $result .= <<<"EOT"
             <button id="SAG_Copy" type="button" class="btn btn-info btn-sm">Copy SAG</button>
             <button id="SAG_Delete" type="button" class="btn btn-danger btn-sm">Delete SAG</button>
             EOT;
         }
-        echo <<<"EOT"
+        $result .= <<<"EOT"
                 </div>
             </div>
         </div>
         EOT;
+        return $result;
     }
 }

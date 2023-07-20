@@ -1,10 +1,27 @@
+const module = __MODULE__;
+
 console.log(performance.now());
 console.time('dt');
-const config = JSON.parse('{{CONFIG}}');
-function handleCheckboxes(el) {
-    const dt = $('#discrepancy-table').DataTable();
+try {
+    module.config = JSON.parse('{{CONFIG}}');
+} catch {
+    module.config = {
+        ajax: function (data, callback, settings) {
+            module.ajax('getProjectUsers')
+                .then(response => {
+                    callback(JSON.parse(response));
+                })
+                .catch(error => {
+                    console.error(error);
+                    callback({ data: [] });
+                });
+        }
+    }
+}
+
+module.handleCheckboxes = function (el) {
     const checked = $(el).prop('checked');
-    dt.rows(function (idx, data, node) {
+    module.dt.rows(function (idx, data, node) {
         return data.bad.length > 0
     }, {
         search: 'applied'
@@ -12,79 +29,79 @@ function handleCheckboxes(el) {
     $('.user-selector input').prop('checked', checked).trigger('change');
 }
 
-function openEmailUsersModal() {
+module.openEmailUsersModal = function () {
     document.querySelector('#emailUsersModal form').reset();
     $('.collapse').collapse('hide');
-    populateDefaultEmailUserModal();
+    module.populateDefaultEmailUserModal();
     $('#emailUsersModal').modal('show');
 }
 
-function populateDefaultEmailUserModal() {
-    const emailBodyTemplate = `{{USER_EMAIL_BODY_TEMPLATE_URL}}`;
+module.populateDefaultEmailUserModal = function () {
+    const emailBodyTemplate = `{{USER_EMAIL_BODY_TEMPLATE}}`;
     tinymce.get('emailBody').setContent(emailBodyTemplate);
 
-    const emailSubjectTemplate = `{{USER_EMAIL_SUBJECT_TEMPLATE_URL}}`;
+    const emailSubjectTemplate = `{{USER_EMAIL_SUBJECT_TEMPLATE}}`;
     $('#emailSubject').val(emailSubjectTemplate);
 
-    const reminderBodyTemplate = `{{USER_REMINDER_EMAIL_BODY_TEMPLATE_URL}}`;
+    const reminderBodyTemplate = `{{USER_REMINDER_EMAIL_BODY_TEMPLATE}}`;
     tinymce.get('reminderBody').setContent(reminderBodyTemplate);
 
-    const reminderSubjectTemplate = `{{USER_REMINDER_EMAIL_SUBJECT_TEMPLATE_URL}}`;
+    const reminderSubjectTemplate = `{{USER_REMINDER_EMAIL_SUBJECT_TEMPLATE}}`;
     $('#reminderSubject').val(reminderSubjectTemplate);
 }
 
-function openEmailUserRightsHoldersModal() {
+module.openEmailUserRightsHoldersModal = function () {
     document.querySelector('#emailUserRightsHoldersModal form').reset();
     $('.collapse').collapse('hide');
-    populateDefaultEmailUserRightsHoldersModal();
+    module.populateDefaultEmailUserRightsHoldersModal();
     $('#emailUserRightsHoldersModal').modal('show');
 }
 
-function populateDefaultEmailUserRightsHoldersModal() {
-    const emailBodyTemplate = `{{USER_RIGHTS_HOLDERS_EMAIL_BODY_TEMPLATE_URL}}`;
+module.populateDefaultEmailUserRightsHoldersModal = function () {
+    const emailBodyTemplate = `{{USER_RIGHTS_HOLDERS_EMAIL_BODY_TEMPLATE}}`;
     tinymce.get('emailBody-UserRightsHolders').setContent(emailBodyTemplate);
 
-    const emailSubjectTemplate = `{{USER_RIGHTS_HOLDERS_EMAIL_SUBJECT_TEMPLATE_URL}}`;
+    const emailSubjectTemplate = `{{USER_RIGHTS_HOLDERS_EMAIL_SUBJECT_TEMPLATE}}`;
     $('#emailSubject-UserRightsHolders').val(emailSubjectTemplate);
 
-    const reminderBodyTemplate = `{{USER_RIGHTS_HOLDERS_REMINDER_EMAIL_BODY_TEMPLATE_URL}}`;
+    const reminderBodyTemplate = `{{USER_RIGHTS_HOLDERS_REMINDER_EMAIL_BODY_TEMPLATE}}`;
     tinymce.get('reminderBody-UserRightsHolders').setContent(reminderBodyTemplate);
 
-    const reminderSubjectTemplate = `{{USER_RIGHTS_HOLDERS_REMINDER_EMAIL_SUBJECT_TEMPLATE_URL}}`;
+    const reminderSubjectTemplate = `{{USER_RIGHTS_HOLDERS_REMINDER_EMAIL_SUBJECT_TEMPLATE}}`;
     $('#reminderSubject-UserRightsHolders').val(reminderSubjectTemplate);
 }
 
-function openExpireUsersModal() {
+module.openExpireUsersModal = function () {
     document.querySelector('#userExpirationModal form').reset();
     $('#userNotificationInfo').collapse('hide');
     userExpirationUserRightsHoldersToggle(false);
-    const usersToExpire = getSelectedUsers();
+    const usersToExpire = module.getSelectedUsers();
     let tableRows = "";
     usersToExpire.forEach(user => {
         tableRows +=
             `<tr><td><strong>${user.username}</strong></td><td>${user.name}</td><td>${user.email}</td></tr>`;
     })
     $('#userExpirationTable tbody').html(tableRows);
-    populateDefaultExpireUsersModal();
+    module.populateDefaultExpireUsersModal();
     $('#userExpirationModal').modal('show');
 }
 
-function populateDefaultExpireUsersModal() {
-    const userEmailBodyTemplate = `{{USER_EXPIRATION_EMAIL_BODY_TEMPLATE_URL}}`;
+module.populateDefaultExpireUsersModal = function () {
+    const userEmailBodyTemplate = `{{USER_EXPIRATION_EMAIL_BODY_TEMPLATE}}`;
     tinymce.get('emailBody-userExpiration').setContent(userEmailBodyTemplate);
 
     const userEmailSubjectTemplate =
-        `{{USER_EXPIRATION_EMAIL_SUBJECT_TEMPLATE_URL}}`;
+        `{{USER_EXPIRATION_EMAIL_SUBJECT_TEMPLATE}}`;
     $('#emailSubject-userExpiration').val(userEmailSubjectTemplate);
 
-    const userRightsHolderEmailBodyTemplate = `{{USER_EXPIRATION_USER_RIGHTS_HOLDERS_EMAIL_BODY_TEMPLATE_URL}}`;
+    const userRightsHolderEmailBodyTemplate = `{{USER_EXPIRATION_USER_RIGHTS_HOLDERS_EMAIL_BODY_TEMPLATE}}`;
     tinymce.get('emailBody-userExpiration-UserRightsHolders').setContent(userRightsHolderEmailBodyTemplate);
 
-    const userRightsHolderEmailSubjectTemplate = `{{USER_EXPIRATION_USER_RIGHTS_HOLDERS_EMAIL_SUBJECT_TEMPLATE_URL}}`;
+    const userRightsHolderEmailSubjectTemplate = `{{USER_EXPIRATION_USER_RIGHTS_HOLDERS_EMAIL_SUBJECT_TEMPLATE}}`;
     $('#emailSubject-userExpiration-UserRightsHolders').val(userRightsHolderEmailSubjectTemplate);
 }
 
-function getSelectedUsers() {
+module.getSelectedUsers = function () {
     return $('#discrepancy-table').DataTable().rows({
         selected: true
     }).data().toArray().map((el) => {
@@ -96,14 +113,14 @@ function getSelectedUsers() {
     });
 }
 
-async function expireUsers() {
-    const users = getSelectedUsers();
-    await $.post("{{EXPIRE_USERS_URL}}", {
+module.expireUsers = async function () {
+    const users = module.getSelectedUsers();
+    await module.ajax('expireUsers', {
         users: users.map(userRow => userRow["username"]),
-        delayDays: $('#delayDays-expiration').val(),
+        delayDays: $('#delayDays-expiration').val()
     })
-        .fail(function (error) {
-            console.error(error.responseText);
+        .catch(function (error) {
+            console.error(error);
             Swal.fire({
                 title: 'Error',
                 html: error.responseText,
@@ -120,8 +137,8 @@ async function expireUsers() {
     return true;
 }
 
-function sendEmailAlerts() {
-    if (!validateEmailForm()) {
+module.sendEmailAlerts = function () {
+    if (!module.validateEmailForm()) {
         return;
     }
 
@@ -129,10 +146,10 @@ function sendEmailAlerts() {
     emailFormContents.emailBody = tinymce.get('emailBody').getContent();
     emailFormContents.reminderBody = tinymce.get('reminderBody').getContent();
     emailFormContents.alertType = 'users';
-    emailFormContents.users = getAlertUserInfo();
+    emailFormContents.users = module.getAlertUserInfo();
 
-    $.post("{{SEND_ALERTS_URL}}", emailFormContents)
-        .done(response => {
+    module.ajax('sendAlerts', { config: emailFormContents })
+        .then(response => {
             const multiple = emailFormContents.users.length > 1;
             Toast.fire({
                 title: 'The alert' + (multiple ? "s were " : " was ") +
@@ -140,7 +157,8 @@ function sendEmailAlerts() {
                 icon: 'success'
             });
         })
-        .fail(error => {
+        .catch(error => {
+            console.error(error);
             Toast.fire({
                 title: 'There was an error sending the alert.',
                 icon: 'error'
@@ -148,7 +166,7 @@ function sendEmailAlerts() {
         });
 }
 
-function validateEmailForm() {
+module.validateEmailForm = function () {
     let valid = true;
     if ($('#emailSubject').val().trim() == "") {
         $('#emailSubject').addClass('is-invalid');
@@ -198,7 +216,7 @@ function validateEmailForm() {
     return valid;
 }
 
-function getAlertUserInfo() {
+module.getAlertUserInfo = function () {
     return $('#discrepancy-table').DataTable().rows({
         selected: true
     }).data().toArray().map((el) => {
@@ -212,8 +230,8 @@ function getAlertUserInfo() {
 }
 
 
-function sendEmailAlerts_UserRightsHolders() {
-    if (!validateEmailForm_UserRightsHolders()) {
+module.sendEmailAlerts_UserRightsHolders = function () {
+    if (!module.validateEmailForm_UserRightsHolders()) {
         return;
     }
 
@@ -221,11 +239,11 @@ function sendEmailAlerts_UserRightsHolders() {
     emailFormContents.emailBody = tinymce.get('emailBody-UserRightsHolders').getContent();
     emailFormContents.reminderBody = tinymce.get('reminderBody-UserRightsHolders').getContent();
     emailFormContents.alertType = 'userRightsHolders';
-    emailFormContents.users = getAlertUserInfo();
-    emailFormContents.recipients = getUserRightsHolderAlertRecipients('emailUserRightsHoldersForm');
+    emailFormContents.users = module.getAlertUserInfo();
+    emailFormContents.recipients = module.getUserRightsHolderAlertRecipients('emailUserRightsHoldersForm');
 
-    $.post("{{SEND_ALERTS_URL}}", emailFormContents)
-        .done(response => {
+    module.ajax('sendAlerts', { config: emailFormContents })
+        .then(response => {
             const multiple = emailFormContents.recipients.length > 1;
             Toast.fire({
                 title: 'The alert' + (multiple ? "s were " : " was ") +
@@ -233,7 +251,8 @@ function sendEmailAlerts_UserRightsHolders() {
                 icon: 'success'
             });
         })
-        .fail(error => {
+        .catch(error => {
+            console.error(error);
             Toast.fire({
                 title: 'There was an error sending the alert.',
                 icon: 'error'
@@ -241,7 +260,7 @@ function sendEmailAlerts_UserRightsHolders() {
         });
 }
 
-function validateEmailForm_UserRightsHolders() {
+module.validateEmailForm_UserRightsHolders = function () {
     let valid = true;
     if ($('#emailSubject-UserRightsHolders').val().trim() == "") {
         $('#emailSubject-UserRightsHolders').addClass('is-invalid');
@@ -302,20 +321,20 @@ function validateEmailForm_UserRightsHolders() {
     return valid;
 }
 
-function expireUsersAndSendAlerts() {
-    if (!validateEmailForm_UserExpiration()) {
+module.expireUsersAndSendAlerts = function () {
+    if (!module.validateEmailForm_UserExpiration()) {
         return;
     }
-    const users = getAlertUserInfo();
+    const users = module.getAlertUserInfo();
     let formContents = $('#userExpirationForm').serializeObject();
     formContents.usersEmailBody = tinymce.get('emailBody-userExpiration').getContent();
     formContents.userRightsHoldersEmailBody = tinymce.get('emailBody-userExpiration-UserRightsHolders')
         .getContent();
     formContents.alertType = 'expiration';
     formContents.users = users;
-    formContents.recipients = getUserRightsHolderAlertRecipients('userExpirationForm');
+    formContents.recipients = module.getUserRightsHolderAlertRecipients('userExpirationForm');
 
-    expireUsers().then(() => {
+    module.expireUsers().then(() => {
         if (!formContents.sendUserNotification && !formContents[
             "sendNotification-userExpiration-UserRightsHolders"]) {
             Toast.fire({
@@ -327,17 +346,18 @@ function expireUsersAndSendAlerts() {
                     window.location.reload();
                 });
         } else {
-            $.post("{{SEND_ALERTS_URL}}", formContents)
-                .done(response => {
+            module.ajax('sendAlerts', { config: formContents })
+                .then(response => {
                     Toast.fire({
-                        title: 'The user' + (users.length > 1 ? "s were " : " was ") +
-                            'successfully expired.',
+                        title: 'The alert' + (users.length > 1 ? "s were " : " was ") +
+                            'successfully sent.',
                         icon: 'success'
                     });
                 })
-                .fail(error => {
+                .catch(error => {
+                    console.error(error);
                     Toast.fire({
-                        title: 'There was an error.',
+                        title: 'There was an error sending the alert.',
                         icon: 'error'
                     });
                 });
@@ -345,7 +365,7 @@ function expireUsersAndSendAlerts() {
     })
 }
 
-function validateEmailForm_UserExpiration() {
+module.validateEmailForm_UserExpiration = function () {
     let valid = true;
     let delayDays = $('#delayDays-expiration').val().trim();
     if (delayDays == "" || !isInteger(delayDays) || delayDays < 0) {
@@ -412,16 +432,16 @@ function validateEmailForm_UserExpiration() {
     return valid;
 }
 
-function getUserRightsHolderAlertRecipients(form_id) {
+module.getUserRightsHolderAlertRecipients = function (form_id) {
     return $(`#${form_id} .user-rights-holder-selector input:checked`).toArray().map(el => {
         return $(el).closest('tr').data('user')
     });
 }
 
-async function previewEmail($emailContainer) {
+module.previewEmail = async function ($emailContainer) {
     const id = $emailContainer.find('textarea.emailBody').prop('id');
     const content = tinymce.get(id).getContent();
-    const replacedContent = await replaceKeywordsPreview(content);
+    const replacedContent = await module.replaceKeywordsPreview(content);
     $('#emailPreview div.modal-body').html(replacedContent);
     $emailContainer.closest('.modal').css('z-index', 1039);
     $('#emailPreview').modal('show');
@@ -430,7 +450,7 @@ async function previewEmail($emailContainer) {
     });
 }
 
-async function replaceKeywordsPreview(text) {
+module.replaceKeywordsPreview = async function (text) {
     const data = {
         'sag_user': 'robin123',
         'sag_user_fullname': 'Robin Jones',
@@ -438,16 +458,13 @@ async function replaceKeywordsPreview(text) {
         'sag_user_rights': ['Project Design and Setup', 'User Rights', 'Create Records']
     };
 
-    return $.post('{{REPLACE_SMART_VARIABLES_URL}}', {
-        text: text,
-        data: data
-    });
+    return module.ajax('replacePlaceholders', { text: text, data: data });
 }
 
-async function previewEmailUserRightsHolders($emailContainer) {
+module.previewEmailUserRightsHolders = async function ($emailContainer) {
     const id = $emailContainer.find('textarea.emailBody').prop('id');
     const content = tinymce.get(id).getContent();
-    const replacedContent = await replaceKeywordsPreviewUserRightsHolders(content);
+    const replacedContent = await module.replaceKeywordsPreviewUserRightsHolders(content);
     $('#emailPreview div.modal-body').html(replacedContent);
     $emailContainer.closest('.modal').css('z-index', 1039);
     $('#emailPreview').modal('show');
@@ -456,7 +473,7 @@ async function previewEmailUserRightsHolders($emailContainer) {
     });
 }
 
-async function replaceKeywordsPreviewUserRightsHolders(text) {
+module.replaceKeywordsPreviewUserRightsHolders = async function (text) {
 
     const data = {
         "sag_users": [
@@ -483,13 +500,10 @@ async function replaceKeywordsPreviewUserRightsHolders(text) {
         ]
     };
 
-    return $.post('{{REPLACE_SMART_VARIABLES_URL}}', {
-        text: text,
-        data: data
-    });
+    return module.ajax('replacePlaceholders', { text: text, data: data });
 }
 
-function handleDisplayUsersButton(allUsersVisible) {
+module.handleDisplayUsersButton = function (allUsersVisible) {
     if (allUsersVisible) {
         $('#displayUsersButton').addClass('btn-outline-secondary').removeClass('btn-secondary');
     } else {
@@ -497,7 +511,7 @@ function handleDisplayUsersButton(allUsersVisible) {
     }
 }
 
-function handleActionButtons() {
+module.handleActionButtons = function () {
     if ($('#discrepancy-table').DataTable().rows({
         selected: true
     }).count() > 0) {
@@ -507,7 +521,7 @@ function handleActionButtons() {
     }
 }
 
-function initTinyMCE() {
+module.initTinyMCE = function () {
     tinymce.init({
         entity_encoding: "raw",
         default_link_target: '_blank',
@@ -525,7 +539,7 @@ function initTinyMCE() {
         toolbar2: 'bullist numlist | outdent indent | table tableprops tablecellprops | ' +
             'forecolor backcolor | searchreplace code removeformat | fullscreen',
         contextmenu: "copy paste | link inserttable | cell row column deletetable",
-        content_css: "{{SAG_CSS_URL}}",
+        content_css: module.getUrl('SecurityAccessGroups.css', false),
         relative_urls: false,
         convert_urls: false,
         convert_fonts_to_spans: true,
@@ -540,7 +554,7 @@ function initTinyMCE() {
     });
 }
 
-function initClipboard() {
+module.initClipboard = function () {
     $('.dataPlaceholder').popover({
         placement: 'top',
         html: true,
@@ -581,9 +595,6 @@ $(document).ready(function () {
         timerProgressBar: true
     });
 
-
-
-
     console.timeLog('dt', 'document ready');
     $('#sub-nav').removeClass('d-none');
 
@@ -597,8 +608,7 @@ $(document).ready(function () {
         console.timeLog('dt', 'ajax end')
     });
 
-    const dt = $('table.discrepancy-table').DataTable(Object.assign(config, {
-
+    module.dt = $('table.discrepancy-table').DataTable(Object.assign(module.config, {
         select: {
             style: 'multi',
             selector: 'td:first-child input[type="checkbox"]'
@@ -630,7 +640,7 @@ $(document).ready(function () {
                 allChecked = allChecked && thisChecked;
                 document.getElementById(id).checked = thisChecked;
             }
-            handleDisplayUsersButton(allChecked);
+            module.handleDisplayUsersButton(allChecked);
             delete (data.checkboxStatus);
             return data;
         },
@@ -644,7 +654,7 @@ $(document).ready(function () {
                     `<div data-discrepant="${hasDiscrepancy}" data-expired="${row.isExpired}">` +
                     (hasDiscrepancy ?
                         `<input style="display:block; margin: 0 auto;" ` +
-                        `type="checkbox" onchange="handleActionButtons()"></input>` :
+                        `type="checkbox" onchange="module.handleActionButtons()"></input>` :
                         "") +
                     `</div>`;
                 if (type === 'filter') {
@@ -783,8 +793,8 @@ $(document).ready(function () {
             $('table.discrepancy-table').addClass('table');
             this.api().columns.adjust().draw();
             console.timeLog('dt', 'dt init complete');
-            initTinyMCE();
-            initClipboard();
+            module.initTinyMCE();
+            module.initClipboard();
             console.timeEnd('dt');
             console.log(performance.now());
         },
@@ -842,8 +852,8 @@ $(document).ready(function () {
 
         const allChecked = expiredChecked && nonExpiredChecked && discrepantChecked &&
             nonDiscrepantChecked;
-        handleDisplayUsersButton(allChecked);
-        dt.columns(0).search(searchTerm, true).draw();
-        handleActionButtons();
+        module.handleDisplayUsersButton(allChecked);
+        module.dt.columns(0).search(searchTerm, true).draw();
+        module.handleActionButtons();
     });
 });

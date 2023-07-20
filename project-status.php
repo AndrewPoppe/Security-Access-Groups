@@ -4,8 +4,6 @@ namespace YaleREDCap\SecurityAccessGroups;
 
 /** @var SecurityAccessGroups $module */
 
-require_once $module->framework->getSafePath('classes/Alerts.php');
-
 if ( !$module->framework->getUser()->isSuperUser() ) {
     http_response_code(401);
     exit;
@@ -311,13 +309,14 @@ if ( !$module->framework->getUser()->isSuperUser() ) {
                     </div>
                 </div>
             </div>
-            <button type="button" class="btn btn-xs btn-primary action" onclick="openEmailUsersModal();" disabled><i
-                    class="fa-sharp fa-regular fa-envelope"></i> Email User(s)</button>
-            <button type="button" class="btn btn-xs btn-warning action" onclick="openEmailUserRightsHoldersModal();"
-                disabled><i class="fa-kit fa-sharp-regular-envelope-circle-exclamation"></i> Email User Rights
+            <button type="button" class="btn btn-xs btn-primary action" onclick="module.openEmailUsersModal();"
+                disabled><i class="fa-sharp fa-regular fa-envelope"></i> Email User(s)</button>
+            <button type="button" class="btn btn-xs btn-warning action"
+                onclick="module.openEmailUserRightsHoldersModal();" disabled><i
+                    class="fa-kit fa-sharp-regular-envelope-circle-exclamation"></i> Email User Rights
                 Holders</button>
-            <button type="button" class="btn btn-xs btn-danger action" onclick="openExpireUsersModal();" disabled><i
-                    class="fa-regular fa-user-xmark fa-fw"></i> Expire User(s)</button>
+            <button type="button" class="btn btn-xs btn-danger action" onclick="module.openExpireUsersModal();"
+                disabled><i class="fa-regular fa-user-xmark fa-fw"></i> Expire User(s)</button>
             <div class="btn-group" role="group">
                 <i class="fa-solid fa-circle-info fa-lg align-self-center text-info infoButton" style="cursor:pointer;"
                     onclick="$('#infoModal').modal('show');">
@@ -329,7 +328,7 @@ if ( !$module->framework->getUser()->isSuperUser() ) {
                 <thead class="text-center" style="background-color:#ececec">
                     <tr>
                         <th style="vertical-align: middle !important;"><input style="display:block; margin: 0 auto;"
-                                type="checkbox" onchange="handleCheckboxes(this);"></input>
+                                type="checkbox" onchange="module.handleCheckboxes(this);"></input>
                         </th>
                         <th>Username</th>
                         <th>Name</th>
@@ -354,37 +353,29 @@ $usersResult   = $module->framework->query($userSql, [ $project_id ]);
 $usersCount    = intval($usersResult->fetch_assoc()["COUNT(username)"]);
 $userThreshold = 5000;
 if ( $usersCount <= $userThreshold ) {
-    $userData = json_encode($module->getUsersWithBadRights2($project_id));
+    $userData = $module->getUsersWithBadRights2($project_id);
     $config   = json_encode([
-        'data' => json_decode($userData)
+        'data' => $userData
     ]);
 } else {
-    $config = json_encode([
-        'ajax' => [
-            'url'  => $module->framework->getUrl("ajax/projectUsers.php"),
-            'type' => 'POST'
-        ],
-    ]);
+    $config = '';
 }
-
+echo $module->framework->initializeJavascriptModuleObject();
 $js = file_get_contents($module->framework->getSafePath('js/project-status.js'));
 $js = str_replace('{{CONFIG}}', $config, $js);
-$js = str_replace('{{USER_EMAIL_BODY_TEMPLATE_URL}}', $module->getSystemSetting('user-email-body-template') ?? "", $js);
-$js = str_replace('{{USER_EMAIL_SUBJECT_TEMPLATE_URL}}', $module->getSystemSetting('user-email-subject-template') ?? "", $js);
-$js = str_replace('{{USER_REMINDER_EMAIL_BODY_TEMPLATE_URL}}', $module->getSystemSetting('user-reminder-email-body-template') ?? "", $js);
-$js = str_replace('{{USER_REMINDER_EMAIL_SUBJECT_TEMPLATE_URL}}', $module->getSystemSetting('user-reminder-email-subject-template') ?? "", $js);
-$js = str_replace('{{USER_RIGHTS_HOLDERS_EMAIL_BODY_TEMPLATE_URL}}', $module->getSystemSetting('user-rights-holders-email-body-template') ?? "", $js);
-$js = str_replace('{{USER_RIGHTS_HOLDERS_EMAIL_SUBJECT_TEMPLATE_URL}}', $module->getSystemSetting('user-rights-holders-email-subject-template') ?? "", $js);
-$js = str_replace('{{USER_RIGHTS_HOLDERS_REMINDER_EMAIL_BODY_TEMPLATE_URL}}', $module->getSystemSetting('user-rights-holders-reminder-email-body-template') ?? "", $js);
-$js = str_replace('{{USER_RIGHTS_HOLDERS_REMINDER_EMAIL_SUBJECT_TEMPLATE_URL}}', $module->getSystemSetting('user-rights-holders-reminder-email-subject-template') ?? "", $js);
-$js = str_replace('{{USER_EXPIRATION_EMAIL_BODY_TEMPLATE_URL}}', $module->getSystemSetting('user-expiration-email-body-template') ?? "", $js);
-$js = str_replace('{{USER_EXPIRATION_EMAIL_SUBJECT_TEMPLATE_URL}}', $module->getSystemSetting('user-expiration-email-subject-template') ?? "", $js);
-$js = str_replace('{{USER_EXPIRATION_USER_RIGHTS_HOLDERS_EMAIL_BODY_TEMPLATE_URL}}', $module->getSystemSetting('user-expiration-user-rights-holders-email-body-template') ?? "", $js);
-$js = str_replace('{{USER_EXPIRATION_USER_RIGHTS_HOLDERS_EMAIL_SUBJECT_TEMPLATE_URL}}', $module->getSystemSetting('user-expiration-user-rights-holders-email-subject-template') ?? "", $js);
-$js = str_replace('{{EXPIRE_USERS_URL}}', $module->framework->getUrl('ajax/expireUsers.php'), $js);
-$js = str_replace('{{SEND_ALERTS_URL}}', $module->framework->getUrl('ajax/sendAlerts.php'), $js);
-$js = str_replace('{{REPLACE_SMART_VARIABLES_URL}}', $module->framework->getUrl('ajax/replaceSmartVariables.php'), $js);
-$js = str_replace('{{SAG_CSS_URL}}', $module->framework->getUrl('SecurityAccessGroups.css'), $js);
+$js = str_replace('{{USER_EMAIL_BODY_TEMPLATE}}', $module->getSystemSetting('user-email-body-template') ?? "", $js);
+$js = str_replace('{{USER_EMAIL_SUBJECT_TEMPLATE}}', $module->getSystemSetting('user-email-subject-template') ?? "", $js);
+$js = str_replace('{{USER_REMINDER_EMAIL_BODY_TEMPLATE}}', $module->getSystemSetting('user-reminder-email-body-template') ?? "", $js);
+$js = str_replace('{{USER_REMINDER_EMAIL_SUBJECT_TEMPLATE}}', $module->getSystemSetting('user-reminder-email-subject-template') ?? "", $js);
+$js = str_replace('{{USER_RIGHTS_HOLDERS_EMAIL_BODY_TEMPLATE}}', $module->getSystemSetting('user-rights-holders-email-body-template') ?? "", $js);
+$js = str_replace('{{USER_RIGHTS_HOLDERS_EMAIL_SUBJECT_TEMPLATE}}', $module->getSystemSetting('user-rights-holders-email-subject-template') ?? "", $js);
+$js = str_replace('{{USER_RIGHTS_HOLDERS_REMINDER_EMAIL_BODY_TEMPLATE}}', $module->getSystemSetting('user-rights-holders-reminder-email-body-template') ?? "", $js);
+$js = str_replace('{{USER_RIGHTS_HOLDERS_REMINDER_EMAIL_SUBJECT_TEMPLATE}}', $module->getSystemSetting('user-rights-holders-reminder-email-subject-template') ?? "", $js);
+$js = str_replace('{{USER_EXPIRATION_EMAIL_BODY_TEMPLATE}}', $module->getSystemSetting('user-expiration-email-body-template') ?? "", $js);
+$js = str_replace('{{USER_EXPIRATION_EMAIL_SUBJECT_TEMPLATE}}', $module->getSystemSetting('user-expiration-email-subject-template') ?? "", $js);
+$js = str_replace('{{USER_EXPIRATION_USER_RIGHTS_HOLDERS_EMAIL_BODY_TEMPLATE}}', $module->getSystemSetting('user-expiration-user-rights-holders-email-body-template') ?? "", $js);
+$js = str_replace('{{USER_EXPIRATION_USER_RIGHTS_HOLDERS_EMAIL_SUBJECT_TEMPLATE}}', $module->getSystemSetting('user-expiration-user-rights-holders-email-subject-template') ?? "", $js);
+$js = str_replace('__MODULE__', $module->framework->getJavascriptModuleObjectName(), $js);
 echo '<script type="text/javascript">' . $js . '</script>';
 
 $Alerts = new Alerts($module);

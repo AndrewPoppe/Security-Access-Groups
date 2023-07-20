@@ -133,22 +133,22 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
             <span class="sr-only">Toggle Dropdown</span>
         </button>
         <ul class="dropdown-menu">
-            <li><a class="dropdown-item" onclick="showUserTable(false);"><i
+            <li><a class="dropdown-item" onclick="module.showUserTable(false);"><i
                         class="fa-light fa-users fa-fw mr-1 text-danger"></i>Users with
                     Noncompliant Rights (non-expired)</a></li>
-            <li><a class="dropdown-item" onclick="showUserTable(true);"><i
+            <li><a class="dropdown-item" onclick="module.showUserTable(true);"><i
                         class="fa-solid fa-users fa-fw mr-1 text-danger"></i>Users with
                     Noncompliant Rights (all)</a></li>
-            <li><a class="dropdown-item" onclick="showProjectTable(false);"><i
+            <li><a class="dropdown-item" onclick="module.showProjectTable(false);"><i
                         class="fa-sharp fa-light fa-rectangle-history-circle-user fa-fw mr-1 text-successrc"></i>Projects
                     with Noncompliant Rights (non-expired)</a></li>
-            <li><a class="dropdown-item" onclick="showProjectTable(true);"><i
+            <li><a class="dropdown-item" onclick="module.showProjectTable(true);"><i
                         class="fa-sharp fa-solid fa-rectangle-history-circle-user fa-fw mr-1 text-successrc"></i>Projects
                     with Noncompliant Rights (all)</a></li>
-            <li><a class="dropdown-item" onclick="showUserAndProjectTable(false);"><i
+            <li><a class="dropdown-item" onclick="module.showUserAndProjectTable(false);"><i
                         class="fa-sharp fa-light fa-rectangle-list fa-fw mr-1 text-info"></i>Users
                     and Projects with Noncompliant Rights (non-expired)</a></li>
-            <li><a class="dropdown-item" onclick="showUserAndProjectTable(true);"><i
+            <li><a class="dropdown-item" onclick="module.showUserAndProjectTable(true);"><i
                         class="fa-sharp fa-solid fa-rectangle-list fa-fw mr-1 text-info"></i>Users
                     and Projects with Noncompliant Rights (all)</a></li>
         </ul>
@@ -380,24 +380,23 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
         </table>
     </div>
     <style>
-        div.dt-buttons {
-            float: right;
-        }
+    div.dt-buttons {
+        float: right;
+    }
 
-        .select2-search__field {
-            width: 100% !important;
-        }
+    .select2-search__field {
+        width: 100% !important;
+    }
 
-        div.dataTables_filter {
-            margin-top: 4px;
-            margin-right: 10px;
-        }
+    div.dataTables_filter {
+        margin-top: 4px;
+        margin-right: 10px;
+    }
     </style>
 </div> <!-- End SAG_Container -->
 <?php
+echo $module->framework->initializeJavascriptModuleObject();
 $js = file_get_contents($module->framework->getSafePath('js/system-reports.js'));
-$js = str_replace('{{PROJECTS_WITH_BAD_RIGHTS_URL}}', $module->framework->getUrl('ajax/projectsWithNoncompliantRights.php'), $js);
 $js = str_replace('{{MODULE_DIRECTORY_PREFIX}}', $module->getModuleDirectoryPrefix(), $js);
-$js = str_replace('{{USERS_WITH_BAD_RIGHTS_URL}}', $module->framework->getUrl('ajax/usersWithNoncompliantRights.php'), $js);
-$js = str_replace('{{USERS_AND_PROJECTS_WITH_BAD_RIGHTS_URL}}', $module->framework->getUrl('ajax/usersAndProjectsWithNoncompliantRights.php'), $js);
+$js = str_replace('__MODULE__', $module->framework->getJavascriptModuleObjectName(), $js);
 echo '<script type="text/javascript">' . $js . '</script>';

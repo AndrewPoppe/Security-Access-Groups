@@ -132,6 +132,25 @@
         }
     ],
     "enable-every-page-hooks-on-system-pages": true,
+    "auth-ajax-actions": [
+        "assignSag",
+        "deleteAlert",
+        "deleteSag",
+        "editSag",
+        "expireUsers",
+        "getAlert",
+        "getAlerts",
+        "getProjectReport",
+        "getProjectUsers",
+        "getSags",
+        "getUserAndProjectReport",
+        "getUserReport",
+        "getUsers",
+        "importCsvSags",
+        "importCsvUsers",
+        "replacePlaceholders",
+        "sendAlerts"
+    ],
     "no-auth-pages": [],
     "framework-version": 12,
     "compatibility": {

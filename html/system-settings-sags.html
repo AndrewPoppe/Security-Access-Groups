@@ -19,16 +19,16 @@
                 <span class="sr-only">Toggle Dropdown</span>
             </button>
             <ul class="dropdown-menu">
-                <li><a class="dropdown-item" onclick="exportRawCsv();"><i
+                <li><a class="dropdown-item" onclick="module.exportRawCsv();"><i
                             class="fa-sharp fa-regular fa-file-arrow-down fa-fw mr-1 text-info"></i>Export SAGs
                         (raw)</a></li>
-                <li><a class="dropdown-item" onclick="exportCsv();"><i
+                <li><a class="dropdown-item" onclick="module.exportCsv();"><i
                             class="fa-sharp fa-regular fa-file-arrow-down fa-fw mr-1 text-success"></i>Export SAGs
                         (labels)</a></li>
-                <li><a class="dropdown-item" onclick="importCsv();"><i
+                <li><a class="dropdown-item" onclick="module.importCsv();"><i
                             class="fa-sharp fa-solid fa-file-arrow-up fa-fw mr-1 text-danger"></i>Import SAGs</a>
                 </li>
-                <li><a class="dropdown-item" onclick="exportRawCsv(false);"><i
+                <li><a class="dropdown-item" onclick="module.exportRawCsv(false);"><i
                             class="fa-sharp fa-solid fa-download fa-fw mr-1 text-primary"></i>Download Import
                         Template</a></li>
             </ul>
@@ -45,7 +45,7 @@
             <input id="newSagName" class="form-control form-control-sm" type="text" placeholder="Enter new SAG name">
         </div>
         <div class="col ml-1 px-0 justify-content-start">
-            <button class="btn btn-success btn-sm" id="addSagButton" onclick="addNewSag();"
+            <button class="btn btn-success btn-sm" id="addSagButton" onclick="module.addNewSag();"
                 title="Add a New Security Access Group">
                 <i class="fa-kit fa-solid-tag-circle-plus fa-fw"></i>
                 <span>Create SAG</span>

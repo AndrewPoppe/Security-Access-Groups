@@ -1,14 +1,14 @@
-window.sags = JSON.parse('{{SAGS_JSON}}');
+const module = __MODULE__;
 
+module.sags = JSON.parse('{{SAGS_JSON}}');
 
-
-function formatNow() {
+module.formatNow = function () {
     const d = new Date();
     return d.getFullYear() + '-' + (d.getMonth() + 1).toString().padStart(2, 0) + '-' + (d.getDate()).toString()
         .padStart(2, 0)
 }
 
-function toggleEditMode(event) {
+module.toggleEditMode = function (event) {
     const button = $('button.editUsersButton');
     const editing = !$(button).data('editing');
     $('.sagSelect').attr('disabled', !editing);
@@ -42,9 +42,8 @@ function toggleEditMode(event) {
     });
 }
 
-function handleCsvExport() {
-    const dt = $('#SUR-System-Table').DataTable();
-    if (dt.search() != '') {
+module.handleCsvExport = function () {
+    if (module.dt.search() != '') {
         Swal.fire({
             title: 'Export Filtered Data?',
             text: 'You have a filter applied to the table. Do you want to export the filtered data or all data?',
@@ -55,17 +54,17 @@ function handleCsvExport() {
             denyButtonText: 'Export All Data'
         }).then((result) => {
             if (result.isConfirmed) {
-                exportCsv(true);
+                module.exportCsv(true);
             } else if (result.isDenied) {
-                exportCsv();
+                module.exportCsv();
             }
         });
     } else {
-        exportCsv();
+        module.exportCsv();
     }
 }
 
-function join(a, separator, boundary, escapeChar, reBoundary) {
+module.join = function (a, separator, boundary, escapeChar, reBoundary) {
     let s = '';
     for (let i = 0, ien = a.length; i < ien; i++) {
         if (i > 0) {
@@ -78,26 +77,25 @@ function join(a, separator, boundary, escapeChar, reBoundary) {
     return s;
 };
 
-function exportCsv(useFilter = false) {
-    const dt = $('#SUR-System-Table').DataTable();
+module.exportCsv = function (useFilter = false) {
     const newLine = /Windows/.exec(navigator.userAgent) ? '\r\n' : '\n';
     const escapeChar = '"';
     const boundary = '"';
     const separator = ',';
     const extension = '.csv';
     const reBoundary = new RegExp(boundary, 'g');
-    const filename = 'SecurityAccessGroups_Users_' + (useFilter ? 'FILTERED_' : '') + formatNow() + extension;
+    const filename = 'SecurityAccessGroups_Users_' + (useFilter ? 'FILTERED_' : '') + module.formatNow() + extension;
     let charset = document.characterSet;
     if (charset) {
         charset = ';charset=' + charset;
     }
 
     const useSearch = useFilter ? 'applied' : 'none';
-    const allData = dt.rows({
+    const allData = module.dt.rows({
         search: useSearch,
         page: 'all'
     }).data();
-    const data = dt.buttons.exportData({
+    const data = module.dt.buttons.exportData({
         format: {
             header: function (html, col, node) {
                 return $(node).data('id');
@@ -112,7 +110,7 @@ function exportCsv(useFilter = false) {
                 } else if (col === 2) {
                     return allData[row]["user_email"];
                 } else if (col === 3) {
-                    return window.sags[allData[row]["sag"]];
+                    return module.sags[allData[row]["sag"]];
                 } else if (col === 4) {
                     return allData[row]["sag"];
                 }
@@ -125,11 +123,11 @@ function exportCsv(useFilter = false) {
         }
     });
 
-    const header = join(data.header, separator, boundary, escapeChar, reBoundary) + newLine;
-    const footer = data.footer ? newLine + join(data.footer, separator, boundary, escapeChar, reBoundary) : '';
+    const header = module.join(data.header, separator, boundary, escapeChar, reBoundary) + newLine;
+    const footer = data.footer ? newLine + module.join(data.footer, separator, boundary, escapeChar, reBoundary) : '';
     const body = [];
     for (let i = 0, ien = data.body.length; i < ien; i++) {
-        body.push(join(data.body[i], separator, boundary, escapeChar, reBoundary));
+        body.push(module.join(data.body[i], separator, boundary, escapeChar, reBoundary));
     }
 
     const result = {
@@ -145,15 +143,44 @@ function exportCsv(useFilter = false) {
     $('#loading').modal('hide');
 }
 
-function importCsv() {
+module.importCsv = function () {
     $('#importUsersFile').click();
 }
 
-function handleFiles() {
+module.handleImportError = function (errorData) {
+    let body = errorData.error.join('<br>') + "<div class='container'>";
+    if (errorData.users.length) {
+        body +=
+            "<div class='row justify-content-center m-2'>" +
+            "<table><thead><tr><th>Username</th></tr></thead><tbody>";
+        errorData.users.forEach((user) => {
+            body += `<tr><td>${user}</td></tr>`;
+        });
+        body += "</tbody></table></div>";
+    }
+    if (errorData.sags.length) {
+        body +=
+            "<div class='row justify-content-center m-2'>" +
+            "<table><thead><tr><th>SAG ID</th></tr></thead><tbody>";
+        errorData.sags.forEach((sag) => {
+            body += `<tr><td>${sag}</td></tr>`;
+        });
+        body += "</tbody></table></div>";
+    }
+    body += "</div>";
+    Swal.fire({
+        title: 'Error',
+        html: body,
+        icon: 'error'
+    });
+}
+
+module.handleFiles = function () {
     if (this.files.length !== 1) {
         return;
     }
     const file = this.files[0];
+    this.value = null;
 
     if (file.type !== "text/csv") {
         return;
@@ -164,63 +191,35 @@ function handleFiles() {
 
     const reader = new FileReader();
     reader.onload = (e) => {
-        window.csv_file_contents = e.target.result;
-        $.post("{{IMPORT_CSV_USERS_URL}}", {
-            data: window.csv_file_contents
-        })
-            .done((response) => {
+        module.csv_file_contents = e.target.result;
+        module.ajax('importCsvUsers', { data: module.csv_file_contents })
+            .then((response) => {
                 Swal.close();
-                $(response).modal('show');
-            })
-            .fail((error) => {
-                Swal.close();
-                try {
-                    console.error(JSON.parse(error.responseText).error);
-                    const response = JSON.parse(error.responseText);
-                    let body = response.error.join('<br>') + "<div class='container'>";
-                    if (response.users.length) {
-                        body +=
-                            "<div class='row justify-content-center m-2'>" +
-                            "<table><thead><tr><th>Username</th></tr></thead><tbody>";
-                        response.users.forEach((user) => {
-                            body += `<tr><td>${user}</td></tr>`;
-                        });
-                        body += "</tbody></table></div>";
-                    }
-                    if (response.sags.length) {
-                        body +=
-                            "<div class='row justify-content-center m-2'>" +
-                            "<table><thead><tr><th>SAG ID</th></tr></thead><tbody>";
-                        response.sags.forEach((sag) => {
-                            body += `<tr><td>${sag}</td></tr>`;
-                        });
-                        body += "</tbody></table></div>";
-                    }
-                    body += "</div>";
-                    Swal.fire({
-                        title: 'Error',
-                        html: body,
-                        icon: 'error'
-                    });
-                } catch (error) {
-                    console.error(error);
+                const result = JSON.parse(response);
+                if (result.status != 'error') {
+                    $(result.data).modal('show');
+                } else {
+                    module.handleImportError(result.data);
                 }
+            })
+            .catch((error) => {
+                Swal.close();
+                console.error(error);
             });
     };
     reader.readAsText(file);
 }
 
-function confirmImport() {
+module.confirmImport = function () {
     $('.modal').modal('hide');
-    if (!window.csv_file_contents || window.csv_file_contents === "") {
+    if (!module.csv_file_contents || module.csv_file_contents === "") {
         return;
     }
-    $.post("{{IMPORT_CSV_USERS_URL}}", {
-        data: window.csv_file_contents,
-        confirm: true
-    })
-        .done((response) => {
-            if (response) {
+    module.ajax('importCsvUsers', { data: module.csv_file_contents, confirm: true })
+        .then((response) => {
+            const result = JSON.parse(response);
+            if (result.status != 'error') {
+                module.dt.ajax.reload();
                 Swal.fire({
                     icon: 'success',
                     html: "Successfully imported assignments.",
@@ -228,10 +227,7 @@ function confirmImport() {
                         confirmButton: 'btn btn-primary',
                     },
                     buttonsStyling: false
-                })
-                    .then(() => {
-                        window.location.reload();
-                    });
+                });
             } else {
                 Toast.fire({
                     icon: 'error',
@@ -239,16 +235,16 @@ function confirmImport() {
                 });
             }
         })
-        .fail((error) => {
+        .catch((error) => {
             Toast.fire({
                 icon: 'error',
                 html: "Error importing CSV"
             });
-            console.error(error.responseText);
-        })
+            console.error(error);
+        });
 }
 
-function downloadTemplate() {
+module.downloadTemplate = function () {
     const newLine = /Windows/.exec(navigator.userAgent) ? '\r\n' : '\n';
     const escapeChar = '"';
     const boundary = '"';
@@ -262,11 +258,11 @@ function downloadTemplate() {
     }
 
     const data = $('#templateTable').DataTable().buttons.exportData();
-    const header = join(data.header, separator, boundary, escapeChar, reBoundary) + newLine;
-    const footer = data.footer ? newLine + join(data.footer, separator, boundary, escapeChar, reBoundary) : '';
+    const header = module.join(data.header, separator, boundary, escapeChar, reBoundary) + newLine;
+    const footer = data.footer ? newLine + module.join(data.footer, separator, boundary, escapeChar, reBoundary) : '';
     const body = [];
     for (let i = 0, ien = data.body.length; i < ien; i++) {
-        body.push(join(data.body[i], separator, boundary, escapeChar, reBoundary));
+        body.push(module.join(data.body[i], separator, boundary, escapeChar, reBoundary));
     }
     const result = {
         str: header + body.join(newLine) + footer,
@@ -279,38 +275,39 @@ function downloadTemplate() {
         true);
 }
 
-function saveSag(selectNode) {
+module.saveSag = function (selectNode) {
     const select = $(selectNode);
     const tr = $(selectNode).closest('tr');
     const user = tr.data('user');
     const newSag = select.val();
 
-    const url = '{{ASSIGN_SAG_URL}}';
     let color = "#66ff99";
-    const dt = $('#SUR-System-Table').DataTable();
-    $.post(url, {
-        "username": user,
-        "sag": newSag
-    })
-        .done(function (response) {
-            select.closest('td').data('sag', newSag);
-            select.closest('td').attr('data-sag', newSag);
-            const rowIndex = dt.row(select.closest('tr')).index();
-            dt.cell(rowIndex, 4).data(newSag);
-        })
-        .fail(function () {
-            color = "#ff3300";
-            select.val(select.closest('td').data('sag')).select2();
-        })
-        .always(function () {
+    module.ajax('assignSag', { username: user, sag: newSag })
+        .then((response) => {
+            const result = JSON.parse(response);
+            if (result.status != 'error') {
+                select.closest('td').data('sag', newSag);
+                select.closest('td').attr('data-sag', newSag);
+                const rowIndex = module.dt.row(select.closest('tr')).index();
+                module.dt.cell(rowIndex, 4).data(newSag);
+            } else {
+                color = "#ff3300";
+                Toast.fire({
+                    icon: 'error',
+                    title: 'Error assigning SAG'
+                });
+                module.dt.ajax.reload();
+            }
             $(tr).find('td').effect('highlight', {
                 color: color
             }, 2000);
-
+        })
+        .catch((error) => {
+            console.error(error);
         });
 }
 
-function handleSelects() {
+module.handleSelects = function () {
     const button = $('button.editUsersButton');
     const editing = $(button).data('editing');
     const style = editing ? 'user-select:all; cursor: text; margin-left: 1px; margin-right: 1px;' : 'none';
@@ -349,14 +346,20 @@ $(document).ready(function () {
     });
 
     const importFileElement = document.getElementById("importUsersFile");
-    importFileElement.addEventListener("change", handleFiles, false);
-    $('#SUR-System-Table').DataTable({
-        ajax: {
-            url: '{{USERS_URL}}',
-            type: 'POST'
+    importFileElement.addEventListener("change", module.handleFiles, false);
+    module.dt = $('#SUR-System-Table').DataTable({
+        ajax: function (data, callback, settings) {
+            module.ajax('getUsers')
+                .then((response) => {
+                    callback(JSON.parse(response));
+                })
+                .catch((error) => {
+                    console.error(error);
+                    callback({ data: [] });
+                });
         },
         drawCallback: function (settings) {
-            handleSelects();
+            module.handleSelects();
         },
         deferRender: true,
         paging: true,
@@ -396,14 +399,14 @@ $(document).ready(function () {
                     row.sag = '{{DEFAULT_SAG_ID}}';
                 }
                 if (type === 'filter') {
-                    return row.sag + ' ' + window.sags[row.sag];
+                    return row.sag + ' ' + module.sags[row.sag];
                 } else if (type === 'sort') {
-                    return window.sags[row.sag];
+                    return module.sags[row.sag];
                 } else {
                     let result =
-                        `<select class="sagSelect" disabled="true" onchange="saveSag(this)">`;
-                    for (let sag_id in sags) {
-                        const sag_label = sags[sag_id];
+                        `<select class="sagSelect" disabled="true" onchange="module.saveSag(this)">`;
+                    for (let sag_id in module.sags) {
+                        const sag_label = module.sags[sag_id];
                         const selected = sag_id == row.sag ?
                             "selected" : "";
                         result +=
@@ -443,7 +446,7 @@ $(document).ready(function () {
             setTimeout(() => {
                 $(this).DataTable().columns.adjust().draw();
             }, 0);
-            handleSelects();
+            module.handleSelects();
             console.log(performance.now());
         },
         lengthMenu: [

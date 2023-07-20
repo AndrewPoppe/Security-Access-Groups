@@ -75,17 +75,13 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
 
     $sagsHtml = file_get_contents($module->framework->getSafePath('html/system-settings-sags.html'));
     $sagsHtml = str_replace('{{HEADERS}}', $headers, $sagsHtml);
+    echo $sagsHtml;
+    echo $module->framework->initializeJavascriptModuleObject();
 
     $js = file_get_contents($module->framework->getSafePath('js/system-settings-sags.js'));
-    $js = str_replace('{{DELETE_SAG_URL}}', $module->framework->getUrl('ajax/deleteSag.php'), $js);
-    $js = str_replace('{{EDIT_SAG_URL}}', $module->framework->getUrl('ajax/editSag.php'), $js);
     $js = str_replace('{{USER_RIGHTS_ERROR_MESSAGE}}', $lang['rights_358'], $js);
-    $js = str_replace('{{EDIT_SAG_FALSE_URL}}', $module->framework->getUrl('ajax/editSag.php?newSag=false'), $js);
-    $js = str_replace('{{EDIT_SAG_TRUE_URL}}', $module->framework->getUrl('ajax/editSag.php?newSag=true'), $js);
-    $js = str_replace('{{IMPORT_CSV_SAGS_URL}}', $module->framework->getUrl('ajax/importCsvSags.php'), $js);
-    $js = str_replace('{{SAGS_URL}}', $module->framework->getUrl('ajax/sags.php'), $js);
+    $js = str_replace('__MODULE__', $module->framework->getJavascriptModuleObjectName(), $js);
 
-    echo $sagsHtml;
     echo '<script type="text/javascript">', $js, '</script>';
     ?>
 </div> <!-- End SAG_Container -->
