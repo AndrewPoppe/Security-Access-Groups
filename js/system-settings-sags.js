@@ -352,7 +352,7 @@ module.handleFiles = function () {
     const file = this.files[0];
     this.value = null;
 
-    if (file.type !== "text/csv") {
+    if (file.type !== "text/csv" && file.name.toLowerCase().indexOf('.csv') === -1) {
         return;
     }
 
@@ -445,7 +445,10 @@ $(document).ready(function () {
     });
 
     const importFileElement = document.getElementById("importSagsFile");
-    importFileElement.addEventListener("change", module.handleFiles, false);
+    importFileElement.addEventListener("change", module.handleFiles);
+    // $('#importSagsFile').on('change', function () {
+    //     console.log(this.files);
+    // });
 
     const shieldcheck = '<i class="fa-solid fa-shield-check fa-xl" style="color: green;"></i>';
     const check = '<i class="fa-solid fa-check fa-xl" style="color: green;"></i>';

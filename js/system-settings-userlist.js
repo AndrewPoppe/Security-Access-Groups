@@ -182,7 +182,7 @@ module.handleFiles = function () {
     const file = this.files[0];
     this.value = null;
 
-    if (file.type !== "text/csv") {
+    if (file.type !== "text/csv" && file.name.toLowerCase().indexOf('.csv') === -1) {
         return;
     }
 
