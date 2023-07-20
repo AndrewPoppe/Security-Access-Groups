@@ -1353,23 +1353,23 @@ class SecurityAccessGroups extends AbstractExternalModule
         return $allResults;
     }
 
-    public function redcap_module_ajax($action, $payload, $project_id, $record, $instrument, $event_id, $repeat_instance, $survey_hash, $response_id, $survey_queue_hash, $page, $page_full, $user_id, $group_id)
+    public function redcap_module_ajax($action, $payload, $projectId, $record, $instrument, $eventId, $repeatInstance, $surveyHash, $responseId, $surveyQueueHash, $page, $pageFull, $userId, $groupId)
     {
         $ajaxHandler = new AjaxHandler($this, [
             'action'            => $action,
             'payload'           => $payload,
-            'project_id'        => $project_id,
+            'project_id'        => $projectId,
             'record'            => $record,
             'instrument'        => $instrument,
-            'event_id'          => $event_id,
-            'repeat_instance'   => $repeat_instance,
-            'survey_hash'       => $survey_hash,
-            'response_id'       => $response_id,
-            'survey_queue_hash' => $survey_queue_hash,
+            'event_id'          => $eventId,
+            'repeat_instance'   => $repeatInstance,
+            'survey_hash'       => $surveyHash,
+            'response_id'       => $responseId,
+            'survey_queue_hash' => $surveyQueueHash,
             'page'              => $page,
-            'page_full'         => $page_full,
-            'user_id'           => $user_id,
-            'group_id'          => $group_id
+            'page_full'         => $pageFull,
+            'user_id'           => $userId,
+            'group_id'          => $groupId
         ]);
         return $ajaxHandler->handleAjax();
     }
