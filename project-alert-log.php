@@ -19,13 +19,13 @@ if ( !$module->framework->getUser()->isSuperUser() ) {
 </noscript>
 <script defer src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
-<script defer src="<?= $module->framework->getUrl('assets/fontawesome/js/regular.min.js') ?>"></script>
-<script defer src="<?= $module->framework->getUrl('assets/fontawesome/js/sharp-regular.min.js') ?>"></script>
-<script defer src="<?= $module->framework->getUrl('assets/fontawesome/js/sharp-solid.min.js') ?>"></script>
-<script defer src="<?= $module->framework->getUrl('assets/fontawesome/js/solid.min.js') ?>"></script>
-<script defer src="<?= $module->framework->getUrl('assets/fontawesome/js/duotone.min.js') ?>"></script>
-<script defer src="<?= $module->framework->getUrl('assets/fontawesome/js/custom-icons.min.js') ?>"></script>
-<script defer src="<?= $module->framework->getUrl('assets/fontawesome/js/fontawesome.min.js') ?>"></script>
+<script defer src="<?= $module->framework->getUrl('lib/fontawesome/js/regular.min.js') ?>"></script>
+<script defer src="<?= $module->framework->getUrl('lib/fontawesome/js/sharp-regular.min.js') ?>"></script>
+<script defer src="<?= $module->framework->getUrl('lib/fontawesome/js/sharp-solid.min.js') ?>"></script>
+<script defer src="<?= $module->framework->getUrl('lib/fontawesome/js/solid.min.js') ?>"></script>
+<script defer src="<?= $module->framework->getUrl('lib/fontawesome/js/duotone.min.js') ?>"></script>
+<script defer src="<?= $module->framework->getUrl('lib/fontawesome/js/custom-icons.min.js') ?>"></script>
+<script defer src="<?= $module->framework->getUrl('lib/fontawesome/js/fontawesome.min.js') ?>"></script>
 
 <script defer src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <link rel='stylesheet' type='text/css' href='<?= $module->framework->getUrl('SecurityAccessGroups.css') ?>' />
