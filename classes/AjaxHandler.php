@@ -37,35 +37,21 @@ class AjaxHandler
         $this->action = $this->module->framework->escape($this->params['action']);
     }
 
+    // TODO: validate that the methods are being called from the correct page? Does it matter?
     public function handleAjax()
     {
-        if ( in_array($this->action, self::$generalActions, true) ) {
-            return $this->handleGeneralAjax();
-        } elseif ( in_array($this->action, self::$adminActions, true) ) {
-            return $this->handleAdminAjax();
-        } else {
-            http_response_code(400);
-            throw new AjaxException("Invalid action: {$this->action}");
-        }
-
-    }
-
-    private function handleGeneralAjax()
-    {
-        return null;
-    }
-
-    private function handleAdminAjax()
-    {
-        if ( !$this->module->framework->getUser()->isSuperUser() ) {
-            throw new AjaxException("User is not a super user", 403);
-        }
-
-        // Redundant check, but it makes me feel better
-        if ( in_array($this->action, self::$adminActions, true) ) {
-            $action = $this->action;
+        $action = $this->module->escape($this->action);
+        if ( in_array($action, self::$generalActions, true) ) {
             return $this->$action();
+        } elseif ( in_array($action, self::$adminActions, true) ) {
+            if ( !$this->module->framework->getUser()->isSuperUser() ) {
+                throw new AjaxException("User is not a super user", 403);
+            }
+            return $this->$action();
+        } else {
+            throw new AjaxException("Invalid action: {$action}", 400);
         }
+
     }
 
     // Alerts
