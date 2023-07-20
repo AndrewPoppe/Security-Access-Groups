@@ -13,11 +13,15 @@ class AjaxHandler
     private static array $adminActions = [
         'assignSag',
         'deleteAlert',
+        'deleteSag',
+        'editSag',
         'expireUsers',
         'getAlert',
         'getAlerts',
         'getProjectUsers',
+        'getSags',
         'getUsers',
+        'importCsvSags',
         'importCsvUsers',
         'replacePlaceholders',
         'sendAlerts'
@@ -61,6 +65,10 @@ class AjaxHandler
             $result = $this->assignSag();
         } elseif ( $action === 'deleteAlert' ) {
             $result = $this->deleteAlert();
+        } elseif ( $action === 'deleteSag' ) {
+            $result = $this->deleteSag();
+        } elseif ( $action === 'editSag' ) {
+            $result = $this->editSag();
         } elseif ( $action === 'expireUsers' ) {
             $result = $this->expireUsers();
         } elseif ( $action === 'getAlert' ) {
@@ -69,8 +77,12 @@ class AjaxHandler
             $result = $this->getAlerts();
         } elseif ( $action === 'getProjectUsers' ) {
             $result = $this->getProjectUsers();
+        } elseif ( $action === 'getSags' ) {
+            $result = $this->getSags();
         } elseif ( $action === 'getUsers' ) {
             $result = $this->getUsers();
+        } elseif ( $action === 'importCsvSags' ) {
+            $result = $this->importCsvSags();
         } elseif ( $action === 'importCsvUsers' ) {
             $result = $this->importCsvUsers();
         } elseif ( $action === 'replacePlaceholders' ) {
@@ -210,6 +222,115 @@ class AjaxHandler
             $data['error'] = $error;
         }
         return json_encode($data);
+    }
+
+    // SAGs
+
+    private function deleteSag()
+    {
+        $sagId = filter_var($this->params['payload']['sag_id'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        if ( empty($sagId) || !$this->module->sagExists($sagId) ) {
+            return json_encode([
+                'status'  => 'error',
+                'message' => 'The provided SAG ID was bad.'
+            ]);
+        }
+
+        $this->module->throttleDeleteSag($sagId);
+        return json_encode([
+            'status'  => 'ok',
+            'message' => 'SAG deleted'
+        ]);
+    }
+
+    private function editSag()
+    {
+        $subaction = $this->params['payload']['subaction'];
+
+        // We're submitting the form to add/edit the SAG
+        if ( $subaction == 'save' ) {
+            $data    = filter_var_array($this->params['payload'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+            $sagId   = $data['sag_id'] ?? $this->module->generateNewSagId();
+            $sagName = $data['sag_name_edit'];
+            $newSag  = $data['newSag'];
+            if ( $newSag == 1 ) {
+                $this->module->throttleSaveSag($sagId, $sagName, json_encode($data));
+            } else {
+                $this->module->throttleUpdateSag($sagId, $sagName, json_encode($data));
+            }
+            return json_encode([ 'status' => 'ok', 'sagId' => $sagId ]);
+        }
+
+        // We're asking for the add/edit SAG form contents
+        if ( $subaction == 'get' ) {
+            $newSag  = filter_var($this->params['payload']['newSag'], FILTER_VALIDATE_BOOLEAN);
+            $sagId   = filter_var($this->params['payload']['sag_id'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+            $sagName = filter_var($this->params['payload']['sag_name'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+
+            if ( $newSag === true ) {
+                $rights = $this->module->getDefaultRights();
+                $newSag = true;
+            } else {
+                $thisRole = $this->module->getSagRightsById($sagId);
+                $rights   = json_decode($thisRole['permissions'], true);
+                $sagName  = $thisRole['sag_name'];
+                $newSag   = false;
+            }
+            $sagEditForm = new SagEditForm(
+                $this->module,
+                $rights,
+                $newSag,
+                $sagName,
+                $sagId
+            );
+            return json_encode([ 'form' => $sagEditForm->getForm() ]);
+        }
+    }
+
+    private function getSags()
+    {
+        $sags           = $this->module->getAllSags();
+        $allPermissions = $this->module->getDisplayTextForRights(true);
+
+        $sagsForTable = [];
+        foreach ( $sags as $index => $sag ) {
+            $sag['index']       = $index;
+            $permissions        = json_decode($sag['permissions'], true);
+            $sag['permissions'] = [];
+            foreach ( $allPermissions as $permission => $displayText ) {
+                $sag['permissions'][$permission] = $permissions[$permission] ?? null;
+            }
+            $sagsForTable[] = $sag;
+        }
+
+        return json_encode([ 'data' => $sagsForTable ]);
+    }
+
+    private function importCsvSags()
+    {
+        $csvString = $this->params['payload']['data'];
+        $sagImport = new CsvSAGImport($this->module, $csvString);
+        $sagImport->parseCsvString();
+
+        $contentsValid = $sagImport->contentsValid();
+        if ( $contentsValid !== true ) {
+            return json_encode([
+                'status'  => 'error',
+                'message' => $sagImport->errorMessages
+            ]);
+        }
+
+        if ( filter_var($this->params['payload']['confirm'], FILTER_VALIDATE_BOOLEAN) ) {
+            return json_encode([
+                'status' => 'ok',
+                'result' => $sagImport->import()
+            ]);
+        } else {
+            return json_encode([
+                'status' => 'ok',
+                'table'  => $sagImport->getUpdateTable()
+            ]);
+        }
     }
 
     // Users

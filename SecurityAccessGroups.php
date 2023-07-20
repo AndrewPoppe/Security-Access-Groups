@@ -746,7 +746,7 @@ class SecurityAccessGroups extends AbstractExternalModule
 
     public function throttleSaveSag(string $roleId, string $roleName, string $permissions)
     {
-        if ( !$this->throttle("message = ?", 'role', 3, 1) ) {
+        if ( !$this->framework->throttle("message = ?", [ 'sag' ], 3, 1) ) {
             $this->saveSag($roleId, $roleName, $permissions);
         } else {
             $this->log('saveSag Throttled', [

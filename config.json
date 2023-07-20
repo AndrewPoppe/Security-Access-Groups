@@ -135,11 +135,15 @@
     "auth-ajax-actions": [
         "assignSag",
         "deleteAlert",
+        "deleteSag",
+        "editSag",
         "expireUsers",
         "getAlert",
         "getAlerts",
         "getProjectUsers",
+        "getSags",
         "getUsers",
+        "importCsvSags",
         "importCsvUsers",
         "replacePlaceholders",
         "sendAlerts"

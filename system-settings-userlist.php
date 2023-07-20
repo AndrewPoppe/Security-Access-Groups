@@ -81,7 +81,6 @@ if ( !$module->framework->getUser()->isSuperUser() ) {
     $basicSagsJson = json_encode($basicSags);
     $js            = file_get_contents($module->framework->getSafePath('js/system-settings-userlist.js'));
     $js            = str_replace('{{SAGS_JSON}}', $basicSagsJson, $js);
-    $js            = str_replace('{{USERS_URL}}', $module->framework->getUrl('ajax/users.php'), $js);
     $js            = str_replace('{{DEFAULT_SAG_ID}}', $module->defaultSagId, $js);
     $js            = str_replace('__MODULE__', $module->framework->getJavascriptModuleObjectName(), $js);
 

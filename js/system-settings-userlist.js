@@ -1,6 +1,6 @@
 const module = __MODULE__;
 
-window.sags = JSON.parse('{{SAGS_JSON}}');
+module.sags = JSON.parse('{{SAGS_JSON}}');
 
 module.formatNow = function () {
     const d = new Date();
@@ -110,7 +110,7 @@ module.exportCsv = function (useFilter = false) {
                 } else if (col === 2) {
                     return allData[row]["user_email"];
                 } else if (col === 3) {
-                    return window.sags[allData[row]["sag"]];
+                    return module.sags[allData[row]["sag"]];
                 } else if (col === 4) {
                     return allData[row]["sag"];
                 }
@@ -399,9 +399,9 @@ $(document).ready(function () {
                     row.sag = '{{DEFAULT_SAG_ID}}';
                 }
                 if (type === 'filter') {
-                    return row.sag + ' ' + window.sags[row.sag];
+                    return row.sag + ' ' + module.sags[row.sag];
                 } else if (type === 'sort') {
-                    return window.sags[row.sag];
+                    return module.sags[row.sag];
                 } else {
                     let result =
                         `<select class="sagSelect" disabled="true" onchange="module.saveSag(this)">`;
