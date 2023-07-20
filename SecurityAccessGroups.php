@@ -189,6 +189,28 @@ class SecurityAccessGroups extends AbstractExternalModule
         return null;
     }
 
+    public function redcap_module_ajax($action, $payload, $projectId, $record, $instrument, $eventId, $repeatInstance, $surveyHash, $responseId, $surveyQueueHash, $page, $pageFull, $userId, $groupId)
+    {
+        $ajaxHandler = new AjaxHandler($this, [
+            'action'            => $action,
+            'payload'           => $payload,
+            'project_id'        => $projectId,
+            'record'            => $record,
+            'instrument'        => $instrument,
+            'event_id'          => $eventId,
+            'repeat_instance'   => $repeatInstance,
+            'survey_hash'       => $surveyHash,
+            'response_id'       => $responseId,
+            'survey_queue_hash' => $surveyQueueHash,
+            'page'              => $page,
+            'page_full'         => $pageFull,
+            'user_id'           => $userId,
+            'group_id'          => $groupId
+        ]);
+        return $ajaxHandler->handleAjax();
+    }
+
+
     public function getCurrentRightsFormatted(string $username, $projectId)
     {
         $currentRights     = $this->getCurrentRights($username, $projectId);
@@ -1351,26 +1373,5 @@ class SecurityAccessGroups extends AbstractExternalModule
             }
         }
         return $allResults;
-    }
-
-    public function redcap_module_ajax($action, $payload, $projectId, $record, $instrument, $eventId, $repeatInstance, $surveyHash, $responseId, $surveyQueueHash, $page, $pageFull, $userId, $groupId)
-    {
-        $ajaxHandler = new AjaxHandler($this, [
-            'action'            => $action,
-            'payload'           => $payload,
-            'project_id'        => $projectId,
-            'record'            => $record,
-            'instrument'        => $instrument,
-            'event_id'          => $eventId,
-            'repeat_instance'   => $repeatInstance,
-            'survey_hash'       => $surveyHash,
-            'response_id'       => $responseId,
-            'survey_queue_hash' => $surveyQueueHash,
-            'page'              => $page,
-            'page_full'         => $pageFull,
-            'user_id'           => $userId,
-            'group_id'          => $groupId
-        ]);
-        return $ajaxHandler->handleAjax();
     }
 }

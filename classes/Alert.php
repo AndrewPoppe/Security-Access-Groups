@@ -4,8 +4,6 @@ namespace YaleREDCap\SecurityAccessGroups;
 
 /** @var SecurityAccessGroups $module */
 
-require_once "TextReplacer.php";
-
 class Alert
 {
     private $alertData;
