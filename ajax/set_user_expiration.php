@@ -16,9 +16,8 @@ if ( !$module->getUser()->isSuperUser() ) {
 
 $scriptPath = $module->getSafePath('UserRights/set_user_expiration.php', APP_PATH_DOCROOT);
 
-$data       = filter_input_array(INPUT_POST);
-$username   = $data["username"];
-$expiration = $data["expiration"];
+$username   = filter_input(INPUT_POST, 'username', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+$expiration = filter_input(INPUT_POST, 'expiration', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 
 if ( !empty($expiration) && strtotime($expiration) < strtotime('today') ) {
     require_once $scriptPath;

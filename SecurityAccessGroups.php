@@ -536,9 +536,9 @@ class SecurityAccessGroups extends AbstractExternalModule
             $result   = $this->framework->query($sql, []);
             $userinfo = [];
             while ( $row = $result->fetch_assoc() ) {
-                $userinfo[] = $this->framework->escape($row);
+                $userinfo[] = $row;
             }
-            return $userinfo;
+            return $this->framework->escape($userinfo);
         } catch ( \Throwable $e ) {
             $this->log("Error getting all user info", [ "error" => $e->getMessage(), "user" => $this->getUser()->getUsername() ]);
         }
