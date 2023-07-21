@@ -18,7 +18,7 @@ class APIHandler
     {
         $this->module = $module;
         $this->post   = $post;
-        $this->token  = $this->post['token'];
+        $this->token  = $this->module->framework->sanitizeAPIToken($this->post['token']);
         $this->data   = json_decode($this->post['data'] ?? '{}', true);
         $this->action = htmlspecialchars($this->post['content']);
     }
