@@ -1,4 +1,6 @@
 const module = __MODULE__;
+console.log(performance.now());
+console.time('dt');
 
 module.sags = JSON.parse('{{SAGS_JSON}}');
 
@@ -448,6 +450,7 @@ $(document).ready(function () {
             }, 0);
             module.handleSelects();
             console.log(performance.now());
+            console.timeEnd('dt');
         },
         lengthMenu: [
             [10, 25, 50, 100, -1],

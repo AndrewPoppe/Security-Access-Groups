@@ -1,4 +1,6 @@
 const module = __MODULE__;
+console.log(performance.now());
+console.time('dt');
 
 module.openSagEditor = function (sag_id = "", sag_name = "", newSag = false) {
     const deleteSagButtonCallback = function () {
@@ -528,6 +530,9 @@ $(document).ready(function () {
                 table.stateRestore();
                 table.columns.adjust().draw();
             }, 0);
+
+            console.log(performance.now());
+            console.timeEnd('dt');
         },
 
         columns: [{

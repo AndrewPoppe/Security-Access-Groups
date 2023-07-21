@@ -1,4 +1,6 @@
 const module = __MODULE__;
+console.log(performance.now());
+console.time('dt');
 
 module.hover = function () {
     const thisNode = $(this);
@@ -955,4 +957,6 @@ $(document).ready(function () {
     if ('scrollRestoration' in history) {
         history.scrollRestoration = 'manual';
     }
+    console.log(performance.now());
+    console.timeEnd('dt');
 });
