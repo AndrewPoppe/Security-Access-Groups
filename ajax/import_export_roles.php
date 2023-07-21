@@ -27,16 +27,16 @@ if ( isset($_POST['csv_content']) && $_POST['csv_content'] != '' ) {
             if ( $uniqueRoleName == '' ) {
                 continue;
             }
-            $roleId           = $module->getRoleIdFromUniqueRoleName($uniqueRoleName);
-            $roleName         = \ExternalModules\ExternalModules::getRoleName($pid, $roleId);
-            $role_rights      = $module->getRoleRights($roleId);
+            $role             = new Role($module, null, $uniqueRoleName);
+            $roleName         = $role->getRoleName();
+            $role_rights      = $role->getRoleRights();
             $acceptableRights = $module->getAcceptableRights($username);
             $theseBadRights   = $module->checkProposedRights($acceptableRights, $role_rights);
             // We ignore expired users
             $userExpired = $module->isUserExpired($username, $pid);
             if ( !empty($theseBadRights) && !$userExpired ) {
                 $badRights[$roleName][$username] = [
-                    'SAG'    => $sag['role_name'],
+                    'SAG'    => $sag['sag_name'],
                     'rights' => $theseBadRights
                 ];
             }
@@ -55,8 +55,8 @@ if ( isset($_POST['csv_content']) && $_POST['csv_content'] != '' ) {
                             $username       = $this_assignment['username'];
                             $uniqueRoleName = $this_assignment['unique_role_name'];
                             $uniqueRoleName = $uniqueRoleName == '' ? 'None' : $uniqueRoleName;
-                            $roleId         = $module->getRoleIdFromUniqueRoleName($uniqueRoleName);
-                            $roleLabel      = $module->getRoleLabel($roleId) ?? 'None';
+                            $role           = new Role($module, null, $uniqueRoleName);
+                            $roleLabel      = $role->getRoleName() ?? 'None';
                             $dataValues     = "user = '" . $username . "'\nrole = '" . $roleLabel . "'\nunique_role_name = '" . $uniqueRoleName . "'";
 
                             $sql    = "SELECT log_event_id FROM $logTable WHERE project_id = ? AND user = ? AND page = 'ExternalModules/index.php' AND object_type = 'redcap_user_rights' AND pk = ? AND event = 'INSERT' AND TIMESTAMPDIFF(SECOND,ts,NOW()) <= 10 ORDER BY ts DESC";
@@ -105,11 +105,12 @@ if ( isset($_POST['csv_content']) && $_POST['csv_content'] != '' ) {
         $allRoleIdsOrig   = array_keys(\UserRights::getRoles($pid));
         foreach ( $data as $key => $thisRole ) {
             $roleLabel = $thisRole['role_label'];
-            $roleId    = $module->getRoleIdFromUniqueRoleName($thisRole['unique_role_name']);
+            $role      = new Role($module, null, $thisRole['unique_role_name']);
+            $roleId    = $role->getRoleId();
             if ( isset($roleId) ) {
-                $allCurrentRights[$roleId] = $module->getRoleRightsRaw($roleId);
+                $allCurrentRights[$roleId] = $role->getRoleRightsRaw();
             }
-            $usersInRole = $module->getUsersInRole($pid, $roleId);
+            $usersInRole = $role->getUsersInRole($pid);
             if ( isset($thisRole['forms']) && $thisRole['forms'] != '' ) {
                 foreach ( explode(',', $thisRole['forms']) as $thisPair ) {
                     list( $thisForm, $thisRight )  = explode(':', $thisPair, 2);
@@ -138,7 +139,7 @@ if ( isset($_POST['csv_content']) && $_POST['csv_content'] != '' ) {
                 $userExpired = $module->isUserExpired($username, $pid);
                 if ( !empty($userBadRights) && !$userExpired ) {
                     $theseBadRights[$username] = [
-                        'SAG'    => $sag['role_name'],
+                        'SAG'    => $sag['sag_name'],
                         'rights' => $userBadRights
                     ];
                 }
@@ -168,7 +169,8 @@ if ( isset($_POST['csv_content']) && $_POST['csv_content'] != '' ) {
                             continue;
                         }
                         $pk        = $roleId;
-                        $roleLabel = $module->getRoleLabel($roleId);
+                        $role      = new Role($module, $roleId);
+                        $roleLabel = $role->getRoleName();
 
                         if ( $newRole ) {
                             $description    = 'Add role';
@@ -185,7 +187,7 @@ if ( isset($_POST['csv_content']) && $_POST['csv_content'] != '' ) {
                             $params        = [ $pid, $redcapUser, $pk ];
                         }
 
-                        $updatedRights = $module->getRoleRightsRaw($roleId) ?? [];
+                        $updatedRights = $role->getRoleRightsRaw() ?? [];
                         $changes       = json_encode(array_diff_assoc($updatedRights, $currentRights), JSON_PRETTY_PRINT);
                         $changes       = $changes === '[]' ? 'None' : $changes;
                         $dataValues    = "role = '$roleLabel'\nchanges = $changes\n\n";

@@ -24,12 +24,12 @@ if ( $roleId == 0 ) {
     exit;
 }
 
-$roleLabel        = $module->getRoleLabel($roleId);
-$unique_role_name = $module->getUniqueRoleNameFromRoleId($roleId);
-$roleName         = $module->getRoleLabel($roleId);
+$role             = new Role($module, $roleId);
+$roleLabel        = $role->getRoleName();
+$unique_role_name = $role->getUniqueRoleName();
 $project_id       = $module->framework->getProjectId();
 
-$role_rights      = $module->getRoleRights($roleId);
+$role_rights      = $role->getRoleRights($project_id);
 $acceptableRights = $module->getAcceptableRights($username);
 
 $badRights = $module->checkProposedRights($acceptableRights, $role_rights);
@@ -87,6 +87,6 @@ if ( $errors === false || $userExpired ) {
     ob_end_flush(); // End buffering and clean up
 } else {
     http_response_code(403);
-    echo json_encode($module->framework->escape([ 'error' => true, 'bad_rights' => [ "$username" => [ 'SAG' => $sag['sag_name'], 'rights' => $badRights ] ], 'role' => $roleName ]));
+    echo json_encode($module->framework->escape([ 'error' => true, 'bad_rights' => [ "$username" => [ 'SAG' => $sag['sag_name'], 'rights' => $badRights ] ], 'role' => $roleLabel ]));
 }
 exit;

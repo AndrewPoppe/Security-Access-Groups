@@ -104,8 +104,8 @@ if ( $submitAction === "edit_role" ) {
     if ( !isset($data["role_name"]) || $data["role_name"] == "" ) {
         exit;
     }
-    $role        = $data["user"];
-    $usersInRole = $module->getUsersInRole($pid, $role);
+    $role        = new Role($module, $data["user"]);
+    $usersInRole = $role->getUsersInRole($pid);
     $badRights   = [];
     foreach ( $usersInRole as $username ) {
         $acceptableRights = $module->getAcceptableRights($username);
@@ -119,7 +119,7 @@ if ( $submitAction === "edit_role" ) {
 
         if ( !empty($theseBadRights) && !$userExpired ) {
             $badRights[$username] = [
-                "role"   => $role["role_name"],
+                "role"   => $role->getRoleName(),
                 "SAG"    => $sag["sag_name"],
                 "rights" => $theseBadRights
             ];
@@ -127,25 +127,25 @@ if ( $submitAction === "edit_role" ) {
     }
     if ( empty($badRights) ) {
         $requestedRights = $module->filterPermissions($data);
-        $module->log("Editing Role", [ "role" => $role, "requested_rights" => json_encode($requestedRights) ]);
+        $module->log("Editing Role", [ "role" => $role->getRoleId(), "requested_rights" => json_encode($requestedRights) ]);
         $actionInfo = [
             "action"        => $submitAction,
             "rights"        => $requestedRights,
-            "currentRights" => $module->getRoleRightsRaw($role),
-            "role"          => $role,
+            "currentRights" => $role->getRoleRightsRaw(),
+            "role"          => $role->getRoleId(),
             "project_id"    => $pid
         ];
 
-        ob_start(function ($str) use ($actionInfo, $module) {
+        ob_start(function ($str) use ($actionInfo, $module, $role) {
             try {
                 $succeeded = strpos($str, "<div class='userSaveMsg") !== false; // is there no better way?
                 if ( $succeeded ) {
                     $action         = "Update role";
-                    $updatedRights  = $module->getRoleRightsRaw($actionInfo["role"]) ?? [];
+                    $updatedRights  = $role->getRoleRightsRaw() ?? [];
                     $roleName       = $updatedRights["role_name"];
                     $previousRights = $actionInfo["currentRights"] ?? [];
                     $changes        = json_encode(array_diff_assoc($updatedRights, $previousRights), JSON_PRETTY_PRINT);
-                    $dataValues     = "role = '" . $roleName . "'\nchanges = " . $changes;
+                    $dataValues     = "role = '" . $roleName . "'\nunique role name = '" . $role->getUniqueRoleName() . "'\nchanges = " . $changes;
 
                     $logTable   = $module->framework->getProject($actionInfo["project_id"])->getLogTable();
                     $sql        = "SELECT log_event_id FROM $logTable WHERE project_id = ? AND user = ? AND page = 'ExternalModules/index.php' AND object_type = 'redcap_user_rights' AND pk = ? AND event IN ('INSERT','UPDATE') AND TIMESTAMPDIFF(SECOND,ts,NOW()) <= 10 ORDER BY ts DESC";

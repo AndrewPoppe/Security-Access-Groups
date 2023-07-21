@@ -9,7 +9,7 @@ if ( $_SERVER["REQUEST_METHOD"] !== "POST" ) {
     exit;
 }
 
-if ( !$module->getUser()->isSuperUser() ) {
+if ( !$module->isSuperUser() ) {
     http_response_code(401);
     exit;
 }

@@ -4,7 +4,7 @@ namespace YaleREDCap\SecurityAccessGroups;
 
 /** @var SecurityAccessGroups $module */
 
-if ( !$module->framework->getUser()->isSuperUser() ) {
+if ( !$module->framework->isSuperUser() ) {
     exit();
 }
 require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';

@@ -3,7 +3,7 @@ namespace YaleREDCap\SecurityAccessGroups;
 
 /** @var SecurityAccessGroups $module */
 
-if ( !$module->framework->getUser()->isSuperUser() ) {
+if ( !$module->framework->isSuperUser() ) {
     http_response_code(401);
     exit;
 }

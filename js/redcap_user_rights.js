@@ -28,6 +28,7 @@ $(function () {
                 });
                 text += `</tbody></table>`;
             } else if (window.import_type == "roles") {
+                console.log('1')
                 title = "You cannot import those roles.";
                 text =
                     `The following roles have users assigned to them, and the following permissions cannot be granted for those users due to their current SAG assignment:<br><table style="margin-top: 20px; width: 100%; table-layout: fixed;"><thead style="border-bottom: 2px solid #666;"><tr><th>User Role</th><th>User</th><th>SAG</th><th COLSPAN=2>Permissions</th></tr></thead><tbody style="border-bottom: 1px solid black;">`;
@@ -56,6 +57,7 @@ $(function () {
                 })
                 text += `</tbody></table>`;
             }
+            console.log('2')
             Swal.fire({
                 icon: 'error',
                 title: title,
@@ -269,8 +271,9 @@ $(function () {
                     $('#tooltipExpirationProgress').hide();
                     $('#userClickExpiration').hide();
                 }, 400);
-                fixLinks();
-                checkImportErrors();
             });
     }
+
+    fixLinks();
+    checkImportErrors();
 });

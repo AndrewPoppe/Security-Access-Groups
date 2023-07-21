@@ -10,7 +10,9 @@ require_once 'classes/APIHandler.php';
 require_once 'classes/CsvSAGImport.php';
 require_once 'classes/CsvUserImport.php';
 require_once 'classes/RightsChecker.php';
+require_once 'classes/Role.php';
 require_once 'classes/SagEditForm.php';
+require_once 'classes/SAGException.php';
 require_once 'classes/TextReplacer.php';
 use ExternalModules\AbstractExternalModule;
 use ExternalModules\Framework;
@@ -131,7 +133,7 @@ class SecurityAccessGroups extends AbstractExternalModule
 
     public function redcap_module_link_check_display($projectId, $link)
     {
-        if ( empty($projectId) || $this->getUser()->isSuperUser() ) {
+        if ( empty($projectId) || $this->isSuperUser() ) {
             return $link;
         }
 
@@ -170,7 +172,7 @@ class SecurityAccessGroups extends AbstractExternalModule
             if ( $enabledSystemwide ) {
                 $allProjectIds = $this->getAllProjectIds();
                 $projectIds    = array_filter($allProjectIds, function ($projectId) use ($prefix) {
-                    return $this->isModuleEnabled($prefix, $projectId);
+                    return $this->framework->isModuleEnabled($prefix, $projectId);
                 });
             } else {
                 $projectIds = $this->framework->getProjectsWithModuleEnabled();
@@ -421,8 +423,8 @@ class SecurityAccessGroups extends AbstractExternalModule
         foreach ( $originalRights as $mapping ) {
             $username       = $mapping['username'];
             $uniqueRoleName = $mapping['unique_role_name'];
-            $roleId         = $this->getRoleIdFromUniqueRoleName($uniqueRoleName);
-            $roleLabel      = $this->getRoleLabel($roleId);
+            $role           = new Role($this, null, $uniqueRoleName);
+            $roleLabel      = $role->getRoleName();
 
             $logTable   = $this->framework->getProject($projectId)->getLogTable();
             $sql        = "SELECT log_event_id FROM $logTable WHERE project_id = ? AND user = ? AND page = 'api/index.php' AND object_type = 'redcap_user_rights' AND pk = ? AND event = 'INSERT' AND TIMESTAMPDIFF(SECOND,ts,NOW()) <= 10 ORDER BY ts DESC";
@@ -640,76 +642,6 @@ class SecurityAccessGroups extends AbstractExternalModule
         return !is_null($row['expiration']) && strtotime($row['expiration']) < strtotime('today');
     }
 
-    /**
-     * Gets project role's ID from its unique role name
-     * @param string $uniqueRoleName
-     * @return string project role's ID
-     */
-    public function getRoleIdFromUniqueRoleName(string $uniqueRoleName)
-    {
-        $sql    = 'SELECT role_id FROM redcap_user_roles WHERE unique_role_name = ?';
-        $result = $this->framework->query($sql, [ $uniqueRoleName ]);
-        $row    = $result->fetch_assoc();
-        return $this->framework->escape($row['role_id']);
-    }
-
-    /**
-     * Gets project role's unique role name from its ID
-     * @param mixed $roleId
-     * @return string project role's unique role name
-     */
-    public function getUniqueRoleNameFromRoleId($roleId)
-    {
-        $sql    = 'SELECT unique_role_name FROM redcap_user_roles WHERE role_id = ?';
-        $result = $this->framework->query($sql, [ $roleId ]);
-        $row    = $result->fetch_assoc();
-        return $this->framework->escape($row['unique_role_name']);
-    }
-
-    public function getUsersInRole($projectId, $roleId)
-    {
-        if ( empty($roleId) ) {
-            return [];
-        }
-        $sql    = 'SELECT * FROM redcap_user_rights WHERE project_id = ? AND role_id = ?';
-        $result = $this->framework->query($sql, [ $projectId, $roleId ]);
-        $users  = [];
-        while ( $row = $result->fetch_assoc() ) {
-            $users[] = $row['username'];
-        }
-        return $this->framework->escape($users);
-    }
-
-    public function getRoleLabel($roleId)
-    {
-        $sql    = 'SELECT role_name FROM redcap_user_roles WHERE role_id = ?';
-        $result = $this->framework->query($sql, [ $roleId ]);
-        $row    = $result->fetch_assoc();
-        return $this->framework->escape($row['role_name']);
-    }
-
-    public function getRoleRightsRaw($roleId)
-    {
-        $sql    = 'SELECT * FROM redcap_user_roles WHERE role_id = ?';
-        $result = $this->framework->query($sql, [ $roleId ]);
-        return $this->framework->escape($result->fetch_assoc());
-    }
-
-    public function getRoleRights($roleId, $pid = null)
-    {
-        $projectId = $pid ?? $this->getProjectId();
-        $roles     = \UserRights::getRoles($projectId);
-        $thisRole  = $roles[$roleId];
-        return array_filter($thisRole, function ($value, $key) {
-            $off          = $value === '0';
-            $null         = is_null($value);
-            $unset        = isset($value) && is_null($value);
-            $excluded     = in_array($key, [ 'role_name', 'unique_role_name', 'project_id', 'data_entry', 'data_export_instruments' ], true);
-            $alsoExcluded = !in_array($key, $this->getAllRights(), true);
-            return !$off && !$unset && !$excluded && !$alsoExcluded && !$null;
-        }, ARRAY_FILTER_USE_BOTH);
-    }
-
     public function getModuleDirectoryPrefix()
     {
         return strrev(preg_replace('/^.*v_/', '', strrev($this->framework->getModuleDirectoryName()), 1));
@@ -880,11 +812,11 @@ class SecurityAccessGroups extends AbstractExternalModule
         $result = $this->framework->queryLogs($sql, []);
         $sags   = [];
         while ( $row = $result->fetch_assoc() ) {
-            $logId            = $row['log_id'];
-            $sql2             = 'SELECT sag_id, sag_name, permissions WHERE (project_id IS NULL OR project_id IS NOT NULL) AND log_id = ?';
-            $result2          = $this->framework->queryLogs($sql2, [ $logId ]);
-            $sag              = $result2->fetch_assoc();
-            $sag['role_name'] = $this->framework->escape($sag['sag_name']);
+            $logId           = $row['log_id'];
+            $sql2            = 'SELECT sag_id, sag_name, permissions WHERE (project_id IS NULL OR project_id IS NOT NULL) AND log_id = ?';
+            $result2         = $this->framework->queryLogs($sql2, [ $logId ]);
+            $sag             = $result2->fetch_assoc();
+            $sag['sag_name'] = $this->framework->escape($sag['sag_name']);
             if ( $parsePermissions ) {
                 $sag['permissions']   = json_decode($sag['permissions'], true);
                 $sags[$sag['sag_id']] = $sag;

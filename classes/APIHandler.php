@@ -99,12 +99,13 @@ class APIHandler
                 if ( $uniqueRoleName == '' ) {
                     continue;
                 }
-                $roleId = $this->module->getRoleIdFromUniqueRoleName($uniqueRoleName);
+                $role   = new Role($this->module, null, $uniqueRoleName);
+                $roleId = $role->getRoleId();
                 if ( empty($roleId) ) {
                     continue;
                 }
-                $roleName         = \ExternalModules\ExternalModules::getRoleName($this->projectId, $roleId);
-                $roleRights       = $this->module->getRoleRights($roleId, $this->projectId);
+                $roleName         = $role->getRoleName();
+                $roleRights       = $role->getRoleRights($this->projectId);
                 $acceptableRights = $this->module->getAcceptableRights($username);
                 $theseBadRights   = $this->module->checkProposedRights($acceptableRights, $roleRights);
                 // We ignore expired users
@@ -170,8 +171,8 @@ class APIHandler
             $badRights = [];
             foreach ( $this->data as $thisRole ) {
                 $roleLabel   = $thisRole['role_label'];
-                $roleId      = $this->module->getRoleIdFromUniqueRoleName($thisRole['unique_role_name']);
-                $usersInRole = $this->module->getUsersInRole($this->projectId, $roleId);
+                $role        = new Role($this->module, null, $thisRole['unique_role_name']);
+                $usersInRole = $role->getUsersInRole($this->projectId);
                 $thisRole    = $this->handleFormsViewing($thisRole);
                 $thisRole    = $this->handleFormsExport($thisRole);
                 $thisRole    = $this->filterRights($thisRole);

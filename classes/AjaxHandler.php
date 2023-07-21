@@ -2,8 +2,6 @@
 
 namespace YaleREDCap\SecurityAccessGroups;
 
-use AjaxException;
-
 class AjaxHandler
 {
     private SecurityAccessGroups $module;
@@ -44,7 +42,7 @@ class AjaxHandler
         if ( in_array($action, self::$generalActions, true) ) {
             return $this->$action();
         } elseif ( in_array($action, self::$adminActions, true) ) {
-            if ( !$this->module->framework->getUser()->isSuperUser() ) {
+            if ( !$this->module->framework->isSuperUser() ) {
                 throw new AjaxException("User is not a super user", 403);
             }
             return $this->$action();

@@ -55,7 +55,7 @@ if ( isset($_POST['csv_content']) && $_POST['csv_content'] != '' ) {
 
         if ( !empty($theseBadRights) && !$ignore ) {
             $badRights[$username] = [
-                'SAG'    => $sag['role_name'],
+                'SAG'    => $sag['sag_name'],
                 'rights' => $theseBadRights
             ];
         }
