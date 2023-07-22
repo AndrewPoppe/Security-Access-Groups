@@ -28,8 +28,16 @@ class SecurityAccessGroups extends AbstractExternalModule
     public string $defaultSagId = 'sag_Default';
     public string $defaultSagName = 'Default SAG';
 
-    // External Module Framework Hooks
+    public function __construct()
+    {
+        parent::__construct();
+        $sag = new SAG($this, $this->defaultSagId, $this->defaultSagName);
+        if ( !$sag->sagExists() ) {
+            $this->setDefaultSag();
+        }
+    }
 
+    // External Module Framework Hooks
     public function redcap_every_page_before_render()
     {
         // Only run on the pages we're interested in
@@ -552,8 +560,8 @@ class SecurityAccessGroups extends AbstractExternalModule
     public function getAcceptableRights(string $username)
     {
         $sagId = $this->getUserSag($username);
-        $sag   = $this->getSagRightsById($sagId);
-        return json_decode($sag['permissions'], true);
+        $sag   = new SAG($this, $sagId);
+        return $sag->getSagRights();
     }
 
     // E.g., from ["export-form-form1"=>"1", "export-form-form2"=>"1"] to "[form1,1][form2,1]"
@@ -646,15 +654,21 @@ class SecurityAccessGroups extends AbstractExternalModule
         $this->setSystemSetting($setting, $sagId);
     }
 
-    public function getUserSag($username)
+    /**
+     * Gets user's SAG ID from system settings. If it doesn't exist, sets it to the default SAG ID.
+     * @param mixed $username
+     * @return string $sagId
+     */
+    public function getUserSag($username) : string
     {
         $setting = $username . '-sag';
-        $sag     = $this->getSystemSetting($setting);
-        if ( empty($sag) || !$this->sagExists($sag) ) {
-            $sag = $this->defaultSagId;
-            $this->setUserSag($username, $sag);
+        $sagId   = $this->getSystemSetting($setting) ?? '';
+        $sag     = new SAG($this, $sagId);
+        if ( empty($sagId) || !$sag->sagExists() ) {
+            $sagId = $this->defaultSagId;
+            $this->setUserSag($username, $sagId);
         }
-        return $sag;
+        return $sagId;
     }
 
     private function convertDataQualityResolution($rights)
@@ -686,43 +700,6 @@ class SecurityAccessGroups extends AbstractExternalModule
         }
 
         return json_encode($rights);
-    }
-
-    public function throttleSaveSag(string $roleId, string $roleName, string $permissions)
-    {
-        return true;
-    }
-
-    /**
-     * @param string $sagId
-     * @param string $sagName
-     * @param string $permissions - json-encoded string of user rights
-     *
-     * @return [type]
-     */
-    public function saveSag(string $sagId, string $sagName, string $permissions)
-    {
-        return true;
-    }
-
-    public function throttleUpdateSag(string $sagId, string $sagName, string $permissions)
-    {
-        return true;
-    }
-
-    public function updateSag(string $sagId, string $sagName, string $permissions)
-    {
-        return true;
-    }
-
-    public function throttleDeleteSag($sagId)
-    {
-        return true;
-    }
-
-    public function deleteSag($sagId)
-    {
-        return true;
     }
 
     /**
@@ -762,21 +739,12 @@ class SecurityAccessGroups extends AbstractExternalModule
         return $rights;
     }
 
-    public function getSagRightsById($sagId)
-    {
-        return [];
-    }
-
-    public function sagExists($sagId)
-    {
-        return true;
-    }
-
     public function generateNewSagId()
     {
         $newSagId = 'sag_' . substr(md5(uniqid()), 0, 13);
+        $sag      = new SAG($this, $newSagId);
 
-        if ( $this->sagExists($newSagId) ) {
+        if ( $sag->sagExists() ) {
             return $this->generateNewSagId();
         } else {
             return $newSagId;

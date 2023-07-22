@@ -10,14 +10,19 @@ class SAG
     public string $sagName;
     public string $permissionsJson;
 
-    public array $permissions;
+    public ?array $permissions;
 
-    public function __construct(SecurityAccessGroups $module, $sagId = null, $sagName = null, string $permissionsJson = null)
+    public function __construct(SecurityAccessGroups $module, string $sagId = '', $sagName = null, string $permissionsJson = '')
     {
         $this->module          = $module;
         $this->sagId           = $sagId;
         $this->permissionsJson = $permissionsJson;
-        $this->sagName         = $sagName ?? $this->getSagNameFromSagId();
+        $this->sagName         = $sagName ?? $this->getSagNameFromSagId() ?? '';
+    }
+
+    public function setSagId(string $sagId)
+    {
+        $this->sagId = $sagId;
     }
 
     public function throttleSaveSag(string $permissions, string $sagName = null)
@@ -168,19 +173,32 @@ class SAG
 
     public function getSagRights()
     {
-        $sql    = "SELECT sag_id, sag_name, permissions WHERE message = 'sag' AND sag_id = ? AND (project_id IS NULL OR project_id IS NOT NULL) ORDER BY log_id DESC LIMIT 1";
-        $result = $this->module->framework->queryLogs($sql, [ $this->sagId ]);
-        $rights = $result->fetch_assoc();
-        if ( empty($rights) ) {
-            $sagId2  = $this->module->defaultSagId;
-            $result2 = $this->module->framework->queryLogs($sql, [ $sagId2 ]);
-            $rights  = $result2->fetch_assoc();
+        if ( empty($this->permissions) ) {
+            $sql    = "SELECT sag_id, sag_name, permissions WHERE message = 'sag' AND sag_id = ? AND (project_id IS NULL OR project_id IS NOT NULL) ORDER BY log_id DESC LIMIT 1";
+            $result = $this->module->framework->queryLogs($sql, [ $this->sagId ]);
+            $row    = $result->fetch_assoc();
+            if ( empty($row) ) {
+                $sagId2  = $this->module->defaultSagId;
+                $result2 = $this->module->framework->queryLogs($sql, [ $sagId2 ]);
+                $rights  = $result2->fetch_assoc();
 
-            if ( empty($rights) ) {
-                $rights = $this->module->setDefaultSag();
+                if ( empty($rights) ) {
+                    $rights = $this->module->setDefaultSag();
+                }
+            } else {
+                $this->permissionsJson = $row['permissions'];
+                $rights                = json_decode($row['permissions'], true);
             }
+            $this->permissions = $rights;
+        } else {
+            $rights = $this->permissions;
         }
         return $rights;
+    }
+
+    public function setSagRights(array $rights)
+    {
+        $this->permissions = $rights;
     }
 
     private function getSagNameFromSagId()
@@ -194,6 +212,9 @@ class SAG
 
     public function sagExists()
     {
+        if ( empty($this->sagId) ) {
+            return false;
+        }
         $sql    = 'SELECT sag_id WHERE message = \'sag\' AND sag_id = ? AND (project_id IS NULL OR project_id IS NOT NULL)';
         $result = $this->module->framework->queryLogs($sql, [ $this->sagId ]);
         return $result->num_rows > 0;

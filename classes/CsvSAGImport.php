@@ -67,7 +67,8 @@ class CsvSAGImport
     private function checkSagId($sagId)
     {
         $sagId = trim($sagId);
-        if ( empty($sagId) || !$this->module->sagExists($sagId) ) {
+        $sag   = new SAG($this->module, $sagId);
+        if ( empty($sagId) || !$sag->sagExists() ) {
             $sagId = '[new]';
         }
         return $sagId;
@@ -133,24 +134,24 @@ class CsvSAGImport
         foreach ( $this->cleanContents as $row ) {
             $thisResult             = [];
             $id                     = $row['sag_id'];
-            $thisResult['existing'] = $this->module->sagExists($id);
+            $sag                    = new SAG($this->module, $id);
+            $thisResult['existing'] = $sag->sagExists();
             if ( $thisResult['existing'] ) {
-                $currentSag                = $this->module->getSagRightsById($id);
-                $currentSag['permissions'] = json_decode($currentSag['permissions'], true);
+                $sag->getSagRights();
             } else {
-                $currentSag = $row;
+                $sag->setSagRights($row['permissions']);
             }
             $thisResult['sag_id']  = $id;
             $thisResult['changes'] = false;
-            if ( $row['sag_name'] == $currentSag['sag_name'] ) {
-                $thisResult['sag_name'] = $row['sag_name'];
+            if ( $row['sag_name'] == $sag->sagName ) {
+                $thisResult['sag_name'] = $sag->sagName;
             } else {
-                $thisResult['sag_name'] = [ 'current' => $currentSag['sag_name'], 'proposed' => $row['sag_name'] ];
+                $thisResult['sag_name'] = [ 'current' => $sag->sagName, 'proposed' => $row['sag_name'] ];
                 $thisResult['changes']  = true;
             }
             $thisResult['permissions'] = [];
             foreach ( $this->permissions as $permission ) {
-                $current  = $currentSag['permissions'][$permission] ?? 0;
+                $current  = $sag->getSagRights()[$permission] ?? 0;
                 $proposed = $row['permissions'][$permission] ?? 0;
 
                 if ( $current == $proposed ) {
@@ -239,15 +240,17 @@ class CsvSAGImport
         try {
             foreach ( $this->cleanContents as $row ) {
                 $sagName = $row['sag_name'];
-                $sag     = $row['sag_id'];
+                $sagId   = $row['sag_id'];
                 if ( empty($sagName) ) {
                     continue;
                 }
-                if ( $this->module->sagExists($sag) ) {
-                    $this->module->updateSag($sag, $sagName, json_encode($row['permissions']));
+                $sag = new SAG($this->module, $sagId, $sagName);
+                if ( $sag->sagExists() ) {
+                    $sag->updateSag(json_encode($row['permissions']));
                 } else {
-                    $sag = $this->module->generateNewSagId();
-                    $this->module->saveSag($sag, $sagName, json_encode($row['permissions']));
+                    $sagId = $this->module->generateNewSagId();
+                    $sag->setSagId($sagId);
+                    $sag->saveSag(json_encode($row['permissions']));
                 }
             }
             $this->module->log('Imported SAGs from CSV');

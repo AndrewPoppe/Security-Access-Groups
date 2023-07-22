@@ -19,7 +19,7 @@ if ( isset($_POST['csv_content']) && $_POST['csv_content'] != '' ) {
     foreach ( $data as $key => $thisUser ) {
         $username = $thisUser['username'];
         $sagId    = $module->getUserSag($username);
-        $sag      = $module->getSagRightsById($sagId);
+        $sag      = new SAG($module, $sagId);
 
         if ( isset($thisUser['forms']) && $thisUser['forms'] != '' ) {
             foreach ( explode(',', $thisUser['forms']) as $thisPair ) {
@@ -55,7 +55,7 @@ if ( isset($_POST['csv_content']) && $_POST['csv_content'] != '' ) {
 
         if ( !empty($theseBadRights) && !$ignore ) {
             $badRights[$username] = [
-                'SAG'    => $sag['sag_name'],
+                'SAG'    => $sag->sagName,
                 'rights' => $theseBadRights
             ];
         }

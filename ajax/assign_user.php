@@ -15,7 +15,7 @@ $data     = filter_input_array(INPUT_POST, FILTER_SANITIZE_ENCODED);
 $username = $data['username'];
 $roleId   = $data['role_id'];
 $sagId    = $module->getUserSag($username);
-$sag      = $module->getSagRightsById($sagId);
+$sag      = new SAG($module, $sagId);
 
 
 // We don't care if the user is being removed from a role.
@@ -87,6 +87,6 @@ if ( $errors === false || $userExpired ) {
     ob_end_flush(); // End buffering and clean up
 } else {
     http_response_code(403);
-    echo json_encode($module->framework->escape([ 'error' => true, 'bad_rights' => [ "$username" => [ 'SAG' => $sag['sag_name'], 'rights' => $badRights ] ], 'role' => $roleLabel ]));
+    echo json_encode($module->framework->escape([ 'error' => true, 'bad_rights' => [ "$username" => [ 'SAG' => $sag->sagName, 'rights' => $badRights ] ], 'role' => $roleLabel ]));
 }
 exit;

@@ -190,15 +190,16 @@ class AjaxHandler
 
     private function deleteSag()
     {
-        $sagId = filter_var($this->params['payload']['sag_id'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-        if ( empty($sagId) || !$this->module->sagExists($sagId) ) {
+        $sagId = filter_var($this->params['payload']['sag_id'], FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? '';
+        $sag = new SAG($this->module, $sagId);
+        if ( empty($sagId) || !$sag->sagExists() ) {
             return json_encode([
                 'status'  => 'error',
                 'message' => 'The provided SAG ID was bad.'
             ]);
         }
 
-        $this->module->throttleDeleteSag($sagId);
+        $sag->throttleDeleteSag();
         return json_encode([
             'status'  => 'ok',
             'message' => 'SAG deleted'
@@ -214,11 +215,21 @@ class AjaxHandler
             $data    = filter_var_array($this->params['payload'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
             $sagId   = $data['sag_id'] ?? $this->module->generateNewSagId();
             $sagName = $data['sag_name_edit'];
+            $sag = new SAG($this->module, $sagId, $sagName);
             $newSag  = $data['newSag'];
+            $this->module->framework->log('thing3', [
+                'data' => json_encode($data),
+                'sagId' => $sagId,
+                'sagName' => $sagName,
+                'newSag' => $newSag,
+                'sag_exists' => $sag->sagExists() ? 'true' : 'false',
+                'sag_sagId' => $sag->sagId,
+                'sag_sagName' => $sag->sagName,
+            ]);
             if ( $newSag == 1 ) {
-                $this->module->throttleSaveSag($sagId, $sagName, json_encode($data));
+                $sag->throttleSaveSag(json_encode($data));
             } else {
-                $this->module->throttleUpdateSag($sagId, $sagName, json_encode($data));
+                $sag->throttleUpdateSag(json_encode($data));
             }
             return json_encode([ 'status' => 'ok', 'sagId' => $sagId ]);
         }
@@ -233,10 +244,16 @@ class AjaxHandler
                 $rights = $this->module->getDefaultRights();
                 $newSag = true;
             } else {
-                $thisRole = $this->module->getSagRightsById($sagId);
-                $rights   = json_decode($thisRole['permissions'], true);
-                $sagName  = $thisRole['sag_name'];
+                $sag = new SAG($this->module, $sagId);
+                $rights   = $sag->getSagRights();
+                $sagName  = $sag->sagName;
                 $newSag   = false;
+                $this->module->framework->log('thing', [
+                    'sag_id'      => $sagId,
+                    'sag_name'    => $sagName,
+                    'permissions' => json_encode($rights),
+                    'newSag' => $newSag
+                ]);
             }
             $sagEditForm = new SagEditForm(
                 $this->module,
@@ -302,7 +319,7 @@ class AjaxHandler
     private function assignSag()
     {
         $username = filter_var($this->params['payload']['username'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-        $sag      = filter_var($this->params['payload']['sag'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $sagId      = filter_var($this->params['payload']['sag'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 
         if ( empty($this->module->framework->getUser($username)->getEmail()) ) {
             return json_encode([
@@ -311,7 +328,8 @@ class AjaxHandler
             ]);
         }
 
-        if ( !$this->module->sagExists($sag) ) {
+        $sag = new SAG($this->module, $sagId);
+        if ( !$sag->sagExists() ) {
             return json_encode([
                 'status'  => 'error',
                 'message' => 'SAG not found'
@@ -319,8 +337,8 @@ class AjaxHandler
         }
 
         $setting = $username . "-sag";
-        $this->module->framework->setSystemSetting($setting, $sag);
-        $this->module->framework->log('Assigned SAG', [ 'user' => $username, 'sag' => $sag ]);
+        $this->module->framework->setSystemSetting($setting, $sagId);
+        $this->module->framework->log('Assigned SAG', [ 'user' => $username, 'sag' => $sagId ]);
         return json_encode([
             'status'  => 'ok',
             'message' => 'SAG assigned'
