@@ -251,18 +251,20 @@ class AjaxHandler
 
     private function getSags()
     {
-        $sags           = $this->module->getAllSags();
+        $sags           = $this->module->getAllSags(false, true);
         $allPermissions = $this->module->getDisplayTextForRights(true);
 
         $sagsForTable = [];
         foreach ( $sags as $index => $sag ) {
-            $sag['index']       = $index;
-            $permissions        = json_decode($sag['permissions'], true);
-            $sag['permissions'] = [];
+            $thisSag['index'] = $index;
+            $permissions        = $sag->permissions;
+            $thisSag['permissions'] = [];
             foreach ( $allPermissions as $permission => $displayText ) {
-                $sag['permissions'][$permission] = $permissions[$permission] ?? null;
+                $thisSag['permissions'][$permission] = $permissions[$permission] ?? null;
             }
-            $sagsForTable[] = $sag;
+            $thisSag['sag_id']   = $sag->sagId;
+            $thisSag['sag_name'] = $sag->sagName;
+            $sagsForTable[] = $thisSag;
         }
 
         return json_encode([ 'data' => $sagsForTable ]);

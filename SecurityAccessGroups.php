@@ -33,7 +33,8 @@ class SecurityAccessGroups extends AbstractExternalModule
     public function __construct()
     {
         parent::__construct();
-        $this->defaultRights = $this->getSagRightsById($this->defaultSagId);
+        $sag                 = new SAG($this, $this->defaultSagId, $this->defaultSagName);
+        $this->defaultRights = $sag->getSagRights();
     }
 
     // External Module Framework Hooks
@@ -129,7 +130,7 @@ class SecurityAccessGroups extends AbstractExternalModule
 
     public function redcap_module_project_enable($version, $projectId)
     {
-        $this->log('Module Enabled');
+        $this->framework->log('Module Enabled');
     }
 
     public function redcap_module_link_check_display($projectId, $link)
@@ -258,16 +259,17 @@ class SecurityAccessGroups extends AbstractExternalModule
     public function getUsersWithBadRights($projectId)
     {
         $users     = $this->getBasicProjectUsers($projectId);
-        $sags      = $this->getAllSags(true);
+        $sags      = $this->getAllSags(true, true);
         $badRights = [];
         foreach ( $users as $user ) {
             $expiration            = $user['expiration'];
             $isExpired             = $expiration != '' && strtotime($expiration) < strtotime('today');
             $username              = $user['username'];
-            $acceptableRights      = $sags[$user['sag']]['permissions'];
+            $sag                   = $sags[$user['sag']] ?? $sags[$this->defaultSagId];
+            $acceptableRights      = $sag->permissions;
             $currentRights         = $this->getCurrentRightsFormatted($username, $projectId);
             $bad                   = $this->checkProposedRights($acceptableRights, $currentRights);
-            $sagName               = $sags[$user['sag']]['sag_name'];
+            $sagName               = $sag->sagName;
             $projectRoleUniqueName = $user['unique_role_name'];
             $projectRoleName       = $user['role_name'];
             $badRights[]           = [
@@ -291,19 +293,18 @@ class SecurityAccessGroups extends AbstractExternalModule
     public function getUsersWithBadRights2($projectId)
     {
         $users            = $this->getBasicProjectUsers($projectId);
-        $sags             = $this->getAllSags(true);
+        $sags             = $this->getAllSags(true, true);
         $allCurrentRights = $this->getAllCurrentRights($projectId);
         $badRights        = [];
         foreach ( $users as $user ) {
             $expiration            = $user['expiration'];
             $isExpired             = $expiration != '' && strtotime($expiration) < strtotime('today');
             $username              = $user['username'];
-            $sag                   = $user['sag'] ?? $this->defaultSagId;
-            $sag                   = array_key_exists($sag, $sags) ? $sag : $this->defaultSagId;
-            $acceptableRights      = $sags[$sag]['permissions'];
+            $sag                   = $sags[$user['sag']] ?? $sags[$this->defaultSagId];
+            $acceptableRights      = $sag->permissions;
             $currentRights         = $allCurrentRights[$username];
             $bad                   = $this->checkProposedRights2($acceptableRights, $currentRights);
-            $sagName               = $sags[$sag]['sag_name'];
+            $sagName               = $sag->sagName;
             $projectRoleUniqueName = $user['unique_role_name'];
             $projectRoleName       = $user['role_name'];
             $badRights[]           = [
@@ -312,7 +313,7 @@ class SecurityAccessGroups extends AbstractExternalModule
                 'email'             => $user['user_email'],
                 'expiration'        => $expiration == '' ? 'never' : $expiration,
                 'isExpired'         => $isExpired,
-                'sag'               => $sag,
+                'sag'               => $sag->sagId,
                 'sag_name'          => $sagName,
                 'project_role'      => $projectRoleUniqueName,
                 'project_role_name' => $projectRoleName,
@@ -683,7 +684,7 @@ class SecurityAccessGroups extends AbstractExternalModule
         return $rights;
     }
 
-    private function convertPermissions(string $permissions)
+    public function convertPermissions(string $permissions)
     {
         $rights = json_decode($permissions, true);
         $rights = $this->convertDataQualityResolution($rights);
@@ -808,24 +809,23 @@ class SecurityAccessGroups extends AbstractExternalModule
     }
 
     /**
-     * Summary of getAllSags
-     * @param bool $parsePermissions
-     * @return 
+     * get an array of all existing SAGs as SAG objects
+     * @param bool $idAsKey - if true, the array will be keyed by the SAG id
+     * @param bool $parsePermissions - if true, the permissions will be parsed into an array
+     * @return SAG[]
      */
-    public function getAllSags($parsePermissions = false)
+    public function getAllSags($idAsKey = false, $parsePermissions = false)
     {
-        $sql    = 'SELECT MAX(log_id) AS \'log_id\' WHERE message = \'sag\' AND (project_id IS NULL OR project_id IS NOT NULL) GROUP BY sag_id';
+        $sql    = 'SELECT sag_id, sag_name, permissions WHERE message = \'sag\' AND (project_id IS NULL OR project_id IS NOT NULL)';
         $result = $this->framework->queryLogs($sql, []);
         $sags   = [];
         while ( $row = $result->fetch_assoc() ) {
-            $logId           = $row['log_id'];
-            $sql2            = 'SELECT sag_id, sag_name, permissions WHERE (project_id IS NULL OR project_id IS NOT NULL) AND log_id = ?';
-            $result2         = $this->framework->queryLogs($sql2, [ $logId ]);
-            $sag             = $result2->fetch_assoc();
-            $sag['sag_name'] = $this->framework->escape($sag['sag_name']);
+            $sag = new SAG($this, $row['sag_id'], $row['sag_name'], $row['permissions']);
             if ( $parsePermissions ) {
-                $sag['permissions']   = json_decode($sag['permissions'], true);
-                $sags[$sag['sag_id']] = $sag;
+                $sag->parsePermissions();
+            }
+            if ( $idAsKey ) {
+                $sags[$row['sag_id']] = $sag;
             } else {
                 $sags[] = $sag;
             }
@@ -833,14 +833,15 @@ class SecurityAccessGroups extends AbstractExternalModule
         return $sags;
     }
 
-    private function setDefaultSag()
+    public function setDefaultSag()
     {
         $rights                  = $this->getDefaultRights();
         $rights['sag_id']        = $this->defaultSagId;
         $rights['sag_name_edit'] = $this->defaultSagName;
         $rights['dataViewing']   = '3';
         $rights['dataExport']    = '3';
-        $this->saveSag($this->defaultSagId, $this->defaultSagName, json_encode($rights));
+        $sag                     = new SAG($this, $this->defaultSagId, $this->defaultSagName, json_encode($rights));
+        $sag->saveSag();
         return $rights;
     }
 
