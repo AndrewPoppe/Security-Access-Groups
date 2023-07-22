@@ -27,15 +27,6 @@ class SecurityAccessGroups extends AbstractExternalModule
 
     public string $defaultSagId = 'sag_Default';
     public string $defaultSagName = 'Default SAG';
-    private array $defaultRights = [];
-
-
-    public function __construct()
-    {
-        parent::__construct();
-        $sag                 = new SAG($this, $this->defaultSagId, $this->defaultSagName);
-        $this->defaultRights = $sag->getSagRights();
-    }
 
     // External Module Framework Hooks
 
@@ -699,15 +690,7 @@ class SecurityAccessGroups extends AbstractExternalModule
 
     public function throttleSaveSag(string $roleId, string $roleName, string $permissions)
     {
-        if ( !$this->framework->throttle('message = ?', [ 'sag' ], 3, 1) ) {
-            $this->saveSag($roleId, $roleName, $permissions);
-        } else {
-            $this->log('saveSag Throttled', [
-                'role_id'   => $roleId,
-                'role_name' => $roleName,
-                'user'      => $this->getUser()->getUsername()
-            ]);
-        }
+        return true;
     }
 
     /**
@@ -719,93 +702,27 @@ class SecurityAccessGroups extends AbstractExternalModule
      */
     public function saveSag(string $sagId, string $sagName, string $permissions)
     {
-        try {
-            $permissionsConverted = $this->convertPermissions($permissions);
-            $this->log('sag', [
-                'sag_id'      => $sagId,
-                'sag_name'    => $sagName,
-                'permissions' => $permissionsConverted,
-                'user'        => $this->getUser()->getUsername()
-            ]);
-            $this->framework->log('Saved SAG', [
-                'sag_id'      => $sagId,
-                'sag_name'    => $sagName,
-                'permissions' => $permissionsConverted
-            ]);
-        } catch ( \Throwable $e ) {
-            $this->log('Error saving SAG', [
-                'error'       => $e->getMessage(),
-                'sag_id'      => $sagId,
-                'sag_name'    => $sagName,
-                'permissions' => $permissionsConverted,
-                'user'        => $this->getUser()->getUsername()
-            ]);
-        }
+        return true;
     }
 
     public function throttleUpdateSag(string $sagId, string $sagName, string $permissions)
     {
-        if ( !$this->throttle("message = 'Updated SAG'", [], 3, 1) ) {
-            $this->updateSag($sagId, $sagName, $permissions);
-        } else {
-            $this->log('updateSag Throttled', [ 'sag_id' => $sagId, 'sag_name' => $sagName, 'user' => $this->getUser()->getUsername() ]);
-        }
+        return true;
     }
 
     public function updateSag(string $sagId, string $sagName, string $permissions)
     {
-        try {
-            $permissionsConverted = $this->convertPermissions($permissions);
-            $sql1                 = "SELECT log_id WHERE message = 'sag' AND sag_id = ? AND project_id IS NULL";
-            $result1              = $this->framework->queryLogs($sql1, [ $sagId ]);
-            $logId                = intval($result1->fetch_assoc()["log_id"]);
-            if ( $logId === 0 ) {
-                throw new \Error('No SAG found with the specified id');
-            }
-            $params = [ 'sag_name' => $sagName, 'permissions' => $permissionsConverted ];
-            foreach ( $params as $name => $value ) {
-                $sql = 'UPDATE redcap_external_modules_log_parameters SET value = ? WHERE log_id = ? AND name = ?';
-                $this->framework->query($sql, [ $value, $logId, $name ]);
-            }
-            $this->log('Updated SAG', [
-                'sag_id'      => $sagId,
-                'sag_name'    => $sagName,
-                'permissions' => $permissionsConverted,
-                'user'        => $this->getUser()->getUsername()
-            ]);
-        } catch ( \Throwable $e ) {
-            $this->log('Error updating SAG', [
-                'error'                 => $e->getMessage(),
-                'sag_id'                => $sagId,
-                'sag_name'              => $sagName,
-                'permissions_orig'      => $permissions,
-                'permissions_converted' => $permissionsConverted,
-                'user'                  => $this->getUser()->getUsername()
-            ]);
-        }
+        return true;
     }
 
     public function throttleDeleteSag($sagId)
     {
-        if ( !$this->throttle("message = 'Deleted SAG'", [], 2, 1) ) {
-            $this->deleteSag($sagId);
-        } else {
-            $this->log('deleteSag Throttled', [ 'sag_id' => $sagId, 'user' => $this->getUser()->getUsername() ]);
-        }
+        return true;
     }
 
-    private function deleteSag($sagId)
+    public function deleteSag($sagId)
     {
-        try {
-            $result = $this->removeLogs("message = 'sag' AND sag_id = ? AND (project_id IS NULL OR project_id IS NOT NULL) ", [ $sagId ]);
-            $this->log('Deleted SAG', [
-                'user'   => $this->getUser()->getUsername(),
-                'sag_id' => $sagId
-            ]);
-            return $result;
-        } catch ( \Throwable $e ) {
-            $this->log('Error deleting SAG', [ 'error' => $e->getMessage(), 'user' => $this->getUser()->getUsername(), 'sag_id' => $sagId ]);
-        }
+        return true;
     }
 
     /**
@@ -847,35 +764,12 @@ class SecurityAccessGroups extends AbstractExternalModule
 
     public function getSagRightsById($sagId)
     {
-        if ( empty($sagId) ) {
-            $sagId = $this->defaultSagId;
-        }
-        $sql    = "SELECT sag_id, sag_name, permissions WHERE message = 'sag' AND sag_id = ? AND (project_id IS NULL OR project_id IS NOT NULL) ORDER BY log_id DESC LIMIT 1";
-        $result = $this->framework->queryLogs($sql, [ $sagId ]);
-        $rights = $result->fetch_assoc();
-        if ( empty($rights) ) {
-            $sagId2  = $this->defaultSagId;
-            $result2 = $this->framework->queryLogs($sql, [ $sagId2 ]);
-            $rights  = $result2->fetch_assoc();
-
-            if ( empty($rights) ) {
-                $rights = $this->setDefaultSag();
-            }
-        }
-        return $rights;
+        return [];
     }
 
     public function sagExists($sagId)
     {
-        if ( empty($sagId) ) {
-            return false;
-        }
-        foreach ( $this->getAllSags() as $sag ) {
-            if ( $sagId == $sag['sag_id'] ) {
-                return true;
-            }
-        }
-        return false;
+        return true;
     }
 
     public function generateNewSagId()
