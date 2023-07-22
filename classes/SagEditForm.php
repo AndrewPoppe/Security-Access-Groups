@@ -30,6 +30,12 @@ class SagEditForm
         $existingMessage      = 'Editing existing Security Access Group';
         $messageSuffix        = ' "<strong>' . \REDCap::escapeHtml($sagName) . '</strong>"';
         $this->contextMessage = ($newSag ? $newMessage : $existingMessage) . $messageSuffix;
+        $this->module->framework->log('thing2', [
+            'sag_id'      => $this->sagId,
+            'sag_name'    => $this->sagName,
+            'rights'      => json_encode($this->rights),
+            'dataViewing' => $this->rights['dataViewing'],
+        ]);
     }
 
     public function getForm()

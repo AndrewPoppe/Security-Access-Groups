@@ -60,21 +60,19 @@ if ( !$module->framework->isSuperUser() ) {
     <div class='clear'></div>
 
     <?php
-    $sags    = $module->getAllSags();
-    $sagRows = '';
+    $sags      = $module->getAllSags();
+    $sagRows   = '';
+    $basicSags = [];
     foreach ( $sags as $index => $sag ) {
-        $sagId   = \REDCap::escapeHtml($sag['sag_id']);
+        $sagId             = \REDCap::escapeHtml($sag->sagId);
         $sagRows .= '<tr><td>example_user_' . (intval($index) + 1) . '</td><td>' . $sagId . '</td></tr>';
+        $basicSags[$sagId] = $sag->sagName;
     }
     $userListHtml = file_get_contents($module->framework->getSafePath('html/system-settings-userlist.html'));
     $userListHtml = str_replace('{{SAG_ROWS}}', $sagRows, $userListHtml);
     echo $userListHtml;
     echo $module->framework->initializeJavascriptModuleObject();
 
-    $basicSags = [];
-    foreach ( $sags as $sag ) {
-        $basicSags[$sag["sag_id"]] = $sag["sag_name"];
-    }
     $basicSagsJson = json_encode($basicSags);
     $js            = file_get_contents($module->framework->getSafePath('js/system-settings-userlist.js'));
     $js            = str_replace('{{SAGS_JSON}}', $basicSagsJson, $js);

@@ -50,18 +50,19 @@ class CsvUserImport
         return $userInfo;
     }
 
-    private function checkSag($sag)
+    private function checkSag($sagId)
     {
-        $sag = trim($sag);
-        if ( empty($sag) ) {
+        $sagId = trim($sagId);
+        $sag   = new SAG($this->module, $sagId);
+        if ( empty($sagId) ) {
             $this->errorMessages[] = 'One or more SAG id was invalid.';
             $this->rowValid        = false;
         }
-        if ( !$this->module->sagExists($sag) ) {
-            $this->badSags[] = htmlspecialchars($sag, ENT_QUOTES);
+        if ( !$sag->sagExists() ) {
+            $this->badSags[] = htmlspecialchars($sagId, ENT_QUOTES);
             $this->rowValid  = false;
         }
-        return $sag;
+        return $sagId;
     }
 
     public function contentsValid()
@@ -109,20 +110,21 @@ class CsvUserImport
     private function getAssignments()
     {
         foreach ( $this->cleanContents as $row ) {
-            $currentSag       = $this->module->getUserSag($row['user']);
-            $userInfo         = $this->module->getUserInfo($row['user']);
-            $requestedSagInfo = $this->module->getSagRightsById($row['sag']);
-            $currentSagInfo   = $this->module->getSagRightsById($currentSag);
+            $userInfo       = $this->module->getUserInfo($row['user']);
+            $currentSagId   = $this->module->getUserSag($row['user']);
+            $currentSag     = new SAG($this->module, $currentSagId);
+            $requestedSagId = $row['sag'];
+            $requestedSag   = new SAG($this->module, $requestedSagId);
 
             $result = [
                 'username'   => $userInfo['username'],
                 'name'       => $userInfo['user_firstname'] . ' ' . $userInfo['user_lastname'],
-                'currentSag' => '<strong>' . $currentSagInfo['sag_name'] . '</strong> (' . $currentSagInfo['sag_id'] . ')'
+                'currentSag' => '<strong>' . $currentSag->sagName . '</strong> (' . $currentSag->sagId . ')'
             ];
 
-            if ( $currentSag !== $row['sag'] ) {
-                $result['newSagId'] = $requestedSagInfo['sag_id'];
-                $result['newSag']   = '<strong>' . $requestedSagInfo['sag_name'] . '</strong> (' . $requestedSagInfo['sag_id'] . ')';
+            if ( $currentSag->sagId !== $requestedSag->sagId ) {
+                $result['newSagId'] = $requestedSag->sagId;
+                $result['newSag']   = '<strong>' . $requestedSag->sagName . '</strong> (' . $requestedSag->sagId . ')';
             }
 
             $this->assignments[] = $result;

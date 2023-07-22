@@ -31,7 +31,7 @@ if ( in_array($submitAction, [ 'add_user', 'edit_user' ]) ) {
     $errors           = !empty($badRights);
 
     $sagId = $module->getUserSag($user);
-    $sag   = $module->getSagRightsById($sagId);
+    $sag   = new SAG($module, $sagId);
 
     // We ignore expired users, unless the request unexpires them
     $userExpired         = $module->isUserExpired($user, $module->getProjectId());
@@ -95,7 +95,7 @@ if ( in_array($submitAction, [ 'add_user', 'edit_user' ]) ) {
         ob_end_flush(); // End buffering and clean up
     } else {
         http_response_code(403);
-        echo json_encode([ 'error' => true, 'bad_rights' => [ "$user" => [ 'SAG' => $sag['sag_name'], 'rights' => $badRights ] ] ]);
+        echo json_encode([ 'error' => true, 'bad_rights' => [ "$user" => [ 'SAG' => $sag->sagName, 'rights' => $badRights ] ] ]);
     }
     exit;
 }
@@ -112,7 +112,7 @@ if ( $submitAction === "edit_role" ) {
         $theseBadRights   = $module->checkProposedRights($acceptableRights, $data);
 
         $sagId = $module->getUserSag($username);
-        $sag   = $module->getSagRightsById($sagId);
+        $sag   = new SAG($module, $sagId);
 
         // We ignore expired users
         $userExpired = $module->isUserExpired($username, $module->getProjectId());
@@ -120,7 +120,7 @@ if ( $submitAction === "edit_role" ) {
         if ( !empty($theseBadRights) && !$userExpired ) {
             $badRights[$username] = [
                 "role"   => $role->getRoleName(),
-                "SAG"    => $sag["sag_name"],
+                "SAG"    => $sag->sagName,
                 "rights" => $theseBadRights
             ];
         }

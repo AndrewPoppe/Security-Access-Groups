@@ -25,8 +25,8 @@ if ( !empty($expiration) && strtotime($expiration) < strtotime('today') ) {
 }
 
 $sagId            = $module->getUserSag($username);
-$sag              = $module->getSagRightsById($sagId);
-$acceptableRights = $module->getAcceptableRights($username);
+$sag              = new SAG($module, $sagId);
+$acceptableRights = $sag->getSagRights();
 $currentRights    = $module->getCurrentRights($username, $module->getProjectId());
 $currentRights    = $module->getCurrentRightsFormatted($username, $module->getProjectId());
 $badRights        = $module->checkProposedRights($acceptableRights, $currentRights);
@@ -37,5 +37,5 @@ if ( $errors === false ) {
     exit;
 } else {
     http_response_code(403);
-    echo json_encode([ "error" => true, "bad_rights" => [ "$username" => [ "SAG" => $sag["sag_name"], "rights" => $badRights ] ] ]);
+    echo json_encode([ "error" => true, "bad_rights" => [ "$username" => [ "SAG" => $sag->sagName, "rights" => $badRights ] ] ]);
 }
