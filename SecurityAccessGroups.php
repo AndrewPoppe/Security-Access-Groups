@@ -11,6 +11,7 @@ require_once 'classes/CsvSAGImport.php';
 require_once 'classes/CsvUserImport.php';
 require_once 'classes/RightsChecker.php';
 require_once 'classes/Role.php';
+require_once 'classes/SAG.php';
 require_once 'classes/SagEditForm.php';
 require_once 'classes/SAGException.php';
 require_once 'classes/TextReplacer.php';
@@ -806,6 +807,11 @@ class SecurityAccessGroups extends AbstractExternalModule
         }
     }
 
+    /**
+     * Summary of getAllSags
+     * @param bool $parsePermissions
+     * @return 
+     */
     public function getAllSags($parsePermissions = false)
     {
         $sql    = 'SELECT MAX(log_id) AS \'log_id\' WHERE message = \'sag\' AND (project_id IS NULL OR project_id IS NOT NULL) GROUP BY sag_id';
