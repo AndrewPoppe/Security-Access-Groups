@@ -53,12 +53,13 @@ class SAGProject
         $sags      = $this->module->getAllSags(true, true);
         $badRights = [];
         foreach ( $users as $user ) {
+            $sagUser               = new SAGUser($this->module, $user['username']);
             $expiration            = $user['expiration'];
             $isExpired             = $expiration != '' && strtotime($expiration) < strtotime('today');
             $username              = $user['username'];
             $sag                   = $sags[$user['sag']] ?? $sags[$this->module->defaultSagId];
             $acceptableRights      = $sag->permissions;
-            $currentRights         = $this->module->getCurrentRightsFormatted($username, $this->projectId);
+            $currentRights         = $sagUser->getCurrentRightsFormatted($this->projectId);
             $bad                   = $this->module->checkProposedRights($acceptableRights, $currentRights);
             $sagName               = $sag->sagName;
             $projectRoleUniqueName = $user['unique_role_name'];

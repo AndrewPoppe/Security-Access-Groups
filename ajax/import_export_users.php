@@ -18,8 +18,8 @@ if ( isset($_POST['csv_content']) && $_POST['csv_content'] != '' ) {
     $allCurrentRights = [];
     foreach ( $data as $key => $thisUser ) {
         $username = $thisUser['username'];
-        $sagId    = $module->getUserSag($username);
-        $sag      = new SAG($module, $sagId);
+        $sagUser  = new SAGUser($module, $username);
+        $sag      = $sagUser->getUserSag();
 
         if ( isset($thisUser['forms']) && $thisUser['forms'] != '' ) {
             foreach ( explode(',', $thisUser['forms']) as $thisPair ) {
@@ -39,8 +39,8 @@ if ( isset($_POST['csv_content']) && $_POST['csv_content'] != '' ) {
             return $value != 0;
         });
 
-        $acceptableRights = $module->getAcceptableRights($username);
-        $currentRights    = $module->getCurrentRights($username, $module->framework->getProjectId()) ?? [];
+        $acceptableRights = $sagUser->getAcceptableRights();
+        $currentRights    = $sagUser->getCurrentRights($module->framework->getProjectId()) ?? [];
         $requestedRights  = $thisUser;
         $theseBadRights   = $module->checkProposedRights($acceptableRights, $requestedRights);
 
@@ -48,7 +48,7 @@ if ( isset($_POST['csv_content']) && $_POST['csv_content'] != '' ) {
         $allCurrentRights[$username] = $currentRights;
 
         // We ignore expired users, unless the request unexpires them
-        $userExpired         = $module->isUserExpired($username, $module->framework->getProjectId());
+        $userExpired         = $sagUser->isUserExpired($module->framework->getProjectId());
         $requestedExpiration = $thisUser['expiration'];
         $requestedUnexpired  = empty($requestedExpiration) || (strtotime($requestedExpiration) >= strtotime('today'));
         $ignore              = $userExpired && !$requestedUnexpired;
@@ -62,7 +62,7 @@ if ( isset($_POST['csv_content']) && $_POST['csv_content'] != '' ) {
     }
 
     if ( empty($badRights) ) {
-        ob_start(function () use ($allCurrentRights, $module) {
+        ob_start(function () use ($allCurrentRights, $module, $sagUser) {
             try {
                 $imported   = $_SESSION['imported'] === 'users';
                 $errorCount = sizeof($_SESSION['errors']) ?? 0;
@@ -74,7 +74,7 @@ if ( isset($_POST['csv_content']) && $_POST['csv_content'] != '' ) {
                     $sql        = "SELECT log_event_id FROM $logTable WHERE project_id = ? AND user = ? AND page = 'ExternalModules/index.php' AND object_type = 'redcap_user_rights' AND pk = ? AND event IN ('INSERT','UPDATE') AND TIMESTAMPDIFF(SECOND,ts,NOW()) <= 10 ORDER BY ts DESC";
                     $redcapUser = $module->getUser()->getUsername();
                     foreach ( $allCurrentRights as $username => $currentRights ) {
-                        $updatedRights = $module->getCurrentRights($username, $pid) ?? [];
+                        $updatedRights = $sagUser->getCurrentRights($pid) ?? [];
                         $changes       = json_encode(array_diff_assoc($updatedRights, $currentRights), JSON_PRETTY_PRINT);
                         $changes       = $changes === '[]' ? 'None' : $changes;
                         $dataValues    = "user = '$username'\nchanges = $changes\n\n";

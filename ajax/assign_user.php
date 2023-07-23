@@ -13,9 +13,9 @@ if ( $_SERVER['REQUEST_METHOD'] !== 'POST' ) {
 
 $data     = filter_input_array(INPUT_POST, FILTER_SANITIZE_ENCODED);
 $username = $data['username'];
+$sagUser  = new SAGUser($module, $username);
 $roleId   = $data['role_id'];
-$sagId    = $module->getUserSag($username);
-$sag      = new SAG($module, $sagId);
+$sag      = $sagUser->getUserSag();
 
 
 // We don't care if the user is being removed from a role.
@@ -30,13 +30,13 @@ $unique_role_name = $role->getUniqueRoleName();
 $project_id       = $module->framework->getProjectId();
 
 $role_rights      = $role->getRoleRights($project_id);
-$acceptableRights = $module->getAcceptableRights($username);
+$acceptableRights = $sagUser->getAcceptableRights();
 
 $badRights = $module->checkProposedRights($acceptableRights, $role_rights);
 $errors    = !empty($badRights);
 
 // We ignore expired users
-$userExpired = $module->isUserExpired($username, $project_id);
+$userExpired = $sagUser->isUserExpired($project_id);
 
 if ( $errors === false || $userExpired ) {
     $info = [
