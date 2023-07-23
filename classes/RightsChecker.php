@@ -164,16 +164,16 @@ class RightsChecker
         $dqrClose   = $this->acceptableRights["data_quality_resolution_close"] == 1;
 
         if ( $value == '1' && !$dqrView ) {
-            $badRight          = $this->module->getDisplayTextForRight("data_quality_resolution_view");
+            $badRight          = RightsUtilities::getDisplayTextForRight("data_quality_resolution_view");
             $this->badRights[] = $badRight;
         } elseif ( ($value == '4' || $value == '5' || $value == '3') && !$dqrOpen ) {
-            $badRight          = $this->module->getDisplayTextForRight("data_quality_resolution_open");
+            $badRight          = RightsUtilities::getDisplayTextForRight("data_quality_resolution_open");
             $this->badRights[] = $badRight;
         } elseif ( ($value == '2' || $value == '5' || $value == '3') && !$dqrRespond ) {
-            $badRight          = $this->module->getDisplayTextForRight("data_quality_resolution_respond");
+            $badRight          = RightsUtilities::getDisplayTextForRight("data_quality_resolution_respond");
             $this->badRights[] = $badRight;
         } elseif ( $value == '3' && !$dqrClose ) {
-            $badRight          = $this->module->getDisplayTextForRight("data_quality_resolution_close");
+            $badRight          = RightsUtilities::getDisplayTextForRight("data_quality_resolution_close");
             $this->badRights[] = $badRight;
         }
     }
@@ -188,7 +188,7 @@ class RightsChecker
                 continue;
             }
 
-            $right = $this->module->convertRightName($right);
+            $right = RightsUtilities::convertRightName($right);
             if ( $this->isSafeRight($right) ) {
                 continue;
             }
@@ -201,7 +201,7 @@ class RightsChecker
             $this->checkDataResolutionRights($right, $value);
 
             if ( !$this->accountedFor && $this->acceptableRights[$right] == 0 ) {
-                $this->badRights[] = $this->module->getDisplayTextForRight($right);
+                $this->badRights[] = RightsUtilities::getDisplayTextForRight($right);
             }
         }
         return array_values(array_unique($this->badRights, SORT_REGULAR));
@@ -217,7 +217,7 @@ class RightsChecker
                 continue;
             }
 
-            $right = $this->module->convertRightName($right);
+            $right = RightsUtilities::convertRightName($right);
             if ( $this->isSafeRight($right) ) {
                 continue;
             }
@@ -230,7 +230,7 @@ class RightsChecker
 
 
             if ( !$this->accountedFor && $this->acceptableRights[$right] == 0 ) {
-                $this->badRights[] = $this->module->getDisplayTextForRight($right);
+                $this->badRights[] = RightsUtilities::getDisplayTextForRight($right);
             }
         }
         return array_values(array_unique($this->badRights, SORT_REGULAR));

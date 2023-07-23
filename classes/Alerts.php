@@ -190,7 +190,7 @@ class Alerts
                         'project_id'  => $projectId
                     ]
                 );
-                $this->module->updateLog($reminder['reminder_log_id'], [ 'status' => 'error' ]);
+                $this->updateAlertLog($reminder['reminder_log_id'], [ 'status' => 'error' ]);
             } else {
                 $this->module->framework->log('Reminder sent', [
                     'reminder_id' => $reminder['reminder_log_id'],
@@ -198,13 +198,27 @@ class Alerts
                     'from'        => $reminder['from'],
                     'project_id'  => $projectId
                 ]);
-                $this->module->updateLog($reminder['reminder_log_id'], [
+                $this->updateAlertLog($reminder['reminder_log_id'], [
                     'sentTimestamp' => time(),
                     'status'        => 'sent'
                 ]);
             }
 
         }
+    }
+
+    private function updateAlertLog($logId, array $params)
+    {
+        $sql = 'UPDATE redcap_external_modules_log_parameters SET value = ? WHERE log_id = ? AND name = ?';
+        foreach ( $params as $name => $value ) {
+            try {
+                $this->module->framework->query($sql, [ $value, $logId, $name ]);
+            } catch ( \Throwable $e ) {
+                $this->module->framework->log('Error updating log parameter', [ 'error' => $e->getMessage() ]);
+                return false;
+            }
+        }
+        return true;
     }
 
     private function getUserRemindersToSend($projectId) : array

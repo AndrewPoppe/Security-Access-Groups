@@ -23,12 +23,15 @@ if ( in_array($submitAction, [ 'delete_user', 'add_role', 'delete_role', 'copy_r
     exit;
 }
 
+$rightsUtilities = new RightsUtilities($module);
+
 if ( in_array($submitAction, [ 'add_user', 'edit_user' ]) ) {
     $sagUser          = new SAGUser($module, $user);
     $acceptableRights = $sagUser->getAcceptableRights();
-    $badRights        = $module->checkProposedRights($acceptableRights, $data);
+    $rightsChecker    = new RightsChecker($module, $data, $acceptableRights);
+    $badRights        = $rightsChecker->checkRights();
     $currentRights    = $sagUser->getCurrentRights($pid);
-    $requestedRights  = $module->filterPermissions($data);
+    $requestedRights  = $rightsUtilities->filterPermissions($data);
     $errors           = !empty($badRights);
     $sag              = $sagUser->getUserSag();
 
@@ -110,7 +113,8 @@ if ( $submitAction === "edit_role" ) {
     foreach ( $usersInRole as $username ) {
         $sagUser          = new SAGUser($module, $username);
         $acceptableRights = $sagUser->getAcceptableRights();
-        $theseBadRights   = $module->checkProposedRights($acceptableRights, $data);
+        $rightsChecker    = new RightsChecker($module, $data, $acceptableRights);
+        $theseBadRights   = $rightsChecker->checkRights();
         $sag              = $sagUser->getUserSag();
 
         // We ignore expired users
@@ -125,7 +129,7 @@ if ( $submitAction === "edit_role" ) {
         }
     }
     if ( empty($badRights) ) {
-        $requestedRights = $module->filterPermissions($data);
+        $requestedRights = $rightsUtilities->filterPermissions($data);
         $module->log("Editing Role", [ "role" => $role->getRoleId(), "requested_rights" => json_encode($requestedRights) ]);
         $actionInfo = [
             "action"        => $submitAction,

@@ -28,8 +28,8 @@ class SAGUser
     public function getCurrentRightsFormatted($projectId)
     {
         $currentRights     = $this->getCurrentRights($projectId);
-        $currentDataExport = $this->module->convertExportRightsStringToArray($currentRights['data_export_instruments']);
-        $currentDataEntry  = $this->module->convertDataEntryRightsStringToArray($currentRights['data_entry']);
+        $currentDataExport = RightsUtilities::convertExportRightsStringToArray($currentRights['data_export_instruments']);
+        $currentDataEntry  = RightsUtilities::convertDataEntryRightsStringToArray($currentRights['data_entry']);
         $currentRights     = array_merge($currentRights, $currentDataExport, $currentDataEntry);
         unset($currentRights['data_export_instruments']);
         unset($currentRights['data_entry']);

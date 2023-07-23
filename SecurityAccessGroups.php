@@ -10,6 +10,7 @@ require_once 'classes/APIHandler.php';
 require_once 'classes/CsvSAGImport.php';
 require_once 'classes/CsvUserImport.php';
 require_once 'classes/RightsChecker.php';
+require_once 'classes/RightsUtilities.php';
 require_once 'classes/Role.php';
 require_once 'classes/SAG.php';
 require_once 'classes/SAGProject.php';
@@ -193,6 +194,17 @@ class SecurityAccessGroups extends AbstractExternalModule
         }
     }
 
+    /**
+     * Get the prefix for the module directory prefix (minus the v_version#)
+     * @return string module prefix (minus the v_version#)
+     */
+    public function getModuleDirectoryPrefix()
+    {
+        return strrev(preg_replace('/^.*v_/', '', strrev($this->framework->getModuleDirectoryName()), 1));
+    }
+
+
+    //  PROJECT UTILITIES
     public function getAllProjectIds()
     {
         try {
@@ -212,6 +224,8 @@ class SecurityAccessGroups extends AbstractExternalModule
     }
 
 
+
+    // USER UTILITIES
 
     public function getAllUserInfo($includeSag = false) : ?array
     {
@@ -251,125 +265,8 @@ class SecurityAccessGroups extends AbstractExternalModule
         }
     }
 
-    public function getAllRights()
-    {
-        $sql    = 'SHOW COLUMNS FROM redcap_user_rights';
-        $result = $this->framework->query($sql, []);
-        $rights = [];
-        while ( $row = $result->fetch_assoc() ) {
-            if ( !in_array($row['Field'], [ 'project_id', 'username', 'expiration', 'role_id', 'group_id', 'api_token', 'data_access_group' ], true) ) {
-                $rights[$row['Field']] = $this->framework->escape($row['Field']);
-            }
-        }
-        return $rights;
-    }
 
-    // E.g., from ["export-form-form1"=>"1", "export-form-form2"=>"1"] to "[form1,1][form2,1]"
-    private function convertExportRightsArrayToString($fullRightsArray)
-    {
-        $result = "";
-        foreach ( $fullRightsArray as $key => $value ) {
-            if ( substr_compare($key, 'export-form-', 0, strlen('export-form-')) === 0 ) {
-                $formName = str_replace('export-form-', '', $key);
-                $result .= '[' . $formName . ',' . $value . ']';
-            }
-        }
-        return $result;
-    }
-
-    // E.g., from ["form-form1"=>"1", "form-form2"=>"1"] to "[form1,1][form2,1]"
-    private function convertDataEntryRightsArrayToString($fullRightsArray)
-    {
-        $result = "";
-        foreach ( $fullRightsArray as $key => $value ) {
-            if ( substr_compare($key, 'form-', 0, strlen('form-')) === 0 && substr_compare($key, 'form-editresp-', 0, strlen('form-editresp-')) !== 0 ) {
-                $formName = str_replace('form-', '', $key);
-
-                if ( $fullRightsArray['form-editresp-' . $formName] === 'on' ) {
-                    $value = '3';
-                }
-
-                $result .= '[' . $formName . ',' . $value . ']';
-            }
-        }
-        return $result;
-    }
-
-    // E.g., from "[form1,1][form2,1]" to ["export-form-form1"=>"1", "export-form-form2"=>"1"]
-    public function convertExportRightsStringToArray($fullRightsString)
-    {
-        $raw    = \UserRights::convertFormRightsToArray($fullRightsString);
-        $result = [];
-        foreach ( $raw as $key => $value ) {
-            $result['export-form-' . $key] = $value;
-        }
-        return $result;
-    }
-
-    // E.g., from "[form1,1][form2,1]" to ["form-form1"=>"1", "form-form2"=>"1"]
-    public function convertDataEntryRightsStringToArray($fullRightsString)
-    {
-        $raw    = \UserRights::convertFormRightsToArray($fullRightsString);
-        $result = [];
-        foreach ( $raw as $key => $value ) {
-            if ( $value == 3 ) {
-                $result['form-' . $key]          = 2;
-                $result['form-editresp-' . $key] = 'on';
-            } else {
-                $result['form-' . $key] = $value;
-            }
-        }
-        return $result;
-    }
-
-
-    public function checkProposedRights(array $acceptableRights, array $requestedRights)
-    {
-        $rightsChecker = new RightsChecker($this, $requestedRights, $acceptableRights);
-        return $rightsChecker->checkRights();
-    }
-
-    public function checkProposedRights2(array $acceptableRights, array $requestedRights)
-    {
-        $rightsChecker = new RightsChecker($this, $requestedRights, $acceptableRights);
-        return $rightsChecker->checkRights2();
-    }
-
-    public function getModuleDirectoryPrefix()
-    {
-        return strrev(preg_replace('/^.*v_/', '', strrev($this->framework->getModuleDirectoryName()), 1));
-    }
-
-    private function convertDataQualityResolution($rights)
-    {
-        // 0: no access
-        // 1: view only
-        // 4: open queries only
-        // 2: respond only to opened queries
-        // 5: open and respond to queries
-        // 3: open, close, and respond to queries
-        $value = $rights['data_quality_resolution'];
-        if ( $value ) {
-            $rights['data_quality_resolution_view']    = intval($value) > 0 ? 1 : 0;
-            $rights['data_quality_resolution_open']    = in_array(intval($value), [ 3, 4, 5 ], true) ? 1 : 0;
-            $rights['data_quality_resolution_respond'] = in_array(intval($value), [ 2, 3, 5 ], true) ? 1 : 0;
-            $rights['data_quality_resolution_close']   = intval($value) === 3 ? 1 : 0;
-        }
-        return $rights;
-    }
-
-    public function convertPermissions(string $permissions)
-    {
-        $rights = json_decode($permissions, true);
-        $rights = $this->convertDataQualityResolution($rights);
-        foreach ( $rights as $key => $value ) {
-            if ( $value === 'on' ) {
-                $rights[$key] = 1;
-            }
-        }
-
-        return json_encode($rights);
-    }
+    // SAG UTILITIES
 
     /**
      * get an array of all existing SAGs as SAG objects
@@ -398,7 +295,8 @@ class SecurityAccessGroups extends AbstractExternalModule
 
     public function setDefaultSag()
     {
-        $rights                  = $this->getDefaultRights();
+        $rightsUtilities         = new RightsUtilities($this);
+        $rights                  = $rightsUtilities->getDefaultRights();
         $rights['sag_id']        = $this->defaultSagId;
         $rights['sag_name_edit'] = $this->defaultSagName;
         $rights['dataViewing']   = '3';
@@ -420,213 +318,8 @@ class SecurityAccessGroups extends AbstractExternalModule
         }
     }
 
-    public function getDisplayTextForRights(bool $allRights = false)
-    {
-        global $lang;
-        $rights = [
-            'design'                         => $lang['rights_135'],
-            'user_rights'                    => $lang['app_05'],
-            'data_access_groups'             => $lang['global_22'],
-            'dataViewing'                    => $lang['rights_373'],
-            'dataExport'                     => $lang['rights_428'],
-            'alerts'                         => $lang['global_154'],
-            'reports'                        => $lang['rights_96'],
-            'graphical'                      => $lang['report_builder_78'],
-            'participants'                   => $lang['app_24'],
-            'calendar'                       => $lang['app_08'] . ' ' . $lang['rights_357'],
-            'data_import_tool'               => $lang['app_01'],
-            'data_comparison_tool'           => $lang['app_02'],
-            'data_logging'                   => $lang['app_07'],
-            'file_repository'                => $lang['app_04'],
-            'double_data'                    => $lang['rights_50'],
-            'lock_record_customize'          => $lang['app_11'],
-            'lock_record'                    => $lang['rights_97'],
-            'randomization'                  => $lang['app_21'],
-            'data_quality_design'            => $lang['dataqueries_38'],
-            'data_quality_execute'           => $lang['dataqueries_39'],
-            'data_quality_resolution'        => $lang['dataqueries_137'],
-            'api'                            => $lang['setup_77'],
-            'mobile_app'                     => $lang['global_118'],
-            'realtime_webservice_mapping'    => 'CDP/DDP' . ' ' . $lang['ws_19'],
-            'realtime_webservice_adjudicate' => 'CDP/DDP' . ' ' . $lang['ws_20'],
-            'dts'                            => $lang['rights_132'],
-            'mycap_participants'             => $lang['rights_437'],
-            'record_create'                  => $lang['rights_99'],
-            'record_rename'                  => $lang['rights_100'],
-            'record_delete'                  => $lang['rights_101']
 
-        ];
-        if ( $allRights === true ) {
-            $rights['random_setup']                    = $lang['app_21'] . ' - ' . $lang['rights_142'];
-            $rights['random_dashboard']                = $lang['app_21'] . ' - ' . $lang['rights_143'];
-            $rights['random_perform']                  = $lang['app_21'] . ' - ' . $lang['rights_144'];
-            $rights['data_quality_resolution_view']    = 'Data Quality Resolution - View Queries';
-            $rights['data_quality_resolution_open']    = 'Data Quality Resolution - Open Queries';
-            $rights['data_quality_resolution_respond'] = 'Data Quality Resolution - Respond to Queries';
-            $rights['data_quality_resolution_close']   = 'Data Quality Resolution - Close Queries';
-            $rights['api_export']                      = $lang['rights_139'];
-            $rights['api_import']                      = $lang['rights_314'];
-            $rights['mobile_app_download_data']        = $lang['rights_306'];
-            $rights['lock_record_multiform']           = $lang['rights_370'];
-        }
-        return $rights;
-    }
-
-    public function getDisplayTextForRight(string $right, string $key = '')
-    {
-        $rights = $this->getDisplayTextForRights(true);
-        return $rights[$right] ?? $rights[$key] ?? $right;
-    }
-
-    public function convertRightName($rightName)
-    {
-
-        $conversions = [
-            'stats_and_charts'           => 'graphical',
-            'manage_survey_participants' => 'participants',
-            'logging'                    => 'data_logging',
-            'data_quality_create'        => 'data_quality_design',
-            'lock_records_all_forms'     => 'lock_record_multiform',
-            'lock_records'               => 'lock_record',
-            'lock_records_customization' => 'lock_record_customize'
-        ];
-
-        return $conversions[$rightName] ?? $rightName;
-    }
-
-    public function filterPermissions($rawArray)
-    {
-        $allRights                         = $this->getAllRights();
-        $dataEntryString                   = $this->convertDataEntryRightsArrayToString($rawArray);
-        $dataExportString                  = $this->convertExportRightsArrayToString($rawArray);
-        $result                            = array_intersect_key($rawArray, $allRights);
-        $result['data_export_instruments'] = $dataExportString;
-        $result['data_entry']              = $dataEntryString;
-        return $result;
-    }
-
-    public function getDefaultRights()
-    {
-        $allRights = $this->getAllRights();
-        if ( isset($allRights['data_export_tool']) ) {
-            $allRights['data_export_tool'] = 2;
-        }
-        if ( isset($allRights['data_import_tool']) ) {
-            $allRights['data_import_tool'] = 0;
-        }
-        if ( isset($allRights['data_comparison_tool']) ) {
-            $allRights['data_comparison_tool'] = 0;
-        }
-        if ( isset($allRights['data_logging']) ) {
-            $allRights['data_logging'] = 0;
-        }
-        if ( isset($allRights['file_repository']) ) {
-            $allRights['file_repository'] = 1;
-        }
-        if ( isset($allRights['double_data']) ) {
-            $allRights['double_data'] = 0;
-        }
-        if ( isset($allRights['user_rights']) ) {
-            $allRights['user_rights'] = 0;
-        }
-        if ( isset($allRights['lock_record']) ) {
-            $allRights['lock_record'] = 0;
-        }
-        if ( isset($allRights['lock_record_multiform']) ) {
-            $allRights['lock_record_multiform'] = 0;
-        }
-        if ( isset($allRights['lock_record_customize']) ) {
-            $allRights['lock_record_customize'] = 0;
-        }
-        if ( isset($allRights['data_access_groups']) ) {
-            $allRights['data_access_groups'] = 0;
-        }
-        if ( isset($allRights['graphical']) ) {
-            $allRights['graphical'] = 1;
-        }
-        if ( isset($allRights['reports']) ) {
-            $allRights['reports'] = 1;
-        }
-        if ( isset($allRights['design']) ) {
-            $allRights['design'] = 0;
-        }
-        if ( isset($allRights['alerts']) ) {
-            $allRights['alerts'] = 0;
-        }
-        if ( isset($allRights['dts']) ) {
-            $allRights['dts'] = 0;
-        }
-        if ( isset($allRights['calendar']) ) {
-            $allRights['calendar'] = 1;
-        }
-        if ( isset($allRights['record_create']) ) {
-            $allRights['record_create'] = 1;
-        }
-        if ( isset($allRights['record_rename']) ) {
-            $allRights['record_rename'] = 0;
-        }
-        if ( isset($allRights['record_delete']) ) {
-            $allRights['record_delete'] = 0;
-        }
-        if ( isset($allRights['participants']) ) {
-            $allRights['participants'] = 1;
-        }
-        if ( isset($allRights['data_quality_design']) ) {
-            $allRights['data_quality_design'] = 0;
-        }
-        if ( isset($allRights['data_quality_execute']) ) {
-            $allRights['data_quality_execute'] = 0;
-        }
-        if ( isset($allRights['data_quality_resolution']) ) {
-            $allRights['data_quality_resolution'] = 1;
-        }
-        if ( isset($allRights['api_export']) ) {
-            $allRights['api_export'] = 0;
-        }
-        if ( isset($allRights['api_import']) ) {
-            $allRights['api_import'] = 0;
-        }
-        if ( isset($allRights['mobile_app']) ) {
-            $allRights['mobile_app'] = 0;
-        }
-        if ( isset($allRights['mobile_app_download_data']) ) {
-            $allRights['mobile_app_download_data'] = 0;
-        }
-        if ( isset($allRights['random_setup']) ) {
-            $allRights['random_setup'] = 0;
-        }
-        if ( isset($allRights['random_dashboard']) ) {
-            $allRights['random_dashboard'] = 0;
-        }
-        if ( isset($allRights['random_perform']) ) {
-            $allRights['random_perform'] = 1;
-        }
-        if ( isset($allRights['realtime_webservice_mapping']) ) {
-            $allRights['realtime_webservice_mapping'] = 0;
-        }
-        if ( isset($allRights['realtime_webservice_adjudicate']) ) {
-            $allRights['realtime_webservice_adjudicate'] = 0;
-        }
-        if ( isset($allRights['mycap_participants']) ) {
-            $allRights['mycap_participants'] = 1;
-        }
-        return $allRights;
-    }
-
-    // TODO: just move this to Alerts if that's the only place it's used
-    public function updateLog($logId, array $params)
-    {
-        $sql = 'UPDATE redcap_external_modules_log_parameters SET value = ? WHERE log_id = ? AND name = ?';
-        foreach ( $params as $name => $value ) {
-            try {
-                $this->framework->query($sql, [ $value, $logId, $name ]);
-            } catch ( \Throwable $e ) {
-                $this->framework->log('Error updating log parameter', [ 'error' => $e->getMessage() ]);
-                return false;
-            }
-        }
-        return true;
-    }
+    // REPORT UTILITIES
 
     public function getProjectsWithNoncompliantUsers(bool $includeExpired = false)
     {

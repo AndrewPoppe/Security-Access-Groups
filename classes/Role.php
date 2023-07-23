@@ -37,15 +37,17 @@ class Role
 
     public function getRoleRights($pid = null)
     {
-        $projectId = $pid ?? $this->module->framework->getProjectId();
-        $roles     = \UserRights::getRoles($projectId);
-        $thisRole  = $roles[$this->roleId];
-        return array_filter($thisRole, function ($value, $key) {
+        $projectId       = $pid ?? $this->module->framework->getProjectId();
+        $roles           = \UserRights::getRoles($projectId);
+        $rightsUtilities = new RightsUtilities($this->module);
+        $allRights       = $rightsUtilities->getAllRights();
+        $thisRole        = $roles[$this->roleId];
+        return array_filter($thisRole, function ($value, $key) use ($allRights) {
             $off          = $value === '0';
             $null         = is_null($value);
             $unset        = isset($value) && is_null($value);
             $excluded     = in_array($key, [ 'role_name', 'unique_role_name', 'project_id', 'data_entry', 'data_export_instruments' ], true);
-            $alsoExcluded = !in_array($key, $this->module->getAllRights(), true);
+            $alsoExcluded = !in_array($key, $allRights, true);
             return !$off && !$unset && !$excluded && !$alsoExcluded && !$null;
         }, ARRAY_FILTER_USE_BOTH);
     }

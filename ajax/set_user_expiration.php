@@ -28,7 +28,8 @@ $sag              = $sagUser->getUserSag();
 $acceptableRights = $sag->getSagRights();
 $sagUser          = new SAGUser($module, $username);
 $currentRights    = $sagUser->getCurrentRightsFormatted($module->getProjectId());
-$badRights        = $module->checkProposedRights($acceptableRights, $currentRights);
+$rightsChecker    = new RightsChecker($module, $currentRights, $acceptableRights);
+$badRights        = $rightsChecker->checkRights();
 $errors           = !empty($badRights);
 
 if ( $errors === false ) {

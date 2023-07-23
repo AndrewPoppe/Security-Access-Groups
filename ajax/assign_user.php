@@ -32,8 +32,9 @@ $project_id       = $module->framework->getProjectId();
 $role_rights      = $role->getRoleRights($project_id);
 $acceptableRights = $sagUser->getAcceptableRights();
 
-$badRights = $module->checkProposedRights($acceptableRights, $role_rights);
-$errors    = !empty($badRights);
+$rightsChecker = new RightsChecker($module, $role_rights, $acceptableRights);
+$badRights     = $rightsChecker->checkRights();
+$errors        = !empty($badRights);
 
 // We ignore expired users
 $userExpired = $sagUser->isUserExpired($project_id);

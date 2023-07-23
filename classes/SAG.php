@@ -52,7 +52,7 @@ class SAG
         $rightsJson = $rightsJson ?? $this->permissionsJson;
         $user       = $this->module->framework->getUser()->getUsername();
         try {
-            $permissionsConverted = $this->module->convertPermissions($rightsJson);
+            $permissionsConverted = RightsUtilities::convertPermissions($rightsJson);
             $this->module->framework->log('sag', [
                 'sag_id'      => $this->sagId,
                 'sag_name'    => $sagName,
@@ -100,7 +100,7 @@ class SAG
         $sagName = $sagName ?? $this->sagName;
         $user    = $this->module->framework->getUser()->getUsername();
         try {
-            $permissionsConverted = $this->module->convertPermissions($permissions);
+            $permissionsConverted = RightsUtilities::convertPermissions($permissions);
             $sql1                 = "SELECT log_id WHERE message = 'sag' AND sag_id = ? AND project_id IS NULL";
             $result1              = $this->module->framework->queryLogs($sql1, [ $this->sagId ]);
             $logId                = intval($result1->fetch_assoc()["log_id"]);

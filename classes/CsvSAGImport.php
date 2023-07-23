@@ -18,7 +18,7 @@ class CsvSAGImport
     {
         $this->module    = $module;
         $this->csvString = $csvString;
-        $permissions     = array_keys($module->getDisplayTextForRights(true));
+        $permissions     = array_keys(RightsUtilities::getDisplayTextForRights(true));
         if ( ($key = array_search('randomization', $permissions)) !== false ) {
             unset($permissions[$key]);
         }

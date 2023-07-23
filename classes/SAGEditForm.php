@@ -24,7 +24,8 @@ class SAGEditForm
         $this->sagName   = $sagName;
         $this->sagId     = $sagId;
         $this->lang      = $lang;
-        $this->allRights = $this->module->getAllRights();
+        $rightsUtilities = new RightsUtilities($module);
+        $this->allRights = $rightsUtilities->getAllRights();
 
         $newMessage           = 'Creating new Security Access Group';
         $existingMessage      = 'Editing existing Security Access Group';

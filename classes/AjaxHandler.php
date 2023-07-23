@@ -241,7 +241,8 @@ class AjaxHandler
             $sagName = filter_var($this->params['payload']['sag_name'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 
             if ( $newSag === true ) {
-                $rights = $this->module->getDefaultRights();
+                $rightsUtilities = new RightsUtilities($this->module);
+                $rights = $rightsUtilities->getDefaultRights();
                 $newSag = true;
             } else {
                 $sag = new SAG($this->module, $sagId);
@@ -269,7 +270,7 @@ class AjaxHandler
     private function getSags()
     {
         $sags           = $this->module->getAllSags(false, true);
-        $allPermissions = $this->module->getDisplayTextForRights(true);
+        $allPermissions = RightsUtilities::getDisplayTextForRights(true);
 
         $sagsForTable = [];
         foreach ( $sags as $index => $sag ) {

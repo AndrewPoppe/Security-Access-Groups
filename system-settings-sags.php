@@ -61,7 +61,7 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
     <div class='clear'></div>
 
     <?php
-    $allDisplayTextForUserRights = $module->framework->escape($module->getDisplayTextForRights(true));
+    $allDisplayTextForUserRights = $module->framework->escape(RightsUtilities::getDisplayTextForRights(true));
     $headers                     = '';
     foreach ( $allDisplayTextForUserRights as $dataKey => $value ) {
         $headers .= "<th data-key='" . $dataKey . "' class='dt-head-center'>" . $value . "</th>";

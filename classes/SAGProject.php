@@ -60,7 +60,8 @@ class SAGProject
             $sag                   = $sags[$user['sag']] ?? $sags[$this->module->defaultSagId];
             $acceptableRights      = $sag->permissions;
             $currentRights         = $sagUser->getCurrentRightsFormatted($this->projectId);
-            $bad                   = $this->module->checkProposedRights($acceptableRights, $currentRights);
+            $rightsChecker         = new RightsChecker($this->module, $currentRights, $acceptableRights);
+            $bad                   = $rightsChecker->checkRights();
             $sagName               = $sag->sagName;
             $projectRoleUniqueName = $user['unique_role_name'];
             $projectRoleName       = $user['role_name'];
@@ -95,7 +96,8 @@ class SAGProject
             $sag                   = $sags[$user['sag']] ?? $sags[$this->module->defaultSagId];
             $acceptableRights      = $sag->permissions;
             $currentRights         = $allCurrentRights[$username];
-            $bad                   = $this->module->checkProposedRights2($acceptableRights, $currentRights);
+            $rightsChecker         = new RightsChecker($this->module, $currentRights, $acceptableRights);
+            $bad                   = $rightsChecker->checkRights2();
             $sagName               = $sag->sagName;
             $projectRoleUniqueName = $user['unique_role_name'];
             $projectRoleName       = $user['role_name'];
