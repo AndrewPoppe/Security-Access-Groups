@@ -2,7 +2,7 @@
 
 namespace YaleREDCap\SecurityAccessGroups;
 
-class SagEditForm
+class SAGEditForm
 {
     private $module;
     private $rights;

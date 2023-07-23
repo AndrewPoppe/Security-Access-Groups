@@ -255,7 +255,7 @@ class AjaxHandler
                     'newSag' => $newSag
                 ]);
             }
-            $sagEditForm = new SagEditForm(
+            $sagEditForm = new SAGEditForm(
                 $this->module,
                 $rights,
                 $newSag,
