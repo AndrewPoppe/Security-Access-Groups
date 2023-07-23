@@ -2,6 +2,13 @@
 
 namespace YaleREDCap\SecurityAccessGroups;
 
+/**
+ * User object for Security Access Groups
+ *
+ * This class is used to get information about a user and their SAG.
+ * @property SecurityAccessGroups $module
+ * @property string $username
+ */
 class SAGUser
 {
     private SecurityAccessGroups $module;
@@ -13,6 +20,11 @@ class SAGUser
         $this->username = $username;
     }
 
+    /**
+     * Gets the user's current formatted rights for a project.
+     * @param mixed $projectId REDCap project ID (pid)
+     * @return array The user's current rights for the project formatted as an array
+     */
     public function getCurrentRightsFormatted($projectId)
     {
         $currentRights     = $this->getCurrentRights($projectId);
