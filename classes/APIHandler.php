@@ -95,6 +95,7 @@ class APIHandler
             $badRights = [];
             foreach ( $this->data as $this_assignment ) {
                 $username       = $this_assignment['username'];
+                $sagUser        = new SAGUser($this->module, $username);
                 $uniqueRoleName = $this_assignment['unique_role_name'];
                 if ( $uniqueRoleName == '' ) {
                     continue;
@@ -106,10 +107,10 @@ class APIHandler
                 }
                 $roleName         = $role->getRoleName();
                 $roleRights       = $role->getRoleRights($this->projectId);
-                $acceptableRights = $this->module->getAcceptableRights($username);
+                $acceptableRights = $sagUser->getAcceptableRights();
                 $theseBadRights   = $this->module->checkProposedRights($acceptableRights, $roleRights);
                 // We ignore expired users
-                $userExpired = $this->module->isUserExpired($username, $this->projectId);
+                $userExpired = $sagUser->isUserExpired($this->projectId);
                 if ( !empty($theseBadRights) && !$userExpired ) {
                     $badRights[$roleName] = $theseBadRights;
                 }
@@ -154,10 +155,11 @@ class APIHandler
     {
         $theseBadRights = [];
         foreach ( $usersInRole as $username ) {
-            $acceptableRights = $this->module->getAcceptableRights($username);
+            $sagUser          = new SAGUser($this->module, $username);
+            $acceptableRights = $sagUser->getAcceptableRights();
             $userBadRights    = $this->module->checkProposedRights($acceptableRights, $thisRole);
             // We ignore expired users
-            $userExpired = $this->module->isUserExpired($username, $this->projectId);
+            $userExpired = $sagUser->isUserExpired($this->projectId);
             if ( !empty($userBadRights) && !$userExpired ) {
                 $theseBadRights[$username] = $userBadRights;
             }
@@ -196,15 +198,16 @@ class APIHandler
             $badRights = [];
             foreach ( $this->data as $thisUser ) {
                 $username = $thisUser['username'];
+                $sagUser  = new SAGUser($this->module, $username);
                 $thisUser = $this->handleFormsViewing($thisUser);
                 $thisUser = $this->handleFormsExport($thisUser);
                 $thisUser = $this->filterRights($thisUser);
 
-                $acceptableRights = $this->module->getAcceptableRights($username);
+                $acceptableRights = $sagUser->getAcceptableRights();
                 $theseBadRights   = $this->module->checkProposedRights($acceptableRights, $thisUser);
 
                 // We ignore expired users, unless the request unexpires them
-                $userExpired            = $this->module->isUserExpired($username, $this->projectId);
+                $userExpired            = $sagUser->isUserExpired($this->projectId);
                 $requestedExpiration    = urldecode($thisUser['expiration']);
                 $expirationDateInFuture = strtotime($requestedExpiration) >= strtotime('today');
                 $requestedUnexpired     = empty($requestedExpiration) || $expirationDateInFuture;
@@ -215,9 +218,10 @@ class APIHandler
                 if ( !empty($theseBadRights) && !$ignore ) {
                     $badRights[$username] = $theseBadRights;
                 } else {
+
                     $this->originalRights[] = [
                         'username' => $username,
-                        'rights'   => $this->module->getCurrentRights($username, $this->projectId)
+                        'rights'   => $sagUser->getCurrentRights($this->projectId)
                     ];
                 }
             }

@@ -211,28 +211,14 @@ class SecurityAccessGroups extends AbstractExternalModule
         }
     }
 
-
-    public function getCurrentRightsFormatted(string $username, $projectId)
-    {
-        $currentRights     = $this->getCurrentRights($username, $projectId);
-        $currentDataExport = $this->convertExportRightsStringToArray($currentRights['data_export_instruments']);
-        $currentDataEntry  = $this->convertDataEntryRightsStringToArray($currentRights['data_entry']);
-        $currentRights     = array_merge($currentRights, $currentDataExport, $currentDataEntry);
-        unset($currentRights['data_export_instruments']);
-        unset($currentRights['data_entry']);
-        unset($currentRights['data_export_tool']);
-        unset($currentRights['external_module_config']);
-        return $currentRights;
-    }
-
-
     private function logApiUser($projectId, $user, array $originalRights)
     {
         foreach ( $originalRights as $theseOriginalRights ) {
             $username   = $theseOriginalRights['username'];
+            $sagUser    = new SAGUser($this, $username);
             $oldRights  = $theseOriginalRights['rights'] ?? [];
             $newUser    = empty($oldRights);
-            $newRights  = $this->getCurrentRights($username, $projectId);
+            $newRights  = $sagUser->getCurrentRights($projectId);
             $changes    = json_encode(array_diff_assoc($newRights, $oldRights), JSON_PRETTY_PRINT);
             $changes    = $changes === '[]' ? 'None' : $changes;
             $dataValues = "user = '" . $username . "'\nchanges = " . $changes;
@@ -379,35 +365,6 @@ class SecurityAccessGroups extends AbstractExternalModule
         }, 0, PHP_OUTPUT_HANDLER_FLUSHABLE);
     }
 
-    public function getUserInfo(string $username) : ?array
-    {
-        $sql = 'SELECT username
-        , user_email
-        , user_firstname
-        , user_lastname
-        , super_user
-        , account_manager
-        , access_system_config
-        , access_system_upgrade
-        , access_external_module_install
-        , admin_rights
-        , access_admin_dashboards
-        , user_creation
-        , user_lastlogin
-        , user_suspended_time
-        , user_expiration
-        , user_sponsor
-        , allow_create_db
-        FROM redcap_user_information
-        WHERE username = ?';
-        try {
-            $result = $this->framework->query($sql, [ $username ]);
-            return $this->framework->escape($result->fetch_assoc());
-        } catch ( \Throwable $e ) {
-            $this->log('Error getting user info', [ 'username' => $username, 'error' => $e->getMessage(), 'user' => $this->getUser()->getUsername() ]);
-        }
-    }
-
     public function getAllUserInfo($includeSag = false) : ?array
     {
         $sql = 'SELECT username
@@ -459,13 +416,6 @@ class SecurityAccessGroups extends AbstractExternalModule
         return $rights;
     }
 
-    public function getAcceptableRights(string $username)
-    {
-        $sagId = $this->getUserSag($username);
-        $sag   = new SAG($this, $sagId);
-        return $sag->getSagRights();
-    }
-
     // E.g., from ["export-form-form1"=>"1", "export-form-form2"=>"1"] to "[form1,1][form2,1]"
     private function convertExportRightsArrayToString($fullRightsArray)
     {
@@ -498,7 +448,7 @@ class SecurityAccessGroups extends AbstractExternalModule
     }
 
     // E.g., from "[form1,1][form2,1]" to ["export-form-form1"=>"1", "export-form-form2"=>"1"]
-    private function convertExportRightsStringToArray($fullRightsString)
+    public function convertExportRightsStringToArray($fullRightsString)
     {
         $raw    = \UserRights::convertFormRightsToArray($fullRightsString);
         $result = [];
@@ -509,7 +459,7 @@ class SecurityAccessGroups extends AbstractExternalModule
     }
 
     // E.g., from "[form1,1][form2,1]" to ["form-form1"=>"1", "form-form2"=>"1"]
-    private function convertDataEntryRightsStringToArray($fullRightsString)
+    public function convertDataEntryRightsStringToArray($fullRightsString)
     {
         $raw    = \UserRights::convertFormRightsToArray($fullRightsString);
         $result = [];
@@ -537,40 +487,9 @@ class SecurityAccessGroups extends AbstractExternalModule
         return $rightsChecker->checkRights2();
     }
 
-    public function isUserExpired($username, $projectId)
-    {
-        $sql    = 'SELECT * FROM redcap_user_rights WHERE username = ? AND project_id = ?';
-        $result = $this->framework->query($sql, [ $username, $projectId ]);
-        $row    = $result->fetch_assoc();
-        return !is_null($row['expiration']) && strtotime($row['expiration']) < strtotime('today');
-    }
-
     public function getModuleDirectoryPrefix()
     {
         return strrev(preg_replace('/^.*v_/', '', strrev($this->framework->getModuleDirectoryName()), 1));
-    }
-
-    private function setUserSag($username, $sagId)
-    {
-        $setting = $username . '-sag';
-        $this->setSystemSetting($setting, $sagId);
-    }
-
-    /**
-     * Gets user's SAG ID from system settings. If it doesn't exist, sets it to the default SAG ID.
-     * @param mixed $username
-     * @return string $sagId
-     */
-    public function getUserSag($username) : string
-    {
-        $setting = $username . '-sag';
-        $sagId   = $this->getSystemSetting($setting) ?? '';
-        $sag     = new SAG($this, $sagId);
-        if ( empty($sagId) || !$sag->sagExists() ) {
-            $sagId = $this->defaultSagId;
-            $this->setUserSag($username, $sagId);
-        }
-        return $sagId;
     }
 
     private function convertDataQualityResolution($rights)
@@ -844,18 +763,6 @@ class SecurityAccessGroups extends AbstractExternalModule
             $allRights['mycap_participants'] = 1;
         }
         return $allRights;
-    }
-
-    public function getCurrentRights(string $username, $projectId)
-    {
-        $result = $this->framework->query('SELECT * FROM redcap_user_rights WHERE username = ? AND project_id = ?', [ $username, $projectId ]);
-        $rights = $result->fetch_assoc();
-        if ( !empty($rights['role_id']) ) {
-            $result2 = $this->framework->query('SELECT * FROM redcap_user_roles WHERE role_id = ?', [ $rights['role_id'] ]);
-            $rights  = $result2->fetch_assoc();
-        }
-        unset($rights['api_token'], $rights['expiration']);
-        return $this->framework->escape($rights);
     }
 
     public function updateLog($logId, array $params)

@@ -292,7 +292,8 @@ class Alerts
     private function getAlertRecipient($alert)
     {
         $thisRecipient = \REDCap::escapeHtml($alert['recipient']);
-        return $this->module->getUserInfo($thisRecipient);
+        $sagUser       = new SAGUser($this->module, $thisRecipient);
+        return $sagUser->getUserInfo();
     }
 
     /**

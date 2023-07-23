@@ -24,17 +24,16 @@ if ( in_array($submitAction, [ 'delete_user', 'add_role', 'delete_role', 'copy_r
 }
 
 if ( in_array($submitAction, [ 'add_user', 'edit_user' ]) ) {
-    $acceptableRights = $module->getAcceptableRights($user);
+    $sagUser          = new SAGUser($module, $user);
+    $acceptableRights = $sagUser->getAcceptableRights();
     $badRights        = $module->checkProposedRights($acceptableRights, $data);
-    $currentRights    = $module->getCurrentRights($user, $pid);
+    $currentRights    = $sagUser->getCurrentRights($pid);
     $requestedRights  = $module->filterPermissions($data);
     $errors           = !empty($badRights);
-
-    $sagId = $module->getUserSag($user);
-    $sag   = new SAG($module, $sagId);
+    $sag              = $sagUser->getUserSag();
 
     // We ignore expired users, unless the request unexpires them
-    $userExpired         = $module->isUserExpired($user, $module->getProjectId());
+    $userExpired         = $sagUser->isUserExpired($module->getProjectId());
     $requestedExpiration = urldecode($data['expiration']);
     $requestedUnexpired  = empty($requestedExpiration) || (strtotime($requestedExpiration) >= strtotime('today'));
     if ( $userExpired && !$requestedUnexpired ) {
@@ -48,7 +47,8 @@ if ( in_array($submitAction, [ 'add_user', 'edit_user' ]) ) {
             'rights'        => $requestedRights,
             'currentRights' => $currentRights,
             'user'          => $user,
-            'project_id'    => $pid
+            'project_id'    => $pid,
+            'sagUser'       => $sagUser
         ];
 
         ob_start(function ($str) use ($actionInfo, $module) {
@@ -56,7 +56,7 @@ if ( in_array($submitAction, [ 'add_user', 'edit_user' ]) ) {
                 $succeeded = strpos($str, '<div class=\'userSaveMsg') !== false; // is there no better way?
                 if ( $succeeded ) {
                     $action         = $actionInfo['submit_action'] === 'add_user' ? 'Add user' : 'Update user';
-                    $updatedRights  = $module->getCurrentRights($actionInfo['user'], $actionInfo['project_id']) ?? [];
+                    $updatedRights  = $actionInfo['sagUser']->getCurrentRights($actionInfo['user'], $actionInfo['project_id']) ?? [];
                     $previousRights = $actionInfo['currentRights'] ?? [];
                     $changes        = json_encode(array_diff_assoc($updatedRights, $previousRights), JSON_PRETTY_PRINT);
                     $dataValues     = "user = '" . $actionInfo['user'] . "'\nchanges = " . $changes;
@@ -108,14 +108,13 @@ if ( $submitAction === "edit_role" ) {
     $usersInRole = $role->getUsersInRole($pid);
     $badRights   = [];
     foreach ( $usersInRole as $username ) {
-        $acceptableRights = $module->getAcceptableRights($username);
+        $sagUser          = new SAGUser($module, $username);
+        $acceptableRights = $sagUser->getAcceptableRights();
         $theseBadRights   = $module->checkProposedRights($acceptableRights, $data);
-
-        $sagId = $module->getUserSag($username);
-        $sag   = new SAG($module, $sagId);
+        $sag              = $sagUser->getUserSag();
 
         // We ignore expired users
-        $userExpired = $module->isUserExpired($username, $module->getProjectId());
+        $userExpired = $sagUser->isUserExpired($module->getProjectId());
 
         if ( !empty($theseBadRights) && !$userExpired ) {
             $badRights[$username] = [

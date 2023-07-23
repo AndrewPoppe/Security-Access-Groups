@@ -42,7 +42,8 @@ class CsvUserImport
 
     private function checkUser($username)
     {
-        $userInfo = $this->module->getUserInfo($username);
+        $sagUser  = new SAGUser($this->module, $username);
+        $userInfo = $sagUser->getUserInfo();
         if ( is_null($userInfo) ) {
             $this->badUsers[] = htmlspecialchars($username, ENT_QUOTES);
             $this->rowValid   = false;
@@ -110,9 +111,9 @@ class CsvUserImport
     private function getAssignments()
     {
         foreach ( $this->cleanContents as $row ) {
-            $userInfo       = $this->module->getUserInfo($row['user']);
-            $currentSagId   = $this->module->getUserSag($row['user']);
-            $currentSag     = new SAG($this->module, $currentSagId);
+            $sagUser        = new SAGUser($this->module, $row['user']);
+            $userInfo       = $sagUser->getUserInfo();
+            $currentSag     = $sagUser->getUserSag();
             $requestedSagId = $row['sag'];
             $requestedSag   = new SAG($this->module, $requestedSagId);
 

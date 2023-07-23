@@ -21,8 +21,8 @@ if ( isset($_POST['csv_content']) && $_POST['csv_content'] != '' ) {
         $badRights = [];
         foreach ( $data as $key => $this_assignment ) {
             $username       = $this_assignment['username'];
-            $sagId          = $module->getUserSag($username);
-            $sag            = new SAG($module, $sagId);
+            $sagUser        = new SAGUser($module, $username);
+            $sag            = $sagUser->getUserSag();
             $uniqueRoleName = $this_assignment['unique_role_name'];
             if ( $uniqueRoleName == '' ) {
                 continue;
@@ -30,10 +30,10 @@ if ( isset($_POST['csv_content']) && $_POST['csv_content'] != '' ) {
             $role             = new Role($module, null, $uniqueRoleName);
             $roleName         = $role->getRoleName();
             $role_rights      = $role->getRoleRights();
-            $acceptableRights = $module->getAcceptableRights($username);
+            $acceptableRights = $sagUser->getAcceptableRights();
             $theseBadRights   = $module->checkProposedRights($acceptableRights, $role_rights);
             // We ignore expired users
-            $userExpired = $module->isUserExpired($username, $pid);
+            $userExpired = $sagUser->isUserExpired($pid);
             if ( !empty($theseBadRights) && !$userExpired ) {
                 $badRights[$roleName][$username] = [
                     'SAG'    => $sag->sagName,
@@ -131,12 +131,12 @@ if ( isset($_POST['csv_content']) && $_POST['csv_content'] != '' ) {
 
             $theseBadRights = [];
             foreach ( $usersInRole as $username ) {
-                $sagId            = $module->getUserSag($username);
-                $sag              = new SAG($module, $sagId);
-                $acceptableRights = $module->getAcceptableRights($username);
+                $sagUser          = new SAGUser($module, $username);
+                $sag              = $sagUser->getUserSag();
+                $acceptableRights = $sagUser->getAcceptableRights();
                 $userBadRights    = $module->checkProposedRights($acceptableRights, $thisRole);
                 // We ignore expired users
-                $userExpired = $module->isUserExpired($username, $pid);
+                $userExpired = $sagUser->isUserExpired($pid);
                 if ( !empty($userBadRights) && !$userExpired ) {
                     $theseBadRights[$username] = [
                         'SAG'    => $sag->sagName,
