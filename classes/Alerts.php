@@ -10,7 +10,7 @@ class Alerts
 
     public function __construct(SecurityAccessGroups $module)
     {
-        $this->module = $module;
+        $this->module        = $module;
         $this->adminUsername = $this->module->framework->getUser()->getUsername();
     }
 
@@ -40,7 +40,9 @@ class Alerts
 
     private function getUserRightsHoldersText() : string
     {
-        $userRightsHolders = $this->module->getUserRightsHolders($this->module->getProjectId());
+        $projectId         = $this->module->framework->getProjectId();
+        $sagProject        = new SAGProject($this->module, $projectId);
+        $userRightsHolders = $sagProject->getUserRightsHolders();
         $result            = '';
         foreach ( $userRightsHolders as $userRightsHolder ) {
             $result .= '<tr data-user="' . $userRightsHolder["username"] . '">';
@@ -53,7 +55,7 @@ class Alerts
         return $result;
     }
 
-    
+
     public function getUserEmailModal() : void
     {
         $html = file_get_contents($this->module->framework->getSafePath('html/userEmailModal.html'));
@@ -62,7 +64,7 @@ class Alerts
         echo $html;
     }
 
-    
+
     public function getUserRightsHoldersEmailModal() : void
     {
         $html = file_get_contents($this->module->framework->getSafePath('html/userRightsHoldersEmailModal.html'));

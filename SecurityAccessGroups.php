@@ -12,6 +12,7 @@ require_once 'classes/CsvUserImport.php';
 require_once 'classes/RightsChecker.php';
 require_once 'classes/Role.php';
 require_once 'classes/SAG.php';
+require_once 'classes/SAGProject.php';
 require_once 'classes/SagEditForm.php';
 require_once 'classes/SAGException.php';
 require_once 'classes/TextReplacer.php';
@@ -224,105 +225,6 @@ class SecurityAccessGroups extends AbstractExternalModule
         return $currentRights;
     }
 
-
-    private function getBasicProjectUsers($projectId)
-    {
-        $sql = 'SELECT rights.username,
-        info.user_firstname,
-        info.user_lastname,
-        user_email,
-        expiration,
-        rights.role_id,
-        roles.unique_role_name,
-        roles.role_name,
-        em.value AS sag
-        FROM redcap_user_rights rights
-        LEFT JOIN redcap_user_roles roles
-        ON rights.role_id = roles.role_id
-        LEFT JOIN redcap_user_information info
-        ON rights.username = info.username
-        LEFT JOIN redcap_external_module_settings em ON em.key = CONCAT(rights.username,\'-sag\')
-        WHERE rights.project_id = ?';
-        try {
-            $result = $this->framework->query($sql, [ $projectId ]);
-            $users  = [];
-            while ( $row = $result->fetch_assoc() ) {
-                $users[] = $this->framework->escape($row);
-            }
-            return $users;
-        } catch ( \Throwable $e ) {
-            $this->framework->log('Error getting project users', [ 'error' => $e->getMessage() ]);
-            return [];
-        }
-    }
-    public function getUsersWithBadRights($projectId)
-    {
-        $users     = $this->getBasicProjectUsers($projectId);
-        $sags      = $this->getAllSags(true, true);
-        $badRights = [];
-        foreach ( $users as $user ) {
-            $expiration            = $user['expiration'];
-            $isExpired             = $expiration != '' && strtotime($expiration) < strtotime('today');
-            $username              = $user['username'];
-            $sag                   = $sags[$user['sag']] ?? $sags[$this->defaultSagId];
-            $acceptableRights      = $sag->permissions;
-            $currentRights         = $this->getCurrentRightsFormatted($username, $projectId);
-            $bad                   = $this->checkProposedRights($acceptableRights, $currentRights);
-            $sagName               = $sag->sagName;
-            $projectRoleUniqueName = $user['unique_role_name'];
-            $projectRoleName       = $user['role_name'];
-            $badRights[]           = [
-                'username'          => $username,
-                'name'              => $user['user_firstname'] . ' ' . $user['user_lastname'],
-                'email'             => $user['user_email'],
-                'expiration'        => $expiration == '' ? 'never' : $expiration,
-                'isExpired'         => $isExpired,
-                'sag'               => $user['sag'],
-                'sag_name'          => $sagName,
-                'project_role'      => $projectRoleUniqueName,
-                'project_role_name' => $projectRoleName,
-                'acceptable'        => $acceptableRights,
-                'current'           => $currentRights,
-                'bad'               => $bad
-            ];
-        }
-        return $badRights;
-    }
-
-    public function getUsersWithBadRights2($projectId)
-    {
-        $users            = $this->getBasicProjectUsers($projectId);
-        $sags             = $this->getAllSags(true, true);
-        $allCurrentRights = $this->getAllCurrentRights($projectId);
-        $badRights        = [];
-        foreach ( $users as $user ) {
-            $expiration            = $user['expiration'];
-            $isExpired             = $expiration != '' && strtotime($expiration) < strtotime('today');
-            $username              = $user['username'];
-            $sag                   = $sags[$user['sag']] ?? $sags[$this->defaultSagId];
-            $acceptableRights      = $sag->permissions;
-            $currentRights         = $allCurrentRights[$username];
-            $bad                   = $this->checkProposedRights2($acceptableRights, $currentRights);
-            $sagName               = $sag->sagName;
-            $projectRoleUniqueName = $user['unique_role_name'];
-            $projectRoleName       = $user['role_name'];
-            $badRights[]           = [
-                'username'          => $username,
-                'name'              => $user['user_firstname'] . ' ' . $user['user_lastname'],
-                'email'             => $user['user_email'],
-                'expiration'        => $expiration == '' ? 'never' : $expiration,
-                'isExpired'         => $isExpired,
-                'sag'               => $sag->sagId,
-                'sag_name'          => $sagName,
-                'project_role'      => $projectRoleUniqueName,
-                'project_role_name' => $projectRoleName,
-                'acceptable'        => $acceptableRights,
-                'current'           => $currentRights,
-                'bad'               => $bad
-            ];
-        }
-        return $badRights;
-    }
 
     private function logApiUser($projectId, $user, array $originalRights)
     {
@@ -629,7 +531,7 @@ class SecurityAccessGroups extends AbstractExternalModule
         return $rightsChecker->checkRights();
     }
 
-    private function checkProposedRights2(array $acceptableRights, array $requestedRights)
+    public function checkProposedRights2(array $acceptableRights, array $requestedRights)
     {
         $rightsChecker = new RightsChecker($this, $requestedRights, $acceptableRights);
         return $rightsChecker->checkRights2();
@@ -956,67 +858,6 @@ class SecurityAccessGroups extends AbstractExternalModule
         return $this->framework->escape($rights);
     }
 
-    private function getAllCurrentRights($projectId)
-    {
-        $result = $this->framework->query('SELECT r.*,
-        data_entry LIKE "%,3]%" data_entry3,
-        data_entry LIKE "%,2]%" data_entry2,
-        data_entry LIKE "%,1]%" data_entry1,
-        data_export_instruments LIKE "%,3]%" data_export3,
-        data_export_instruments LIKE "%,2]%" data_export2,
-        data_export_instruments LIKE "%,1]%" data_export1
-        FROM redcap_user_rights r WHERE project_id = ? AND role_id IS NULL', [ $projectId ]);
-        $rights = [];
-        while ( $row = $result->fetch_assoc() ) {
-            unset($row['data_export_instruments']);
-            unset($row['data_entry']);
-            unset($row['data_export_tool']);
-            unset($row['external_module_config']);
-            $rights[$row['username']] = $row;
-        }
-        $result2 = $this->framework->query('SELECT user.username, role.*,
-        role.data_entry LIKE "%,3]%" data_entry3,
-        role.data_entry LIKE "%,2]%" data_entry2,
-        role.data_entry LIKE "%,1]%" data_entry1,
-        role.data_export_instruments LIKE "%,3]%" data_export3,
-        role.data_export_instruments LIKE "%,2]%" data_export2,
-        role.data_export_instruments LIKE "%,1]%" data_export1
-        FROM redcap_user_rights user
-        LEFT JOIN redcap_user_roles role
-        ON user.role_id = role.role_id
-        WHERE user.project_id = ? AND user.role_id IS NOT NULL', [ $projectId ]);
-        while ( $row = $result2->fetch_assoc() ) {
-            unset($row['data_export_instruments']);
-            unset($row['data_entry']);
-            unset($row['data_export_tool']);
-            unset($row['external_module_config']);
-            $rights[$row['username']] = $row;
-        }
-        return $this->framework->escape($rights);
-    }
-
-    public function getUserRightsHolders($projectId)
-    {
-        try {
-            $sql    = 'SELECT rights.username username,
-            CONCAT(info.user_firstname, " ", info.user_lastname) fullname,
-            info.user_email email
-            FROM redcap_user_rights rights
-            LEFT JOIN redcap_user_information info
-            ON rights.username = info.username
-            WHERE project_id = ?
-            AND user_rights = 1';
-            $result = $this->framework->query($sql, [ $projectId ]);
-            $users  = [];
-            while ( $row = $result->fetch_assoc() ) {
-                $users[] = $row;
-            }
-            return $this->framework->escape($users);
-        } catch ( \Throwable $e ) {
-            $this->log('Error fetching user rights holders', [ 'error' => $e->getMessage() ]);
-        }
-    }
-
     public function updateLog($logId, array $params)
     {
         $sql = 'UPDATE redcap_external_modules_log_parameters SET value = ? WHERE log_id = ? AND name = ?';
@@ -1047,15 +888,15 @@ class SecurityAccessGroups extends AbstractExternalModule
 
         $projects = [];
         foreach ( $projectIds as $projectId ) {
-            $discrepantRights = $this->getUsersWithBadRights2($projectId);
+            $sagProject       = new SAGProject($this, $projectId);
+            $discrepantRights = $sagProject->getUsersWithBadRights();
             $users            = array_filter($discrepantRights, function ($user) use ($includeExpired) {
                 return !empty($user['bad'] && ($includeExpired || !$user['isExpired']));
             });
             if ( sizeof($users) > 0 ) {
-                $thisProject = $this->framework->getProject($projectId);
-                $projects[]  = [
+                $projects[] = [
                     'project_id'            => $projectId,
-                    'project_title'         => $thisProject->getTitle(),
+                    'project_title'         => $sagProject->getTitle(),
                     'users_with_bad_rights' => array_values(array_map(function ($thisUser) {
                         return [
                             'username' => $thisUser['username'],
@@ -1107,13 +948,13 @@ class SecurityAccessGroups extends AbstractExternalModule
 
         $users = [];
         foreach ( $projectIds as $projectId ) {
-            $discrepantRights = $this->getUsersWithBadRights2($projectId);
+            $sagProject       = new SAGProject($this, $projectId);
+            $discrepantRights = $sagProject->getUsersWithBadRights();
             foreach ( $discrepantRights as $user ) {
                 if ( !empty($user['bad']) && ($includeExpired || !$user['isExpired']) ) {
-                    $thisProject                            = $this->framework->getProject($projectId);
                     $users[$user['username']]['projects'][] = [
                         'project_id'    => $projectId,
-                        'project_title' => $thisProject->getTitle(),
+                        'project_title' => $sagProject->getTitle(),
                         'bad_rights'    => $user['bad'],
                     ];
                     $users[$user['username']]['username']   = $user['username'];
@@ -1153,13 +994,13 @@ class SecurityAccessGroups extends AbstractExternalModule
 
         $allResults = [];
         foreach ( $projectIds as $projectId ) {
-            $discrepantRights = $this->getUsersWithBadRights2($projectId);
+            $sagProject       = new SAGProject($this, $projectId);
+            $discrepantRights = $sagProject->getUsersWithBadRights();
             foreach ( $discrepantRights as $user ) {
                 if ( !empty($user['bad']) && ($includeExpired || !$user['isExpired']) ) {
-                    $thisProject  = $this->framework->getProject($projectId);
                     $allResults[] = [
                         'project_id'    => $projectId,
-                        'project_title' => $thisProject->getTitle(),
+                        'project_title' => $sagProject->getTitle(),
                         'bad_rights'    => $user['bad'],
                         'username'      => $user['username'],
                         'name'          => $user['name'],

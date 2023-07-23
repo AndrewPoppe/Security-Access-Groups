@@ -409,7 +409,8 @@ class AjaxHandler
     private function getProjectUsers()
     {
         $projectId        = $this->params['project_id'];
-        $discrepantRights = $this->module->getUsersWithBadRights2($projectId);
+        $sagProject       = new SAGProject($this->module, $projectId);
+        $discrepantRights = $sagProject->getUsersWithBadRights();
         return json_encode([ 'data' => $discrepantRights ]);
     }
 
