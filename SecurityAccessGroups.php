@@ -13,7 +13,7 @@ require_once 'classes/RightsChecker.php';
 require_once 'classes/Role.php';
 require_once 'classes/SAG.php';
 require_once 'classes/SAGProject.php';
-require_once 'classes/SagEditForm.php';
+require_once 'classes/SAGEditForm.php';
 require_once 'classes/SAGException.php';
 require_once 'classes/TextReplacer.php';
 use ExternalModules\AbstractExternalModule;
