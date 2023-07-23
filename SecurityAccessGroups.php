@@ -70,8 +70,7 @@ class SecurityAccessGroups extends AbstractExternalModule
                 echo json_encode($badRights);
                 $this->exitAfterHook();
             } else {
-                [ $action, $project_id, $user, $original_rights ] = $api->getApiRequestInfo();
-                $this->logApi($action, $project_id, $user, $original_rights);
+                $api->logApi();
             }
             return;
         }
@@ -212,159 +211,7 @@ class SecurityAccessGroups extends AbstractExternalModule
         }
     }
 
-    private function logApiUser($projectId, $user, array $originalRights)
-    {
-        foreach ( $originalRights as $theseOriginalRights ) {
-            $username   = $theseOriginalRights['username'];
-            $sagUser    = new SAGUser($this, $username);
-            $oldRights  = $theseOriginalRights['rights'] ?? [];
-            $newUser    = empty($oldRights);
-            $newRights  = $sagUser->getCurrentRights($projectId);
-            $changes    = json_encode(array_diff_assoc($newRights, $oldRights), JSON_PRETTY_PRINT);
-            $changes    = $changes === '[]' ? 'None' : $changes;
-            $dataValues = "user = '" . $username . "'\nchanges = " . $changes;
-            if ( $newUser ) {
-                $event       = 'INSERT';
-                $description = 'Add user';
-            } else {
-                $event       = 'UPDATE';
-                $description = 'Edit user';
-            }
-            $logTable   = $this->framework->getProject($projectId)->getLogTable();
-            $sql        = "SELECT log_event_id FROM $logTable WHERE project_id = ? AND user = ? AND page = 'api/index.php' AND object_type = 'redcap_user_rights' AND pk = ? AND event = ? AND TIMESTAMPDIFF(SECOND,ts,NOW()) <= 10 ORDER BY ts DESC";
-            $params     = [ $projectId, $user, $username, $event ];
-            $result     = $this->framework->query($sql, $params);
-            $logEventId = intval($result->fetch_assoc()['log_event_id']);
-            if ( $logEventId != 0 ) {
-                $this->framework->query("UPDATE $logTable SET data_values = ? WHERE log_event_id = ?", [ $dataValues, $logEventId ]);
-            } else {
-                \Logging::logEvent(
-                    '',
-                    'redcap_user_rights',
-                    $event,
-                    $username,
-                    $dataValues,
-                    $description,
-                    '',
-                    '',
-                    '',
-                    true,
-                    null,
-                    null,
-                    false
-                );
-            }
-        }
-    }
 
-    private function logApiUserRole($projectId, $user, array $originalRights)
-    {
-        $newRights = \UserRights::getRoles($projectId);
-        foreach ( $newRights as $role_id => $role ) {
-            $oldRights  = $originalRights[$role_id] ?? [];
-            $newRole    = empty($oldRights);
-            $roleLabel  = $role['role_name'];
-            $changes    = json_encode(array_diff_assoc($role, $oldRights), JSON_PRETTY_PRINT);
-            $changes    = $changes === '[]' ? 'None' : $changes;
-            $dataValues = "role = '" . $roleLabel . "'\nchanges = " . $changes;
-            $logTable   = $this->framework->getProject($projectId)->getLogTable();
-
-            if ( $newRole ) {
-                $description    = 'Add role';
-                $event          = 'INSERT';
-                $origDataValues = "role = '" . $roleLabel . "'";
-                $objectType     = 'redcap_user_rights';
-                $sql            = "SELECT log_event_id FROM $logTable WHERE project_id = ? AND user = ? AND page = 'api/index.php' AND object_type = 'redcap_user_rights' AND pk IS NULL AND event = 'INSERT' AND data_values = ? AND TIMESTAMPDIFF(SECOND,ts,NOW()) <= 10 ORDER BY ts DESC";
-                $params         = [ $projectId, $user, $origDataValues ];
-            } else {
-                $description = 'Edit role';
-                $event       = 'update';
-                $objectType  = 'redcap_user_roles';
-                $sql         = "SELECT log_event_id FROM $logTable WHERE project_id = ? AND user = ? AND page = 'api/index.php' AND object_type = 'redcap_user_roles' AND pk = ? AND event = 'UPDATE' AND TIMESTAMPDIFF(SECOND,ts,NOW()) <= 10 ORDER BY ts DESC";
-                $params      = [ $projectId, $user, $role_id ];
-            }
-
-            $result     = $this->framework->query($sql, $params);
-            $logEventId = intval($result->fetch_assoc()['log_event_id']);
-            if ( $logEventId != 0 ) {
-                $this->framework->query("UPDATE $logTable SET data_values = ? WHERE log_event_id = ?", [ $dataValues, $logEventId ]);
-            } else {
-                \Logging::logEvent(
-                    '',
-                    $objectType,
-                    $event,
-                    $role_id,
-                    $dataValues,
-                    $description,
-                    '',
-                    '',
-                    '',
-                    true,
-                    null,
-                    null,
-                    false
-                );
-            }
-        }
-    }
-
-    private function logApiUserRoleMapping($projectId, $user, array $originalRights)
-    {
-        foreach ( $originalRights as $mapping ) {
-            $username       = $mapping['username'];
-            $uniqueRoleName = $mapping['unique_role_name'];
-            $role           = new Role($this, null, $uniqueRoleName);
-            $roleLabel      = $role->getRoleName();
-
-            $logTable   = $this->framework->getProject($projectId)->getLogTable();
-            $sql        = "SELECT log_event_id FROM $logTable WHERE project_id = ? AND user = ? AND page = 'api/index.php' AND object_type = 'redcap_user_rights' AND pk = ? AND event = 'INSERT' AND TIMESTAMPDIFF(SECOND,ts,NOW()) <= 10 ORDER BY ts DESC";
-            $params     = [ $projectId, $user, $username ];
-            $result     = $this->framework->query($sql, $params);
-            $logEventId = intval($result->fetch_assoc()['log_event_id']);
-
-            $dataValues = "user = '" . $username . "'\nrole = '" . $roleLabel . "'\nunique_role_name = '" . $uniqueRoleName . "'";
-
-            if ( $logEventId != 0 ) {
-                $this->framework->query("UPDATE $logTable SET data_values = ? WHERE log_event_id = ?", [ $dataValues, $logEventId ]);
-            } else {
-                \Logging::logEvent(
-                    '',
-                    'redcap_user_rights',
-                    'INSERT',
-                    $username,
-                    $dataValues,
-                    'Assign user to role',
-                    '',
-                    '',
-                    '',
-                    true,
-                    null,
-                    null,
-                    false
-                );
-            }
-        }
-    }
-
-    private function logApi(string $action, $projectId, $user, array $originalRights)
-    {
-        ob_start(function ($str) use ($action, $projectId, $user, $originalRights) {
-
-            if ( strpos($str, '{"error":') === 0 ) {
-                $this->log('api_failed');
-                return $str;
-            }
-            if ( $action === 'user' ) {
-                $this->logApiUser($projectId, $user, $originalRights);
-            } elseif ( $action === 'userRole' ) {
-                $this->logApiUserRole($projectId, $user, $originalRights);
-            } elseif ( $action === 'userRoleMapping' ) {
-                $this->logApiUserRoleMapping($projectId, $user, $originalRights);
-            }
-
-            return $str;
-        }, 0, PHP_OUTPUT_HANDLER_FLUSHABLE);
-    }
 
     public function getAllUserInfo($includeSag = false) : ?array
     {
@@ -766,6 +613,7 @@ class SecurityAccessGroups extends AbstractExternalModule
         return $allRights;
     }
 
+    // TODO: just move this to Alerts if that's the only place it's used
     public function updateLog($logId, array $params)
     {
         $sql = 'UPDATE redcap_external_modules_log_parameters SET value = ? WHERE log_id = ? AND name = ?';
