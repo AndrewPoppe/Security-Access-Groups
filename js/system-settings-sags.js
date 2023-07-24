@@ -726,7 +726,8 @@ $(document).ready(function () {
                 } else {
                     return row.permissions.double_data;
                 }
-            }
+            },
+            name: 'double_data'
         },
         {
             className: 'dt-center',

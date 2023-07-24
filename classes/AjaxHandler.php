@@ -31,7 +31,7 @@ class AjaxHandler
     public function __construct(SecurityAccessGroups $module, array $params)
     {
         $this->module = $module;
-        $this->params = $this->module->framework->escape($params);
+        $this->params = $params; // Be careful to escape/sanitize when necessary.
         $this->action = $this->module->framework->escape($this->params['action']);
     }
 
@@ -55,19 +55,21 @@ class AjaxHandler
     // Alerts
     private function deleteAlert()
     {
-        $alerts = new Alerts($this->module);
-        $alert  = $alerts->getAlertById($this->params['payload']['alert_id']);
+        $alerts  = new Alerts($this->module);
+        $alertId = intval($this->params['payload']['alert_id']);
+        $alert   = $alerts->getAlertById($alertId);
         if ( !$alert ) {
             http_response_code(400);
             return 'Alert not found';
         }
-        return json_encode($this->module->escape($alerts->deleteAlert($this->params['payload']['alert_id'])));
+        return json_encode($this->module->escape($alerts->deleteAlert($alertId)));
     }
 
     private function getAlert()
     {
-        $alerts = new Alerts($this->module);
-        $alert  = $alerts->getAlertById($this->params['payload']['alert_id']);
+        $alerts  = new Alerts($this->module);
+        $alertId = intval($this->params['payload']['alert_id']);
+        $alert   = $alerts->getAlertById($alertId);
         if ( !$alert ) {
             http_response_code(400);
             return 'Alert not found';
@@ -90,7 +92,7 @@ class AjaxHandler
     {
         $textReplacer = new TextReplacer(
             $this->module,
-            $this->params['payload']['text'],
+            $this->module->framework->escape($this->params['payload']['text']),
             $this->params['payload']['data'] ?? []
         );
         return $textReplacer->replaceText();
@@ -191,7 +193,7 @@ class AjaxHandler
     private function deleteSag()
     {
         $sagId = filter_var($this->params['payload']['sag_id'], FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? '';
-        $sag = new SAG($this->module, $sagId);
+        $sag   = new SAG($this->module, $sagId);
         if ( empty($sagId) || !$sag->sagExists() ) {
             return json_encode([
                 'status'  => 'error',
@@ -211,42 +213,42 @@ class AjaxHandler
         $subaction = $this->params['payload']['subaction'];
 
         // We're submitting the form to add/edit the SAG
-        if ( $subaction == 'save' ) {
+        if ( $subaction === 'save' ) {
             $data    = filter_var_array($this->params['payload'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
             $sagId   = $data['sag_id'] ?? $this->module->generateNewSagId();
             $sagName = $data['sag_name_edit'];
-            $sag = new SAG($this->module, $sagId, $sagName);
+            $sag     = new SAG($this->module, $sagId, $sagName);
             $newSag  = $data['newSag'];
             if ( $newSag === '1' ) {
                 $sag->throttleSaveSag(json_encode($data));
-            } elseif ($newSag === '0'){
+            } elseif ( $newSag === '0' ) {
                 $sag->throttleUpdateSag(json_encode($data));
             }
             return json_encode([ 'status' => 'ok', 'sagId' => $sagId ]);
         }
 
         // We're asking for the add/edit SAG form contents
-        if ( $subaction == 'get' ) {
+        if ( $subaction === 'get' ) {
             $newSag  = filter_var($this->params['payload']['newSag'], FILTER_VALIDATE_BOOLEAN);
             $sagId   = filter_var($this->params['payload']['sag_id'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
             $sagName = filter_var($this->params['payload']['sag_name'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 
             if ( $newSag === true ) {
                 $rightsUtilities = new RightsUtilities($this->module);
-                $rights = $rightsUtilities->getDefaultRights();
-                $newSag = true;
+                $rights          = $rightsUtilities->getDefaultRights();
+                $newSag          = true;
             } else {
-                $sag = new SAG($this->module, $sagId);
-                $rights   = $sag->getSagRights();
-                $sagName  = $sag->sagName;
-                $newSag   = false;
+                $sag     = new SAG($this->module, $sagId);
+                $rights  = $sag->getSagRights();
+                $sagName = $sag->sagName;
+                $newSag  = false;
             }
             $sagEditForm = new SAGEditForm(
                 $this->module,
                 $rights,
                 $newSag,
                 $sagName,
-                $sagId
+                $sag->sagId
             );
             return json_encode([ 'form' => $sagEditForm->getForm() ]);
         }
@@ -259,17 +261,17 @@ class AjaxHandler
 
         $sagsForTable = [];
         foreach ( $sags as $index => $sag ) {
-            $thisSag['index'] = $index;
-            $permissions        = $sag->permissions;
+            $thisSag['index']       = $index;
+            $permissions            = $sag->permissions;
             $thisSag['permissions'] = [];
             foreach ( $allPermissions as $permission => $displayText ) {
                 $thisSag['permissions'][$permission] = $permissions[$permission] ?? null;
             }
             $thisSag['sag_id']   = $sag->sagId;
             $thisSag['sag_name'] = $sag->sagName;
-            $sagsForTable[] = $thisSag;
+            $sagsForTable[]      = $thisSag;
         }
-        
+
         return json_encode([ 'data' => $sagsForTable ]);
     }
 
@@ -305,7 +307,7 @@ class AjaxHandler
     private function assignSag()
     {
         $username = filter_var($this->params['payload']['username'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-        $sagId      = filter_var($this->params['payload']['sag'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $sagId    = filter_var($this->params['payload']['sag'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 
         if ( empty($this->module->framework->getUser($username)->getEmail()) ) {
             return json_encode([
@@ -394,7 +396,7 @@ class AjaxHandler
 
     private function getProjectUsers()
     {
-        $projectId        = $this->params['project_id'];
+        $projectId        = intval($this->params['project_id']);
         $sagProject       = new SAGProject($this->module, $projectId);
         $discrepantRights = $sagProject->getUsersWithBadRights();
         return json_encode([ 'data' => $discrepantRights ]);
