@@ -248,13 +248,12 @@ class Alert
                     $user
                 );
                 $body                        = $bodyReplacer->replaceText();
-                $this->module->log('body', [ 'body' => $body ]);
-                $subjectReplacer = new TextReplacer(
+                $subjectReplacer             = new TextReplacer(
                     $this->module,
                     $this->getEmailSubject(),
                     $user
                 );
-                $subject         = $subjectReplacer->replaceText();
+                $subject                     = $subjectReplacer->replaceText();
 
                 $emailSuccess = \REDCap::email(
                     $user['sag_user_email'],

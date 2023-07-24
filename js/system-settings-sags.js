@@ -61,7 +61,7 @@ module.openSagEditor = function (sag_id = "", sag_name = "", newSag = false) {
                 if (result.isConfirmed) {
                     const sag_name = result.value;
                     data.sag_name_edit = sag_name;
-                    data.newSag = 1;
+                    data.newSag = '1';
                     data.subaction = 'save';
                     module.ajax('editSag', data)
                         .then((response) => {
@@ -92,7 +92,7 @@ module.openSagEditor = function (sag_id = "", sag_name = "", newSag = false) {
         if (sag_name_edit != '') {
             const data = $("#SAG_Setting").serializeObject();
             data.sag_id = sag_id;
-            data.newSag = newSag;
+            data.newSag = '0';
             data.subaction = 'save';
             module.ajax('editSag', data)
                 .then((response) => {
@@ -121,7 +121,7 @@ module.openSagEditor = function (sag_id = "", sag_name = "", newSag = false) {
         const sag_name_edit = $('input[name="sag_name_edit"]').val();
         if (sag_name_edit != '') {
             const data = $("#SAG_Setting").serializeObject();
-            data.newSag = newSag;
+            data.newSag = '1';
             data.subaction = 'save';
             module.ajax('editSag', data)
                 .then((response) => {
@@ -716,17 +716,13 @@ $(document).ready(function () {
             }
         },
         {
-            className: 'dt-center',
+            className: 'dt-center dt-body-nowrap',
             data: function (row, type, set, meta) {
                 if (type === 'display') {
-                    switch (String(row.permissions.double_data)) {
-                        case '1':
-                            return "Person #1";
-                        case '2':
-                            return "Person #2";
-                        default:
-                            return 'Reviewer';
-                    }
+                    const reviewer = row.permissions.double_data_reviewer ? "Reviewer" : null;
+                    const person = row.permissions.double_data_person ? "Entry Person" : null;
+                    const cellValue = [reviewer, person].filter(el => el).join("<br/>");
+                    return cellValue || x;
                 } else {
                     return row.permissions.double_data;
                 }
@@ -939,6 +935,14 @@ $(document).ready(function () {
         },
         {
             data: 'permissions.data_quality_resolution_close',
+            visible: false
+        },
+        {
+            data: 'permissions.double_data_reviewer',
+            visible: false
+        },
+        {
+            data: 'permissions.double_data_person',
             visible: false
         },
         {

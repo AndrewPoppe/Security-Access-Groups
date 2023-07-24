@@ -50,7 +50,6 @@ if ( $errors === false || $userExpired ) {
     ob_start(function ($str) use ($info, $module) {
         try {
             $succeeded = strpos($str, 'userSaveMsg darkgreen') !== false; // is there no better way?
-            $module->log('ok', [ 'str' => $str, 'succeeded' => $succeeded ]);
             if ( $succeeded ) {
                 $dataValues = "user = '" . $info["username"] . "'\nrole = '" . $info["role_label"] . "'\nunique_role_name = '" . $info["unique_role_name"] . "'";
 

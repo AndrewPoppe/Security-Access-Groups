@@ -217,18 +217,9 @@ class AjaxHandler
             $sagName = $data['sag_name_edit'];
             $sag = new SAG($this->module, $sagId, $sagName);
             $newSag  = $data['newSag'];
-            $this->module->framework->log('thing3', [
-                'data' => json_encode($data),
-                'sagId' => $sagId,
-                'sagName' => $sagName,
-                'newSag' => $newSag,
-                'sag_exists' => $sag->sagExists() ? 'true' : 'false',
-                'sag_sagId' => $sag->sagId,
-                'sag_sagName' => $sag->sagName,
-            ]);
-            if ( $newSag == 1 ) {
+            if ( $newSag === '1' ) {
                 $sag->throttleSaveSag(json_encode($data));
-            } else {
+            } elseif ($newSag === '0'){
                 $sag->throttleUpdateSag(json_encode($data));
             }
             return json_encode([ 'status' => 'ok', 'sagId' => $sagId ]);
@@ -249,12 +240,6 @@ class AjaxHandler
                 $rights   = $sag->getSagRights();
                 $sagName  = $sag->sagName;
                 $newSag   = false;
-                $this->module->framework->log('thing', [
-                    'sag_id'      => $sagId,
-                    'sag_name'    => $sagName,
-                    'permissions' => json_encode($rights),
-                    'newSag' => $newSag
-                ]);
             }
             $sagEditForm = new SAGEditForm(
                 $this->module,
@@ -284,7 +269,7 @@ class AjaxHandler
             $thisSag['sag_name'] = $sag->sagName;
             $sagsForTable[] = $thisSag;
         }
-
+        
         return json_encode([ 'data' => $sagsForTable ]);
     }
 

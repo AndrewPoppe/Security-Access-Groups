@@ -121,18 +121,6 @@ class RightsChecker
         }
     }
 
-    private function checkDoubleDataRights($right)
-    {
-        $isDoubleDataRight = $right == "double_data";
-        if ( !$isDoubleDataRight ) {
-            return;
-        }
-        $this->accountedFor = true;
-        if ( intval($this->acceptableRights[$right]) == 0 ) {
-            $this->badRights[] = "Double Data Entry Person";
-        }
-    }
-
     private function checkRecordLockingRights($right, $value)
     {
         $isRecordLockRight = $right == "lock_record";
@@ -142,6 +130,33 @@ class RightsChecker
         $this->accountedFor = true;
         if ( intval($value) > intval($this->acceptableRights[$right]) ) {
             $this->badRights[] = "Record Locking" . ($value == 2 ? " with E-signature" : "");
+        }
+    }
+
+    private function checkDoubleDataRights($right, $value)
+    {
+        $isDoubleDataRight = $right == "double_data";
+        if ( !$isDoubleDataRight ) {
+            return;
+        }
+        $this->module->framework->log('dd', [
+            'right'     => $right,
+            'value'     => $value,
+            'intValue'  => intval($value),
+            'ddeReview' => $this->acceptableRights["double_data_reviewer"] == 1,
+            'ddePerson' => $this->acceptableRights["double_data_person"] == 1,
+
+        ]);
+        $this->accountedFor = true;
+        // 0: reviewer
+        // 1: double data person 1
+        // 2: double data person 2
+        $ddeReview = $this->acceptableRights["double_data_reviewer"] == 1;
+        $ddePerson = $this->acceptableRights["double_data_person"] == 1;
+        if ( intval($value) == 0 && !$ddeReview ) {
+            $this->badRights[] = "Double Data Entry Reviewer";
+        } elseif ( intval($value) > 0 && !$ddePerson ) {
+            $this->badRights[] = "Double Data Entry Person";
         }
     }
 
@@ -184,6 +199,10 @@ class RightsChecker
 
             $this->accountedFor = false;
 
+            // Do this first because a 0 is meaningful here
+            $this->checkDoubleDataRights($right, $value);
+
+            // Otherwise we don't care about 0's
             if ( $value === 0 || $value === '0' ) {
                 continue;
             }
@@ -196,7 +215,7 @@ class RightsChecker
             $this->checkSurveyEditRights($right, $value);
             $this->checkDataViewingRights($right, $value);
             $this->checkDataExportRights($right, $value);
-            $this->checkDoubleDataRights($right);
+
             $this->checkRecordLockingRights($right, $value);
             $this->checkDataResolutionRights($right, $value);
 
@@ -224,7 +243,7 @@ class RightsChecker
 
             $this->checkDataViewingRights2($right);
             $this->checkDataExportRights2($right);
-            $this->checkDoubleDataRights($right);
+            $this->checkDoubleDataRights($right, $value);
             $this->checkRecordLockingRights($right, $value);
             $this->checkDataResolutionRights($right, $value);
 

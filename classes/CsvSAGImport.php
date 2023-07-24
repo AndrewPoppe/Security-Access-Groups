@@ -28,6 +28,9 @@ class CsvSAGImport
         if ( ($key = array_search('data_quality_resolution', $permissions)) !== false ) {
             unset($permissions[$key]);
         }
+        if ( ($key = array_search('double_data', $permissions)) !== false ) {
+            unset($permissions[$key]);
+        }
         $this->permissions = $permissions;
     }
 

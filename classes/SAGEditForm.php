@@ -31,12 +31,6 @@ class SAGEditForm
         $existingMessage      = 'Editing existing Security Access Group';
         $messageSuffix        = ' "<strong>' . \REDCap::escapeHtml($sagName) . '</strong>"';
         $this->contextMessage = ($newSag ? $newMessage : $existingMessage) . $messageSuffix;
-        $this->module->framework->log('thing2', [
-            'sag_id'      => $this->sagId,
-            'sag_name'    => $this->sagName,
-            'rights'      => json_encode($this->rights),
-            'dataViewing' => $this->rights['dataViewing'],
-        ]);
     }
 
     public function getForm()
@@ -332,31 +326,26 @@ class SAGEditForm
         if ( isset($this->allRights['double_data']) ) {
             $label1   = $this->lang['rights_50'];
             $label2   = $this->lang['rights_51'];
-            $label3   = $this->lang['rights_52'] . ' #1';
-            $label4   = $this->lang['rights_52'] . ' #2';
-            $checked1 = $this->rights['double_data'] == 0 ? 'checked' : '';
-            $checked2 = $this->rights['double_data'] == 1 ? 'checked' : '';
-            $checked3 = $this->rights['double_data'] == 2 ? 'checked' : '';
+            $label3   = $this->lang['rights_50'] . ' ' . $this->lang['rights_52'];
+            $checked1 = $this->rights['double_data_reviewer'] == 1 ? 'checked' : '';
+            $checked2 = $this->rights['double_data_person'] == 1 ? 'checked' : '';
             return <<<"EOT"
-            <div class="SUR-form-row row">
+            <div class="SUR-form-row row mb-2">
                 <div class="col mt-1">
                     <i class="fa-solid fa-fw fa-users"></i>&nbsp;&nbsp;$label1
                 </div>
                 <div class="col">
                     <div class="form-check">
-                        <input id='double_data_reviewer' class="form-check-input" type='radio'
-                            name='double_data' $checked1 value='0'>
+                        <input id='double_data_reviewer' class="form-check-input double_data"
+                            type='checkbox' name='double_data_reviewer' $checked1
+                            onchange="if(!\$('.double_data').is(':checked')) this.checked=true;">
                         <label for="double_data_reviewer" class="form-check-label">$label2</label>
                     </div>
                     <div class="form-check">
-                        <input id='double_data_p1' class="form-check-input" type='radio'
-                            name='double_data' $checked2 value='1'>
-                        <label for="double_data_p1" class="form-check-label">$label3</label>
-                    </div>
-                    <div class="form-check">
-                        <input id='double_data_p2' class="form-check-input" type='radio'
-                            name='double_data' $checked3 value='2'>
-                        <label for="double_data_p2" class="form-check-label">$label4</label>
+                        <input id='double_data_person' class="form-check-input double_data"
+                            type='checkbox' name='double_data_person' $checked2
+                            onchange="if(!\$('.double_data').is(':checked')) \$('#double_data_reviewer').prop('checked',true);">
+                        <label for="double_data_person" class="form-check-label">$label3</label>
                     </div>
                 </div>
             </div>

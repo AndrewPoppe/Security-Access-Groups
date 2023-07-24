@@ -71,7 +71,18 @@ class RightsUtilities
     }
 
 
-
+    private static function convertDoubleData($rights)
+    {
+        // 0: Reviewer
+        // 1: Person 1
+        // 2: Person 2
+        $value = $rights['double_data'];
+        if ( isset($value) ) {
+            $rights['double_data_reviewer'] = intval($value) === 0 ? 1 : 0;
+            $rights['double_data_person']   = intval($value) > 0 ? 1 : 0;
+        }
+        return $rights;
+    }
 
 
 
@@ -97,6 +108,7 @@ class RightsUtilities
     {
         $rights = json_decode($permissions, true);
         $rights = self::convertDataQualityResolution($rights);
+        $rights = self::convertDoubleData($rights);
         foreach ( $rights as $key => $value ) {
             if ( $value === 'on' ) {
                 $rights[$key] = 1;
@@ -150,6 +162,8 @@ class RightsUtilities
             $rights['data_quality_resolution_open']    = 'Data Quality Resolution - Open Queries';
             $rights['data_quality_resolution_respond'] = 'Data Quality Resolution - Respond to Queries';
             $rights['data_quality_resolution_close']   = 'Data Quality Resolution - Close Queries';
+            $rights['double_data_reviewer']            = 'Double Data Entry Reviewer';
+            $rights['double_data_person']              = 'Double Data Entry Person';
             $rights['api_export']                      = $lang['rights_139'];
             $rights['api_import']                      = $lang['rights_314'];
             $rights['mobile_app_download_data']        = $lang['rights_306'];
@@ -223,7 +237,8 @@ class RightsUtilities
             $allRights['file_repository'] = 1;
         }
         if ( isset($allRights['double_data']) ) {
-            $allRights['double_data'] = 0;
+            $allRights['double_data']          = 0;
+            $allRights['double_data_reviewer'] = 1;
         }
         if ( isset($allRights['user_rights']) ) {
             $allRights['user_rights'] = 0;
@@ -277,7 +292,8 @@ class RightsUtilities
             $allRights['data_quality_execute'] = 0;
         }
         if ( isset($allRights['data_quality_resolution']) ) {
-            $allRights['data_quality_resolution'] = 1;
+            $allRights['data_quality_resolution']      = 1;
+            $allRights['data_quality_resolution_view'] = 1;
         }
         if ( isset($allRights['api_export']) ) {
             $allRights['api_export'] = 0;
