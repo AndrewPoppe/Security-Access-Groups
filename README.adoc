@@ -11,13 +11,13 @@ image:https://sonarcloud.io/api/project_badges/measure?project=AndrewPoppe_Secur
 
 == Introduction
 
-This module allows admins to create and manage Security Access Groups in a REDCap system. 
+This External Module allows REDCap administrators to create and manage Security Access Groups in a REDCap system. 
 
-Security Access Groups (SAGs) are used to restrict which user rights a REDCap user can be granted in a project. SAGs do not define the rights a user will have in a given project; rather, they define the set of allowable rights the user is able to be granted. SAGs are defined at the system level and are used in any project that has this module enabled.
+*Security Access Groups* (SAGs) are used to restrict which user rights a REDCap user can be granted in a project. SAGs do not define the rights a user will have in a given project; rather, they define the set of allowable rights the user is able to be granted. SAGs are defined at the system level and are used in any project that has this module enabled.
 
 For example, if your institution requires documentation of training for users to export data, you can create a SAG that does not allow the "Data Export Tool" User Right to be granted to users assigned it. Once a user completes training, they can be moved to a SAG that does allow the "Data Export Tool" User Right to be granted.
 
-To accomplish this, REDCap administrators first create SAGs using a menu in the Control Center. Once a SAG is created, users can be assigned to it in the same control center menu. When a user is assigned to a SAG, the user will only be able to be granted User Rights that are allowed by the SAG.
+To accomplish this, REDCap administrators first create SAGs using a <<security_access_groups_tab, menu>> in the Control Center. Once a SAG is created, users can be assigned to it in a separate <<users_tab, tab>> the same control center menu. When a user is assigned to a SAG, the user will only be able to be granted User Rights that are allowed by the SAG.
 
 NOTE: The module must be enabled in a project for it to restrict User Rights in that project. It is recommended that the module be enabled in all projects.
 
