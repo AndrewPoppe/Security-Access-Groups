@@ -22,8 +22,9 @@ image::cc_config_2.png[config, 400]
 The control center module configuration page allows admins to set the following options at the system level:
 
 .EM Framework Management Config Options
-[cols="1,1,3"]
+[cols="1,2,1,3"]
 |===
+.2+|Section
 |Cell in column 1, row 1
 |Cell in column 2, row 1
 |Cell in column 3, row 1
