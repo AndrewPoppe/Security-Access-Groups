@@ -39,6 +39,7 @@ The control center module configuration page allows admins to set the following 
 
 NOTE: Placeholders may be used in any of these default settings.
 
+[#config_options]
 .EM Framework Management Config Options
 [%header,cols="1,2,1,3"]
 |===
@@ -101,6 +102,7 @@ NOTE: Placeholders may be used in any of these default settings.
 
 == Control Center Page
 
+[#users_tab]
 === Users Tab
 
 .Users tab
@@ -127,7 +129,7 @@ The file used to import user assignments must be a CSV file with the following c
 |The REDCap username of the user
 
 |sag_id
-|The SAG ID of the SAG to assign the user to. Can be found on the <<_security_access_groups_tab>> of the module.
+|The SAG ID of the SAG to assign the user to. SAG IDs can be found on the <<security_access_groups_tab>> of the module.
 |===
 
 You can download a template import file using the dropdown in the menu or use the export file as a guide.
@@ -135,14 +137,334 @@ You can download a template import file using the dropdown in the menu or use th
 .Confirmation popup of SAG assignment import
 image::cc_user_import_confirm_2.png[user import confirm]
 
+[#security_access_groups_tab]
 === Security Access Groups Tab
 
+.Security Access Groups tab
+image::cc_sags_2.png[sags]
+
+This tab shows all SAGs that exist in the system. SAGs can be created, edited, and deleted from this tab. Click a SAG's name to edit it.
+
+TIP: You can also *Copy* and *Delete* the SAG from the editor popup.
+
+.SAG editor
+image::cc_sags_editor_2.png[sags edit]
+
+SAGs can also be created or edited in bulk by importing a CSV file using the dropdown options in the menu. See the <<sag_import_file_format, SAG Import File Format>> for more information.
+
+.SAG dropdown options
+image::cc_sags_actions_2.png[sags actions]
+
+[#sag_import_file_format]
+==== SAG Import File Format
+
+The file used to import SAGs must be a CSV file with the following columns:
+[%header,cols="1,3,4"]
+|===
+|Column header
+|Description / The User Right that is restricted
+|Possible values
+
+.^|sag_name
+.^|The display name of the SAG
+.^a| The text of the SAG name
+
+.^|sag_id
+.^|If you are editing an existing SAG, this is the SAG ID of the SAG to edit. If you are creating a new SAG, this column should be left blank.
+.^a| The text of the SAG ID
+
+.^|design
+.^|Project Design and Setup
+.^a|
+
+* `0` - Not allowed
+* `1` - Allowed
+
+.^|user_rights
+.^|User Rights
+.^a|
+
+* `0` - Not allowed
+* `1` - Allowed
+
+.^|data_access_groups
+.^|Data Access Groups
+.^a|
+
+* `0` - Not allowed
+* `1` - Allowed
+
+.^|dataViewing
+.^|Data Viewing Rights
+.^a|
+
+* `0` - Only _No access_ is allowed
+* `1` - _No access_ and _Read only_ are allowed
+* `2` - _No access_, _Read only_, and _View & Edit_ are allowed
+* `3` - All data viewing rights settings are allowed
+
+.^|dataExport
+.^|Data Export Rights
+.^a|
+
+* `0` - Only _No access_ is allowed
+* `1` - _No access_ and _De-Identified_ are allowed
+* `2` - _No access_, _De-Identified_, and _Remove All Idenitifier Fields_ are allowed
+* `3` - All data export rights settings are allowed
+
+.^|alerts
+.^|Alerts & Notifications
+.^a|
+
+* `0` - Not allowed
+* `1` - Allowed
+
+.^|reports
+.^|Reports & Report Builder
+.^a|
+
+* `0` - Not allowed
+* `1` - Allowed
+
+.^|graphical
+.^|Stats & Charts
+.^a|
+
+* `0` - Not allowed
+* `1` - Allowed
+
+.^|participants
+.^|Survey Distribution Tools
+.^a|
+
+* `0` - Not allowed
+* `1` - Allowed
+
+.^|calendar
+.^|Calendar & Scheduling
+.^a|
+
+* `0` - Not allowed
+* `1` - Allowed
+
+.^|data_import_tool
+.^|Data Import Tool
+.^a|
+
+* `0` - Not allowed
+* `1` - Allowed
+
+.^|data_comparison_tool
+.^|Data Comparison Tool
+.^a|
+
+* `0` - Not allowed
+* `1` - Allowed
+
+.^|data_logging
+.^|Logging
+.^a|
+
+* `0` - Not allowed
+* `1` - Allowed
+
+.^|file_repository
+.^|File Repository
+.^a|
+
+* `0` - Not allowed
+* `1` - Allowed
+
+.^|lock_record_customize
+.^|Record Locking Customization
+.^a|
+
+* `0` - Not allowed
+* `1` - Allowed
+
+.^|lock_record
+.^|Lock/Unlock Records
+.^a|
+
+* `0` - Only _Disabled_ is allowed
+* `1` - _Disabled_ and _Locking / Unlocking_ are allowed
+* `2` - All record locking settings are allowed
+
+.^|data_quality_design
+.^|Data Quality (create/edit rules)
+.^a|
+
+* `0` - Not allowed
+* `1` - Allowed
+
+.^|data_quality_execute
+.^|Data Quality (execute rules)
+.^a|
+
+* `0` - Not allowed
+* `1` - Allowed
+
+.^|mobile_app
+.^|REDCap Mobile App
+.^a|
+
+* `0` - Not allowed
+* `1` - Allowed
+
+.^|mobile_app_download_data
+.^|Allow user to download data for all records to the app?
+.^a|
+
+* `0` - Not allowed
+* `1` - Allowed
+
+.^|realtime_webservice_mapping
+.^|CDP/DDP Setup / Mapping
+.^a|
+
+* `0` - Not allowed
+* `1` - Allowed
+
+.^|realtime_webservice_adjudicate
+.^|CDP/DDP Adjudicate Data
+.^a|
+
+* `0` - Not allowed
+* `1` - Allowed
+
+.^|dts
+.^|DTS (Data Transfer Services)
+.^a|
+
+* `0` - Not allowed
+* `1` - Allowed
+
+.^|mycap_participants
+.^|Manage MyCap Participants
+.^a|
+
+* `0` - Not allowed
+* `1` - Allowed
+
+.^|record_create
+.^|Create Records
+.^a|
+
+* `0` - Not allowed
+* `1` - Allowed
+
+.^|record_rename
+.^|Rename Records
+.^a|
+
+* `0` - Not allowed
+* `1` - Allowed
+
+.^|record_delete
+.^|Delete Records
+.^a|
+
+* `0` - Not allowed
+* `1` - Allowed
+
+.^|random_setup
+.^|Randomization - Setup
+.^a|
+
+* `0` - Not allowed
+* `1` - Allowed
+
+.^|random_dashboard
+.^|Randomization - Dashboard
+.^a|
+
+* `0` - Not allowed
+* `1` - Allowed
+
+.^|random_perform
+.^|Randomization - Randomize
+.^a|
+
+* `0` - Not allowed
+* `1` - Allowed
+
+.^|data_quality_resolution_view
+.^|Data Quality Resolution - View Queries
+.^a|
+
+* `0` - Not allowed
+* `1` - Allowed
+
+.^|data_quality_resolution_open
+.^|Data Quality Resolution - Open Queries
+.^a|
+
+* `0` - Not allowed
+* `1` - Allowed
+
+.^|data_quality_resolution_respond
+.^|Data Quality Resolution - Respond to Queries
+.^a|
+
+* `0` - Not allowed
+* `1` - Allowed
+
+.^|data_quality_resolution_close
+.^|Data Quality Resolution - Close Queries
+.^a|
+
+* `0` - Not allowed
+* `1` - Allowed
+
+.^|double_data_reviewer
+.^|Double Data Entry - Reviewer
+.^a|
+
+* `0` - Not allowed to be a reviewer
+* `1` - Allowed
+
+.^|double_data_person
+.^|Double Data Entry - Person
+.^a|
+
+* `0` - Not allowed to be either Person #1 or Person #2
+* `1` - Allowed
+
+.^|api_export
+.^|API Export
+.^a|
+
+* `0` - Not allowed
+* `1` - Allowed
+
+.^|api_import
+.^|API Import/Update
+.^a|
+
+* `0` - Not allowed
+* `1` - Allowed
+
+.^|lock_record_multiform
+.^|Lock/Unlock \*Entire* Records (record level)
+.^a|
+
+* `0` - Not allowed
+* `1` - Allowed
+|===
+
+
+[#user_rights_holders_tab]
+[#reports_tab]
 === Reports Tab
 
+[#project_page]
 == Project Page
 
+[#project_status_tab]
 === Project Status Tab
 
+[#alert_log_tab]
 === Alert Log Tab
 
+[#logging]
 == Logging
