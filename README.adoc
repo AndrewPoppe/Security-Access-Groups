@@ -28,7 +28,7 @@ For example, if your institution requires documentation of training for users to
 
 To accomplish this, REDCap administrators first create SAGs using a <<security_access_groups_tab, menu>> in the Control Center. Once a SAG is created, users can be assigned to it in a separate <<users_tab, tab>> the same control center menu. When a user is assigned to a SAG, the user will only be able to be granted User Rights that are allowed by the SAG.
 
-NOTE: The module must be enabled in a project for it to restrict User Rights in that project. It is recommended that the module be enabled in all projects.
+IMPORTANT: The module must be enabled in a project for it to restrict User Rights in that project. It is recommended that the module be enabled in all projects.
 
 When the module is enabled in a project, it will check which rights are allowable for a user according to their SAG before granting any user rights to that user. The module intercepts all attempts to set user rights in a project, including
 
@@ -130,6 +130,10 @@ image::cc_users_actions_2.png[users actions]
 
 [#import_file_format]
 ==== Import File Format
+
+[horizontal]
+username:: The REDCap username of the user
+sag_id:: The SAG ID of the SAG to assign the user to. SAG IDs can be found on the <<security_access_groups_tab>> of the module.
 
 The file used to import user assignments must be a CSV file with the following columns:
 [%header,cols="1,2"]
