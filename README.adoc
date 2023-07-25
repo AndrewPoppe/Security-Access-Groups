@@ -23,6 +23,7 @@ image::cc_config_2.png[config, 400]
 The control center module configuration page allows admins to set the following options at the system level:
 
 .EM Framework Management Config Options
+[.color-bg-accent-emphasis]
 [%header,cols="1,2,1,3"]
 |===
 |Section
