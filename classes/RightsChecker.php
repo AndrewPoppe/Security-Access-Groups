@@ -5,17 +5,17 @@ namespace YaleREDCap\SecurityAccessGroups;
 class RightsChecker
 {
     private $module;
-    private $requestedRights;
+    private $rightsToCheck;
     private $acceptableRights;
 
     private $badRights = [];
     private $dataViewing;
     private $dataExport;
     private $accountedFor = false;
-    public function __construct(SecurityAccessGroups $module, array $requestedRights, array $acceptableRights)
+    public function __construct(SecurityAccessGroups $module, array $rightsToCheck, array $acceptableRights)
     {
         $this->module           = $module;
-        $this->requestedRights  = $requestedRights;
+        $this->rightsToCheck    = $rightsToCheck;
         $this->acceptableRights = $acceptableRights;
         $this->dataViewing      = intval($acceptableRights["dataViewing"]);
         $this->dataExport       = intval($acceptableRights["dataExport"]);
@@ -187,7 +187,7 @@ class RightsChecker
 
     public function checkRights()
     {
-        foreach ( $this->requestedRights as $right => $value ) {
+        foreach ( $this->rightsToCheck as $right => $value ) {
 
             $this->accountedFor = false;
 
@@ -219,7 +219,7 @@ class RightsChecker
 
     public function checkRights2()
     {
-        foreach ( $this->requestedRights as $right => $value ) {
+        foreach ( $this->rightsToCheck as $right => $value ) {
 
             $this->accountedFor = false;
 
