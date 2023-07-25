@@ -28,12 +28,12 @@ When the module is enabled in a project, it will check which rights are allowabl
 *All attempts to set user rights will be blocked if the user is not allowed to be granted the rights according to their SAG.* Attempts to circumvent the module are detected and logged.
 
 .Example of a user being blocked from being granted a User Right
-image::p_blocked_2.png[blocked]
+image::p_blocked_2.png[blocked, 600]
 
 == Module Configuration
 
 .EM Framework Config Options
-image::cc_config_2.png[config]
+image::cc_config_2.png[config, 600]
 
 The control center module configuration page allows admins to set the following options at the system level.
 
