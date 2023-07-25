@@ -19,7 +19,9 @@ This
 .EM Framework Config Options
 image::cc_config_2.png[config, 400]
 
-The control center module configuration page allows admins to set the following options at the system level:
+The control center module configuration page allows admins to set the following options at the system level.
+
+NOTE: Placeholders may be used in any of these default settings.
 
 .EM Framework Management Config Options
 [%header,cols="1,2,1,3"]
@@ -29,39 +31,54 @@ The control center module configuration page allows admins to set the following 
 |Type
 |Description
 
-.2+.^a|User Alert Email Settings
-|Default Email Subject
+.4+.^a|User Alert Email Settings
+|User Alert Email Default Subject
 |Text
-|The default subject for emails sent to users. Placeholders may be used in the subject.
+|The default subject for emails sent to users.
 
-|Default Email Body
+|User Alert Email Default Body
 |Rich Text
-|The default body for emails sent to users. Placeholders may be used in the body.
+|The default body for emails sent to users.
 
-.2+.^a|[.bold]#User Alert Reminder Settings#
-|
-|
-|
+|User Reminder Alert Email Default Subject
+|Text
+|The default subject for reminder emails sent to users.
 
-|
-|
-|
+|User Reminder Email Default Body
+|Rich Text
+|The default body for reminder emails sent to users.
 
-.2+.^a|User Rights Holders Alert Email Settings
-|
-|
-|
+.4+.^|User Rights Holder Alert Email Settings
+|User Rights Holders Alert Email Default Subject
+|Text
+|The default subject for emails sent to user rights holders.
 
-|
-|
-|
+|User Rights Holders Alert Email Default Body
+|Rich Text
+|The default body for emails sent to user rights holders.
 
-.2+.^a|User Rights Holders Alert Reminder Settings
-|
-|
-|
+|User Rights Holders Reminder Alert Email Default Subject
+|Text
+|The default subject for reminder emails sent to user rights holders.
 
-|
-|
-|
+|User Rights Holders Reminder Alert Email Default Body
+|Rich Text
+|The default body for reminder emails sent to user rights holders.
+
+.4+.^|User Expiration Alert Email Settings
+|User Expiration Alert Email Default Subject
+|Text
+|The default subject for emails sent to users upon expiration.
+
+|User Expiration Alert Email Default Body
+|Rich Text
+|The default body for emails sent to users upon expiration.
+
+|User Rights Holders Alert Email Default Subject
+|Text
+|The default subject for emails sent to user rights holders upon expiration.
+
+|User Rights Holders Alert Email Default Body
+|Rich Text
+|The default body for emails sent to user rights holders upon expiration.
 |===

@@ -33,12 +33,12 @@
         },
         {
             "key": "user-reminder-email-subject-template",
-            "name": "<span style='border: 1px solid #ff000020; background-color: #ff000014;' class='p-2'><strong>User Reminder Alert Email Default Subject</strong></span>",
+            "name": "<span style='border: 1px solid #ff000020; background-color: #ff000014;' class='p-2'><strong>User Reminder Alert Email Default Subject</strong>",
             "type": "text"
         },
         {
             "key": "user-reminder-email-body-template",
-            "name": "<span style='border: 1px solid #ff000020; background-color: #ff000014;' class='p-2'><strong>User Reminder Email Default Body</strong></span>",
+            "name": "<span style='border: 1px solid #ff000020; background-color: #ff000014;' class='p-2'><strong>User Reminder Email Default Body</strong>",
             "type": "rich-text"
         },
         {
@@ -87,13 +87,13 @@
             "type": "rich-text"
         },
         {
-            "key": "user-expiration-user-rights-holders-reminder-email-subject-template",
-            "name": "<span style='border: 1px solid #ffdf7e; background-color: #ffeeba;' class='p-2'><strong>User Rights Holders Reminder Alert Email Default Subject</strong>",
+            "key": "user-expiration-user-rights-holders-email-subject-template",
+            "name": "<span style='border: 1px solid #ffdf7e; background-color: #ffeeba;' class='p-2'><strong>User Rights Holders Alert Email Default Subject</strong>",
             "type": "text"
         },
         {
-            "key": "user-expiration-user-rights-holders-reminder-email-body-template",
-            "name": "<span style='border: 1px solid #ffdf7e; background-color: #ffeeba;' class='p-2'><strong>User Rights Holders Reminder Alert Email Default Body</strong>",
+            "key": "user-expiration-user-rights-holders-email-body-template",
+            "name": "<span style='border: 1px solid #ffdf7e; background-color: #ffeeba;' class='p-2'><strong>User Rights Holders Alert Email Default Body</strong>",
             "type": "rich-text"
         }
     ],
