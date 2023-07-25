@@ -1,8 +1,28 @@
 = Security Access Groups
+Andrew Poppe <andrew.poppe@yale.edu>
+:description: This is an External Module for REDCap that allows admins to create and manage Security Access Groups that restrict which User Rights a user may be granted.
+:imagesdir: docs/images
+:icons: font
+:sectlinks: true
 
 image:https://sonarcloud.io/api/project_badges/measure?project=AndrewPoppe_Security-Access-Groups&metric=alert_status[link="https://sonarcloud.io/summary/new_code?id=AndrewPoppe_Security-Access-Groups"]
 
 :toc:
-:url-gitlab: https://gitlab.eclipse.org
 
-== Section 1
+== Introduction
+
+This 
+
+== Module Configuration
+
+image::cc_config_2.png[config, 400]
+
+****
+Test thing
+
+[discrete]
+== Discrete Heading
+
+Discrete Headings ...
+****
+
