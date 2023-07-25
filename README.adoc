@@ -28,12 +28,12 @@ When the module is enabled in a project, it will check which rights are allowabl
 *All attempts to set user rights will be blocked if the user is not allowed to be granted the rights according to their SAG.* Attempts to circumvent the module are detected and logged.
 
 .Example of a user being blocked from being granted a User Right
-image::p_blocked_2.png[blocked, 600]
+image::p_blocked_2.png[blocked]
 
 == Module Configuration
 
 .EM Framework Config Options
-image::cc_config_2.png[config, 600]
+image::cc_config_2.png[config]
 
 The control center module configuration page allows admins to set the following options at the system level.
 
@@ -104,15 +104,15 @@ NOTE: Placeholders may be used in any of these default settings.
 === Users Tab
 
 .Users tab
-image::cc_users_2.png[users, 600]
+image::cc_users_2.png[users]
 
 This tab allows admins to assign users to SAGs. Users can be assigned to SAGs individually or in bulk using the `Import User Assignments` feature (see <<_import_file_format>>).
 
 .User assignment
-image::cc_users_edit_2.png[users assign, 600]
+image::cc_users_edit_2.png[users assign]
 
 .Users actions
-image::cc_users_actions_2.png[users actions, 600]
+image::cc_users_actions_2.png[users actions]
 
 ==== Import File Format
 
@@ -132,7 +132,7 @@ The file used to import user assignments must be a CSV file with the following c
 You can download a template import file using the dropdown in the menu or use the export file as a guide.
 
 .Confirmation popup of SAG assignment import
-image::cc_user_import_confirm_2.png[user import confirm, 600]
+image::cc_user_import_confirm_2.png[user import confirm]
 
 === Security Access Groups Tab
 
