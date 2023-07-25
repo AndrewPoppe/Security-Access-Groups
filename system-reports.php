@@ -380,18 +380,18 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
         </table>
     </div>
     <style>
-        div.dt-buttons {
-            float: right;
-        }
+    div.dt-buttons {
+        float: right;
+    }
 
-        .select2-search__field {
-            width: 100% !important;
-        }
+    .select2-search__field {
+        width: 100% !important;
+    }
 
-        div.dataTables_filter {
-            margin-top: 4px;
-            margin-right: 10px;
-        }
+    div.dataTables_filter {
+        margin-top: 4px;
+        margin-right: 10px;
+    }
     </style>
 </div> <!-- End SAG_Container -->
 <?php
@@ -400,3 +400,4 @@ $js = file_get_contents($module->framework->getSafePath('js/system-reports.js'))
 $js = str_replace('{{MODULE_DIRECTORY_PREFIX}}', $module->getModuleDirectoryPrefix(), $js);
 $js = str_replace('__MODULE__', $module->framework->getJavascriptModuleObjectName(), $js);
 echo '<script type="text/javascript">' . $js . '</script>';
+require_once APP_PATH_DOCROOT . 'ControlCenter/footer.php';

@@ -24,9 +24,9 @@ if ( !empty($expiration) && strtotime($expiration) < strtotime('today') ) {
     exit;
 }
 
+$sagUser          = new SAGUser($module, $username);
 $sag              = $sagUser->getUserSag();
 $acceptableRights = $sag->getSagRights();
-$sagUser          = new SAGUser($module, $username);
 $currentRights    = $sagUser->getCurrentRightsFormatted($module->getProjectId());
 $rightsChecker    = new RightsChecker($module, $currentRights, $acceptableRights);
 $badRights        = $rightsChecker->checkRights();

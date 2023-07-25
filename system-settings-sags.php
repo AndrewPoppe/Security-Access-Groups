@@ -79,3 +79,5 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
     echo '<script type="text/javascript">', $js, '</script>';
     ?>
 </div> <!-- End SAG_Container -->
+<?php
+require_once APP_PATH_DOCROOT . 'ControlCenter/footer.php';

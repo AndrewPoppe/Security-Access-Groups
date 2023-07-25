@@ -139,14 +139,6 @@ class RightsChecker
         if ( !$isDoubleDataRight ) {
             return;
         }
-        $this->module->framework->log('dd', [
-            'right'     => $right,
-            'value'     => $value,
-            'intValue'  => intval($value),
-            'ddeReview' => $this->acceptableRights["double_data_reviewer"] == 1,
-            'ddePerson' => $this->acceptableRights["double_data_person"] == 1,
-
-        ]);
         $this->accountedFor = true;
         // 0: reviewer
         // 1: double data person 1
@@ -215,7 +207,6 @@ class RightsChecker
             $this->checkSurveyEditRights($right, $value);
             $this->checkDataViewingRights($right, $value);
             $this->checkDataExportRights($right, $value);
-
             $this->checkRecordLockingRights($right, $value);
             $this->checkDataResolutionRights($right, $value);
 
@@ -232,6 +223,10 @@ class RightsChecker
 
             $this->accountedFor = false;
 
+            // Do this first because a 0 is meaningful here
+            $this->checkDoubleDataRights($right, $value);
+
+            // Otherwise we don't care about 0's
             if ( $value === 0 || $value === '0' ) {
                 continue;
             }
@@ -243,7 +238,6 @@ class RightsChecker
 
             $this->checkDataViewingRights2($right);
             $this->checkDataExportRights2($right);
-            $this->checkDoubleDataRights($right, $value);
             $this->checkRecordLockingRights($right, $value);
             $this->checkDataResolutionRights($right, $value);
 
