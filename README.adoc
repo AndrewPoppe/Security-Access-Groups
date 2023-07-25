@@ -11,12 +11,29 @@ image:https://sonarcloud.io/api/project_badges/measure?project=AndrewPoppe_Secur
 
 == Introduction
 
-This 
+This module allows admins to create and manage Security Access Groups (SAGs) that restrict which User Rights a user may be granted. 
+
+For example, if your institution requires documentation of training for users to export data, you can create a SAG that does not allow the "Data Export Tool" User Right to be granted to users assigned it. Once a user completes training, they can be moved to a SAG that does allow the "Data Export Tool" User Right to be granted.
+
+To accomplish this, REDCap administrators first create SAGs using a menu in the Control Center. Once a SAG is created, users can be assigned to it in the same control center menu. When a user is assigned to a SAG, the user will only be able to be granted User Rights that are allowed by the SAG.
+
+NOTE: The module must be enabled in a project for it to restrict User Rights in that project. It is recommended that the module be enabled in all projects.
+
+When the module is enabled in a project, it will check which rights are allowable for a user according to their SAG before granting any user rights to that user. The module intercepts all attempts to set user rights in a project, including
+
+* Using the usual methods on the User Rights project page
+* Using the `Upload users, role, and assignments` feature on the User Rights project page
+* Using the REDCap API
+
+*All attempts to set user rights will be blocked if the user is not allowed to be granted the rights according to their SAG.* Attempts to circumvent the module are detected and logged.
+
+.Example of a user being blocked from being granted a User Right
+image::p_blocked_2.png[blocked]
 
 == Module Configuration
 
 .EM Framework Config Options
-image::cc_config_2.png[config, 400]
+image::cc_config_2.png[config]
 
 The control center module configuration page allows admins to set the following options at the system level.
 
