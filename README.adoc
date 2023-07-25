@@ -101,16 +101,47 @@ NOTE: Placeholders may be used in any of these default settings.
 
 == Control Center Page
 
-=== Users
+=== Users Tab
 
-=== Security Access Groups
+.Users tab
+image::cc_users_2.png[users, 600]
 
-=== Reports
+This tab allows admins to assign users to SAGs. Users can be assigned to SAGs individually or in bulk using the `Import User Assignments` feature (see <<_import_file_format>>).
+
+.User assignment
+image::cc_users_edit_2.png[users assign, 600]
+
+.Users actions
+image::cc_users_actions_2.png[users actions, 600]
+
+==== Import File Format
+
+The file used to import user assignments must be a CSV file with the following columns:
+[%header,cols="1,2"]
+|===
+|Column header
+|Description
+
+|username
+|The REDCap username of the user
+
+|sag_id
+|The SAG ID of the SAG to assign the user to. Can be found on the <<_security_access_groups_tab>> of the module.
+|===
+
+You can download a template import file using the dropdown in the menu or use the export file as a guide.
+
+.Confirmation popup of SAG assignment import
+image::cc_user_import_confirm_2.png[user import confirm, 600]
+
+=== Security Access Groups Tab
+
+=== Reports Tab
 
 == Project Page
 
-=== Project Status
+=== Project Status Tab
 
-=== Alert Log
+=== Alert Log Tab
 
 == Logging
