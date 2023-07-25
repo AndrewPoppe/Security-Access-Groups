@@ -98,3 +98,19 @@ NOTE: Placeholders may be used in any of these default settings.
 |Rich Text
 |The default body for emails sent to user rights holders upon expiration.
 |===
+
+== Control Center Page
+
+=== Users
+
+=== Security Access Groups
+
+=== Reports
+
+== Project Page
+
+=== Project Status
+
+=== Alert Log
+
+== Logging
