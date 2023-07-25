@@ -4,6 +4,7 @@ Andrew Poppe <andrew.poppe@yale.edu>
 :imagesdir: docs/images
 :icons: font
 :sectlinks: true
+:table-stripes: even
 
 image:https://sonarcloud.io/api/project_badges/measure?project=AndrewPoppe_Security-Access-Groups&metric=alert_status[link="https://sonarcloud.io/summary/new_code?id=AndrewPoppe_Security-Access-Groups"]
 
@@ -15,14 +16,24 @@ This
 
 == Module Configuration
 
+.EM Framework Config Options
 image::cc_config_2.png[config, 400]
 
-****
-Test thing
+The control center module configuration page allows admins to set the following options at the system level:
 
-[discrete]
-== Discrete Heading
+.EM Framework Management Config Options
+[cols="1,1,3"]
+|===
+|Cell in column 1, row 1
+|Cell in column 2, row 1
+|Cell in column 3, row 1
 
-Discrete Headings ...
-****
 
+|Cell in column 1, row 2
+|Cell in column 2, row 2
+|
+
+|Cell in column 1, row 3
+|
+|
+|===
