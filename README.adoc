@@ -6,17 +6,21 @@ Andrew Poppe <andrew.poppe@yale.edu>
 :table-stripes: odd
 :toc:
 :toc-placement!:
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+endif::[]
 
 image:https://sonarcloud.io/api/project_badges/measure?project=AndrewPoppe_Security-Access-Groups&metric=alert_status[link="https://sonarcloud.io/summary/new_code?id=AndrewPoppe_Security-Access-Groups"]
 
-
+toc::[]
 
 == Introduction
 
 This External Module allows REDCap administrators to create and manage Security Access Groups in a REDCap system.
-
-
-toc::[]
 
 *Security Access Groups* (SAGs) are used to restrict which user rights a REDCap user can be granted in a project. SAGs do not define the rights a user will have in a given project; rather, they define the set of allowable rights the user is able to be granted. SAGs are defined at the system level and are used in any project that has this module enabled.
 
