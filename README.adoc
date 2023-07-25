@@ -29,8 +29,8 @@ The control center module configuration page allows admins to set the following 
 |Type
 |Description
 
-[.color-bg-accent-emphasis]
-.2+|Section
+
+.color-bg-accent-emphasis .2+|Section
 |Cell in column 1, row 1
 |Cell in column 2, row 1
 |Cell in column 3, row 1
