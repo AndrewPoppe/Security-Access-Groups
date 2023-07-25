@@ -8,6 +8,7 @@ Andrew Poppe <andrew.poppe@yale.edu>
 image:https://sonarcloud.io/api/project_badges/measure?project=AndrewPoppe_Security-Access-Groups&metric=alert_status[link="https://sonarcloud.io/summary/new_code?id=AndrewPoppe_Security-Access-Groups"]
 
 :toc:
+:toc-placement!:
 
 == Introduction
 
@@ -31,6 +32,8 @@ When the module is enabled in a project, it will check which rights are allowabl
 
 .Example of a user being blocked from being granted a User Right
 image::p_blocked_2.png[blocked]
+
+toc::[]
 
 == Module Configuration
 
