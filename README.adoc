@@ -515,6 +515,8 @@ The module adds a page that shows the status of all users in the project. The st
 
 * <span class="color-fg-success">green</span> - compliant with their SAG
 
+This sentence contains [.application]*bold inline content* that's assigned a role.
+
 .Project status tab
 image::p_status_2.png[project status]
 
