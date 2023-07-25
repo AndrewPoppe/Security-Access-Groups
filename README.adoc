@@ -106,7 +106,7 @@ NOTE: Placeholders may be used in any of these default settings.
 .Users tab
 image::cc_users_2.png[users]
 
-This tab allows admins to assign users to SAGs. Users can be assigned to SAGs individually or in bulk using the `Import User Assignments` feature (see <<_import_file_format>>).
+This tab allows admins to assign users to SAGs. Users can be assigned to SAGs individually or in bulk using the `Import User Assignments` feature (see <<import_file_format, Import File Format>>).
 
 .User assignment
 image::cc_users_edit_2.png[users assign]
@@ -114,6 +114,7 @@ image::cc_users_edit_2.png[users assign]
 .Users actions
 image::cc_users_actions_2.png[users actions]
 
+[#import_file_format]
 ==== Import File Format
 
 The file used to import user assignments must be a CSV file with the following columns:
