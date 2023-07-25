@@ -19,7 +19,7 @@ This
 .EM Framework Config Options
 image::cc_config_2.png[config, 400]
 
-The control center module configuration page allows admins to set the following options at the system level:
+The control [.color-bg-accent-emphasis]#center# module configuration page allows admins to set the following options at the system level:
 
 .EM Framework Management Config Options
 [%header,cols="1,2,1,3"]
