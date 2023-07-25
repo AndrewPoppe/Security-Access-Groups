@@ -29,7 +29,7 @@ The control center module configuration page allows admins to set the following 
 |Type
 |Description
 
-.2+|User Alert Email Settings
+.2+.^a|User Alert Email Settings
 |Default Email Subject
 |Text
 |The default subject for emails sent to users. Placeholders may be used in the subject.
@@ -38,14 +38,30 @@ The control center module configuration page allows admins to set the following 
 |Rich Text
 |The default body for emails sent to users. Placeholders may be used in the body.
 
-.2+|User Alert Reminder Settings
+.2+.^a|[.bold]#User Alert Reminder Settings#
 |
 |
 |
 
-.2+|User Alert Email Settings
 |
 |
 |
 
+.2+.^a|User Rights Holders Alert Email Settings
+|
+|
+|
+
+|
+|
+|
+
+.2+.^a|User Rights Holders Alert Reminder Settings
+|
+|
+|
+
+|
+|
+|
 |===
