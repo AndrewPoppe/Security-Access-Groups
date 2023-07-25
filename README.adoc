@@ -131,10 +131,6 @@ image::cc_users_actions_2.png[users actions]
 [#import_file_format]
 ==== Import File Format
 
-[horizontal]
-username:: The REDCap username of the user
-sag_id:: The SAG ID of the SAG to assign the user to. SAG IDs can be found on the <<security_access_groups_tab>> of the module.
-
 The file used to import user assignments must be a CSV file with the following columns:
 [%header,cols="1,2"]
 |===
@@ -515,6 +511,10 @@ image::cc_report_example_2.png[report example]
 [#project_status_tab]
 === Project Status Tab
 
+The module adds a page that shows the status of all users in the project. The status of each user is determined by the user's SAG and the rights they have in the project. The color of the row indicates whether the user is:
+
+* <span class="color-fg-success">green</span> - compliant with their SAG
+
 .Project status tab
 image::p_status_2.png[project status]
 
@@ -601,6 +601,10 @@ TIP: You can also use any REDCap Smart Variables, although few will be relevant 
 [#alert_log_tab]
 === Alert Log Tab
 
+The module provides a table of all alerts sent and scheduled in the project. 
+
+TIP: Scheduled reminders can be canceled from this tab.
+
 .Alert log tab
 image::p_alert_log_2.png[alert log]
 
@@ -610,3 +614,25 @@ image::p_logs_preview_2.png[alert preview]
 
 [#logging]
 == Logging
+
+One of the benefits of using this module is the enhanced logging it provides. The module creates detailed logs in the project's own logs for all changes to user rights, including
+
+* [x] When a user is added to a project with custom rights
+* [x] When a user is added to a project in an existing User Role
+* [x] When a user's rights are changed
+* [x] When a role's rights definition is changed
+* [x] When a user is added/removed from a user role
+* [x] When users are imported into a project via CSV
+* [x] When a user's rights are changed via CSV import
+* [x] When roles are imported into a project via CSV
+* [x] When a user is assigned to a role via CSV import
+* [x] When a user is added to a project via the API
+* [x] When a user's rights are changed via the API
+* [x] When user roles are imported/changed via the API
+* [x] When a user is assigned to a role via the API
+
+.Example log of a user's rights being changed
+image::p_logging_user_2.png[user log]
+
+.Example log of a role's rights being changed
+image::p_logging_role_2.png[role log]
