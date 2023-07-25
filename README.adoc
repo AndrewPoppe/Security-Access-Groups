@@ -5,6 +5,7 @@ Andrew Poppe <andrew.poppe@yale.edu>
 :icons: font
 :sectlinks: true
 :table-stripes: even
+:stylesheet: docs/css/custom.css
 
 image:https://sonarcloud.io/api/project_badges/measure?project=AndrewPoppe_Security-Access-Groups&metric=alert_status[link="https://sonarcloud.io/summary/new_code?id=AndrewPoppe_Security-Access-Groups"]
 
@@ -19,7 +20,7 @@ This
 .EM Framework Config Options
 image::cc_config_2.png[config, 400]
 
-The control [.color-bg-accent-emphasis]#center# module configuration page allows admins to set the following options at the system level:
+The control center module configuration page allows admins to set the following options at the system level:
 
 .EM Framework Management Config Options
 [%header,cols="1,2,1,3"]
@@ -29,18 +30,23 @@ The control [.color-bg-accent-emphasis]#center# module configuration page allows
 |Type
 |Description
 
+.2+|User Alert Email Settings
+|Default Email Subject
+|Text
+|The default subject for emails sent to users. Placeholders may be used in the subject.
 
-.2+|Section
-|[.color-bg-accent-emphasis]#Cell in column 1, row 1#
-|Cell in column 2, row 1
-|Cell in column 3, row 1
+|Default Email Body
+|Rich Text
+|The default body for emails sent to users. Placeholders may be used in the body.
 
-
-|Cell in column 1, row 2
-|Cell in column 2, row 2
-|
-
-|Cell in column 1, row 3
+.2+|User Alert Reminder Settings
 |
 |
+|
+
+.2+|User Alert Email Settings
+|
+|
+|
+
 |===
