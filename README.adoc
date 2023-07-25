@@ -38,6 +38,13 @@ When the module is enabled in a project, it will check which rights are allowabl
 
 *All attempts to set user rights will be blocked if the user is not allowed to be granted the rights according to their SAG.* Attempts to circumvent the module are detected and logged.
 
+[TIP]
+====
+The module ignores users who are currently expired in the project. This allows the user to remain in the project but prevents them from using their noncompliant user rights until those noncompliant rights are removed. The user can then be un-expired. 
+
+The module provides a convenient way to expire users in a project on the <<project_status_tab, Project Status tab>>.
+====
+
 .Example of a user being blocked from being granted a User Right
 image::p_blocked_2.png[blocked]
 
@@ -513,12 +520,16 @@ image::cc_report_example_2.png[report example]
 
 The module adds a page that shows the status of all users in the project. The status of each user is determined by the user's SAG and the rights they have in the project. The color of the row indicates whether the user is:
 
-* <span class="color-fg-success">green</span> - compliant with their SAG
+* Green - compliant with their SAG
+* Red - non-compliant with their SAG
+* Grey - expired in the project
 
-This sentence contains [.application]*bold inline content* that's assigned a role.
+You can also check the *Noncompliant Rights* column to see which rights the user has that are not allowed by their SAG.
 
 .Project status tab
 image::p_status_2.png[project status]
+
+TIP: If there are any users that are non-compliant with their SAG, you can use one of the *Action* buttons to send an email to the user, the user's rights holders, or both. You can also expire the user from the project. An alert can optionally be sent to the user and/or the user's rights holders when the user is expired.
 
 .Alert user
 image::p_status_alert_user_2.png[alert user]
@@ -597,9 +608,6 @@ conform with the user's security access group.
 
 TIP: You can also use any REDCap Smart Variables, although few will be relevant in this context.
 
-
-[#user_rights_tab]
-
 [#alert_log_tab]
 === Alert Log Tab
 
@@ -619,22 +627,24 @@ image::p_logs_preview_2.png[alert preview]
 
 One of the benefits of using this module is the enhanced logging it provides. The module creates detailed logs in the project's own logs for all changes to user rights, including
 
-* [x] When a user is added to a project with custom rights
-* [x] When a user is added to a project in an existing User Role
-* [x] When a user's rights are changed
-* [x] When a role's rights definition is changed
-* [x] When a user is added/removed from a user role
-* [x] When users are imported into a project via CSV
-* [x] When a user's rights are changed via CSV import
-* [x] When roles are imported into a project via CSV
-* [x] When a user is assigned to a role via CSV import
-* [x] When a user is added to a project via the API
-* [x] When a user's rights are changed via the API
-* [x] When user roles are imported/changed via the API
-* [x] When a user is assigned to a role via the API
+* When a user is added to a project with custom rights
+* When a user is added to a project in an existing User Role
+* When a user's rights are changed
+* When a role's rights definition is changed
+* When a user is added/removed from a user role
+* When users are imported into a project via CSV
+* When a user's rights are changed via CSV import
+* When roles are imported into a project via CSV
+* When a user is assigned to a role via CSV import
+* When a user is added to a project via the API
+* When a user's rights are changed via the API
+* When user roles are imported/changed via the API
+* When a user is assigned to a role via the API
 
 .Example log of a user's rights being changed
 image::p_logging_user_2.png[user log]
 
 .Example log of a role's rights being changed
 image::p_logging_role_2.png[role log]
+
+== Changelog
