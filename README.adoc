@@ -11,7 +11,9 @@ image:https://sonarcloud.io/api/project_badges/measure?project=AndrewPoppe_Secur
 
 == Introduction
 
-This module allows admins to create and manage Security Access Groups (SAGs) that restrict which User Rights a user may be granted. 
+This module allows admins to create and manage Security Access Groups in a REDCap system. 
+
+Security Access Groups (SAGs) are used to restrict which user rights a REDCap user can be granted in a project. SAGs do not define the rights a user will have in a given project; rather, they define the set of allowable rights the user is able to be granted. SAGs are defined at the system level and are used in any project that has this module enabled.
 
 For example, if your institution requires documentation of training for users to export data, you can create a SAG that does not allow the "Data Export Tool" User Right to be granted to users assigned it. Once a user completes training, they can be moved to a SAG that does allow the "Data Export Tool" User Right to be granted.
 
@@ -37,7 +39,7 @@ image::cc_config_2.png[config]
 
 The control center module configuration page allows admins to set the following options at the system level.
 
-NOTE: Placeholders may be used in any of these default settings.
+NOTE: <<placeholders, Placeholders>> may be used in any of these default settings.
 
 [#config_options]
 .EM Framework Management Config Options
@@ -457,14 +459,140 @@ The file used to import SAGs must be a CSV file with the following columns:
 [#reports_tab]
 === Reports Tab
 
+.Reports tab
+image::cc_report_types_2.png[reports]
+
+This tab provides an easy way to see all users in the system that currently have user rights that do not comply with their current SAG. This can occur when the module is first enabled in a project or when a user is assigned to a new SAG.
+
+The report options are as follows:
+
+[#reports_table]
+[%header,cols="1,3"]
+|===
+|Report title
+|Description
+
+|Users with Noncompliant Rights (non-expired)
+|This report lists all users who are assigned to a SAG that does not allow the user to be granted all of the rights they currently have in a project. This report only includes users if they are not currently expired in the project(s).
+
+|Users with Noncompliant Rights (all)
+|This report lists all users who are assigned to a SAG that does not allow the user to be granted all of the rights they currently have in a project. This report includes all users, regardless of whether they are currently expired in the project(s).
+
+|Projects with Noncompliant Rights (non-expired)
+|This report lists all projects that have at least one user who is assigned to a SAG that does not allow the user to be granted all of the rights they currently have in the project. This report only includes users who have a non-expired user account.
+
+|Projects with Noncompliant Rights (all)
+|This report lists all projects that have at least one user who is assigned to a SAG that does not allow the user to be granted all of the rights they currently have in the project. This report includes all users, regardless of whether their user account is expired.
+
+|Users and Projects with Noncompliant Rights (non-expired)
+|This report lists every user and project combination in which the user is assigned to a SAG that does not allow the user to be granted all of the rights they currently have in the project. This report only includes users who are not currently expired in the project.
+
+|Users and Projects with Noncompliant Rights (all)
+|This report lists every user and project combination in which the user is assigned to a SAG that does not allow the user to be granted all of the rights they currently have in the project. This report includes all users, regardless of whether they are currently expired in the project.
+|===
+
+.Report example
+image::cc_report_example_2.png[report example]
+
+
 [#project_page]
 == Project Page
 
 [#project_status_tab]
 === Project Status Tab
 
+.Project status tab
+image::p_status_2.png[project status]
+
+.Alert user
+image::p_status_alert_user_2.png[alert user]
+
+.Remind user
+image::p_status_alert_user_reminder_2.png[remind user]
+
+.Alert user rights holders
+image::p_status_alert_user-rights-holder_2.png[alert user rights holders]
+
+.Remind user rights holders
+image::p_status_alert_user-rights-holder_reminder_2.png[remind user rights holders]
+
+.Expire users
+image::p_status_expiration_2.png[expire users]
+
+.Alert users upon expiration
+image::p_status_expiration_alert_user_2.png[alert users upon expiration]
+
+.Alert user rights holders upon expiration
+image::p_status_expiration_alert_user-rights-holder_2.png[alert user rights holders upon expiration]
+
+[#placeholders]
+==== Placeholders
+
+The following placeholders can be used in the email subject and body fields in alerts:
+
+[%header,cols="2,1,4"]
+|===
+|Placeholder
+|Audience
+|Description
+
+.^a|`[sag-user]`
+.^|Project User
+| The user's username
+
+.^a|`[sag-user-fullname]`
+.^|Project User
+|The user's full name
+
+.^a|`[sag-user-email]`
+.^|Project User
+|The user's email address
+
+.^a|`[sag-rights]`
+.^|Project User
+|A formatted list of the rights that do not
+conform with the user's security access group.
+
+.^a|`[sag-project-title]`
+.^|Any
+|The title of the project
+
+.^a|`[sag-users]`
+.^|User Rights Holders
+|A formatted list of usernames
+
+.^a|`[sag-user-fullnames]`
+.^|User Rights Holders
+|A formatted list of users' full names
+
+.^a|`[sag-user-emails]`
+.^|User Rights Holders
+|A formatted list of user emails
+
+.^a|`[sag-users-table]`
+.^|User Rights Holders
+|A formatted table of usernames, full names, and email addresses
+
+.^a|`[sag-users-table-full]`
+.^|User Rights Holders
+|A formatted table of usernames, full names, email addresses, and non-compliant rights
+
+|===
+
+TIP: You can also use any REDCap Smart Variables, although few will be relevant in this context.
+
+
+[#user_rights_tab]
+
 [#alert_log_tab]
 === Alert Log Tab
+
+.Alert log tab
+image::p_alert_log_2.png[alert log]
+
+
+.Alert preview example
+image::p_logs_preview_2.png[alert preview]
 
 [#logging]
 == Logging
