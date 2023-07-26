@@ -456,7 +456,8 @@ sag_module.replaceKeywordsPreview = async function (text) {
         'sag_user_fullname': 'Robin Jones',
         'sag_user_email': 'robin.jones@email.com',
         'sag_user_sag': { 'sag_id': 'sag_Default', 'sag_name': 'Default SAG' },
-        'sag_user_rights': ['Project Design and Setup', 'User Rights', 'Create Records']
+        'sag_user_rights': ['Project Design and Setup', 'User Rights', 'Create Records'],
+        'sag_expiration_date': '1970-01-01'
     };
 
     return sag_module.ajax('replacePlaceholders', { text: text, data: data });
@@ -503,7 +504,8 @@ sag_module.replaceKeywordsPreviewUserRightsHolders = async function (text) {
             ['Data Export - Full Data Set', 'Data Viewing - View & Edit', 'Data Access Groups',
                 'Stats & Charts', 'Survey Distribution Tools', 'File Repository'
             ]
-        ]
+        ],
+        "sag_expiration_date": '1970-01-01'
     };
 
     return sag_module.ajax('replacePlaceholders', { text: text, data: data });

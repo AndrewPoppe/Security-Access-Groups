@@ -10,8 +10,9 @@ if ( !$module->framework->isSuperUser() ) {
 require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
 
 ?>
-<link href="<?= $module->framework->getUrl('lib/DataTables/datatables.min.css') ?>" rel="stylesheet" />
-<script src="<?= $module->framework->getUrl('lib/DataTables/datatables.min.js') ?>"></script>
+<link href="https://cdn.datatables.net/v/dt/jszip-3.10.1/dt-1.13.5/b-2.4.1/b-html5-2.4.1/datatables.min.css"
+    rel="stylesheet" />
+<script src="https://cdn.datatables.net/v/dt/jszip-3.10.1/dt-1.13.5/b-2.4.1/b-html5-2.4.1/datatables.min.js"></script>
 
 <script defer src="<?= $module->framework->getUrl('lib/fontawesome/js/regular.min.js') ?>"></script>
 <script defer src="<?= $module->framework->getUrl('lib/fontawesome/js/sharp-regular.min.js') ?>"></script>
@@ -23,9 +24,8 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
 <script defer src="<?= $module->framework->getUrl('lib/fontawesome/js/fontawesome.min.js') ?>"></script>
 
 <link href="<?= $module->framework->getUrl('lib/Select2/select2.min.css') ?>" rel="stylesheet" />
-<script src="<?= $module->framework->getUrl('lib/Select2/select2.min.js') ?>"></script>
-<script src="<?= $module->framework->getUrl('lib/SweetAlert/sweetalert2.all.min.js') ?>"></script>
-
+<script defer src="<?= $module->framework->getUrl('lib/Select2/select2.min.js') ?>"></script>
+<script defer src="<?= $module->framework->getUrl('lib/SweetAlert/sweetalert2.all.min.js') ?>"></script>
 <link rel='stylesheet' type='text/css' href='<?= $module->framework->getUrl('SecurityAccessGroups.css') ?>' />
 
 
