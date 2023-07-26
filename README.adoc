@@ -63,10 +63,14 @@ image::p_blocked_2.png[blocked]
 
 == Module Configuration
 
+=== Default Email Settings
+
+The control center module configuration page allows admins to set the default values for all alerts that can be sent to users and user rights holders from the <<project_status_tab, project status page>>. 
+
+This is a convenient way to get up and running when you first enable the module, because many users likely will need to be notified.
+
 .EM Framework Config Options
 image::cc_config_2.png[config]
-
-The control center module configuration page allows admins to set the following options at the system level.
 
 NOTE: <<placeholders, Placeholders>> may be used in any of these default settings.
 
