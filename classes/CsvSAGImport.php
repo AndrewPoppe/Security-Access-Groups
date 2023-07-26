@@ -191,7 +191,7 @@ class CsvSAGImport
                     </div>
                     <div class="modal-body">
                     <div class="container mb-4 w-90" style="font-size:larger;">Examine the table of proposed changes below to verify it is correct.
-                    Only SAGs in highlighted rows will be affected.</div>
+                    Only SAGs in highlighted rows or with highlighted cells will be affected.</div>
                     <table class="table table-bordered">
                         <thead class="thead-dark">
                             <tr>
