@@ -60,6 +60,7 @@ The module provides a convenient way to expire users in a project on the <<proje
 .Example of a user being blocked from being granted a User Right
 image::p_blocked_2.png[blocked]
 
+---
 
 == Module Configuration
 
@@ -134,6 +135,8 @@ NOTE: <<placeholders, Placeholders>> may be used in any of these default setting
 |Rich Text
 |The default body for emails sent to user rights holders upon expiration.
 |===
+
+---
 
 == Control Center Page
 
@@ -536,6 +539,7 @@ The report options are as follows:
 .Report example
 image::cc_report_example_2.png[report example]
 
+---
 
 [#project_page]
 == Project Page
@@ -659,6 +663,8 @@ image::p_alert_log_2.png[alert log]
 .Alert preview example
 image::p_logs_preview_2.png[alert preview]
 
+---
+
 [#logging]
 == Logging
 
@@ -683,6 +689,8 @@ image::p_logging_user_2.png[user log]
 
 .Example log of a role's rights being changed
 image::p_logging_role_2.png[role log]
+
+---
 
 == Changelog
 
