@@ -9,12 +9,8 @@ if ( !$module->framework->isSuperUser() ) {
     exit;
 }
 ?>
-<link href="https://cdn.datatables.net/v/dt/dt-1.13.4/b-2.3.6/b-html5-2.3.6/sl-1.6.2/sr-1.2.2/datatables.min.css"
-    rel="stylesheet" />
-
-<script src="https://cdn.datatables.net/v/dt/dt-1.13.4/b-2.3.6/b-html5-2.3.6/sl-1.6.2/sr-1.2.2/datatables.min.js">
-</script>
-
+<script defer src="<?= $module->framework->getUrl('lib/DataTables/datatables.min.js') ?>"></script>
+<link rel="stylesheet" href="<?= $module->framework->getUrl('lib/DataTables/datatables.min.css') ?>">
 <link rel='stylesheet' type='text/css' href='<?= $module->framework->getUrl('SecurityAccessGroups.css') ?>' />
 
 <script defer src="<?= $module->framework->getUrl('lib/fontawesome/js/regular.min.js') ?>"></script>
@@ -23,8 +19,7 @@ if ( !$module->framework->isSuperUser() ) {
 <script defer src="<?= $module->framework->getUrl('lib/fontawesome/js/custom-icons.min.js') ?>"></script>
 <script defer src="<?= $module->framework->getUrl('lib/fontawesome/js/fontawesome.min.js') ?>"></script>
 
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.11/dist/clipboard.min.js"></script>
+<script defer src="<?= $module->framework->getUrl('lib/Clipboard/clipboard.min.js') ?>"></script>
 
 
 <!-- Modal -->
@@ -309,13 +304,13 @@ if ( !$module->framework->isSuperUser() ) {
                     </div>
                 </div>
             </div>
-            <button type="button" class="btn btn-xs btn-primary action" onclick="module.openEmailUsersModal();"
+            <button type="button" class="btn btn-xs btn-primary action" onclick="sag_module.openEmailUsersModal();"
                 disabled><i class="fa-sharp fa-regular fa-envelope"></i> Email User(s)</button>
             <button type="button" class="btn btn-xs btn-warning action"
-                onclick="module.openEmailUserRightsHoldersModal();" disabled><i
+                onclick="sag_module.openEmailUserRightsHoldersModal();" disabled><i
                     class="fa-kit fa-sharp-regular-envelope-circle-exclamation"></i> Email User Rights
                 Holders</button>
-            <button type="button" class="btn btn-xs btn-danger action" onclick="module.openExpireUsersModal();"
+            <button type="button" class="btn btn-xs btn-danger action" onclick="sag_module.openExpireUsersModal();"
                 disabled><i class="fa-regular fa-user-xmark fa-fw"></i> Expire User(s)</button>
             <div class="btn-group" role="group">
                 <i class="fa-solid fa-circle-info fa-lg align-self-center text-info infoButton" style="cursor:pointer;"
@@ -328,7 +323,7 @@ if ( !$module->framework->isSuperUser() ) {
                 <thead class="text-center" style="background-color:#ececec">
                     <tr>
                         <th style="vertical-align: middle !important;"><input style="display:block; margin: 0 auto;"
-                                type="checkbox" onchange="module.handleCheckboxes(this);"></input>
+                                type="checkbox" onchange="sag_module.handleCheckboxes(this);"></input>
                         </th>
                         <th>Username</th>
                         <th>Name</th>

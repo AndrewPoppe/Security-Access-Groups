@@ -10,9 +10,8 @@ if ( !$module->framework->isSuperUser() ) {
 require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
 
 ?>
-<link href="https://cdn.datatables.net/v/dt/jszip-3.10.1/dt-1.13.5/b-2.4.1/b-html5-2.4.1/datatables.min.css"
-    rel="stylesheet" />
-<script src="https://cdn.datatables.net/v/dt/jszip-3.10.1/dt-1.13.5/b-2.4.1/b-html5-2.4.1/datatables.min.js"></script>
+<link href="<?= $module->framework->getUrl('lib/DataTables/datatables.min.css') ?>" rel="stylesheet" />
+<script src="<?= $module->framework->getUrl('lib/DataTables/datatables.min.js') ?>"></script>
 
 <script defer src="<?= $module->framework->getUrl('lib/fontawesome/js/regular.min.js') ?>"></script>
 <script defer src="<?= $module->framework->getUrl('lib/fontawesome/js/sharp-regular.min.js') ?>"></script>
@@ -133,22 +132,22 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
             <span class="sr-only">Toggle Dropdown</span>
         </button>
         <ul class="dropdown-menu">
-            <li><a class="dropdown-item" onclick="module.showUserTable(false);"><i
+            <li><a class="dropdown-item" onclick="sag_module.showUserTable(false);"><i
                         class="fa-light fa-users fa-fw mr-1 text-danger"></i>Users with
                     Noncompliant Rights (non-expired)</a></li>
-            <li><a class="dropdown-item" onclick="module.showUserTable(true);"><i
+            <li><a class="dropdown-item" onclick="sag_module.showUserTable(true);"><i
                         class="fa-solid fa-users fa-fw mr-1 text-danger"></i>Users with
                     Noncompliant Rights (all)</a></li>
-            <li><a class="dropdown-item" onclick="module.showProjectTable(false);"><i
+            <li><a class="dropdown-item" onclick="sag_module.showProjectTable(false);"><i
                         class="fa-sharp fa-light fa-rectangle-history-circle-user fa-fw mr-1 text-successrc"></i>Projects
                     with Noncompliant Rights (non-expired)</a></li>
-            <li><a class="dropdown-item" onclick="module.showProjectTable(true);"><i
+            <li><a class="dropdown-item" onclick="sag_module.showProjectTable(true);"><i
                         class="fa-sharp fa-solid fa-rectangle-history-circle-user fa-fw mr-1 text-successrc"></i>Projects
                     with Noncompliant Rights (all)</a></li>
-            <li><a class="dropdown-item" onclick="module.showUserAndProjectTable(false);"><i
+            <li><a class="dropdown-item" onclick="sag_module.showUserAndProjectTable(false);"><i
                         class="fa-sharp fa-light fa-rectangle-list fa-fw mr-1 text-info"></i>Users
                     and Projects with Noncompliant Rights (non-expired)</a></li>
-            <li><a class="dropdown-item" onclick="module.showUserAndProjectTable(true);"><i
+            <li><a class="dropdown-item" onclick="sag_module.showUserAndProjectTable(true);"><i
                         class="fa-sharp fa-solid fa-rectangle-list fa-fw mr-1 text-info"></i>Users
                     and Projects with Noncompliant Rights (all)</a></li>
         </ul>
@@ -380,18 +379,18 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
         </table>
     </div>
     <style>
-    div.dt-buttons {
-        float: right;
-    }
+        div.dt-buttons {
+            float: right;
+        }
 
-    .select2-search__field {
-        width: 100% !important;
-    }
+        .select2-search__field {
+            width: 100% !important;
+        }
 
-    div.dataTables_filter {
-        margin-top: 4px;
-        margin-right: 10px;
-    }
+        div.dataTables_filter {
+            margin-top: 4px;
+            margin-right: 10px;
+        }
     </style>
 </div> <!-- End SAG_Container -->
 <?php

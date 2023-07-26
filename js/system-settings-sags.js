@@ -1,8 +1,8 @@
-const module = __MODULE__;
+const sag_module = __MODULE__;
 console.log(performance.now());
 console.time('dt');
 
-module.openSagEditor = function (sag_id = "", sag_name = "", newSag = false) {
+sag_module.openSagEditor = function (sag_id = "", sag_name = "", newSag = false) {
     const deleteSagButtonCallback = function () {
         Swal.fire({
             title: 'Are you sure you want to delete this SAG?',
@@ -17,7 +17,7 @@ module.openSagEditor = function (sag_id = "", sag_name = "", newSag = false) {
         }).then((result) => {
             if (result.isConfirmed) {
                 Swal.showLoading();
-                module.ajax('deleteSag', { sag_id: sag_id })
+                sag_module.ajax('deleteSag', { sag_id: sag_id })
                     .then((response) => {
                         const result = JSON.parse(response);
                         if (result.status != 'error') {
@@ -63,7 +63,7 @@ module.openSagEditor = function (sag_id = "", sag_name = "", newSag = false) {
                     data.sag_name_edit = sag_name;
                     data.newSag = '1';
                     data.subaction = 'save';
-                    module.ajax('editSag', data)
+                    sag_module.ajax('editSag', data)
                         .then((response) => {
                             const result = JSON.parse(response);
                             if (result.status != 'error') {
@@ -94,7 +94,7 @@ module.openSagEditor = function (sag_id = "", sag_name = "", newSag = false) {
             data.sag_id = sag_id;
             data.newSag = '0';
             data.subaction = 'save';
-            module.ajax('editSag', data)
+            sag_module.ajax('editSag', data)
                 .then((response) => {
                     const result = JSON.parse(response);
                     if (result.status != 'error') {
@@ -123,7 +123,7 @@ module.openSagEditor = function (sag_id = "", sag_name = "", newSag = false) {
             const data = $("#SAG_Setting").serializeObject();
             data.newSag = '1';
             data.subaction = 'save';
-            module.ajax('editSag', data)
+            sag_module.ajax('editSag', data)
                 .then((response) => {
                     const result = JSON.parse(response);
                     if (result.status != 'error') {
@@ -146,7 +146,7 @@ module.openSagEditor = function (sag_id = "", sag_name = "", newSag = false) {
         }
     };
 
-    module.ajax('editSag', { subaction: 'get', sag_id: sag_id, sag_name: sag_name, newSag: newSag })
+    sag_module.ajax('editSag', { subaction: 'get', sag_id: sag_id, sag_name: sag_name, newSag: newSag })
         .then((response) => {
             const form = JSON.parse(response).form;
             $("#edit_sag_popup").html(form);
@@ -179,11 +179,11 @@ module.openSagEditor = function (sag_id = "", sag_name = "", newSag = false) {
         });
 }
 
-module.editSag = function (sag_id, sag_name) {
-    module.openSagEditor(sag_id, sag_name, false);
+sag_module.editSag = function (sag_id, sag_name) {
+    sag_module.openSagEditor(sag_id, sag_name, false);
 }
 
-module.addNewSag = function () {
+sag_module.addNewSag = function () {
     $('#addSagButton').blur();
     const newSagName = $('#newSagName').val().trim();
     if (newSagName == "") {
@@ -196,17 +196,17 @@ module.addNewSag = function () {
             }
         });
     } else {
-        module.openSagEditor("", newSagName, true);
+        sag_module.openSagEditor("", newSagName, true);
     }
 }
 
-module.formatNow = function () {
+sag_module.formatNow = function () {
     const d = new Date();
     return d.getFullYear() + '-' + (d.getMonth() + 1).toString().padStart(2, 0) +
         '-' + (d.getDate()).toString().padStart(2, 0);
 }
 
-module.join = function (a, separator, boundary, escapeChar, reBoundary) {
+sag_module.join = function (a, separator, boundary, escapeChar, reBoundary) {
     let s = '';
     for (let i = 0, ien = a.length; i < ien; i++) {
         if (i > 0) {
@@ -219,7 +219,7 @@ module.join = function (a, separator, boundary, escapeChar, reBoundary) {
     return s;
 };
 
-module.exportRawCsv = function (includeData = true) {
+sag_module.exportRawCsv = function (includeData = true) {
     const newLine = /Windows/.exec(navigator.userAgent) ? '\r\n' : '\n';
     const escapeChar = '"';
     const boundary = '"';
@@ -227,7 +227,7 @@ module.exportRawCsv = function (includeData = true) {
     const extension = '.csv';
     const reBoundary = new RegExp(boundary, 'g');
     const filename = (includeData ?
-        'SecurityAccessGroups_Raw_' + module.formatNow() :
+        'SecurityAccessGroups_Raw_' + sag_module.formatNow() :
         'SecurityAccessGroups_ImportTemplate') + extension;
     let charset = document.characterSet;
     if (charset) {
@@ -235,7 +235,7 @@ module.exportRawCsv = function (includeData = true) {
     }
 
     const rowSelector = includeData ? undefined : -1;
-    const data = module.dt.buttons.exportData({
+    const data = sag_module.dt.buttons.exportData({
         format: {
             header: function (html, col, node) {
                 const key = $(node).data('key');
@@ -263,11 +263,11 @@ module.exportRawCsv = function (includeData = true) {
         columns: 'export:name'
     });
 
-    const header = module.join(data.header, separator, boundary, escapeChar, reBoundary) + newLine;
-    const footer = data.footer ? newLine + module.join(data.footer, separator, boundary, escapeChar, reBoundary) : '';
+    const header = sag_module.join(data.header, separator, boundary, escapeChar, reBoundary) + newLine;
+    const footer = data.footer ? newLine + sag_module.join(data.footer, separator, boundary, escapeChar, reBoundary) : '';
     const body = [];
     for (let i = 0, ien = data.body.length; i < ien; i++) {
-        body.push(module.join(data.body[i], separator, boundary, escapeChar, reBoundary));
+        body.push(sag_module.join(data.body[i], separator, boundary, escapeChar, reBoundary));
     }
 
     const result = {
@@ -282,20 +282,20 @@ module.exportRawCsv = function (includeData = true) {
         true);
 }
 
-module.exportCsv = function () {
+sag_module.exportCsv = function () {
     const newLine = /Windows/.exec(navigator.userAgent) ? '\r\n' : '\n';
     const escapeChar = '"';
     const boundary = '"';
     const separator = ',';
     const extension = '.csv';
     const reBoundary = new RegExp(boundary, 'g');
-    const filename = 'SecurityAccessGroups_Labels_' + module.formatNow() + extension;
+    const filename = 'SecurityAccessGroups_Labels_' + sag_module.formatNow() + extension;
     let charset = document.characterSet;
     if (charset) {
         charset = ';charset=' + charset;
     }
 
-    const data = module.dt.buttons.exportData({
+    const data = sag_module.dt.buttons.exportData({
         format: {
             body: function (html, row, col, node) {
                 if (col === 0) {
@@ -324,11 +324,11 @@ module.exportCsv = function () {
         columns: 'export:name'
     });
 
-    const header = module.join(data.header, separator, boundary, escapeChar, reBoundary) + newLine;
-    const footer = data.footer ? newLine + module.join(data.footer, separator, boundary, escapeChar, reBoundary) : '';
+    const header = sag_module.join(data.header, separator, boundary, escapeChar, reBoundary) + newLine;
+    const footer = data.footer ? newLine + sag_module.join(data.footer, separator, boundary, escapeChar, reBoundary) : '';
     const body = [];
     for (let i = 0, ien = data.body.length; i < ien; i++) {
-        body.push(module.join(data.body[i], separator, boundary, escapeChar, reBoundary));
+        body.push(sag_module.join(data.body[i], separator, boundary, escapeChar, reBoundary));
     }
 
     const result = {
@@ -343,11 +343,11 @@ module.exportCsv = function () {
         true);
 }
 
-module.importCsv = function () {
+sag_module.importCsv = function () {
     $('#importSagsFile').click();
 }
 
-module.handleFiles = function () {
+sag_module.handleFiles = function () {
     if (this.files.length !== 1) {
         return;
     }
@@ -362,7 +362,7 @@ module.handleFiles = function () {
     reader.onload = (e) => {
         window.csv_file_contents = e.target.result;
 
-        module.ajax('importCsvSags', { data: e.target.result })
+        sag_module.ajax('importCsvSags', { data: e.target.result })
             .then((response) => {
                 const result = JSON.parse(response);
                 if (result.status != 'error') {
@@ -383,13 +383,13 @@ module.handleFiles = function () {
     reader.readAsText(file);
 }
 
-module.confirmImport = function () {
+sag_module.confirmImport = function () {
     $('.modal').modal('hide');
     if (!window.csv_file_contents || window.csv_file_contents === "") {
         return;
     }
 
-    module.ajax('importCsvSags', { data: window.csv_file_contents, confirm: true })
+    sag_module.ajax('importCsvSags', { data: window.csv_file_contents, confirm: true })
         .then((response) => {
             const result = JSON.parse(response);
             if (result.status != 'error') {
@@ -420,13 +420,13 @@ module.confirmImport = function () {
         });
 }
 
-module.hover = function () {
+sag_module.hover = function () {
     const thisNode = $(this);
     const rowIdx = thisNode.attr('data-dt-row');
     $("tr[data-dt-row='" + rowIdx + "'] td").addClass("highlight"); // shade only the hovered row
 }
 
-module.dehover = function () {
+sag_module.dehover = function () {
     const thisNode = $(this);
     const rowIdx = thisNode.attr('data-dt-row');
     $("tr[data-dt-row='" + rowIdx + "'] td").removeClass("highlight"); // shade only the hovered row
@@ -447,14 +447,14 @@ $(document).ready(function () {
     });
 
     const importFileElement = document.getElementById("importSagsFile");
-    importFileElement.addEventListener("change", module.handleFiles);
+    importFileElement.addEventListener("change", sag_module.handleFiles);
 
     const shieldcheck = '<i class="fa-solid fa-shield-check fa-xl" style="color: green;"></i>';
     const check = '<i class="fa-solid fa-check fa-xl" style="color: green;"></i>';
     const x = '<i class="fa-regular fa-xmark" style="color: #D00000;"></i>';
-    module.dt = $('#sagTable').DataTable({
+    sag_module.dt = $('#sagTable').DataTable({
         ajax: function (data, callback, settings) {
-            module.ajax('getSags')
+            sag_module.ajax('getSags')
                 .then((response) => {
                     callback(JSON.parse(response));
                 })
@@ -499,8 +499,8 @@ $(document).ready(function () {
 
             table.on('draw', function () {
                 $('.dataTable tbody tr').each((i, row) => {
-                    row.onmouseenter = module.hover;
-                    row.onmouseleave = module.dehover;
+                    row.onmouseenter = sag_module.hover;
+                    row.onmouseleave = sag_module.dehover;
                 });
             });
 
@@ -519,8 +519,8 @@ $(document).ready(function () {
             });
 
             $('.dataTable tbody tr').each((i, row) => {
-                row.onmouseenter = module.hover;
-                row.onmouseleave = module.dehover;
+                row.onmouseenter = sag_module.hover;
+                row.onmouseleave = sag_module.dehover;
             });
 
             setTimeout(() => {
@@ -546,7 +546,7 @@ $(document).ready(function () {
                     const aclass = "SagLink text-primary";
                     return `<div style="display: flex; align-items: center; white-space: nowrap;">` +
                         `<i class="${iclass}"></i>` +
-                        `<a class="${aclass}" onclick="module.editSag('${row.sag_id}')">${row.sag_name}</a>` +
+                        `<a class="${aclass}" onclick="sag_module.editSag('${row.sag_id}')">${row.sag_name}</a>` +
                         `</div>`;
                 } else {
                     return row.sag_name;

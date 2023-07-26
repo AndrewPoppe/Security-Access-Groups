@@ -9,16 +9,9 @@ if ( !$module->framework->isSuperUser() ) {
 }
 
 ?>
-<link href="https://cdn.datatables.net/v/dt/dt-1.13.4/datatables.min.css" rel="stylesheet" />
-<script src="https://cdn.datatables.net/v/dt/dt-1.13.4/datatables.min.js"></script>
 
-<link rel="preload" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" as="style"
-    onload="this.onload=null;this.rel='stylesheet'">
-<noscript>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-</noscript>
-<script defer src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-
+<link rel="stylesheet" href="<?= $module->framework->getUrl('lib/Flatpickr/flatpickr.min.css') ?>">
+<script defer src="<?= $module->framework->getUrl('lib/Flatpickr/flatpickr.min.js') ?>"></script>
 <script defer src="<?= $module->framework->getUrl('lib/fontawesome/js/regular.min.js') ?>"></script>
 <script defer src="<?= $module->framework->getUrl('lib/fontawesome/js/sharp-regular.min.js') ?>"></script>
 <script defer src="<?= $module->framework->getUrl('lib/fontawesome/js/sharp-solid.min.js') ?>"></script>
@@ -26,8 +19,6 @@ if ( !$module->framework->isSuperUser() ) {
 <script defer src="<?= $module->framework->getUrl('lib/fontawesome/js/duotone.min.js') ?>"></script>
 <script defer src="<?= $module->framework->getUrl('lib/fontawesome/js/custom-icons.min.js') ?>"></script>
 <script defer src="<?= $module->framework->getUrl('lib/fontawesome/js/fontawesome.min.js') ?>"></script>
-
-<script defer src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <link rel='stylesheet' type='text/css' href='<?= $module->framework->getUrl('SecurityAccessGroups.css') ?>' />
 
 
@@ -86,12 +77,12 @@ if ( !$module->framework->isSuperUser() ) {
                                     <div class="row pl-4 py-2">
                                         <div class="col">
                                             <button class="btn btn-xs btn-success"
-                                                onclick="module.showPastAlerts()">View past
+                                                onclick="sag_module.showPastAlerts()">View past
                                                 alerts</button>
                                         </div>
                                         <div class="col">
                                             <button class="btn btn-xs btn-primaryrc"
-                                                onclick="module.showFutureAlerts()">View
+                                                onclick="sag_module.showFutureAlerts()">View
                                                 future alerts</button>
                                         </div>
                                     </div>

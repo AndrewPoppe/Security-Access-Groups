@@ -1,25 +1,24 @@
 
-const module = __MODULE__;
+const sag_module = __MODULE__;
 
 console.log(performance.now());
-console.time('dt');
 
-module.uniqueArray = function (a) {
+sag_module.uniqueArray = function (a) {
     return [...new Set(a.map(o => JSON.stringify(o)))].map(s => JSON.parse(s));
 }
 
-module.openAlertPreview = function (alert_id) {
+sag_module.openAlertPreview = function (alert_id) {
     Swal.fire({
         title: 'Loading...',
         didOpen: () => {
             Swal.showLoading()
         }
     });
-    module.ajax('getAlert', { alert_id: alert_id })
+    sag_module.ajax('getAlert', { alert_id: alert_id })
         .then(function (json) {
             Swal.close();
             const data = JSON.parse(json);
-            module.createAlertPreviewModal(data);
+            sag_module.createAlertPreviewModal(data);
         })
         .catch(function (data) {
             Swal.fire({
@@ -29,7 +28,7 @@ module.openAlertPreview = function (alert_id) {
         });
 }
 
-module.createAlertPreviewModal = function (data) {
+sag_module.createAlertPreviewModal = function (data) {
     $('#alertPreviewModal .modal-body').html(data.table);
     let title = 'Alert Preview - ';
     if (data.alertType === "users") {
@@ -52,7 +51,7 @@ module.createAlertPreviewModal = function (data) {
     $('#alertPreviewModal').modal('show');
 }
 
-module.deleteAlert = function (alert_id) {
+sag_module.deleteAlert = function (alert_id) {
     Swal.fire({
         title: 'Are you sure?',
         text: "You are about to delete this alert. This action cannot be undone.",
@@ -67,7 +66,7 @@ module.deleteAlert = function (alert_id) {
     })
         .then((result) => {
             if (result.isConfirmed) {
-                module.ajax('deleteAlert', { alert_id: alert_id })
+                sag_module.ajax('deleteAlert', { alert_id: alert_id })
                     .then(function (json) {
                         const data = JSON.parse(json);
                         if (data) {
@@ -95,18 +94,18 @@ module.deleteAlert = function (alert_id) {
         });
 }
 
-module.showPastAlerts = function () {
+sag_module.showPastAlerts = function () {
     document.querySelector('#mindatetime')._flatpickr.clear();
     document.querySelector('#maxdatetime')._flatpickr.setDate(new Date(), true);
 }
 
-module.showFutureAlerts = function () {
+sag_module.showFutureAlerts = function () {
     document.querySelector('#maxdatetime')._flatpickr.clear();
     document.querySelector('#mindatetime')._flatpickr.setDate(new Date(), true);
 }
 
 // Custom user function
-module.searchUsers = function () {
+sag_module.searchUsers = function () {
     const users = $('#usersSelect').val() || [];
     const dt = $('#alertLogTable').DataTable();
     dt.columns(5).search(users.join('|'), true).draw();
@@ -125,17 +124,8 @@ $(document).ready(function () {
         timerProgressBar: true
     });
 
-    console.timeLog('dt', 'document ready');
 
     $('#sub-nav').removeClass('d-none');
-
-
-    $(document).on('preXhr.dt', function (e, settings, json) {
-        console.timeLog('dt', 'ajax start')
-    });
-    $(document).on('xhr.dt', function (e, settings, json) {
-        console.timeLog('dt', 'ajax end')
-    });
 
     // Custom range filtering function
     $.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
@@ -193,7 +183,7 @@ $(document).ready(function () {
 
     $('#alertLogTable').DataTable({
         ajax: function (data, callback, settings) {
-            module.ajax('getAlerts')
+            sag_module.ajax('getAlerts')
                 .then(response => {
                     callback(JSON.parse(response))
                 })
@@ -245,7 +235,7 @@ $(document).ready(function () {
                             `<i class="fa-regular fa-circle fa-stack-1x text-dark"></i></span>`;
                         deleteButton = sent ? "" :
                             `<a class='deleteAlertButton' href='javascript:;' ` +
-                            `onclick='module.deleteAlert(${row.id});'>` +
+                            `onclick='sag_module.deleteAlert(${row.id});'>` +
                             `<i class='fa-solid fa-xmark text-danger' title="Delete alert"></i></a>`;
                     }
                     const formattedDate = moment(row.sendTime * 1000).format(
@@ -302,7 +292,7 @@ $(document).ready(function () {
                     return row.subject + ' ' + row.body;
                 } else {
                     return `<button class='btn btn-xs btn-outline-info' ` +
-                        `onclick='module.openAlertPreview("${row.id}");'>` +
+                        `onclick='sag_module.openAlertPreview("${row.id}");'>` +
                         `<i class="fa-solid fa-envelope"></i> View</button>`;
                 }
             }
@@ -356,7 +346,6 @@ $(document).ready(function () {
             [1, 'desc']
         ],
         initComplete: function () {
-            console.timeLog('dt', 'dt init complete');
             $('.timePicker').flatpickr({
                 enableTime: true,
                 dateFormat: "U",
@@ -372,7 +361,7 @@ $(document).ready(function () {
 
             const dt = this.api();
             const usersAll = dt.column(5).data().toArray();
-            const users = module.uniqueArray(usersAll.flatten());
+            const users = sag_module.uniqueArray(usersAll.flatten());
             const usersSelect = $('#usersSelect').select2({
                 minimumResultsForSearch: 20,
                 placeholder: "Filter users",
@@ -390,10 +379,10 @@ $(document).ready(function () {
                 `<strong>${user.username}</strong> (${user.name})`,
                 user.username, false, false)));
             usersSelect.trigger('change');
-            usersSelect.on('change', module.searchUsers);
+            usersSelect.on('change', sag_module.searchUsers);
 
             const recipientsAll = dt.column(6).data().toArray();
-            const recipients = module.uniqueArray(recipientsAll);
+            const recipients = sag_module.uniqueArray(recipientsAll);
             const recipientSelect = $('#recipientSelect').select2({
                 minimumResultsForSearch: 20,
                 placeholder: "Filter recipients",
@@ -438,7 +427,6 @@ $(document).ready(function () {
             $('.alertLogWrapper').show();
             $('table#alertLogTable select').val(null).trigger('change');
             dt.columns.adjust();
-            console.timeEnd('dt');
             console.log(performance.now());
         },
         lengthMenu: [

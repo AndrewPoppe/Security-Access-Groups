@@ -1,16 +1,16 @@
-const module = __MODULE__;
+const sag_module = __MODULE__;
 console.log(performance.now());
 console.time('dt');
 
-module.sags = JSON.parse('{{SAGS_JSON}}');
+sag_module.sags = JSON.parse('{{SAGS_JSON}}');
 
-module.formatNow = function () {
+sag_module.formatNow = function () {
     const d = new Date();
     return d.getFullYear() + '-' + (d.getMonth() + 1).toString().padStart(2, 0) + '-' + (d.getDate()).toString()
         .padStart(2, 0)
 }
 
-module.toggleEditMode = function (event) {
+sag_module.toggleEditMode = function (event) {
     const button = $('button.editUsersButton');
     const editing = !$(button).data('editing');
     $('.sagSelect').attr('disabled', !editing);
@@ -44,8 +44,8 @@ module.toggleEditMode = function (event) {
     });
 }
 
-module.handleCsvExport = function () {
-    if (module.dt.search() != '') {
+sag_module.handleCsvExport = function () {
+    if (sag_module.dt.search() != '') {
         Swal.fire({
             title: 'Export Filtered Data?',
             text: 'You have a filter applied to the table. Do you want to export the filtered data or all data?',
@@ -56,17 +56,17 @@ module.handleCsvExport = function () {
             denyButtonText: 'Export All Data'
         }).then((result) => {
             if (result.isConfirmed) {
-                module.exportCsv(true);
+                sag_module.exportCsv(true);
             } else if (result.isDenied) {
-                module.exportCsv();
+                sag_module.exportCsv();
             }
         });
     } else {
-        module.exportCsv();
+        sag_module.exportCsv();
     }
 }
 
-module.join = function (a, separator, boundary, escapeChar, reBoundary) {
+sag_module.join = function (a, separator, boundary, escapeChar, reBoundary) {
     let s = '';
     for (let i = 0, ien = a.length; i < ien; i++) {
         if (i > 0) {
@@ -79,25 +79,25 @@ module.join = function (a, separator, boundary, escapeChar, reBoundary) {
     return s;
 };
 
-module.exportCsv = function (useFilter = false) {
+sag_module.exportCsv = function (useFilter = false) {
     const newLine = /Windows/.exec(navigator.userAgent) ? '\r\n' : '\n';
     const escapeChar = '"';
     const boundary = '"';
     const separator = ',';
     const extension = '.csv';
     const reBoundary = new RegExp(boundary, 'g');
-    const filename = 'SecurityAccessGroups_Users_' + (useFilter ? 'FILTERED_' : '') + module.formatNow() + extension;
+    const filename = 'SecurityAccessGroups_Users_' + (useFilter ? 'FILTERED_' : '') + sag_module.formatNow() + extension;
     let charset = document.characterSet;
     if (charset) {
         charset = ';charset=' + charset;
     }
 
     const useSearch = useFilter ? 'applied' : 'none';
-    const allData = module.dt.rows({
+    const allData = sag_module.dt.rows({
         search: useSearch,
         page: 'all'
     }).data();
-    const data = module.dt.buttons.exportData({
+    const data = sag_module.dt.buttons.exportData({
         format: {
             header: function (html, col, node) {
                 return $(node).data('id');
@@ -112,7 +112,7 @@ module.exportCsv = function (useFilter = false) {
                 } else if (col === 2) {
                     return allData[row]["user_email"];
                 } else if (col === 3) {
-                    return module.sags[allData[row]["sag"]];
+                    return sag_module.sags[allData[row]["sag"]];
                 } else if (col === 4) {
                     return allData[row]["sag"];
                 }
@@ -125,11 +125,11 @@ module.exportCsv = function (useFilter = false) {
         }
     });
 
-    const header = module.join(data.header, separator, boundary, escapeChar, reBoundary) + newLine;
-    const footer = data.footer ? newLine + module.join(data.footer, separator, boundary, escapeChar, reBoundary) : '';
+    const header = sag_module.join(data.header, separator, boundary, escapeChar, reBoundary) + newLine;
+    const footer = data.footer ? newLine + sag_module.join(data.footer, separator, boundary, escapeChar, reBoundary) : '';
     const body = [];
     for (let i = 0, ien = data.body.length; i < ien; i++) {
-        body.push(module.join(data.body[i], separator, boundary, escapeChar, reBoundary));
+        body.push(sag_module.join(data.body[i], separator, boundary, escapeChar, reBoundary));
     }
 
     const result = {
@@ -145,11 +145,11 @@ module.exportCsv = function (useFilter = false) {
     $('#loading').modal('hide');
 }
 
-module.importCsv = function () {
+sag_module.importCsv = function () {
     $('#importUsersFile').click();
 }
 
-module.handleImportError = function (errorData) {
+sag_module.handleImportError = function (errorData) {
     let body = errorData.error.join('<br>') + "<div class='container'>";
     if (errorData.users.length) {
         body +=
@@ -177,7 +177,7 @@ module.handleImportError = function (errorData) {
     });
 }
 
-module.handleFiles = function () {
+sag_module.handleFiles = function () {
     if (this.files.length !== 1) {
         return;
     }
@@ -193,15 +193,15 @@ module.handleFiles = function () {
 
     const reader = new FileReader();
     reader.onload = (e) => {
-        module.csv_file_contents = e.target.result;
-        module.ajax('importCsvUsers', { data: module.csv_file_contents })
+        sag_module.csv_file_contents = e.target.result;
+        sag_module.ajax('importCsvUsers', { data: sag_module.csv_file_contents })
             .then((response) => {
                 Swal.close();
                 const result = JSON.parse(response);
                 if (result.status != 'error') {
                     $(result.data).modal('show');
                 } else {
-                    module.handleImportError(result.data);
+                    sag_module.handleImportError(result.data);
                 }
             })
             .catch((error) => {
@@ -212,16 +212,16 @@ module.handleFiles = function () {
     reader.readAsText(file);
 }
 
-module.confirmImport = function () {
+sag_module.confirmImport = function () {
     $('.modal').modal('hide');
-    if (!module.csv_file_contents || module.csv_file_contents === "") {
+    if (!sag_module.csv_file_contents || sag_module.csv_file_contents === "") {
         return;
     }
-    module.ajax('importCsvUsers', { data: module.csv_file_contents, confirm: true })
+    sag_module.ajax('importCsvUsers', { data: sag_module.csv_file_contents, confirm: true })
         .then((response) => {
             const result = JSON.parse(response);
             if (result.status != 'error') {
-                module.dt.ajax.reload();
+                sag_module.dt.ajax.reload();
                 Swal.fire({
                     icon: 'success',
                     html: "Successfully imported assignments.",
@@ -246,7 +246,7 @@ module.confirmImport = function () {
         });
 }
 
-module.downloadTemplate = function () {
+sag_module.downloadTemplate = function () {
     const newLine = /Windows/.exec(navigator.userAgent) ? '\r\n' : '\n';
     const escapeChar = '"';
     const boundary = '"';
@@ -260,11 +260,11 @@ module.downloadTemplate = function () {
     }
 
     const data = $('#templateTable').DataTable().buttons.exportData();
-    const header = module.join(data.header, separator, boundary, escapeChar, reBoundary) + newLine;
-    const footer = data.footer ? newLine + module.join(data.footer, separator, boundary, escapeChar, reBoundary) : '';
+    const header = sag_module.join(data.header, separator, boundary, escapeChar, reBoundary) + newLine;
+    const footer = data.footer ? newLine + sag_module.join(data.footer, separator, boundary, escapeChar, reBoundary) : '';
     const body = [];
     for (let i = 0, ien = data.body.length; i < ien; i++) {
-        body.push(module.join(data.body[i], separator, boundary, escapeChar, reBoundary));
+        body.push(sag_module.join(data.body[i], separator, boundary, escapeChar, reBoundary));
     }
     const result = {
         str: header + body.join(newLine) + footer,
@@ -277,28 +277,28 @@ module.downloadTemplate = function () {
         true);
 }
 
-module.saveSag = function (selectNode) {
+sag_module.saveSag = function (selectNode) {
     const select = $(selectNode);
     const tr = $(selectNode).closest('tr');
     const user = tr.data('user');
     const newSag = select.val();
 
     let color = "#66ff99";
-    module.ajax('assignSag', { username: user, sag: newSag })
+    sag_module.ajax('assignSag', { username: user, sag: newSag })
         .then((response) => {
             const result = JSON.parse(response);
             if (result.status != 'error') {
                 select.closest('td').data('sag', newSag);
                 select.closest('td').attr('data-sag', newSag);
-                const rowIndex = module.dt.row(select.closest('tr')).index();
-                module.dt.cell(rowIndex, 4).data(newSag);
+                const rowIndex = sag_module.dt.row(select.closest('tr')).index();
+                sag_module.dt.cell(rowIndex, 4).data(newSag);
             } else {
                 color = "#ff3300";
                 Toast.fire({
                     icon: 'error',
                     title: 'Error assigning SAG'
                 });
-                module.dt.ajax.reload();
+                sag_module.dt.ajax.reload();
             }
             $(tr).find('td').effect('highlight', {
                 color: color
@@ -309,7 +309,7 @@ module.saveSag = function (selectNode) {
         });
 }
 
-module.handleSelects = function () {
+sag_module.handleSelects = function () {
     const button = $('button.editUsersButton');
     const editing = $(button).data('editing');
     const style = editing ? 'user-select:all; cursor: text; margin-left: 1px; margin-right: 1px;' : 'none';
@@ -348,10 +348,10 @@ $(document).ready(function () {
     });
 
     const importFileElement = document.getElementById("importUsersFile");
-    importFileElement.addEventListener("change", module.handleFiles, false);
-    module.dt = $('#SUR-System-Table').DataTable({
+    importFileElement.addEventListener("change", sag_module.handleFiles, false);
+    sag_module.dt = $('#SUR-System-Table').DataTable({
         ajax: function (data, callback, settings) {
-            module.ajax('getUsers')
+            sag_module.ajax('getUsers')
                 .then((response) => {
                     callback(JSON.parse(response));
                 })
@@ -361,7 +361,7 @@ $(document).ready(function () {
                 });
         },
         drawCallback: function (settings) {
-            module.handleSelects();
+            sag_module.handleSelects();
         },
         deferRender: true,
         paging: true,
@@ -401,14 +401,14 @@ $(document).ready(function () {
                     row.sag = '{{DEFAULT_SAG_ID}}';
                 }
                 if (type === 'filter') {
-                    return row.sag + ' ' + module.sags[row.sag];
+                    return row.sag + ' ' + sag_module.sags[row.sag];
                 } else if (type === 'sort') {
-                    return module.sags[row.sag];
+                    return sag_module.sags[row.sag];
                 } else {
                     let result =
-                        `<select class="sagSelect" disabled="true" onchange="module.saveSag(this)">`;
-                    for (let sag_id in module.sags) {
-                        const sag_label = module.sags[sag_id];
+                        `<select class="sagSelect" disabled="true" onchange="sag_module.saveSag(this)">`;
+                    for (let sag_id in sag_module.sags) {
+                        const sag_label = sag_module.sags[sag_id];
                         const selected = sag_id == row.sag ?
                             "selected" : "";
                         result +=
@@ -448,7 +448,7 @@ $(document).ready(function () {
             setTimeout(() => {
                 $(this).DataTable().columns.adjust().draw();
             }, 0);
-            module.handleSelects();
+            sag_module.handleSelects();
             console.log(performance.now());
             console.timeEnd('dt');
         },

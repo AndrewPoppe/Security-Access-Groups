@@ -1,20 +1,20 @@
-const module = __MODULE__;
+const sag_module = __MODULE__;
 console.log(performance.now());
 console.time('dt');
 
-module.hover = function () {
+sag_module.hover = function () {
     const thisNode = $(this);
     const rowIdx = thisNode.attr('data-dt-row');
     $("tr[data-dt-row='" + rowIdx + "'] td").addClass("highlight"); // shade only the hovered row
 }
 
-module.dehover = function () {
+sag_module.dehover = function () {
     const thisNode = $(this);
     const rowIdx = thisNode.attr('data-dt-row');
     $("tr[data-dt-row='" + rowIdx + "'] td").removeClass("highlight"); // shade only the hovered row
 }
 
-module.makeUserTable = function (usersString) {
+sag_module.makeUserTable = function (usersString) {
     let tableString =
         '<table class="table table-sm table-bordered"><thead><tr><th>Username</th><th>Name</th><th>Email</th><th>Security Access Group</th></tr></thead><tbody>';
     JSON.parse(usersString).forEach(user => {
@@ -30,7 +30,7 @@ module.makeUserTable = function (usersString) {
     });
 }
 
-module.clearTables = function () {
+sag_module.clearTables = function () {
     $('.dataTables_filter').remove();
     $('.dataTables_length').remove();
     $('.dataTables_info').remove();
@@ -42,8 +42,8 @@ module.clearTables = function () {
 
 
 // Projects Table
-module.showProjectTable = function (includeExpired = false) {
-    module.clearTables();
+sag_module.showProjectTable = function (includeExpired = false) {
+    sag_module.clearTables();
     $('.tableWrapper').hide();
     $('#projectTableTitle').text('Projects with Noncompliant Rights' + (includeExpired ?
         ' (including expired users)' :
@@ -58,7 +58,7 @@ module.showProjectTable = function (includeExpired = false) {
     }
     $('#SUR-System-Table.projectTable').DataTable({
         ajax: function (data, callback, settings) {
-            module.ajax('getProjectReport', { includeExpired: includeExpired })
+            sag_module.ajax('getProjectReport', { includeExpired: includeExpired })
                 .then(function (data) {
                     callback(JSON.parse(data));
                 })
@@ -167,14 +167,14 @@ module.showProjectTable = function (includeExpired = false) {
 
             table.on('draw', function () {
                 $('.dataTable tbody tr').each((i, row) => {
-                    row.onmouseenter = module.hover;
-                    row.onmouseleave = module.dehover;
+                    row.onmouseenter = sag_module.hover;
+                    row.onmouseleave = sag_module.dehover;
                 });
             });
 
             $('.dataTable tbody tr').each((i, row) => {
-                row.onmouseenter = module.hover;
-                row.onmouseleave = module.dehover;
+                row.onmouseenter = sag_module.hover;
+                row.onmouseleave = sag_module.dehover;
             });
             $('div.dt-buttons button').removeClass('dt-button');
             table.columns.adjust().draw();
@@ -207,7 +207,7 @@ module.showProjectTable = function (includeExpired = false) {
             data: function (row, type, set, meta) {
                 const users = row.users_with_bad_rights;
                 const usersString = JSON.stringify(users);
-                return '<a href="javascript:void(0)" onclick=\'module.makeUserTable(`' +
+                return '<a href="javascript:void(0)" onclick=\'sag_module.makeUserTable(`' +
                     usersString + '`);\'>' + users.length + '</a>';
             },
             width: '5%'
@@ -299,8 +299,8 @@ module.showProjectTable = function (includeExpired = false) {
 }
 
 // Users Table
-module.showUserTable = function (includeExpired = false) {
-    module.clearTables();
+sag_module.showUserTable = function (includeExpired = false) {
+    sag_module.clearTables();
     $('.tableWrapper').hide();
     $('#userTableTitle').text('Users with Noncompliant Rights' + (includeExpired ? ' (including expired users)' :
         ' (excluding expired users)'));
@@ -314,7 +314,7 @@ module.showUserTable = function (includeExpired = false) {
     }
     $('#SUR-System-Table.userTable').DataTable({
         ajax: function (data, callback, settings) {
-            module.ajax('getUserReport', { includeExpired: includeExpired })
+            sag_module.ajax('getUserReport', { includeExpired: includeExpired })
                 .then(function (data) {
                     callback(JSON.parse(data));
                 })
@@ -408,14 +408,14 @@ module.showUserTable = function (includeExpired = false) {
 
             table.on('draw', function () {
                 $('.dataTable tbody tr').each((i, row) => {
-                    row.onmouseenter = module.hover;
-                    row.onmouseleave = module.dehover;
+                    row.onmouseenter = sag_module.hover;
+                    row.onmouseleave = sag_module.dehover;
                 });
             });
 
             $('.dataTable tbody tr').each((i, row) => {
-                row.onmouseenter = module.hover;
-                row.onmouseleave = module.dehover;
+                row.onmouseenter = sag_module.hover;
+                row.onmouseleave = sag_module.dehover;
             });
             table.columns.adjust().draw();
             $('div.dt-buttons button').removeClass(
@@ -559,8 +559,8 @@ module.showUserTable = function (includeExpired = false) {
 }
 
 // Users and Projects Table
-module.showUserAndProjectTable = function (includeExpired = false) {
-    module.clearTables();
+sag_module.showUserAndProjectTable = function (includeExpired = false) {
+    sag_module.clearTables();
     $('.tableWrapper').hide();
     $('#allTableTitle').text('Users and Projects with Noncompliant Rights' + (includeExpired ?
         ' (including expired users)' :
@@ -575,7 +575,7 @@ module.showUserAndProjectTable = function (includeExpired = false) {
     }
     $('#SUR-System-Table.allTable').DataTable({
         ajax: function (data, callback, settings) {
-            module.ajax('getUserAndProjectReport', { includeExpired: includeExpired })
+            sag_module.ajax('getUserAndProjectReport', { includeExpired: includeExpired })
                 .then(function (data) {
                     callback(JSON.parse(data));
                 })
@@ -670,14 +670,14 @@ module.showUserAndProjectTable = function (includeExpired = false) {
 
             table.on('draw', function () {
                 $('.dataTable tbody tr').each((i, row) => {
-                    row.onmouseenter = module.hover;
-                    row.onmouseleave = module.dehover;
+                    row.onmouseenter = sag_module.hover;
+                    row.onmouseleave = sag_module.dehover;
                 });
             });
 
             $('.dataTable tbody tr').each((i, row) => {
-                row.onmouseenter = module.hover;
-                row.onmouseleave = module.dehover;
+                row.onmouseenter = sag_module.hover;
+                row.onmouseleave = sag_module.dehover;
             });
             table.columns.adjust().draw();
             $('div.dt-buttons button').removeClass('dt-button');
