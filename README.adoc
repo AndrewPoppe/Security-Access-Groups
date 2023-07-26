@@ -9,10 +9,10 @@ Andrew Poppe <andrew.poppe@yale.edu>
 ifdef::env-github[]
 :tip-caption: :bulb:
 :note-caption: :information_source:
-:important-caption: :heavy_exclamation_mark:
 :caution-caption: :fire:
 :warning-caption: :warning:
 endif::[]
+:important-caption: 🚩
 
 image:https://sonarcloud.io/api/project_badges/measure?project=AndrewPoppe_Security-Access-Groups&metric=alert_status[link="https://sonarcloud.io/summary/new_code?id=AndrewPoppe_Security-Access-Groups"]
 
