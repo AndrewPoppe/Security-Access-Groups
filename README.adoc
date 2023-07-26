@@ -9,7 +9,7 @@ Andrew Poppe <andrew.poppe@yale.edu>
 ifdef::env-github[]
 :tip-caption: :bulb:
 :note-caption: :information_source:
-:important-caption: :exclamation:
+:important-caption: :heavy_exclamation_mark:
 :caution-caption: :fire:
 :warning-caption: :warning:
 endif::[]
@@ -656,3 +656,4 @@ image::p_logging_user_2.png[user log]
 image::p_logging_role_2.png[role log]
 
 == Changelog
+
