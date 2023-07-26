@@ -619,6 +619,10 @@ conform with the user's security access group.
 .^|User Rights Holders
 |A formatted table of usernames, full names, email addresses, SAGs, and non-compliant rights
 
+.^a|`[sag-expiration-date]`
+.^|Any (only available in User Expiration alerts)
+|The date the user will be expired from the project
+
 |===
 
 TIP: You can also use any REDCap Smart Variables, although few will be relevant in this context.
