@@ -21,7 +21,7 @@ toc::[]
 [qanda]
 *What is it?*::
 
-This is an External Module that allows REDCap administrators to create and manage Security Access Groups in a REDCap system.
+This is an External Module that allows REDCap administrators to create and manage *Security Access Groups* in a REDCap system.
 
 *What are Security Access Groups?*::
 
