@@ -18,13 +18,27 @@ toc::[]
 
 == Introduction
 
-This External Module allows REDCap administrators to create and manage Security Access Groups in a REDCap system.
+[qanda]
+*What is it?*::
+
+This is an External Module that allows REDCap administrators to create and manage Security Access Groups in a REDCap system.
+
+*What are Security Access Groups?*::
 
 *Security Access Groups* (SAGs) are used to restrict which user rights a REDCap user can be granted in a project. SAGs do not define the rights a user will have in a given project; rather, they define the set of allowable rights the user is able to be granted. SAGs are defined at the system level and are used in any project that has this module enabled.
 
-For example, if your institution requires documentation of training for users to export data, you can create a SAG that does not allow the "Data Export Tool" User Right to be granted to users assigned it. Once a user completes training, they can be moved to a SAG that does allow the "Data Export Tool" User Right to be granted.
+*When would that be useful?*::
 
-To accomplish this, REDCap administrators first create SAGs using a <<security_access_groups_tab, menu>> in the Control Center. Once a SAG is created, users can be assigned to it in a separate <<users_tab, tab>> the same control center menu. When a user is assigned to a SAG, the user will only be able to be granted User Rights that are allowed by the SAG.
+For example, if your institution requires documentation of training for users to export data, you can create a SAG that does not allow the "Data Export Tool" User Right to be granted to users assigned it. Once a user completes training, they can be moved to a SAG that does allow the "Data Export Tool" User Right to be granted. +
+ +
+In other words, you may want to provide different tiers of training to your users and only allow specific project-level user rights to users who have completed the appropriate training. Although this module does not administer or track training, it does handle eveything else.
+
+*Isn't it the study team's responsibility to manage user rights?*::
+Yes and no. As system administrators, we have the responsibility to ensure users of our system are properly trained for the jobs they'll be doing. Many users do not want to complete an hours-long training if they will only be entering data in a data collection instrument. You can give those users a shorter, focused training and assign them to a SAG that allows minimal user rights.
+
+=== How do you use the module?
+
+REDCap administrators first create SAGs using a <<security_access_groups_tab, menu>> in the Control Center. Once a SAG is created, users can be assigned to it in another <<users_tab, tab>> of the same control center menu. When a user is assigned to a SAG, the user will only be able to be granted User Rights that are allowed by the SAG.
 
 IMPORTANT: The module must be enabled in a project for it to restrict User Rights in that project. It is recommended that the module be enabled in all projects.
 
