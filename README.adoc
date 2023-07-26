@@ -6,14 +6,11 @@ Andrew Poppe <andrew.poppe@yale.edu>
 :table-stripes: odd
 :toc:
 :toc-placement!:
-ifdef::env-github[]
-
-:note-caption: :information_source:
-:caution-caption: :fire:
-:warning-caption: :warning:
-endif::[]
+:caution-caption: 🔥
+:note-caption: ℹ️
 :tip-caption: 💡
 :important-caption: 🚩
+:warning-caption: ⚠️
 
 image:https://sonarcloud.io/api/project_badges/measure?project=AndrewPoppe_Security-Access-Groups&metric=alert_status[link="https://sonarcloud.io/summary/new_code?id=AndrewPoppe_Security-Access-Groups"]
 
