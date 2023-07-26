@@ -224,6 +224,7 @@ module.getAlertUserInfo = function () {
             'sag_user': el.username,
             'sag_user_fullname': el.name,
             'sag_user_email': el.email,
+            'sag_user_sag': { 'sag_id': el.sag, 'sag_name': el.sag_name },
             'sag_user_rights': el.bad
         };
     });
@@ -455,6 +456,7 @@ module.replaceKeywordsPreview = async function (text) {
         'sag_user': 'robin123',
         'sag_user_fullname': 'Robin Jones',
         'sag_user_email': 'robin.jones@email.com',
+        'sag_user_sag': { 'sag_id': 'sag_Default', 'sag_name': 'Default SAG' },
         'sag_user_rights': ['Project Design and Setup', 'User Rights', 'Create Records']
     };
 
@@ -490,6 +492,11 @@ module.replaceKeywordsPreviewUserRightsHolders = async function (text) {
             'robin.jones@email.com',
             'alex.thomas@email.com',
             'drew.jackson@email.com'
+        ],
+        "sag_sags": [
+            { 'sag_id': 'sag_Default', 'sag_name': 'Default SAG' },
+            { 'sag_id': 'sag_12345678', 'sag_name': 'Example SAG 1' },
+            { 'sag_id': 'sag_87654321', 'sag_name': 'Example SAG 2' }
         ],
         "sag_rights": [
             ['Project Design and Setup', 'User Rights', 'Create Records'],

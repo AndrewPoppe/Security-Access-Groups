@@ -90,18 +90,18 @@ class Alerts
     public function getEmailPreviewModal()
     {
         ?>
-<div class="modal" id="emailPreview" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content">
-            <div class="modal-body">
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <div class="modal" id="emailPreview" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+                <div class="modal-content">
+                    <div class="modal-body">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-</div>
-<?php
+        <?php
     }
 
     public function getPlaceholdersUserRightsHolders($expiration = false) : array
@@ -110,9 +110,10 @@ class Alerts
             'sag-users'            => 'A formatted list of usernames',
             'sag-user-fullnames'   => 'A formatted list of users\' full names',
             'sag-user-emails'      => 'A formatted list of user emails',
-            'sag-users-table'      => 'A formatted table of usernames, full names, and email addresses',
+            'sag-user-sags'        => 'A formatted list of users\' current security access groups',
+            'sag-users-table'      => 'A formatted table of usernames, full names, email addresses, and SAGs',
             'sag-users-table-full' =>
-            'A formatted table of usernames, full names, email addresses, and non-compliant rights',
+            'A formatted table of usernames, full names, email addresses, SAGs, and non-compliant rights',
             'sag-project-title'    => 'The title of the project',
         ];
 
@@ -129,6 +130,7 @@ class Alerts
             'sag-user'          => 'The user\'s username',
             'sag-user-fullname' => 'The user\'s full name',
             'sag-user-email'    => 'The user\'s email address',
+            'sag-user-sag'      => 'The user\'s current security access group',
             'sag-rights'        => '<span>A formatted list of the rights that do not</span>' .
             '<br><span>conform with the user\'s security access group.</span>',
             'sag-project-title' => 'The title of the project',

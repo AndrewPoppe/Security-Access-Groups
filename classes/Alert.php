@@ -365,6 +365,7 @@ class Alert
             $data['sag_users'][]     = $user['sag_user'];
             $data['sag_fullnames'][] = $user['sag_user_fullname'];
             $data['sag_emails'][]    = $user['sag_user_email'];
+            $data['sag_sags'][]      = $user['sag_user_sag'];
             $data['sag_rights'][]    = $user['sag_user_rights'];
         }
         return $data;

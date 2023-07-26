@@ -575,6 +575,10 @@ The following placeholders can be used in the email subject and body fields in a
 .^|Project User
 |The user's email address
 
+.^a|`[sag-user-sag]`
+.^|Project User
+|The user's current security access group
+
 .^a|`[sag-rights]`
 .^|Project User
 |A formatted list of the rights that do not
@@ -596,13 +600,17 @@ conform with the user's security access group.
 .^|User Rights Holders
 |A formatted list of user emails
 
+.^a|`[sag-user-sags]`
+.^|User Rights Holders
+|A formatted list of users' current security access groups
+
 .^a|`[sag-users-table]`
 .^|User Rights Holders
-|A formatted table of usernames, full names, and email addresses
+|A formatted table of usernames, full names, email addresses, and SAGs
 
 .^a|`[sag-users-table-full]`
 .^|User Rights Holders
-|A formatted table of usernames, full names, email addresses, and non-compliant rights
+|A formatted table of usernames, full names, email addresses, SAGs, and non-compliant rights
 
 |===
 

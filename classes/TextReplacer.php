@@ -55,11 +55,13 @@ class TextReplacer
 
     public function replacePlaceholders($text)
     {
+        $text = $this->replaceSagUserSag($text);
         $text = $this->replaceSagUser($text);
         $text = $this->replaceSagUserFullname($text);
         $text = $this->replaceSagUserEmail($text);
         $text = $this->replaceSagRights($text);
         $text = $this->replaceSagProjectTitle($text);
+        $text = $this->replaceSagUserSags($text);
         $text = $this->replaceSagUsers($text);
         $text = $this->replaceSagUserFullnames($text);
         $text = $this->replaceSagUserEmails($text);
@@ -68,6 +70,17 @@ class TextReplacer
         $text = $this->replaceSagExpirationDate($text);
 
         return $text;
+    }
+
+    private function replaceSagUserSag($text)
+    {
+        $placeholder = '[sag-user-sag]';
+        if ( strpos($text, $placeholder) === false ) {
+            return $text;
+        }
+        $sag             = $this->data['sag_user_sag'] ?? '';
+        $replacementText = '<strong>' . $sag['sag_name'] . '</strong> (' . $sag['sag_id'] . ')';
+        return str_replace($placeholder, $replacementText, $text);
     }
 
     private function replaceSagUser($text)
@@ -122,6 +135,21 @@ class TextReplacer
         return str_replace($placeholder, $title, $text);
     }
 
+    private function replaceSagUserSags($text)
+    {
+        $placeholder = '[sag-user-sags]';
+        if ( strpos($text, $placeholder) === false ) {
+            return $text;
+        }
+        $sags     = $this->data['sag_sags'] ?? [];
+        $sagsHtml = [];
+        foreach ( $sags as $sag ) {
+            $sagsHtml[] = '<strong>' . $sag['sag_name'] . '</strong> (' . $sag['sag_id'] . ')';
+        }
+        $sagsReplacement = $this->makeList($sagsHtml);
+        return str_replace($placeholder, $sagsReplacement, $text);
+    }
+
     private function replaceSagUsers($text)
     {
         $placeholder = '[sag-users]';
@@ -172,13 +200,15 @@ class TextReplacer
         $emails    = array_map(function ($email) {
             return "<a href='mailto:$email'>$email</a>";
         }, $emails);
-
-        $table = "<table class='sag_users' style='border: 1px solid #666; border-collapse: collapse; width: 100%;'><thead><tr><th style='text-align: left;padding: 8px;border: 1px solid #666;background-color: #f2f2f2;'>Name</th><th style='text-align: left;padding: 8px;border: 1px solid #666;background-color: #f2f2f2;'>REDCap Username</th><th style='text-align: left;padding: 8px;border: 1px solid #666;background-color: #f2f2f2;'>Email Address</th></tr></thead><tbody>";
+        $sags      = $this->data['sag_sags'] ?? [];
+        $table     = "<table class='sag_users' style='border: 1px solid #666; border-collapse: collapse; width: 100%;'><thead><tr><th style='text-align: left;padding: 8px;border: 1px solid #666;background-color: #f2f2f2;'>Name</th><th style='text-align: left;padding: 8px;border: 1px solid #666;background-color: #f2f2f2;'>REDCap Username</th><th style='text-align: left;padding: 8px;border: 1px solid #666;background-color: #f2f2f2;'>Email Address</th><th style='text-align: left;padding: 8px;border: 1px solid #666;background-color: #f2f2f2;'>Current SAG</th></tr></thead><tbody>";
         foreach ( $users as $index => $username ) {
-            $bg       = $index % 2 == 0 ? 'transparent' : '#f2f2f2';
-            $fullname = $fullnames[$index] ?? '';
-            $email    = $emails[$index] ?? '';
-            $table .= "<tr style='background-color:" . $bg . ";'><td style='text-align: left;padding: 8px;border: 1px solid #666;'>$fullname</td><td style='text-align: left;padding: 8px;border: 1px solid #666;'>$username</td><td style='text-align: left;padding: 8px;border: 1px solid #666;'>$email</td></tr>";
+            $bg          = $index % 2 == 0 ? 'transparent' : '#f2f2f2';
+            $fullname    = $fullnames[$index] ?? '';
+            $email       = $emails[$index] ?? '';
+            $sag         = $sags[$index] ?? '';
+            $sagForTable = '<strong>' . $sag['sag_name'] . '</strong> (' . $sag['sag_id'] . ')';
+            $table .= "<tr style='background-color:" . $bg . ";'><td style='text-align: left;padding: 8px;border: 1px solid #666;'>$fullname</td><td style='text-align: left;padding: 8px;border: 1px solid #666;'>$username</td><td style='text-align: left;padding: 8px;border: 1px solid #666;'>$email</td><td style='text-align: left;padding: 8px;border: 1px solid #666;'>$sagForTable</td></tr>";
         }
         $table .= '</tbody></table>';
 
@@ -198,16 +228,19 @@ class TextReplacer
         $emails    = array_map(function ($email) {
             return "<a href='mailto:$email'>$email</a>";
         }, $emails);
+        $sags      = $this->data['sag_sags'] ?? [];
         $rights    = $this->data['sag_rights'] ?? [];
 
-        $table = "<table class='sag_users' style='border: 1px solid #666; border-collapse: collapse; width: 100%;'><thead><tr><th style='text-align: left;padding: 8px;border: 1px solid #666;background-color: #f2f2f2;'>Name</th><th style='text-align: left;padding: 8px;border: 1px solid #666;background-color: #f2f2f2;'>REDCap Username</th><th style='text-align: left;padding: 8px;border: 1px solid #666;background-color: #f2f2f2;'>Email Address</th><th style='text-align: left;padding: 8px;border: 1px solid #666;background-color: #f2f2f2;'>Noncompliant Rights</th></tr></thead><tbody>";
+        $table = "<table class='sag_users' style='border: 1px solid #666; border-collapse: collapse; width: 100%;'><thead><tr><th style='text-align: left;padding: 8px;border: 1px solid #666;background-color: #f2f2f2;'>Name</th><th style='text-align: left;padding: 8px;border: 1px solid #666;background-color: #f2f2f2;'>REDCap Username</th><th style='text-align: left;padding: 8px;border: 1px solid #666;background-color: #f2f2f2;'>Email Address</th><th style='text-align: left;padding: 8px;border: 1px solid #666;background-color: #f2f2f2;'>Current SAG</th><th style='text-align: left;padding: 8px;border: 1px solid #666;background-color: #f2f2f2;'>Noncompliant Rights</th></tr></thead><tbody>";
         foreach ( $users as $index => $username ) {
             $bg          = $index % 2 == 0 ? 'transparent' : '#f2f2f2';
             $fullname    = $fullnames[$index] ?? '';
             $email       = $emails[$index] ?? '';
+            $sag         = $sags[$index] ?? '';
+            $sagForTable = '<strong>' . $sag['sag_name'] . '</strong> (' . $sag['sag_id'] . ')';
             $theseRights = $rights[$index] ?? [];
             $rightsList  = $this->makeList($theseRights);
-            $table .= "<tr style='background-color:" . $bg . ";'><td style='text-align: left;padding: 8px;border: 1px solid #666;'>$fullname</td><td style='text-align: left;padding: 8px;border: 1px solid #666;'>$username</td><td style='text-align: left;padding: 8px;border: 1px solid #666;'>$email</td><td style='text-align: left;padding: 8px;border: 1px solid #666;'>$rightsList</td></tr>";
+            $table .= "<tr style='background-color:" . $bg . ";'><td style='text-align: left;padding: 8px;border: 1px solid #666;'>$fullname</td><td style='text-align: left;padding: 8px;border: 1px solid #666;'>$username</td><td style='text-align: left;padding: 8px;border: 1px solid #666;'>$email</td><td style='text-align: left;padding: 8px;border: 1px solid #666;'>$sagForTable</td><td style='text-align: left;padding: 8px;border: 1px solid #666;'>$rightsList</td></tr>";
         }
         $table .= '</tbody></table>';
 
