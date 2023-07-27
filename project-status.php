@@ -229,7 +229,7 @@ if ( !$module->framework->isSuperUser() ) {
     </div>
 </div>
 
-<div class="SUR-Container">
+<div class="SAG-Container">
     <div class="projhdr">
         <i class='fa-solid fa-users-between-lines'></i>&nbsp;<span>Security Access Groups</span>
     </div>

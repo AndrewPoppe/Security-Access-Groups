@@ -109,7 +109,7 @@ class SAGEditForm
         $hidden  = $this->newSag ? "hidden" : '';
         return <<<"EOT"
         <!-- EDIT SAG NAME -->
-        <div class="SUR-form-row row $hidden">
+        <div class="SAG-form-row row $hidden">
             <div class="col" colspan='2'>
                 <i class="fa-solid fa-fw fa-id-card"></i>&nbsp;&nbsp;$label
                 <input type='text' value="$sagName"
@@ -125,7 +125,7 @@ class SAGEditForm
         return <<<"EOT"
         <!-- HIGHEST LEVEL PRIVILEGES -->
         <hr>
-        <div class="SUR-form-row row">
+        <div class="SAG-form-row row">
             <div class="col section-header" colspan='2'>
                 $label
             </div>
@@ -140,7 +140,7 @@ class SAGEditForm
             $checked = $this->rights['design'] == 1 ? 'checked' : '';
             return <<<"EOT"
             <!-- Project Setup/Design -->
-            <div class="SUR-form-row row">
+            <div class="SAG-form-row row">
                 <div class="col">
                     <i class="fa-solid fa-fw fa-tasks"></i>&nbsp;&nbsp;$label
                 </div>
@@ -159,7 +159,7 @@ class SAGEditForm
             $checked = $this->rights['user_rights'] == 1 ? 'checked' : '';
             return <<<"EOT"
             <!-- User Rights -->
-            <div class="SUR-form-row row">
+            <div class="SAG-form-row row">
                 <div class="col">
                     <i class="fa-solid fa-fw fa-user"></i>&nbsp;&nbsp;$label
                 </div>
@@ -178,7 +178,7 @@ class SAGEditForm
             $checked = $this->rights['data_access_groups'] == 1 ? 'checked' : '';
             return <<<"EOT"
             <!--Data Access Groups -->
-            <div class="SUR-form-row row">
+            <div class="SAG-form-row row">
                 <div class="col">
                     <i class="fa-solid fa-fw fa-users"></i>&nbsp;&nbsp;$label
                 </div>
@@ -195,7 +195,7 @@ class SAGEditForm
         return <<<"EOT"
         <!-- OTHER PRIVILEGES -->
         <hr>
-        <div class="SUR-form-row row">
+        <div class="SAG-form-row row">
             <div class="col section-header" colspan='2'>
                 $label
             </div>
@@ -210,7 +210,7 @@ class SAGEditForm
             $imgPath = APP_PATH_IMAGES . "mycap_logo_black.png";
             return <<<"EOT"
             <!-- MyCap Mobile App -->
-            <div class="SUR-form-row row">
+            <div class="SAG-form-row row">
                 <div class="col">
                     <img style='height:1rem;' alt='mycap_logo'
                         src='$imgPath'>&nbsp;$label
@@ -229,7 +229,7 @@ class SAGEditForm
             $checked = $this->rights['participants'] == 1 ? 'checked' : '';
             return <<<"EOT"
             <!-- Survey Distribution Tool -->
-            <div class="SUR-form-row row">
+            <div class="SAG-form-row row">
                 <div class="col">
                     <div>
                         <i
@@ -250,7 +250,7 @@ class SAGEditForm
             $checked = $this->rights['alerts'] == 1 ? 'checked' : '';
             return <<<"EOT"
             <!-- Alerts -->
-            <div class="SUR-form-row row">
+            <div class="SAG-form-row row">
                 <div class="col">
                     <i class="fa-solid fa-fw fa-bell"></i>&nbsp;&nbsp;$label
                 </div>
@@ -270,7 +270,7 @@ class SAGEditForm
             $checked = $this->rights['calendar'] == 1 ? 'checked' : '';
             return <<<"EOT"
             <!-- Calendar -->
-            <div class="SUR-form-row row">
+            <div class="SAG-form-row row">
                 <div class="col">
                     <i class="far fa-calendar-alt"></i>&nbsp;&nbsp;
                     $label1 $label2
@@ -290,7 +290,7 @@ class SAGEditForm
             $checked = $this->rights['reports'] == 1 ? 'checked' : '';
             return <<<"EOT"
             <!-- Reports -->
-            <div class="SUR-form-row row">
+            <div class="SAG-form-row row">
                 <div class="col">
                     <i class="fa-solid fa-fw fa-search"></i>&nbsp;&nbsp;$label1
                     <div class="extra-text">$label2</div>
@@ -309,7 +309,7 @@ class SAGEditForm
             $checked = $this->rights['graphical'] == 1 ? 'checked' : '';
             return <<<"EOT"
             <!-- Graphical Data View & Stats -->
-            <div class="SUR-form-row row">
+            <div class="SAG-form-row row">
                 <div class="col">
                     <i
                         class="fa-solid fa-fw fa-chart-column"></i>&nbsp;&nbsp;$label
@@ -330,7 +330,7 @@ class SAGEditForm
             $checked1 = $this->rights['double_data_reviewer'] == 1 ? 'checked' : '';
             $checked2 = $this->rights['double_data_person'] == 1 ? 'checked' : '';
             return <<<"EOT"
-            <div class="SUR-form-row row mb-2">
+            <div class="SAG-form-row row mb-2">
                 <div class="col mt-1">
                     <i class="fa-solid fa-fw fa-users"></i>&nbsp;&nbsp;$label1
                 </div>
@@ -358,7 +358,7 @@ class SAGEditForm
             $label   = $this->lang['app_01'];
             $checked = $this->rights['data_import_tool'] == 1 ? 'checked' : '';
             return <<<"EOT"
-            <div class="SUR-form-row row">
+            <div class="SAG-form-row row">
                 <div class="col">
                     <i class="fa-solid fa-fw fa-file-import"></i>&nbsp;&nbsp;$label
                 </div>
@@ -375,7 +375,7 @@ class SAGEditForm
             $label   = $this->lang['app_02'];
             $checked = $this->rights['data_comparison_tool'] == 1 ? 'checked' : '';
             return <<<"EOT"
-            <div class="SUR-form-row row">
+            <div class="SAG-form-row row">
                 <div class="col">
                     <i class="fa-solid fa-fw fa-not-equal"></i>&nbsp;&nbsp;$label
                 </div>
@@ -392,7 +392,7 @@ class SAGEditForm
             $label   = $this->lang['app_07'];
             $checked = $this->rights['data_logging'] == 1 ? 'checked' : '';
             return <<<"EOT"
-            <div class="SUR-form-row row">
+            <div class="SAG-form-row row">
                 <div class="col">
                     <i class="fa-solid fa-fw fa-receipt"></i>&nbsp;&nbsp;$label
                 </div>
@@ -409,7 +409,7 @@ class SAGEditForm
             $label   = $this->lang['app_04'];
             $checked = $this->rights['file_repository'] == 1 ? 'checked' : '';
             return <<<"EOT"
-            <div class="SUR-form-row row">
+            <div class="SAG-form-row row">
                 <div class="col">
                     <i class="fa-solid fa-fw fa-folder-open"></i>&nbsp;&nbsp;$label
                 </div>
@@ -431,7 +431,7 @@ class SAGEditForm
             $checked2 = $this->rights['random_dashboard'] == 1 ? 'checked' : '';
             $checked3 = $this->rights['random_perform'] == 1 ? 'checked' : '';
             return <<<"EOT"
-            <div class="SUR-form-row row">
+            <div class="SAG-form-row row">
                 <div class="col mt-1">
                     <i class="fa-solid fa-fw fa-random"></i>&nbsp;&nbsp;$label1
                 </div>
@@ -468,7 +468,7 @@ class SAGEditForm
             $checked1 = $this->rights['data_quality_design'] == 1 ? 'checked' : '';
             $checked2 = $this->rights['data_quality_execute'] == 1 ? 'checked' : '';
             return <<<"EOT"
-            <div class="SUR-form-row row">
+            <div class="SAG-form-row row">
                 <div class="col mt-1">
                     <i
                         class="fa-solid fa-fw fa-clipboard-check"></i>&nbsp;&nbsp;$label1
@@ -500,7 +500,7 @@ class SAGEditForm
             $checked3 = $this->rights['data_quality_resolution_respond'] == 1 ? 'checked' : '';
             $checked4 = $this->rights['data_quality_resolution_close'] == 1 ? 'checked' : '';
             return <<<"EOT"
-            <div class="SUR-form-row row">
+            <div class="SAG-form-row row">
                 <div class="col mt-1">
                     <i
                         class='fa-solid fa-fw fa-comments'></i>&nbsp;&nbsp;$label
@@ -553,7 +553,7 @@ class SAGEditForm
             $checked1 = $this->rights['api_export'] == 1 ? 'checked' : '';
             $checked2 = $this->rights['api_import'] == 1 ? 'checked' : '';
             return <<<"EOT"
-            <div class="SUR-form-row row">
+            <div class="SAG-form-row row">
                 <div class="col mt-1">
                     <i
                         class="fa-solid fa-fw fa-laptop-code"></i>&nbsp;&nbsp;$label1
@@ -580,7 +580,7 @@ class SAGEditForm
             $checked1 = $this->rights['realtime_webservice_mapping'] == 1 ? 'checked' : '';
             $checked2 = $this->rights['realtime_webservice_adjudicate'] == 1 ? 'checked' : '';
             return <<<"EOT"
-            <div class="SUR-form-row row">
+            <div class="SAG-form-row row">
                 <div class="col mt-1">
                     <div>
                         <i class="fa-solid fa-fw fa-database"></i>&nbsp;&nbsp; Clinical
@@ -623,7 +623,7 @@ class SAGEditForm
             $label   = $this->lang['rights_132'];
             $checked = $this->rights['dts'] == 1 ? 'checked' : '';
             return <<<"EOT"
-        <div class="SUR-form-row row">
+        <div class="SAG-form-row row">
         <div class="col" valign="top">
             <div>
                 <i class="fa-solid fa-fw fa-database"></i>&nbsp;&nbsp;$label
@@ -650,10 +650,10 @@ class SAGEditForm
             $checked2 = $this->rights['mobile_app_download_data'] == 1 ? 'checked' : '';
             return <<<"EOT"
             <hr>
-            <div class="SUR-form-row row">
+            <div class="SAG-form-row row">
                 <div class="col section-header" colspan='2'>$label1</div>
             </div>
-            <div class="SUR-form-row row">
+            <div class="SAG-form-row row">
                 <div class="col">
                     <i class="fa-solid fa-fw fa-tablet-alt"></i>&nbsp;&nbsp;$label2
                     <div class="extra-text">
@@ -665,7 +665,7 @@ class SAGEditForm
 
                 </div>
             </div>
-            <div class="SUR-form-row row">
+            <div class="SAG-form-row row">
                 <div class="col">
                     $label4
                 </div>
@@ -684,7 +684,7 @@ class SAGEditForm
         $label1 = $this->lang['rights_119'];
         $result = <<<"EOT"
         <hr>
-        <div class="SUR-form-row row">
+        <div class="SAG-form-row row">
             <div class="col section-header" colspan='2'>$label1</div>
         </div>
         EOT;
@@ -692,7 +692,7 @@ class SAGEditForm
             $label   = $this->lang['rights_99'];
             $checked = $this->rights['record_create'] == 1 ? 'checked' : '';
             $result .= <<<"EOT"
-            <div class="SUR-form-row row">
+            <div class="SAG-form-row row">
                 <div class="col">
                     <i class="fa-solid fa-fw fa-plus-square"></i>&nbsp;&nbsp;$label
                 </div>
@@ -706,7 +706,7 @@ class SAGEditForm
             $label   = $this->lang['rights_100'];
             $checked = $this->rights['record_rename'] == 1 ? 'checked' : '';
             $result .= <<<"EOT"
-            <div class="SUR-form-row row">
+            <div class="SAG-form-row row">
                 <div class="col">
                     <i class="fa-solid fa-fw fa-exchange-alt"></i>&nbsp;&nbsp;$label
                 </div>
@@ -720,7 +720,7 @@ class SAGEditForm
             $label   = $this->lang['rights_101'];
             $checked = $this->rights['record_delete'] == 1 ? 'checked' : '';
             $result .= <<<"EOT"
-            <div class="SUR-form-row row">
+            <div class="SAG-form-row row">
                 <div class="col">
                     <i class="fa-solid fa-fw fa-minus-square"></i>&nbsp;&nbsp;$label
                 </div>
@@ -738,7 +738,7 @@ class SAGEditForm
         $label  = $this->lang['rights_130'];
         $result = <<<"EOT"
         <hr>
-        <div class="SUR-form-row row">
+        <div class="SAG-form-row row">
             <div class="col section-header" colspan='2'>$label</div>
         </div>
         EOT;
@@ -746,7 +746,7 @@ class SAGEditForm
             $label   = $this->lang['app_11'];
             $checked = $this->rights['lock_record_customize'] == 1 ? 'checked' : '';
             $result .= <<<"EOT"
-            <div class="SUR-form-row row">
+            <div class="SAG-form-row row">
                 <div class="col">
                     <div>
                         <i class="fa-solid fa-fw fa-lock"></i>&nbsp;&nbsp;$label
@@ -769,7 +769,7 @@ class SAGEditForm
             $checked2 = $this->rights['lock_record'] == 1 ? 'checked' : '';
             $checked3 = $this->rights['lock_record'] == 2 ? 'checked' : '';
             $result .= <<<"EOT"
-            <div class="SUR-form-row row">
+            <div class="SAG-form-row row">
                 <div class="col mt-1">
                     <div>
                         <i class="fa-solid fa-fw fa-unlock-alt"></i>&nbsp;&nbsp;$label1 $label2
@@ -803,7 +803,7 @@ class SAGEditForm
             $label   = $this->lang['rights_370'];
             $checked = $this->rights['lock_record_multiform'] == 1 ? 'checked' : '';
             $result .= <<<"EOT"
-            <div class="SUR-form-row row">
+            <div class="SAG-form-row row">
                 <div class="col">
                     <div>
                         <i class="fa-solid fa-fw fa-unlock-alt"></i>&nbsp;&nbsp;$label
@@ -834,12 +834,12 @@ class SAGEditForm
                     $label1
                 </div>
                 <div class='card-body p-0' style='background-color:#00000007;'>
-                    <div class="SUR-form-row row" style="margin: 10px 20px 10px 0;">
+                    <div class="SAG-form-row row" style="margin: 10px 20px 10px 0;">
                         <div class="col extra-text" colspan='3'>
                             $label2
                         </div>
                     </div>
-                    <div class="SUR-form-row row" style="margin: 20px;">
+                    <div class="SAG-form-row row" style="margin: 20px;">
         EOT;
     }
     private function getDataViewing()
@@ -940,7 +940,7 @@ class SAGEditForm
         <div class="modal-footer">
             <button id="SAG_Save" type="button"
                 class="btn $buttonClass">$label</button>
-            <button id="SUR_Cancel" type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+            <button id="SAG_Cancel" type="button" class="btn btn-secondary" data-bs-dismiss="modal"
                 data-dismiss="modal">Cancel
             </button>
         EOT;

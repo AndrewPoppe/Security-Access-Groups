@@ -56,7 +56,7 @@ sag_module.showProjectTable = function (includeExpired = false) {
             }
         });
     }
-    $('#SUR-System-Table.projectTable').DataTable({
+    $('#SAG-System-Table.projectTable').DataTable({
         ajax: function (data, callback, settings) {
             sag_module.ajax('getProjectReport', { includeExpired: includeExpired })
                 .then(function (data) {
@@ -312,7 +312,7 @@ sag_module.showUserTable = function (includeExpired = false) {
             }
         });
     }
-    $('#SUR-System-Table.userTable').DataTable({
+    $('#SAG-System-Table.userTable').DataTable({
         ajax: function (data, callback, settings) {
             sag_module.ajax('getUserReport', { includeExpired: includeExpired })
                 .then(function (data) {
@@ -573,7 +573,7 @@ sag_module.showUserAndProjectTable = function (includeExpired = false) {
             }
         });
     }
-    $('#SUR-System-Table.allTable').DataTable({
+    $('#SAG-System-Table.allTable').DataTable({
         ajax: function (data, callback, settings) {
             sag_module.ajax('getUserAndProjectReport', { includeExpired: includeExpired })
                 .then(function (data) {

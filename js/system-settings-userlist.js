@@ -349,7 +349,7 @@ $(document).ready(function () {
 
     const importFileElement = document.getElementById("importUsersFile");
     importFileElement.addEventListener("change", sag_module.handleFiles, false);
-    sag_module.dt = $('#SUR-System-Table').DataTable({
+    sag_module.dt = $('#SAG-System-Table').DataTable({
         ajax: function (data, callback, settings) {
             sag_module.ajax('getUsers')
                 .then((response) => {

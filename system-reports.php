@@ -157,7 +157,7 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
     </div>
     <div id="projectTableWrapper" class="tableWrapper mt-3 card p-3" style="display: none; width: 100%;">
         <h5 id="projectTableTitle"></h5>
-        <table aria-label="Projects Table" id="SUR-System-Table" class="projectTable cell-border" style="width: 100%">
+        <table aria-label="Projects Table" id="SAG-System-Table" class="projectTable cell-border" style="width: 100%">
             <thead>
                 <tr style="background-color: #D7D7D7 !important;">
                     <th class="font-weight-normal" scope="col" colspan="10" style="border-bottom: none;">
@@ -229,7 +229,7 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
     </div>
     <div id="userTableWrapper" class="tableWrapper mt-3 card p-3" style="display: none; width: 100%;">
         <h5 id="userTableTitle"></h5>
-        <table aria-label="Users Table" id="SUR-System-Table" class="userTable cell-border" style="width: 100%">
+        <table aria-label="Users Table" id="SAG-System-Table" class="userTable cell-border" style="width: 100%">
             <thead>
                 <tr style="background-color: #D7D7D7 !important;">
                     <th class="font-weight-normal" scope="col" colspan="10" style="border-bottom: none;">
@@ -305,7 +305,7 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
     </div>
     <div id="allTableWrapper" class="tableWrapper mt-3 card p-3" style="display: none; width: 100%;">
         <h5 id="allTableTitle"></h5>
-        <table aria-label="Users and Projects Table" id="SUR-System-Table" class="allTable cell-border"
+        <table aria-label="Users and Projects Table" id="SAG-System-Table" class="allTable cell-border"
             style="width: 100%">
             <thead>
                 <tr style="background-color: #D7D7D7 !important;">
@@ -379,18 +379,18 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
         </table>
     </div>
     <style>
-        div.dt-buttons {
-            float: right;
-        }
+    div.dt-buttons {
+        float: right;
+    }
 
-        .select2-search__field {
-            width: 100% !important;
-        }
+    .select2-search__field {
+        width: 100% !important;
+    }
 
-        div.dataTables_filter {
-            margin-top: 4px;
-            margin-right: 10px;
-        }
+    div.dataTables_filter {
+        margin-top: 4px;
+        margin-right: 10px;
+    }
     </style>
 </div> <!-- End SAG_Container -->
 <?php

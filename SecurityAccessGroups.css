@@ -30,34 +30,6 @@
     font-style: italic;
 }
 
-@font-face {
-    font-family: "JetBrainsMono";
-    src: url("fonts/JetBrains-Mono/fonts/webfonts/JetBrainsMono-Regular.woff2");
-    font-weight: normal;
-    font-style: normal;
-}
-
-@font-face {
-    font-family: "JetBrainsMono";
-    src: url("fonts/JetBrains-Mono/fonts/webfonts/JetBrainsMono-Bold.woff2");
-    font-weight: bold;
-    font-style: normal;
-}
-
-@font-face {
-    font-family: "JetBrainsMono";
-    src: url("fonts/JetBrains-Mono/fonts/webfonts/JetBrainsMono-Italic.woff2");
-    font-weight: normal;
-    font-style: italic;
-}
-
-@font-face {
-    font-family: "JetBrainsMono";
-    src: url("fonts/JetBrains-Mono/fonts/webfonts/JetBrainsMono-BoldItalic.woff2");
-    font-weight: bold;
-    font-style: italic;
-}
-
 div#control_center_window,
 div#control_center_window p,
 div#control_center_window div,
@@ -70,56 +42,52 @@ div.modal {
     font-family: "Atkinson Hyperlegible", sans-serif !important;
 }
 
-div.SUR-Container,
-div.SUR-Container a,
-div.SUR-Container a:hover {
+div.SAG-Container,
+div.SAG-Container a,
+div.SAG-Container a:hover {
     font-family: "Atkinson Hyperlegible", sans-serif !important;
 }
 
-div#control_center_window pre {
-    font-family: "JetBrainsMono", monospace !important;
-}
-
-table#SUR-System-Table {
+table#SAG-System-Table {
     width: 100%;
     border-collapse: collapse;
     border: 1px solid #aaa !important;
 }
 
-table#SUR-System-Table tbody td:first-child {
+table#SAG-System-Table tbody td:first-child {
     border-left: 1px solid #aaa !important;
 }
 
-table#SUR-System-Table tbody td:last-child {
+table#SAG-System-Table tbody td:last-child {
     border-right: 1px solid #aaa !important;
 }
 
-table#SUR-System-Table thead th:not(:first-child) {
+table#SAG-System-Table thead th:not(:first-child) {
     border-left: 1px solid #ccc !important;
 }
 
-table#SUR-System-Table tr.odd {
+table#SAG-System-Table tr.odd {
     background-color: white !important;
 }
 
-div#SUR-System-Table_filter label {
+div#SAG-System-Table_filter label {
     margin-bottom: 0;
 }
 
-table#SUR-System-Table thead {
+table#SAG-System-Table thead {
     background-color: #ececec;
 }
 
-table#SUR-System-Table tbody tr:hover {
+table#SAG-System-Table tbody tr:hover {
     background-color: #d9ebf5 !important;
 }
 
-table#SUR-System-Table.compact td,
-table#SUR-System-Table.compact th {
+table#SAG-System-Table.compact td,
+table#SAG-System-Table.compact th {
     padding-left: 8px;
 }
 
-table#SUR-System-Table a.user-link {
+table#SAG-System-Table a.user-link {
     color: #A00000;
     text-decoration: underline;
 }
@@ -170,7 +138,7 @@ form#SAG_Setting {
     font-family: "Atkinson Hyperlegible", sans-serif !important;
 }
 
-form#SAG_Setting div.SUR-form-row {
+form#SAG_Setting div.SAG-form-row {
     margin: 5px -5px;
 }
 
@@ -484,14 +452,6 @@ button.btn-secondary:hover {
     border-collapse: collapse;
 }
 
-/* .table.discrepancy-table td {
-    border: 1px solid #454d5580;
-} */
-
-/* .table.discrepancy-table td {
-    border: none;
-} */
-
 .table.discrepancy-table tr.odd,
 .table.discrepancy-table tr.even {
     background-color: inherit !important;
@@ -505,38 +465,6 @@ table.table.is-invalid td.user-rights-holder-selector input {
     border: 1px solid var(--danger) !important;
     box-shadow: 0 0 0 0.1rem rgba(255, 0, 0, .25) !important;
 }
-
-/* div#discrepancy-table_wrapper div.dataTables_scrollHead {
-    border-bottom: 1px solid rgba(0, 0, 0, 0.3) !important;
-} */
-
-/* div#discrepancy-table_wrapper div.dataTables_scrollHead th {
-    border-bottom: none !important;
-}
-
-div#discrepancy-table_wrapper div.dataTables_scrollHead table.border {
-    border-bottom: none;
-}
-
-div#discrepancy-table_wrapper div.dataTables_scrollBody {
-    border: none !important;
-}
-
-div#discrepancy-table_wrapper div.dataTables_scrollBody table.border {
-    border-top: none !important;
-}
-
-div#discrepancy-table_wrapper div.dataTables_scrollBody th {
-    border-top: none !important;
-}
-
-div#discrepancy-table_wrapper table.border {
-    border: none !important;
-}
-
-div#discrepancy-table_wrapper {
-    border: 1px solid rgba(0, 0, 0, 0.3) !important;
-} */
 
 div#discrepancy-table_wrapper div.dataTables_scrollHead {
     background-color: #ececec
@@ -579,12 +507,12 @@ input.timePicker {
 }
 
 table#alertLogTable ::placeholder,
-table#SUR-System-Table ::placeholder {
+table#SAG-System-Table ::placeholder {
     opacity: 1 !important;
 }
 
 table#alertLogTable .select2-container--default.select2-container--focus .select2-selection--multiple,
-table#SUR-System-Table .select2-container--default.select2-container--focus .select2-selection--multiple {
+table#SAG-System-Table .select2-container--default.select2-container--focus .select2-selection--multiple {
     color: #495057;
     background-color: #fff;
     border-color: #80bdff;
@@ -593,7 +521,7 @@ table#SUR-System-Table .select2-container--default.select2-container--focus .sel
 }
 
 table#alertLogTable .select2-container--default .select2-selection--multiple,
-table#SUR-System-Table .select2-container--default .select2-selection--multiple {
+table#SAG-System-Table .select2-container--default .select2-selection--multiple {
     border: 1px solid #ced4da;
     font-size: 14px;
 }
