@@ -30,9 +30,9 @@ class SAG
     {
         if (
             !$this->module->framework->throttle(
-                'message = ?',
-                [ 'sag' ],
-                3,
+                "message = ? OR message = ? OR message = ?",
+                [ 'sag', 'Updated SAG', 'Deleted SAG' ],
+                1,
                 1
             )
         ) {
@@ -80,9 +80,9 @@ class SAG
     {
         if (
             !$this->module->framework->throttle(
-                "message = 'Updated SAG'",
-                [],
-                3,
+                "message = ? OR message = ? OR message = ?",
+                [ 'sag', 'Updated SAG', 'Deleted SAG' ],
+                1,
                 1
             )
         ) {
@@ -135,9 +135,9 @@ class SAG
     {
         if (
             !$this->module->framework->throttle(
-                "message = 'Deleted SAG'",
-                [],
-                2,
+                "message = ? OR message = ? OR message = ?",
+                [ 'sag', 'Updated SAG', 'Deleted SAG' ],
+                1,
                 1
             )
         ) {
