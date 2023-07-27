@@ -172,6 +172,24 @@ class SecurityAccessGroups extends AbstractExternalModule
         return null;
     }
 
+    /**
+     * REDCap Hook: Handle AJAX requests from the JS module object
+     * @param mixed $action
+     * @param mixed $payload
+     * @param mixed $projectId
+     * @param mixed $record
+     * @param mixed $instrument
+     * @param mixed $eventId
+     * @param mixed $repeatInstance
+     * @param mixed $surveyHash
+     * @param mixed $responseId
+     * @param mixed $surveyQueueHash
+     * @param mixed $page
+     * @param mixed $pageFull
+     * @param mixed $userId
+     * @param mixed $groupId
+     * @return mixed
+     */
     public function redcap_module_ajax($action, $payload, $projectId, $record, $instrument, $eventId, $repeatInstance, $surveyHash, $responseId, $surveyQueueHash, $page, $pageFull, $userId, $groupId)
     {
         $ajaxHandler = new AjaxHandler($this, [
@@ -194,6 +212,12 @@ class SecurityAccessGroups extends AbstractExternalModule
     }
 
     // CRON job
+
+    /**
+     * Checks for alert reminders and sends them if necessary.
+     * @param array $cronInfo
+     * @return string
+     */
     public function sendReminders($cronInfo = array())
     {
         try {
@@ -227,14 +251,19 @@ class SecurityAccessGroups extends AbstractExternalModule
      * Get the prefix for the module directory prefix (minus the v_version#)
      * @return string module prefix (minus the v_version#)
      */
-    public function getModuleDirectoryPrefix()
+    public function getModuleDirectoryPrefix() : string
     {
         return strrev(preg_replace('/^.*v_/', '', strrev($this->framework->getModuleDirectoryName()), 1));
     }
 
 
     //  PROJECT UTILITIES
-    public function getAllProjectIds()
+
+    /**
+     * Gets all project ids in the system, except deleted, completed, and system projects
+     * @return int[] | null
+     */
+    public function getAllProjectIds() : ?array
     {
         try {
             $query      = "SELECT project_id FROM redcap_projects
@@ -256,6 +285,11 @@ class SecurityAccessGroups extends AbstractExternalModule
 
     // USER UTILITIES
 
+    /**
+     * Get useful user information for all users
+     * @param bool $includeSag
+     * @return array[]|null
+     */
     public function getAllUserInfo($includeSag = false) : ?array
     {
         $sql = 'SELECT username
@@ -322,6 +356,10 @@ class SecurityAccessGroups extends AbstractExternalModule
         return $sags;
     }
 
+    /**
+     * Saves a default SAG to the database
+     * @return array
+     */
     public function setDefaultSag()
     {
         $rightsUtilities         = new RightsUtilities($this);
@@ -335,7 +373,11 @@ class SecurityAccessGroups extends AbstractExternalModule
         return $rights;
     }
 
-    public function generateNewSagId()
+    /**
+     * Creates a new SAG id
+     * @return string
+     */
+    public function generateNewSagId() : string
     {
         $newSagId = 'sag_' . substr(md5(uniqid()), 0, 13);
         $sag      = new SAG($this, $newSagId);
@@ -350,6 +392,12 @@ class SecurityAccessGroups extends AbstractExternalModule
 
     // REPORT UTILITIES
 
+    /**
+     * Get a report of all projects that have users with noncompliant rights
+     *
+     * @param bool $includeExpired if true, expired users will be included in the report
+     * @return array<array>
+     */
     public function getProjectsWithNoncompliantUsers(bool $includeExpired = false)
     {
         $enabledSystemwide = $this->framework->getSystemSetting('enabled');
@@ -410,6 +458,11 @@ class SecurityAccessGroups extends AbstractExternalModule
         return $projects;
     }
 
+    /**
+     * Get a report of all users with noncompliant rights
+     * @param bool $includeExpired
+     * @return array<array>
+     */
     public function getAllUsersWithNoncompliantRights(bool $includeExpired = false)
     {
         $enabledSystemwide = $this->framework->getSystemSetting('enabled');
