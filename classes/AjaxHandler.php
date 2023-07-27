@@ -39,6 +39,7 @@ class AjaxHandler
     public function handleAjax()
     {
         $action = $this->module->escape($this->action);
+        $this->module->framework->log("Ajax action: {$action}", [ 'params' => json_encode($this->params, JSON_PRETTY_PRINT) ]);
         if ( in_array($action, self::$generalActions, true) ) {
             return $this->$action();
         } elseif ( in_array($action, self::$adminActions, true) ) {
