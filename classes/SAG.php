@@ -17,7 +17,8 @@ class SAG
         $this->module          = $module;
         $this->sagId           = $sagId;
         $this->permissionsJson = $permissionsJson;
-        $this->sagName         = $sagName ?? $this->getSagNameFromSagId() ?? '';
+        $sagNameClean          = $sagName ?? $this->getSagNameFromSagId() ?? '';
+        $this->sagName         = $this->module->framework->escape($sagNameClean);
     }
 
     public function setSagId(string $sagId)

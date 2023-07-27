@@ -41,7 +41,14 @@ class SecurityAccessGroups extends AbstractExternalModule
     }
 
     // External Module Framework Hooks
-    public function redcap_every_page_before_render()
+
+    /**
+     * REDCap Hook: Used here to prevent attempts to circumvent the module to add/edit user rights
+     *
+     * Be careful with this method, since it runs on every REDCap page.
+     * @return void
+     */
+    public function redcap_every_page_before_render() : void
     {
         // Only run on the pages we're interested in
         if (
@@ -111,7 +118,12 @@ class SecurityAccessGroups extends AbstractExternalModule
         }
     }
 
-    public function redcap_user_rights($projectId)
+    /**
+     * REDCap Hook: Replace links in the User Rights page to point to this module instead
+     * @param mixed $projectId The project ID
+     * @return void
+     */
+    public function redcap_user_rights($projectId) : void
     {
         if ( isset($_SESSION['SAG_imported']) ) {
             echo "<script>window.import_type = '" . $_SESSION['SAG_imported'] . "';" .
@@ -131,10 +143,27 @@ class SecurityAccessGroups extends AbstractExternalModule
 
     public function redcap_module_project_enable($version, $projectId)
     {
-        $this->framework->log('Module Enabled');
+        $this->framework->log('Module Enabled', [
+            'version' => $version,
+            'user'    => $this->framework->getUser()->getUsername()
+        ]);
     }
 
-    public function redcap_module_link_check_display($projectId, $link)
+    public function redcap_module_project_disable($version, $projectId)
+    {
+        $this->framework->log('Module Disabled', [
+            'version' => $version,
+            'user'    => $this->framework->getUser()->getUsername()
+        ]);
+    }
+
+    /**
+     * REDCap Hook: Only show sidebar link if it's in the Control Center or if the user is a super user
+     * @param mixed $projectId
+     * @param mixed $link
+     * @return mixed
+     */
+    public function redcap_module_link_check_display($projectId, $link) : ?array
     {
         if ( empty($projectId) || $this->isSuperUser() ) {
             return $link;
