@@ -714,11 +714,11 @@ $(document).ready(function () {
                     for (const rightI in row.bad) {
                         const right = row.bad[rightI];
                         rows +=
-                            `<tr style='cursor: default;'><td><span>${right}</span></td></tr>`;
+                            `<tr style='cursor: default;'><td style="background-color: white !important;"><span>${right}</span></td></tr>`;
                     }
                     return `<a class="${row.isExpired ? "text-secondary" : "text-primary"}" ` +
-                        `style="text-decoration: underline; cursor: pointer;" data-toggle="modal" ` +
-                        `data-target="#modal-${row.username}">${row.bad.length} ` +
+                        `style="text-decoration: underline; cursor: pointer;" data-bs-toggle="modal" data-toggle="modal" ` +
+                        `data-target="#modal-${row.username}" data-bs-target="#modal-${row.username}">${row.bad.length} ` +
                         (row.bad.length > 1 ? " Rights" : " Right") +
                         `</a>` +
                         `<div class="modal fade" id="modal-${row.username}" tabindex="-1" aria-hidden="true">` +
@@ -731,7 +731,7 @@ $(document).ready(function () {
                         `</div>` +
                         `<div class="modal-body">` +
                         `<div class="d-flex justify-content-center">` +
-                        `<table class="table table-sm table-hover table-borderless mb-0">` +
+                        `<table class="table table-sm table-hover table-borderless mb-0 table-default">` +
                         `<tbody>${rows}</tbody>` +
                         `</table>` +
                         `</div>` +
