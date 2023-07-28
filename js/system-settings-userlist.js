@@ -301,7 +301,6 @@ sag_module.saveSag = function (selectNode) {
                 });
                 sag_module.dt.ajax.reload();
             }
-            const originalStyle = $(tr).find('td.SAG').attr('style');
             $(tr).find('td.SAG').css('cssText', `background-color:${color} !important`);
             setTimeout(() => {
                 $(tr).find('td.SAG').css('cssText', 'transition:background-color 2s ease-out;');
