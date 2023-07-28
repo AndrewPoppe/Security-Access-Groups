@@ -307,7 +307,7 @@ sag_module.saveSag = function (selectNode) {
                 $(tr).find('td.SAG').css('cssText', 'transition:background-color 2s ease-out;');
                 setTimeout(() => {
                     $(tr).find('td.SAG').css('cssText', '');
-                }, 1000);
+                }, 2000);
             }, 10);
         })
         .catch((error) => {
