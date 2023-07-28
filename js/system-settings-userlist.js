@@ -287,6 +287,7 @@ sag_module.saveSag = function (selectNode) {
     sag_module.ajax('assignSag', { username: user, sag: newSag })
         .then((response) => {
             const result = JSON.parse(response);
+            console.log('result', result);
             if (result.status != 'error') {
                 select.closest('td').data('sag', newSag);
                 select.closest('td').attr('data-sag', newSag);
@@ -300,9 +301,14 @@ sag_module.saveSag = function (selectNode) {
                 });
                 sag_module.dt.ajax.reload();
             }
-            $(tr).find('td').effect('highlight', {
-                color: color
-            }, 2000);
+            const originalStyle = $(tr).find('td.SAG').attr('style');
+            $(tr).find('td.SAG').css('cssText', `transition:background-color 1s ease-in-out; background-color:${color} !important`);
+            setTimeout(() => {
+                $(tr).find('td.SAG').css('cssText', 'transition:background-color 1s ease-in-out;');
+                setTimeout(() => {
+                    $(tr).find('td.SAG').css('cssText', '');
+                }, 1000);
+            }, 1200);
         })
         .catch((error) => {
             console.error(error);
@@ -429,18 +435,21 @@ $(document).ready(function () {
         },
         columnDefs: [{
             targets: [0, 1, 2],
-            width: '25%'
+            width: '25%',
+            className: 'SAG'
         }, {
             targets: [3],
             createdCell: function (td, cellData, rowData, row, col) {
                 $(td).attr('data-sag', rowData.sag);
-            }
+            },
+            className: 'SAG'
         }, {
             targets: [4],
             visible: false,
             createdCell: function (td, cellData, rowData, row, col) {
                 $(td).addClass('hidden_sag_id');
-            }
+            },
+            className: 'SAG'
         }],
         dom: 'lftip',
         initComplete: function () {

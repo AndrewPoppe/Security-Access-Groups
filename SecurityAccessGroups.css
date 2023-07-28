@@ -54,11 +54,11 @@ table#SAG-System-Table {
     border: 1px solid #aaa !important;
 }
 
-table#SAG-System-Table tbody td:first-child {
+table#SAG-System-Table tbody td.SAG:first-child {
     border-left: 1px solid #aaa !important;
 }
 
-table#SAG-System-Table tbody td:last-child {
+table#SAG-System-Table tbody td.SAG:last-child {
     border-right: 1px solid #aaa !important;
 }
 
@@ -66,7 +66,7 @@ table#SAG-System-Table thead th:not(:first-child) {
     border-left: 1px solid #ccc !important;
 }
 
-table#SAG-System-Table tr.odd {
+table#SAG-System-Table tr.odd td.SAG {
     background-color: white !important;
 }
 
@@ -78,11 +78,15 @@ table#SAG-System-Table thead {
     background-color: #ececec;
 }
 
-table#SAG-System-Table tbody tr:hover {
+table.dataTable.cell-border tbody tr td.SAG {
+    border-top: 1px solid rgba(0, 0, 0, 0.15) !important;
+}
+
+table#SAG-System-Table tbody tr:hover td.SAG {
     background-color: #d9ebf5 !important;
 }
 
-table#SAG-System-Table.compact td,
+table#SAG-System-Table.compact td.SAG,
 table#SAG-System-Table.compact th {
     padding-left: 8px;
 }
