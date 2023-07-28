@@ -83,6 +83,10 @@ table#SAG-System-Table thead {
     background-color: #ececec;
 }
 
+table.dataTable.cell-border tbody tr:first-child td.SAG {
+    border-top: none !important;
+}
+
 table.dataTable.cell-border tbody tr td.SAG {
     border-top: 1px solid rgba(0, 0, 0, 0.15) !important;
 }
@@ -346,6 +350,8 @@ td.sag-id-column {
 
 .select2-container {
     width: 100% !important;
+    padding-left: 0;
+    padding-right: 0;
     font-family: "Atkinson Hyperlegible", sans-serif !important;
 }
 
