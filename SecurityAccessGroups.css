@@ -66,7 +66,8 @@ table#SAG-System-Table thead th:not(:first-child) {
     border-left: 1px solid #ccc !important;
 }
 
-table#SAG-System-Table tr.odd td.SAG {
+table#SAG-System-Table tr.odd td.SAG,
+table#SAG-System-Table tr.odd td.dataTables_empty {
     background-color: white !important;
 }
 
