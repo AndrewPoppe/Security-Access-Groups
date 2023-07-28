@@ -19,6 +19,7 @@ if ( !$module->framework->isSuperUser() ) {
 <script defer src="<?= $module->framework->getUrl('lib/fontawesome/js/duotone.min.js') ?>"></script>
 <script defer src="<?= $module->framework->getUrl('lib/fontawesome/js/custom-icons.min.js') ?>"></script>
 <script defer src="<?= $module->framework->getUrl('lib/fontawesome/js/fontawesome.min.js') ?>"></script>
+<script defer src="<?= $module->framework->getUrl('lib/SweetAlert/sweetalert2.all.min.js') ?>"></script>
 <link rel='stylesheet' type='text/css' href='<?= $module->framework->getUrl('SecurityAccessGroups.css') ?>' />
 
 
