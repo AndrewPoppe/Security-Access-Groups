@@ -276,7 +276,7 @@ $(document).ready(function () {
             data: function (row, type, set, meta) {
                 if (type === 'display') {
                     return row.reminder ?
-                        `<span class="badge badge-pill bg-reminder border font-weight-normal default-cursor">` +
+                        `<span class="badge badge-pill bg-reminder border font-weight-normal default-cursor text-dark">` +
                         `Reminder</span>` :
                         '';
                 } else if (type === 'filter') {
