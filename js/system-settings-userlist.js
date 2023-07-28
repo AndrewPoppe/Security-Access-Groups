@@ -302,13 +302,13 @@ sag_module.saveSag = function (selectNode) {
                 sag_module.dt.ajax.reload();
             }
             const originalStyle = $(tr).find('td.SAG').attr('style');
-            $(tr).find('td.SAG').css('cssText', `transition:background-color 1s ease-in-out; background-color:${color} !important`);
+            $(tr).find('td.SAG').css('cssText', `background-color:${color} !important`);
             setTimeout(() => {
-                $(tr).find('td.SAG').css('cssText', 'transition:background-color 1s ease-in-out;');
+                $(tr).find('td.SAG').css('cssText', 'transition:background-color 2s ease-out;');
                 setTimeout(() => {
                     $(tr).find('td.SAG').css('cssText', '');
                 }, 1000);
-            }, 1200);
+            }, 10);
         })
         .catch((error) => {
             console.error(error);
