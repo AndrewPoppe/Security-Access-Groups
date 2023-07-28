@@ -341,6 +341,10 @@ $(document).ready(function () {
             visible: false
         }
         ],
+        columnDefs: [{
+            targets: '_all',
+            className: 'SAG'
+        }],
         responsive: false,
         order: [
             [1, 'desc']

@@ -56,7 +56,7 @@ if ( !$module->framework->isSuperUser() ) {
         This page shows all alerts sent by the SAG module as well as all currently scheduled reminders.
     </div>
     <div class="alertLogWrapper mt-4 mr-3 card card-body bg-light" style="width: 1100px; display: none;">
-        <table aria-label="alert log table" id="alertLogTable" class="border" style="width:100%;">
+        <table aria-label="alert log table" id="alertLogTable" class="border sagTable" style="width:100%;">
             <thead>
                 <tr style="background-color: #D7D7D7 !important;">
                     <th class="font-weight-normal" scope="col" colspan="8" style="border-bottom: none;">
