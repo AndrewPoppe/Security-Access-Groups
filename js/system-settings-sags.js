@@ -969,7 +969,8 @@ $(document).ready(function () {
                 $(td).data('value', cellData ?? 0);
             },
             name: 'export',
-            orderable: false
+            orderable: false,
+            className: 'SAG'
         }]
     });
 

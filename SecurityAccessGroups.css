@@ -66,12 +66,12 @@ table#SAG-System-Table thead th:not(:first-child) {
     border-left: 1px solid #ccc !important;
 }
 
-table#SAG-System-Table tr.odd td.SAG,
-table#SAG-System-Table tr.odd td.dataTables_empty {
+table.sagTable tr.odd td.SAG,
+table.sagTable tr.odd td.dataTables_empty {
     background-color: white !important;
 }
 
-table#SAG-System-Table tr.even td.SAG {
+table.sagTable tr.even td.SAG {
     background-color: #f5f5f5 !important;
 }
 
@@ -148,7 +148,18 @@ form#SAG_Setting {
 }
 
 form#SAG_Setting div.SAG-form-row {
-    margin: 5px -5px;
+    /* margin: 5px -5px; */
+}
+
+.form-check {
+    margin: 0;
+    min-height: 0;
+}
+
+.form-check-label {
+    /* margin-top: .3rem !important; */
+    margin: 0;
+    padding-top: 0.25em;
 }
 
 form#SAG_Setting hr {
@@ -182,10 +193,6 @@ div.modal-xl {
 
 div#pagecontainer {
     max-width: 1600px;
-}
-
-.form-check-label {
-    margin-top: .3rem !important;
 }
 
 div#sagTableWrapper {

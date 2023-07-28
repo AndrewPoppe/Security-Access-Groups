@@ -145,8 +145,9 @@ class SAGEditForm
                     <i class="fa-solid fa-fw fa-tasks"></i>&nbsp;&nbsp;$label
                 </div>
                 <div class="col">
-                    <input type='checkbox' $checked
-                        name='design'>
+                    <div class='form-check'>
+                        <input type='checkbox' class='form-check-input' $checked name='design'>
+                    </div>
                 </div>
             </div>
             EOT;
@@ -164,8 +165,9 @@ class SAGEditForm
                     <i class="fa-solid fa-fw fa-user"></i>&nbsp;&nbsp;$label
                 </div>
                 <div class="col">
-                    <input type='checkbox' $checked
-                        name='user_rights'>
+                    <div class='form-check'>
+                        <input type='checkbox' class='form-check-input' $checked name='user_rights'>
+                    </div>
                 </div>
             </div>
             EOT;
@@ -183,7 +185,9 @@ class SAGEditForm
                     <i class="fa-solid fa-fw fa-users"></i>&nbsp;&nbsp;$label
                 </div>
                 <div class="col">
-                    <input type='checkbox' $checked name='data_access_groups'>
+                    <div class='form-check'>
+                        <input type='checkbox' class='form-check-input' $checked name='data_access_groups'>
+                    </div>
                 </div>
             </div>
             EOT;
@@ -216,7 +220,9 @@ class SAGEditForm
                         src='$imgPath'>&nbsp;$label
                 </div>
                 <div class="col">
-                    <input type='checkbox' $checked name='mycap_participants'>
+                    <div class='form-check'>
+                        <input type='checkbox' class='form-check-input' $checked name='mycap_participants'>
+                    </div>
                 </div>
             </div>
             EOT;
@@ -237,7 +243,9 @@ class SAGEditForm
                     </div>
                 </div>
                 <div class="col">
-                    <input type='checkbox' $checked name='participants'>
+                    <div class='form-check'>
+                        <input type='checkbox' class='form-check-input' $checked name='participants'>
+                    </div>
                 </div>
             </div>
             EOT;
@@ -255,8 +263,9 @@ class SAGEditForm
                     <i class="fa-solid fa-fw fa-bell"></i>&nbsp;&nbsp;$label
                 </div>
                 <div class="col">
-                    <input type='checkbox' $checked
-                        name='alerts'>
+                    <div class='form-check'>
+                        <input type='checkbox' class='form-check-input' $checked name='alerts'>
+                    </div>
                 </div>
             </div>
             EOT;
@@ -276,7 +285,9 @@ class SAGEditForm
                     $label1 $label2
                 </div>
                 <div class="col">
-                    <input type='checkbox' $checked name='calendar'>
+                    <div class='form-check'>
+                        <input type='checkbox' class='form-check-input' $checked name='calendar'>
+                    </div>
                 </div>
             </div>
             EOT;
@@ -296,7 +307,9 @@ class SAGEditForm
                     <div class="extra-text">$label2</div>
                 </div>
                 <div class="col">
-                    <input type='checkbox' $checked name='reports'>
+                    <div class='form-check'>
+                        <input type='checkbox' class='form-check-input' $checked name='reports'>
+                    </div>
                 </div>
             </div>
             EOT;
@@ -315,7 +328,9 @@ class SAGEditForm
                         class="fa-solid fa-fw fa-chart-column"></i>&nbsp;&nbsp;$label
                 </div>
                 <div class="col">
-                    <input type='checkbox' $checked name='graphical'>
+                    <div class='form-check'>
+                        <input type='checkbox' class='form-check-input' $checked name='graphical'>
+                    </div>
                 </div>
             </div>
             EOT;
@@ -363,7 +378,9 @@ class SAGEditForm
                     <i class="fa-solid fa-fw fa-file-import"></i>&nbsp;&nbsp;$label
                 </div>
                 <div class="col">
-                    <input type='checkbox' $checked name='data_import_tool'>
+                    <div class='form-check'>
+                        <input type='checkbox' class='form-check-input' $checked name='data_import_tool'>
+                    </div>
                 </div>
             </div>
             EOT;
@@ -380,7 +397,9 @@ class SAGEditForm
                     <i class="fa-solid fa-fw fa-not-equal"></i>&nbsp;&nbsp;$label
                 </div>
                 <div class="col">
-                    <input type='checkbox' $checked name='data_comparison_tool'>
+                    <div class='form-check'>
+                        <input type='checkbox' class='form-check-input' $checked name='data_comparison_tool'>
+                    </div>
                 </div>
             </div>
             EOT;
@@ -397,7 +416,9 @@ class SAGEditForm
                     <i class="fa-solid fa-fw fa-receipt"></i>&nbsp;&nbsp;$label
                 </div>
                 <div class="col">
-                    <input type='checkbox' $checked name='data_logging'>
+                    <div class='form-check'>
+                        <input type='checkbox' class='form-check-input' $checked name='data_logging'>
+                    </div>
                 </div>
             </div>
             EOT;
@@ -414,7 +435,9 @@ class SAGEditForm
                     <i class="fa-solid fa-fw fa-folder-open"></i>&nbsp;&nbsp;$label
                 </div>
                 <div class="col">
-                    <input type='checkbox' $checked name='file_repository'>
+                    <div class='form-check'>
+                        <input type='checkbox' class='form-check-input' $checked name='file_repository'>
+                    </div>
                 </div>
             </div>
             EOT;
@@ -632,7 +655,9 @@ class SAGEditForm
         <div class="col" valign="top">
 
             <div>
-                <input type="checkbox" $checked name="dts">
+                <div class='form-check'>
+                    <input type='checkbox' class='form-check-input' $checked name='dts'>
+                </div>
             </div>
         </div>
         </div>
@@ -661,8 +686,9 @@ class SAGEditForm
                     </div>
                 </div>
                 <div class="col">
-                    <input type='checkbox' $checked1 name='mobile_app'>
-
+                    <div class='form-check'>
+                        <input type='checkbox' class='form-check-input' $checked1 name='mobile_app'>
+                    </div>
                 </div>
             </div>
             <div class="SAG-form-row row">
@@ -670,8 +696,8 @@ class SAGEditForm
                     $label4
                 </div>
                 <div class="col">
-                    <div>
-                        <input type='checkbox' $checked2 name='mobile_app_download_data'>
+                    <div class='form-check'>
+                        <input type='checkbox' class='form-check-input' $checked2 name='mobile_app_download_data'>
                     </div>
                 </div>
             </div>
@@ -697,7 +723,9 @@ class SAGEditForm
                     <i class="fa-solid fa-fw fa-plus-square"></i>&nbsp;&nbsp;$label
                 </div>
                 <div class="col">
-                    <input type='checkbox' $checked name='record_create'>
+                    <div class='form-check'>
+                        <input type='checkbox' class='form-check-input' $checked name='record_create'>
+                    </div>
                 </div>
             </div>
             EOT;
@@ -711,7 +739,9 @@ class SAGEditForm
                     <i class="fa-solid fa-fw fa-exchange-alt"></i>&nbsp;&nbsp;$label
                 </div>
                 <div class="col">
-                    <input type='checkbox' $checked name='record_rename'>
+                    <div class='form-check'>
+                        <input type='checkbox' class='form-check-input' $checked name='record_rename'>
+                    </div>
                 </div>
             </div>
             EOT;
@@ -725,7 +755,9 @@ class SAGEditForm
                     <i class="fa-solid fa-fw fa-minus-square"></i>&nbsp;&nbsp;$label
                 </div>
                 <div class="col">
-                    <input type='checkbox' $checked name='record_delete'>
+                    <div class='form-check'>
+                        <input type='checkbox' class='form-check-input' $checked name='record_delete'>
+                    </div>
                 </div>
             </div>
             EOT;
@@ -753,7 +785,9 @@ class SAGEditForm
                     </div>
                 </div>
                 <div class="col">
-                    <input type='checkbox' $checked name='lock_record_customize'>
+                    <div class='form-check'>
+                        <input type='checkbox' class='form-check-input' $checked name='lock_record_customize'>
+                    </div>
                 </div>
             </div>
             EOT;
@@ -811,7 +845,9 @@ class SAGEditForm
                 </div>
                 <div class="col">
                     <div>
-                        <input type='checkbox' $checked name='lock_record_multiform'>
+                        <div class='form-check'>
+                            <input type='checkbox' class='form-check-input' $checked name='lock_record_multiform'>
+                        </div>
                     </div>
                 </div>
             </div>
