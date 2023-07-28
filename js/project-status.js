@@ -446,7 +446,7 @@ sag_module.previewEmail = async function ($emailContainer) {
     $emailContainer.closest('.modal').css('z-index', 1039);
     $('#emailPreview').modal('show');
     $('#emailPreview').on('hidden.bs.modal', function (event) {
-        $emailContainer.closest('.modal').css('z-index', 1050);
+        $emailContainer.closest('.modal').css('z-index', 1060);
     });
 }
 
@@ -471,7 +471,7 @@ sag_module.previewEmailUserRightsHolders = async function ($emailContainer) {
     $emailContainer.closest('.modal').css('z-index', 1039);
     $('#emailPreview').modal('show');
     $('#emailPreview').on('hidden.bs.modal', function (event) {
-        $emailContainer.closest('.modal').css('z-index', 1050);
+        $emailContainer.closest('.modal').css('z-index', 1060);
     });
 }
 
@@ -563,6 +563,7 @@ sag_module.initTinyMCE = function () {
 }
 
 sag_module.initClipboard = function () {
+
     $('.dataPlaceholder').popover({
         placement: 'top',
         html: true,
@@ -575,17 +576,20 @@ sag_module.initClipboard = function () {
         }
     });
 
-    const clipboard = new ClipboardJS('.dataPlaceholder', {
-        text: function (trigger) {
-            return $(trigger).text();
-        }
-    });
-    clipboard.on('success', function (e) {
-        $(e.trigger).popover('show');
-        setTimeout(function () {
-            $(e.trigger).popover('hide');
-        }, 1000);
-        e.clearSelection();
+    $('.userAlert').each((index, modal) => {
+        const clipboard = new ClipboardJS('.dataPlaceholder', {
+            text: function (trigger) {
+                return $(trigger).text();
+            },
+            container: modal
+        });
+        clipboard.on('success', function (e) {
+            $(e.trigger).popover('show');
+            setTimeout(function () {
+                $(e.trigger).popover('hide');
+            }, 1000);
+            e.clearSelection();
+        });
     });
 }
 
@@ -608,6 +612,7 @@ $(document).ready(function () {
     $(document).on('preInit.dt', function (e, settings) {
         $('#containerCard').show();
     });
+
     sag_module.dt = $('table.discrepancy-table').DataTable(Object.assign(sag_module.config, {
         select: {
             style: 'multi',
@@ -714,11 +719,11 @@ $(document).ready(function () {
                     for (const rightI in row.bad) {
                         const right = row.bad[rightI];
                         rows +=
-                            `<tr style='cursor: default;'><td><span>${right}</span></td></tr>`;
+                            `<tr style='cursor: default;'><td style="background-color: white !important;"><span>${right}</span></td></tr>`;
                     }
                     return `<a class="${row.isExpired ? "text-secondary" : "text-primary"}" ` +
-                        `style="text-decoration: underline; cursor: pointer;" data-toggle="modal" ` +
-                        `data-target="#modal-${row.username}">${row.bad.length} ` +
+                        `style="text-decoration: underline; cursor: pointer;" data-bs-toggle="modal" data-toggle="modal" ` +
+                        `data-target="#modal-${row.username}" data-bs-target="#modal-${row.username}">${row.bad.length} ` +
                         (row.bad.length > 1 ? " Rights" : " Right") +
                         `</a>` +
                         `<div class="modal fade" id="modal-${row.username}" tabindex="-1" aria-hidden="true">` +
@@ -731,7 +736,7 @@ $(document).ready(function () {
                         `</div>` +
                         `<div class="modal-body">` +
                         `<div class="d-flex justify-content-center">` +
-                        `<table class="table table-sm table-hover table-borderless mb-0">` +
+                        `<table class="table table-sm table-hover table-borderless mb-0 table-default">` +
                         `<tbody>${rows}</tbody>` +
                         `</table>` +
                         `</div>` +
@@ -760,11 +765,12 @@ $(document).ready(function () {
         createdRow: function (row, data, dataIndex) {
             let rowClass = data.bad.length > 0 ? 'table-danger-light' :
                 'table-success-light';
-            rowClass = data.isExpired ? 'text-secondary bg-light' : rowClass;
+            rowClass = data.isExpired ? 'table-expired' : rowClass;
             $(row).attr('data-user', data.username);
             $(row).attr('data-email', data.email);
             $(row).attr('data-name', data.name);
             $(row).addClass(rowClass);
+            $(row).find('td').addClass(rowClass);
         },
         drawCallback: function (settings) {
             const api = this.api();
@@ -779,14 +785,10 @@ $(document).ready(function () {
         },
         columnDefs: [{
             targets: [4, 5, 6, 7],
-            createdCell: function (td) {
-                $(td).addClass('align-middle text-center');
-            }
+            className: 'text-center'
         }, {
             targets: '_all',
-            createdCell: function (td) {
-                $(td).addClass('align-middle');
-            }
+            className: 'align-middle SAG'
         }],
         dom: "lftip",
         initComplete: function () {

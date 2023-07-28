@@ -157,7 +157,8 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
     </div>
     <div id="projectTableWrapper" class="tableWrapper mt-3 card p-3" style="display: none; width: 100%;">
         <h5 id="projectTableTitle"></h5>
-        <table aria-label="Projects Table" id="SAG-System-Table" class="projectTable cell-border" style="width: 100%">
+        <table aria-label="Projects Table" id="SAG-System-Table" class="sagTable projectTable cell-border"
+            style="width: 100%">
             <thead>
                 <tr style="background-color: #D7D7D7 !important;">
                     <th class="font-weight-normal" scope="col" colspan="10" style="border-bottom: none;">
@@ -171,7 +172,7 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
                                     </div>
                                 </div>
                                 <div class="col px-4" style="border-left: 1px solid #ccc">
-                                    <div class="row pt-2 pb-1 pr-1">
+                                    <div class="row pt-2 pb-1">
                                         <select style="width:100%" class="form-control projectTableSelect tableSelect"
                                             id="sagsSelectProject" multiple="multiple">
                                             <option></option>
@@ -229,7 +230,8 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
     </div>
     <div id="userTableWrapper" class="tableWrapper mt-3 card p-3" style="display: none; width: 100%;">
         <h5 id="userTableTitle"></h5>
-        <table aria-label="Users Table" id="SAG-System-Table" class="userTable cell-border" style="width: 100%">
+        <table aria-label="Users Table" id="SAG-System-Table" class="sagTable userTable cell-border"
+            style="width: 100%">
             <thead>
                 <tr style="background-color: #D7D7D7 !important;">
                     <th class="font-weight-normal" scope="col" colspan="10" style="border-bottom: none;">
@@ -243,7 +245,7 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
                                     </div>
                                 </div>
                                 <div class="col px-4" style="border-left: 1px solid #ccc">
-                                    <div class="row pt-2 pb-1 pr-1">
+                                    <div class="row pt-2 pb-1">
                                         <select style="width:100%" class="form-control userTableSelect tableSelect"
                                             id="sagsSelectUser" multiple="multiple">
                                             <option></option>
@@ -305,7 +307,7 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
     </div>
     <div id="allTableWrapper" class="tableWrapper mt-3 card p-3" style="display: none; width: 100%;">
         <h5 id="allTableTitle"></h5>
-        <table aria-label="Users and Projects Table" id="SAG-System-Table" class="allTable cell-border"
+        <table aria-label="Users and Projects Table" id="SAG-System-Table" class="sagTable allTable cell-border"
             style="width: 100%">
             <thead>
                 <tr style="background-color: #D7D7D7 !important;">
@@ -320,7 +322,7 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
                                     </div>
                                 </div>
                                 <div class="col px-4" style="border-left: 1px solid #ccc">
-                                    <div class="row pt-2 pb-1 pr-1">
+                                    <div class="row pt-2 pb-1">
                                         <select style="width:100%" class="form-control allTableSelect tableSelect"
                                             id="sagsSelectAll" multiple="multiple">
                                             <option></option>

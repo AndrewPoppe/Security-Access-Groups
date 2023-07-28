@@ -288,7 +288,7 @@ sag_module.showProjectTable = function (includeExpired = false) {
         }
         ],
         columnDefs: [{
-            "className": "dt-center dt-head-center",
+            "className": "dt-center dt-head-center SAG",
             "targets": "_all"
         }],
         language: {
@@ -548,7 +548,7 @@ sag_module.showUserTable = function (includeExpired = false) {
 
         ],
         columnDefs: [{
-            "className": "dt-center dt-head-center",
+            "className": "dt-center dt-head-center SAG",
             "targets": "_all"
         }],
         language: {
@@ -787,7 +787,7 @@ sag_module.showUserAndProjectTable = function (includeExpired = false) {
         }
         ],
         columnDefs: [{
-            "className": "dt-center dt-head-center",
+            "className": "dt-center dt-head-center SAG",
             "targets": "_all"
         }],
         language: {

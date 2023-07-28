@@ -543,7 +543,7 @@ $(document).ready(function () {
                 if (type === 'display') {
                     const iclass =
                         "fa-solid  fa-grip-dots-vertical mr-2 dt-rowReorder-grab text-secondary";
-                    const aclass = "SagLink text-primary";
+                    const aclass = "SagLink text-primary text-decoration-none font-weight-bold";
                     return `<div style="display: flex; align-items: center; white-space: nowrap;">` +
                         `<i class="${iclass}"></i>` +
                         `<a class="${aclass}" onclick="sag_module.editSag('${row.sag_id}')">${row.sag_name}</a>` +
@@ -969,7 +969,8 @@ $(document).ready(function () {
                 $(td).data('value', cellData ?? 0);
             },
             name: 'export',
-            orderable: false
+            orderable: false,
+            className: 'SAG'
         }]
     });
 
