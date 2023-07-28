@@ -148,7 +148,7 @@ form#SAG_Setting {
 }
 
 form#SAG_Setting div.SAG-form-row {
-    /* margin: 5px -5px; */
+    margin: 5px -5px;
 }
 
 .form-check {
@@ -157,9 +157,12 @@ form#SAG_Setting div.SAG-form-row {
 }
 
 .form-check-label {
-    /* margin-top: .3rem !important; */
     margin: 0;
     padding-top: 0.25em;
+}
+
+.form-check input {
+    border-color: #aaa;
 }
 
 form#SAG_Setting hr {
