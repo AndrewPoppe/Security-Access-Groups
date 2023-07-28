@@ -167,6 +167,7 @@ form#SAG_Setting div.SAG-form-row {
 
 form#SAG_Setting hr {
     margin: 0.5rem 0;
+    border-color: #666;
 }
 
 form#SAG_Setting .section-header {
@@ -180,13 +181,7 @@ form#SAG_Setting .extra-text {
     color: #777;
 }
 
-a.SagLink {
-    font-weight: bold;
-    color: #0000D0;
-}
-
 a.SagLink:hover {
-    text-decoration: underline;
     cursor: pointer;
 }
 
