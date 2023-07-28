@@ -136,7 +136,7 @@ if ( !$module->framework->isSuperUser() ) {
         <div class="modal-content">
             <div class="modal-header">
                 <h4 class="modal-title" id="alertPreviewModalLabel">Alert Preview</h4>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <button type="button" class="close" data-bs-dismiss="modal" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>

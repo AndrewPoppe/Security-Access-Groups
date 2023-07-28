@@ -90,18 +90,19 @@ class Alerts
     public function getEmailPreviewModal()
     {
         ?>
-        <div class="modal" id="emailPreview" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-lg">
-                <div class="modal-content">
-                    <div class="modal-body">
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    </div>
-                </div>
+<div class="modal" id="emailPreview" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-body">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                    data-dismiss="modal">Close</button>
             </div>
         </div>
-        <?php
+    </div>
+</div>
+<?php
     }
 
     public function getPlaceholdersUserRightsHolders($expiration = false) : array

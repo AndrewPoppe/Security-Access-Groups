@@ -446,7 +446,7 @@ sag_module.previewEmail = async function ($emailContainer) {
     $emailContainer.closest('.modal').css('z-index', 1039);
     $('#emailPreview').modal('show');
     $('#emailPreview').on('hidden.bs.modal', function (event) {
-        $emailContainer.closest('.modal').css('z-index', 1050);
+        $emailContainer.closest('.modal').css('z-index', 1060);
     });
 }
 
@@ -471,7 +471,7 @@ sag_module.previewEmailUserRightsHolders = async function ($emailContainer) {
     $emailContainer.closest('.modal').css('z-index', 1039);
     $('#emailPreview').modal('show');
     $('#emailPreview').on('hidden.bs.modal', function (event) {
-        $emailContainer.closest('.modal').css('z-index', 1050);
+        $emailContainer.closest('.modal').css('z-index', 1060);
     });
 }
 
@@ -563,6 +563,7 @@ sag_module.initTinyMCE = function () {
 }
 
 sag_module.initClipboard = function () {
+
     $('.dataPlaceholder').popover({
         placement: 'top',
         html: true,
@@ -575,17 +576,20 @@ sag_module.initClipboard = function () {
         }
     });
 
-    const clipboard = new ClipboardJS('.dataPlaceholder', {
-        text: function (trigger) {
-            return $(trigger).text();
-        }
-    });
-    clipboard.on('success', function (e) {
-        $(e.trigger).popover('show');
-        setTimeout(function () {
-            $(e.trigger).popover('hide');
-        }, 1000);
-        e.clearSelection();
+    $('.userAlert').each((index, modal) => {
+        const clipboard = new ClipboardJS('.dataPlaceholder', {
+            text: function (trigger) {
+                return $(trigger).text();
+            },
+            container: modal
+        });
+        clipboard.on('success', function (e) {
+            $(e.trigger).popover('show');
+            setTimeout(function () {
+                $(e.trigger).popover('hide');
+            }, 1000);
+            e.clearSelection();
+        });
     });
 }
 
@@ -608,6 +612,7 @@ $(document).ready(function () {
     $(document).on('preInit.dt', function (e, settings) {
         $('#containerCard').show();
     });
+
     sag_module.dt = $('table.discrepancy-table').DataTable(Object.assign(sag_module.config, {
         select: {
             style: 'multi',
