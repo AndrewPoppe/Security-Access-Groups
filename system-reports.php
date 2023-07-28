@@ -172,7 +172,7 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
                                     </div>
                                 </div>
                                 <div class="col px-4" style="border-left: 1px solid #ccc">
-                                    <div class="row pt-2 pb-1 pr-1">
+                                    <div class="row pt-2 pb-1">
                                         <select style="width:100%" class="form-control projectTableSelect tableSelect"
                                             id="sagsSelectProject" multiple="multiple">
                                             <option></option>
@@ -245,7 +245,7 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
                                     </div>
                                 </div>
                                 <div class="col px-4" style="border-left: 1px solid #ccc">
-                                    <div class="row pt-2 pb-1 pr-1">
+                                    <div class="row pt-2 pb-1">
                                         <select style="width:100%" class="form-control userTableSelect tableSelect"
                                             id="sagsSelectUser" multiple="multiple">
                                             <option></option>
@@ -322,7 +322,7 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
                                     </div>
                                 </div>
                                 <div class="col px-4" style="border-left: 1px solid #ccc">
-                                    <div class="row pt-2 pb-1 pr-1">
+                                    <div class="row pt-2 pb-1">
                                         <select style="width:100%" class="form-control allTableSelect tableSelect"
                                             id="sagsSelectAll" multiple="multiple">
                                             <option></option>

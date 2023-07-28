@@ -320,7 +320,7 @@ if ( !$module->framework->isSuperUser() ) {
             </div>
         </div>
         <div id="table-container" class="container mx-0 px-0" style="background-color: #fafafa;">
-            <table aria-label="discrepancy table" id="discrepancy-table" class="discrepancy-table row-border bg-white">
+            <table aria-label="discrepancy table" id="discrepancy-table" class="discrepancy-table bg-white">
                 <thead class="text-center" style="background-color:#ececec">
                     <tr>
                         <th style="vertical-align: middle !important;"><input style="display:block; margin: 0 auto;"

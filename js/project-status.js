@@ -760,11 +760,12 @@ $(document).ready(function () {
         createdRow: function (row, data, dataIndex) {
             let rowClass = data.bad.length > 0 ? 'table-danger-light' :
                 'table-success-light';
-            rowClass = data.isExpired ? 'text-secondary bg-light' : rowClass;
+            rowClass = data.isExpired ? 'table-expired' : rowClass;
             $(row).attr('data-user', data.username);
             $(row).attr('data-email', data.email);
             $(row).attr('data-name', data.name);
             $(row).addClass(rowClass);
+            $(row).find('td').addClass(rowClass);
         },
         drawCallback: function (settings) {
             const api = this.api();
@@ -779,14 +780,10 @@ $(document).ready(function () {
         },
         columnDefs: [{
             targets: [4, 5, 6, 7],
-            createdCell: function (td) {
-                $(td).addClass('align-middle text-center');
-            }
+            className: 'text-center'
         }, {
             targets: '_all',
-            createdCell: function (td) {
-                $(td).addClass('align-middle');
-            }
+            className: 'align-middle SAG'
         }],
         dom: "lftip",
         initComplete: function () {

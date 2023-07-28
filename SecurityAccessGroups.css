@@ -203,7 +203,7 @@ div#sagTableWrapper {
     border: 1px solid rgba(0, 0, 0, 0.30);
 }
 
-table.sagTable thead th {
+table.sagTable.cell-border thead th {
     border-right: solid 1px rgba(0, 0, 0, 0.15);
 }
 
@@ -211,14 +211,13 @@ div#sagTableWrapper div.dataTables_wrapper.no-footer .dataTables_scrollBody {
     border-bottom: none !important;
 }
 
-table.sagTable tbody td.dtfc-fixed-left {
+table.sagTable.cell-border tbody td.dtfc-fixed-left {
     border-left: none !important;
 }
 
-table.sagTable tbody td:last-child:not(.dtfc-fixed-left) {
+table.sagTable.cell-border tbody td:last-child:not(.dtfc-fixed-left) {
     border-right: none;
 }
-
 
 .ui-tooltip {
     background: #333;
@@ -428,18 +427,6 @@ button.editUsersButton:hover {
     border: 1px solid #ffdf7e !important;
 }
 
-.table-danger-light,
-.table-danger-light>td,
-.table-danger-light>th {
-    background-color: #f5c6cbaa !important;
-}
-
-.table-success-light,
-.table-success-light>td,
-.table-success-light>th {
-    background-color: #c3e6cb7f !important;
-}
-
 div.modal.userAlert label.col-form-label {
     font-weight: bold;
 }
@@ -468,13 +455,45 @@ button.btn-secondary:hover {
     order: 3;
 }
 
+.table.discrepancy-table thead th {
+    background-color: #ececec !important;
+}
+
 .table.discrepancy-table {
     border-collapse: collapse;
 }
 
-.table.discrepancy-table tr.odd,
-.table.discrepancy-table tr.even {
-    background-color: inherit !important;
+div#discrepancy-table_wrapper div.dataTables_scroll {
+    border: 1px solid rgba(0, 0, 0, 0.3) !important;
+}
+
+div#discrepancy-table_wrapper div.dataTables_scrollBody {
+    border: none !important;
+}
+
+div#discrepancy-table_wrapper div.dataTables_scrollHead {
+    background-color: #ececec
+}
+
+.table.discrepancy-table td.SAG {
+    border-top: none !important;
+    border-bottom: 1px solid #bbb !important;
+}
+
+table.discrepancy-table tr.table-danger-light,
+table.discrepancy-table tr.table-danger-light>td.SAG {
+    background-color: #f5c6cbaa !important;
+}
+
+table.discrepancy-table tr.table-success-light,
+table.discrepancy-table tr.table-success-light>td.SAG {
+    background-color: #c3e6cb7f !important;
+}
+
+table.discrepancy-table tr.table-expired,
+table.discrepancy-table tr.table-expired>td.SAG {
+    background-color: rgba(var(--bs-light-rgb), var(--bs-bg-opacity)) !important;
+    color: rgb(var(--bs-secondary-rgb)) !important;
 }
 
 div.is-invalid div.tox.tox-tinymce {
@@ -484,10 +503,6 @@ div.is-invalid div.tox.tox-tinymce {
 table.table.is-invalid td.user-rights-holder-selector input {
     border: 1px solid var(--danger) !important;
     box-shadow: 0 0 0 0.1rem rgba(255, 0, 0, .25) !important;
-}
-
-div#discrepancy-table_wrapper div.dataTables_scrollHead {
-    background-color: #ececec
 }
 
 table#alertLogTable {
@@ -548,14 +563,6 @@ table#SAG-System-Table .select2-container--default .select2-selection--multiple 
 
 .default-cursor {
     cursor: default !important;
-}
-
-div#discrepancy-table_wrapper div.dataTables_scroll {
-    border: 1px solid rgba(0, 0, 0, 0.3) !important;
-}
-
-div#discrepancy-table_wrapper div.dataTables_scrollBody {
-    border: none !important;
 }
 
 tr.selected>* {
