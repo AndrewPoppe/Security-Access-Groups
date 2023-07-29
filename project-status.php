@@ -352,7 +352,7 @@ if ( $usersCount <= $userThreshold ) {
     $sagProject = new SAGProject($module, $project_id);
     $userData   = $sagProject->getUsersWithBadRights();
     $config     = json_encode([
-        'data' => $userData
+        'data' => $module->framework->escape($userData)
     ]);
 } else {
     $config = '';
