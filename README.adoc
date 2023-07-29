@@ -46,9 +46,48 @@ ifndef::env-github[]
     font-weight: bold;
     font-style: italic;
 }
-body {
-    font-family: "Atkinson Hyperlegible";
+
+@font-face {
+    font-family: "JetBrains Mono";
+    src: url("fonts/JetBrains-Mono/JetBrainsMono-Regular.woff2") format("woff2"),
+        url("fonts/JetBrains-Mono/JetBrainsMono-Regular.woff") format("woff");
+    font-weight: normal;
+    font-style: normal;
 }
+
+@font-face {
+    font-family: "JetBrains Mono";
+    src: url("fonts/JetBrains-Mono/JetBrainsMono-Bold.woff2") format("woff2"),
+        url("fonts/JetBrains-Mono/JetBrainsMono-Bold.woff") format("woff");
+    font-weight: bold;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "JetBrains Mono";
+    src: url("fonts/JetBrains-Mono/JetBrainsMono-Italic.woff2") format("woff2"),
+        url("fonts/JetBrains-Mono/JetBrainsMono-Italic.woff") format("woff");
+    font-weight: normal;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: "JetBrains Mono";
+    src: url("fonts/JetBrains-Mono/JetBrainsMono-BoldItalic.woff2") format("woff2"),
+        url("fonts/JetBrains-Mono/JetBrainsMono-BoldItalic.woff") format("woff");
+    font-weight: bold;
+    font-style: italic;
+}
+
+body, h1, div, li, a, caption {
+    font-family: "Atkinson Hyperlegible" !important;
+}
+
+code {
+    font-family: "JetBrains Mono" !important;
+    color: #e83e8c !important;
+}
+
 </style>
 ++++
 endif::[]

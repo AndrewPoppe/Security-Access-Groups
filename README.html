@@ -481,9 +481,48 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
     font-weight: bold;
     font-style: italic;
 }
-body {
-    font-family: "Atkinson Hyperlegible";
+
+@font-face {
+    font-family: "JetBrains Mono";
+    src: url("fonts/JetBrains-Mono/JetBrainsMono-Regular.woff2") format("woff2"),
+        url("fonts/JetBrains-Mono/JetBrainsMono-Regular.woff") format("woff");
+    font-weight: normal;
+    font-style: normal;
 }
+
+@font-face {
+    font-family: "JetBrains Mono";
+    src: url("fonts/JetBrains-Mono/JetBrainsMono-Bold.woff2") format("woff2"),
+        url("fonts/JetBrains-Mono/JetBrainsMono-Bold.woff") format("woff");
+    font-weight: bold;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "JetBrains Mono";
+    src: url("fonts/JetBrains-Mono/JetBrainsMono-Italic.woff2") format("woff2"),
+        url("fonts/JetBrains-Mono/JetBrainsMono-Italic.woff") format("woff");
+    font-weight: normal;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: "JetBrains Mono";
+    src: url("fonts/JetBrains-Mono/JetBrainsMono-BoldItalic.woff2") format("woff2"),
+        url("fonts/JetBrains-Mono/JetBrainsMono-BoldItalic.woff") format("woff");
+    font-weight: bold;
+    font-style: italic;
+}
+
+body, h1, div, li, a, caption {
+    font-family: "Atkinson Hyperlegible" !important;
+}
+
+code {
+    font-family: "JetBrains Mono" !important;
+    color: #e83e8c !important;
+}
+
 </style>
 <div class="paragraph">
 <p><span class="image"><a class="image" href="https://sonarcloud.io/summary/new_code?id=AndrewPoppe_Security-Access-Groups"><img src="https://sonarcloud.io/api/project_badges/measure?project=AndrewPoppe_Security-Access-Groups&amp;metric=alert_status" alt="measure?project=AndrewPoppe Security Access Groups&amp;metric=alert status"></a></span></p>
@@ -1817,7 +1856,7 @@ Scheduled reminders can be canceled from this tab.
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2023-07-29 11:02:53 -0400
+Last updated 2023-07-29 11:18:42 -0400
 </div>
 </div>
 </body>
