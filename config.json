@@ -153,6 +153,7 @@
     ],
     "no-auth-pages": [],
     "framework-version": 12,
+    "documentation": "README.html",
     "compatibility": {
         "php-version-min": "7.4.00",
         "php-version-max": "8.1.99",
