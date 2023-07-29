@@ -114,9 +114,9 @@ if ( isset($_POST['csv_content']) && $_POST['csv_content'] != '' ) {
         require_once $scriptPath;
         ob_end_flush(); // End buffering and clean up
     } else {
-        $module->framework->log('User Rights Import: Bad rights found', [ 'bad rights' => json_encode($badRights) ]);
+        $module->framework->log('User Rights Import: Bad rights found', [ 'bad rights' => json_encode($module->framework->escape($badRights)) ]);
         $_SESSION['SAG_imported']   = 'users';
-        $_SESSION['SAG_bad_rights'] = json_encode($badRights);
+        $_SESSION['SAG_bad_rights'] = json_encode($module->framework->escape($badRights));
         redirect(APP_PATH_WEBROOT . 'UserRights/index.php?pid=' . PROJECT_ID);
     }
 }
