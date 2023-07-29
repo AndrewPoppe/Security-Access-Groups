@@ -1,2 +1,4 @@
 fonts/* linguist-vendored
 lib/* linguist-vendored
+lib/**/* linguist-vendored
+fonts/**/* linguist-vendored
