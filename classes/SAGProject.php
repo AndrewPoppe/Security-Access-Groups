@@ -60,7 +60,7 @@ class SAGProject
             $sag                   = $sags[$user['sag']] ?? $sags[$this->module->defaultSagId];
             $acceptableRights      = $sag->permissions;
             $currentRights         = $sagUser->getCurrentRightsFormatted($this->projectId);
-            $rightsChecker         = new RightsChecker($this->module, $currentRights, $acceptableRights);
+            $rightsChecker         = new RightsChecker($this->module, $currentRights, $acceptableRights, $this->projectId);
             $bad                   = $rightsChecker->checkRights();
             $sagName               = $sag->sagName;
             $projectRoleUniqueName = $user['unique_role_name'];
@@ -96,7 +96,7 @@ class SAGProject
             $sag                   = $sags[$user['sag']] ?? $sags[$this->module->defaultSagId];
             $acceptableRights      = $sag->permissions;
             $currentRights         = $allCurrentRights[$username];
-            $rightsChecker         = new RightsChecker($this->module, $currentRights, $acceptableRights);
+            $rightsChecker         = new RightsChecker($this->module, $currentRights, $acceptableRights, $this->projectId);
             $bad                   = $rightsChecker->checkRights2();
             $sagName               = $sag->sagName;
             $projectRoleUniqueName = $user['unique_role_name'];
@@ -185,4 +185,63 @@ class SAGProject
         return $this->module->framework->escape($rights);
     }
 
+    public function areSurveysEnabled() : bool
+    {
+        $systemSql    = 'SELECT value FROM redcap_config WHERE field_name = "enable_projecttype_singlesurveyforms"';
+        $systemResult = $this->module->framework->query($systemSql, []);
+        // If surveys are disabled at the system level, it doesn't matter what the project setting is
+        if ( $systemResult->fetch_assoc()['value'] == 0 ) {
+            return false;
+        }
+        $projectSql    = 'SELECT surveys_enabled FROM redcap_projects WHERE project_id = ?';
+        $projectResult = $this->module->framework->query($projectSql, [ $this->projectId ]);
+        return $projectResult->fetch_assoc()['surveys_enabled'] == 1;
+    }
+
+    public function isDataResolutionWorkflowEnabled() : bool
+    {
+        $sql    = 'SELECT data_resolution_enabled FROM redcap_projects WHERE project_id = ?';
+        $result = $this->module->framework->query($sql, [ $this->projectId ]);
+        return $result->fetch_assoc()['data_resolution_enabled'] == 2; // 2 = DRW, 1 = Field Comment Log
+    }
+
+    public function isDoubleDataEnabled() : bool
+    {
+        $sql    = 'SELECT double_data_entry FROM redcap_projects WHERE project_id = ?';
+        $result = $this->module->framework->query($sql, [ $this->projectId ]);
+        return $result->fetch_assoc()['double_data_entry'];
+    }
+
+    public function isMyCapEnabled() : bool
+    {
+        $systemSql    = 'SELECT value FROM redcap_config WHERE field_name = "mycap_enabled_global"';
+        $systemResult = $this->module->framework->query($systemSql, []);
+        // If surveys are disabled at the system level, it doesn't matter what the project setting is
+        if ( $systemResult->fetch_assoc()['value'] == 0 ) {
+            return false;
+        }
+        $projectSql    = 'SELECT mycap_enabled FROM redcap_projects WHERE project_id = ?';
+        $projectResult = $this->module->framework->query($projectSql, [ $this->projectId ]);
+        return $projectResult->fetch_assoc()['mycap_enabled'] == 1;
+    }
+
+    public function isRandomizationEnabled() : bool
+    {
+        $systemSql    = 'SELECT value FROM redcap_config WHERE field_name = "randomization_global"';
+        $systemResult = $this->module->framework->query($systemSql, []);
+        // If surveys are disabled at the system level, it doesn't matter what the project setting is
+        if ( $systemResult->fetch_assoc()['value'] == 0 ) {
+            return false;
+        }
+        $projectSql    = 'SELECT randomization FROM redcap_projects WHERE project_id = ?';
+        $projectResult = $this->module->framework->query($projectSql, [ $this->projectId ]);
+        return $projectResult->fetch_assoc()['randomization'] == 1;
+    }
+
+    public function isStatsAndChartsEnabled() : bool
+    {
+        $sql          = 'SELECT value FROM redcap_config WHERE field_name = "enable_plotting"';
+        $systemResult = $this->module->framework->query($sql, []);
+        return $systemResult->fetch_assoc()['value'] == 2; // 2 = enabled... yes, really
+    }
 }

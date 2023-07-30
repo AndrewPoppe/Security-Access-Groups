@@ -32,7 +32,7 @@ $project_id       = $module->framework->getProjectId();
 $role_rights      = $role->getRoleRights($project_id);
 $acceptableRights = $sagUser->getAcceptableRights();
 
-$rightsChecker = new RightsChecker($module, $role_rights, $acceptableRights);
+$rightsChecker = new RightsChecker($module, $role_rights, $acceptableRights, $project_id);
 $badRights     = $rightsChecker->checkRights();
 $errors        = !empty($badRights);
 

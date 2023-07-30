@@ -39,17 +39,18 @@ if ( isset($_POST['csv_content']) && $_POST['csv_content'] != '' ) {
             return $value != 0;
         });
 
+        $projectId        = $module->framework->getProjectId();
         $acceptableRights = $sagUser->getAcceptableRights();
-        $currentRights    = $sagUser->getCurrentRights($module->framework->getProjectId()) ?? [];
+        $currentRights    = $sagUser->getCurrentRights($project_id) ?? [];
         $requestedRights  = $thisUser;
-        $rightsChecker    = new RightsChecker($module, $requestedRights, $acceptableRights);
+        $rightsChecker    = new RightsChecker($module, $requestedRights, $acceptableRights, $projectId);
         $theseBadRights   = $rightsChecker->checkRights();
 
         // Store for later logging
         $allCurrentRights[$username] = $currentRights;
 
         // We ignore expired users, unless the request unexpires them
-        $userExpired         = $sagUser->isUserExpired($module->framework->getProjectId());
+        $userExpired         = $sagUser->isUserExpired($project_id);
         $requestedExpiration = $thisUser['expiration'];
         $requestedUnexpired  = empty($requestedExpiration) || (strtotime($requestedExpiration) >= strtotime('today'));
         $ignore              = $userExpired && !$requestedUnexpired;
