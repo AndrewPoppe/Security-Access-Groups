@@ -118,7 +118,7 @@ class RightsUtilities
         return json_encode($rights);
     }
 
-    public static function getDisplayTextForRights(bool $allRights = false)
+    public static function getDisplayTextForRights(bool $allRights = false, bool $extraRights = false)
     {
         global $lang;
         $rights = [
@@ -145,8 +145,8 @@ class RightsUtilities
             'data_quality_resolution'        => $lang['dataqueries_137'],
             'api'                            => $lang['setup_77'],
             'mobile_app'                     => $lang['global_118'],
-            'realtime_webservice_mapping'    => 'CDP/DDP' . ' ' . $lang['ws_19'],
-            'realtime_webservice_adjudicate' => 'CDP/DDP' . ' ' . $lang['ws_20'],
+            'realtime_webservice_mapping'    => $lang['ws_292'] . '/' . $lang['ws_30'] . ' ' . $lang['ws_19'],
+            'realtime_webservice_adjudicate' => $lang['ws_292'] . '/' . $lang['ws_30'] . ' ' . $lang['ws_20'],
             'dts'                            => $lang['rights_132'],
             'mycap_participants'             => $lang['rights_437'],
             'record_create'                  => $lang['rights_99'],
@@ -154,27 +154,37 @@ class RightsUtilities
             'record_delete'                  => $lang['rights_101']
 
         ];
-        if ( $allRights === true ) {
+        if ( $allRights ) {
             $rights['random_setup']                    = $lang['app_21'] . ' - ' . $lang['rights_142'];
             $rights['random_dashboard']                = $lang['app_21'] . ' - ' . $lang['rights_143'];
             $rights['random_perform']                  = $lang['app_21'] . ' - ' . $lang['rights_144'];
-            $rights['data_quality_resolution_view']    = 'Data Quality Resolution - View Queries';
-            $rights['data_quality_resolution_open']    = 'Data Quality Resolution - Open Queries';
-            $rights['data_quality_resolution_respond'] = 'Data Quality Resolution - Respond to Queries';
-            $rights['data_quality_resolution_close']   = 'Data Quality Resolution - Close Queries';
-            $rights['double_data_reviewer']            = 'Double Data Entry Reviewer';
-            $rights['double_data_person']              = 'Double Data Entry Person';
+            $rights['data_quality_resolution_view']    = $lang['app_20'] . ' Resolution - View Queries';
+            $rights['data_quality_resolution_open']    = $lang['dataqueries_137'] . ' - ' . $lang['messaging_175'];
+            $rights['data_quality_resolution_respond'] = $lang['dataqueries_137'] . ' - ' . $lang['dataqueries_152'];
+            $rights['data_quality_resolution_close']   = $lang['dataqueries_137'] . ' - ' . $lang['bottom_90'];
+            $rights['double_data_reviewer']            = $lang['dashboard_44'] . ' ' . $lang['rights_51'];
+            $rights['double_data_person']              = $lang['dashboard_44'] . ' ' . $lang['rights_52'];
             $rights['api_export']                      = $lang['rights_139'];
             $rights['api_import']                      = $lang['rights_314'];
             $rights['mobile_app_download_data']        = $lang['rights_306'];
             $rights['lock_record_multiform']           = $lang['rights_370'];
+        }
+        // These rights won't be displayed in the SAG table - useful for getting display text for a single right
+        if ( $extraRights ) {
+            $rights['lock_record_esignature'] = $lang['rights_116'];
+            $rights['editSurveyResponses']    = $lang['rights_137'];
+            $rights['viewAndEdit']            = $lang['rights_138'];
+            $rights['readOnly']               = $lang['rights_61'];
+            $rights['fullDataSet']            = $lang['rights_49'];
+            $rights['removeIdentifiers']      = $lang['data_export_tool_290'];
+            $rights['deidentified']           = $lang['rights_48'];
         }
         return $rights;
     }
 
     public static function getDisplayTextForRight(string $right, string $key = '')
     {
-        $rights = self::getDisplayTextForRights(true);
+        $rights = self::getDisplayTextForRights(true, true);
         return $rights[$right] ?? $rights[$key] ?? $right;
     }
 
