@@ -204,7 +204,6 @@ class RightsChecker
         $dqrRespond = $this->acceptableRights['data_quality_resolution_respond'] == 1;
         $dqrClose   = $this->acceptableRights['data_quality_resolution_close'] == 1;
 
-<<<<<<< HEAD
         if ( $value != '4' && !$dqrView ) {
             $badRight          = RightsUtilities::getDisplayTextForRight('data_quality_resolution_view');
             $this->badRights[] = $badRight;
@@ -218,17 +217,6 @@ class RightsChecker
             $this->badRights[] = $badRight;
         }
         if ( $value == '3' && !$dqrClose ) {
-=======
-        if ( $value == '1' && !$dqrView ) {
-            $badRight          = RightsUtilities::getDisplayTextForRight('data_quality_resolution_view');
-            $this->badRights[] = $badRight;
-        } elseif ( ($value == '4' || $value == '5' || $value == '3') && !$dqrOpen ) {
-            $badRight          = RightsUtilities::getDisplayTextForRight('data_quality_resolution_open');
-            $this->badRights[] = $badRight;
-        } elseif ( ($value == '2' || $value == '5' || $value == '3') && !$dqrRespond ) {
-            $badRight          = RightsUtilities::getDisplayTextForRight('data_quality_resolution_respond');
-            $this->badRights[] = $badRight;
-        } elseif ( $value == '3' && !$dqrClose ) {
             $badRight          = RightsUtilities::getDisplayTextForRight('data_quality_resolution_close');
             $this->badRights[] = $badRight;
         }
