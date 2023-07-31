@@ -79,9 +79,12 @@ class RightsChecker
             return;
         }
         $this->accountedFor = true;
-        // 0: no access, 2: read only, 1: view and edit
-        if ( $value === '1' && $this->dataViewing < 2 ) {
-            $this->badRights[] = "Data Viewing - View & Edit";
+        $mainRight          = RightsUtilities::getDisplayTextForRight('dataViewing');
+        // 0: no access, 2: read only, 1: view and edit, 3: edit survey responses
+        if ( $value === '3' && $this->dataViewing < 3 ) {
+            $this->badRights[] = $mainRight . ' - ' . RightsUtilities::getDisplayTextForRight('editSurveyResponses');
+        } elseif ( $value === '1' && $this->dataViewing < 2 ) {
+            $this->badRights[] = $mainRight . ' - ' . RightsUtilities::getDisplayTextForRight('viewAndEdit');
         } elseif ( $value === '2' && $this->dataViewing < 1 ) {
             $this->badRights[] = $mainRight . ' - ' . RightsUtilities::getDisplayTextForRight('readOnly');
         }
@@ -226,7 +229,7 @@ class RightsChecker
             $badRight          = RightsUtilities::getDisplayTextForRight('data_quality_resolution_respond');
             $this->badRights[] = $badRight;
         } elseif ( $value == '3' && !$dqrClose ) {
-            $badRight          = RightsUtilities::getDisplayTextForRight("data_quality_resolution_close");
+            $badRight          = RightsUtilities::getDisplayTextForRight('data_quality_resolution_close');
             $this->badRights[] = $badRight;
         }
     }
