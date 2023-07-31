@@ -125,6 +125,8 @@ class SecurityAccessGroups extends AbstractExternalModule
      */
     public function redcap_user_rights($projectId) : void
     {
+        $this->framework->initializeJavascriptModuleObject();
+        $this->framework->tt_transferToJavascriptModuleObject(); // If this slows things down, we can send just the keys we need
         if ( isset($_SESSION['SAG_imported']) ) {
             echo "<script>window.import_type = '" . $_SESSION['SAG_imported'] . "';" .
                 "window.import_errors = JSON.parse('" . $_SESSION['SAG_bad_rights'] . "');</script>";
@@ -132,6 +134,7 @@ class SecurityAccessGroups extends AbstractExternalModule
             unset($_SESSION['SAG_bad_rights']);
         }
         $js = file_get_contents($this->framework->getSafePath('js/redcap_user_rights.js'));
+        $js = str_replace('__MODULE__', $this->framework->getJavascriptModuleObjectName(), $js);
         $js = str_replace('{{IMPORT_EXPORT_USERS_URL}}', $this->framework->getUrl('ajax/import_export_users.php'), $js);
         $js = str_replace('{{IMPORT_EXPORT_ROLES_URL}}', $this->framework->getUrl('ajax/import_export_roles.php'), $js);
         $js = str_replace('{{IMPORT_EXPORT_MAPPINGS_URL}}', $this->framework->getUrl('ajax/import_export_roles.php?action=uploadMapping'), $js);

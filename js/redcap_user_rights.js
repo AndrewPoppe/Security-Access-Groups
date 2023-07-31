@@ -1,3 +1,5 @@
+const sag_module = __MODULE__;
+
 $(function () {
 
     function createRightsTable(bad_rights) {
@@ -15,12 +17,12 @@ $(function () {
 
     function checkImportErrors() {
         if (window.import_type) {
-            let title = "You can't do that.";
+            let title = "";
             let text = "";
             if (window.import_type == "users") {
-                title = "You cannot import those users.";
+                title = sag_module.tt('bad_user_import_2');
                 text =
-                    `The following users included in the provided import file cannot have the following permissions granted to them due to their current SAG assignment:<br><table style="margin-top: 20px; width: 100%;"><thead style="border-bottom: 2px solid #666;"><tr><th>User</th><th>SAG</th><th>Permissions</th></tr></thead><tbody style="border-bottom: 1px solid black;">`;
+                    `${sag_module.tt('bad_user_import_1')}<br><table style="margin-top: 20px; width: 100%;"><thead style="border-bottom: 2px solid #666;"><tr><th>${sag_module.tt('user')}</th><th>${sag_module.tt('sag')}</th><th>${sag_module.tt('permissions_1')}</th></tr></thead><tbody style="border-bottom: 1px solid black;">`;
                 const users = Object.keys(window.import_errors);
                 users.forEach((user) => {
                     text +=
@@ -28,9 +30,9 @@ $(function () {
                 });
                 text += `</tbody></table>`;
             } else if (window.import_type == "roles") {
-                title = "You cannot import those roles.";
+                title = sag_module.tt('bad_role_import_1');
                 text =
-                    `The following roles have users assigned to them, and the following permissions cannot be granted for those users due to their current SAG assignment:<br><table style="margin-top: 20px; width: 100%; table-layout: fixed;"><thead style="border-bottom: 2px solid #666;"><tr><th>User Role</th><th>User</th><th>SAG</th><th COLSPAN=2>Permissions</th></tr></thead><tbody style="border-bottom: 1px solid black;">`;
+                    `${sag_module.tt('bad_role_import_2')}:<br><table style="margin-top: 20px; width: 100%; table-layout: fixed;"><thead style="border-bottom: 2px solid #666;"><tr><th>${sag_module.tt('user_role')}</th><th>${sag_module.tt('user')}</th><th>${sag_module.tt('sag')}</th><th COLSPAN=2>${sag_module.tt('permissions_1')}</th></tr></thead><tbody style="border-bottom: 1px solid black;">`;
                 const roles = Object.keys(window.import_errors);
                 roles.forEach((role) => {
                     const users = Object.keys(window.import_errors[role]);
@@ -42,9 +44,9 @@ $(function () {
                 })
                 text += `</tbody></table>`;
             } else if (window.import_type == "roleassignments") {
-                title = "You cannot assign those users to those roles.";
+                title = sag_module.tt('bad_role_assignment_import_1');
                 text =
-                    `The following permissions cannot be granted for the following users due to their current SAG assignment:<br><table style="margin-top: 20px; width: 100%; table-layout: fixed;"><thead style="border-bottom: 2px solid #666;"><tr><th>User Role</th><th>User</th><th>SAG</th><th COLSPAN=2>Permissions</th></tr></thead><tbody style="border-bottom: 1px solid black;">`;
+                    `${sag_module.tt('bad_role_assigment_import_2')}:<br><table style="margin-top: 20px; width: 100%; table-layout: fixed;"><thead style="border-bottom: 2px solid #666;"><tr><th>${sag_module.tt('user_role')}</th><th>${sag_module.tt('user')}</th><th>${sag_module.tt('sag')}</th><th COLSPAN=2>${sag_module.tt('permissions_1')}</th></tr></thead><tbody style="border-bottom: 1px solid black;">`;
                 const roles = Object.keys(window.import_errors);
                 roles.forEach((role) => {
                     const users = Object.keys(window.import_errors[role]);
@@ -60,7 +62,8 @@ $(function () {
                 icon: 'error',
                 title: title,
                 html: text,
-                width: '900px'
+                width: '900px',
+                confirmButtonText: sag_module.tt('ok')
             });
         }
     }
@@ -72,9 +75,9 @@ $(function () {
             .done(function (data) {
                 // Edit went through normally
                 showProgress(0, 0);
-                if ($('#editUserPopup').hasClass('ui-dialog-content')) $('#editUserPopup')
-                    .dialog(
-                        'destroy');
+                if ($('#editUserPopup').hasClass('ui-dialog-content')) {
+                    $('#editUserPopup').dialog('destroy');
+                }
                 $('#user_rights_roles_table_parent').html(data);
                 simpleDialogAlt($('#user_rights_roles_table_parent div.userSaveMsg'), 1.7);
                 enablePageJS();
@@ -98,13 +101,14 @@ $(function () {
                         let text = "";
                         let users = Object.keys(result.bad_rights);
                         if (!result.role) {
-                            title = `You cannot grant those user rights to user "${users[0]}"`;
-                            text =
-                                `The user is currently assigned to the SAG: "<strong>${result.bad_rights[users[0]].SAG}</strong>"<br>The following permissions you are attempting to grant cannot be granted to users in that SAG:${createRightsTable(result.bad_rights[users[0]].rights)}`;
+                            title = sag_module.tt('bad_user_1', users[0]);
+                            text = sag_module.tt('bad_user_2', result.bad_rights[users[0]].SAG) +
+                                '<br>' + sag_module.tt('bad_user_3') +
+                                createRightsTable(result.bad_rights[users[0]].rights);
                         } else {
-                            title = `You cannot grant those rights to the role<br>"${result.role}"`;
+                            title = sag_module.tt('bad_role_1') + '<br>' + result.role;
                             text =
-                                `The following users are assigned to that role, and the following permissions cannot be granted to them because of their current SAG assignment:<br><table style="margin-top: 20px; width: 100%;"><thead style="border-bottom: 2px solid #666;"><tr><th>User</th><th>SAG</th><th>Permissions</th></tr></thead><tbody style="border-bottom: 1px solid black;">`;
+                                `${sag_module.tt('bad_role_2')}:<br><table style="margin-top: 20px; width: 100%;"><thead style="border-bottom: 2px solid #666;"><tr><th>${sag_module.tt('user')}</th><th>${sag_module.tt('sag')}</th><th>${sag_module.tt('permissions_1')}</th></tr></thead><tbody style="border-bottom: 1px solid black;">`;
                             users.forEach((user) => {
                                 text +=
                                     `<tr style="border-top: 1px solid #666;"><td><strong>${user}</strong></td><td>${result.bad_rights[user].SAG}</td><td>${result.bad_rights[user].rights.join('<br>')}</td></tr>`;
@@ -115,7 +119,8 @@ $(function () {
                             icon: 'error',
                             title: title,
                             html: text,
-                            width: '900px'
+                            width: '900px',
+                            confirmButtonText: sag_module.tt('ok')
                         });
                         return;
                     } catch (error) {
@@ -124,9 +129,10 @@ $(function () {
                 } else {
                     Swal.fire({
                         icon: 'error',
-                        title: 'Something went wrong.',
+                        title: sag_module.tt('error_1'),
                         html: response.responseText,
-                        width: '900px'
+                        width: '900px',
+                        confirmButtonText: sag_module.tt('ok')
                     });
                 }
             })
@@ -173,16 +179,17 @@ $(function () {
                                     return;
                                 }
                                 let users = Object.keys(result.bad_rights);
-                                const title =
-                                    `You cannot assign user "${username}" to user role "${result.role}"`;
-                                const text =
-                                    `The user is currently assigned to the SAG: "<strong>${result.bad_rights[users[0]].SAG}</strong>"<br>The following permissions allowed in user role "${result.role}" cannot be granted to users in that SAG:${createRightsTable(result.bad_rights[users[0]].rights)}`;
+                                const title = sag_module.tt('bad_role_assignment_1', [username, result.role]);
+                                const text = sag_module.tt('bad_user_2', result.bad_rights[users[0]].SAG) +
+                                    '<br>' + sag_module.tt('bad_role_assignment_2', result.role) +
+                                    createRightsTable(result.bad_rights[users[0]].rights);
 
                                 Swal.fire({
                                     icon: 'error',
                                     title: title,
                                     html: text,
-                                    width: '750px'
+                                    width: '750px',
+                                    confirmButtonText: sag_module.tt('ok')
                                 });
                                 return;
                             } catch (error) {
@@ -191,9 +198,10 @@ $(function () {
                         } else {
                             Swal.fire({
                                 icon: 'error',
-                                title: 'Something went wrong.',
+                                title: sag_module.tt('error_1'),
                                 html: response.responseText,
-                                width: '900px'
+                                width: '900px',
+                                confirmButtonText: sag_module.tt('ok')
                             });
                         }
                     })
@@ -237,15 +245,17 @@ $(function () {
                             return;
                         }
                         const users = Object.keys(result.bad_rights);
-                        const title = `You cannot grant those user rights to user "${users[0]}"`;
-                        const text =
-                            `The user is currently assigned to the SAG: "<strong>${result.bad_rights[users[0]].SAG}</strong>"<br>The following permissions you are attempting to grant cannot be granted to users in that SAG:${createRightsTable(result.bad_rights[users[0]].rights)}`;
+                        const title = sag_module.tt('bad_user_1', users[0]);
+                        const text = sag_module.tt('bad_user_2', result.bad_rights[users[0]].SAG) +
+                            '<br>' + sag_module.tt('bad_user_3') +
+                            createRightsTable(result.bad_rights[users[0]].rights);
 
                         Swal.fire({
                             icon: 'error',
                             title: title,
                             html: text,
-                            width: '750px'
+                            width: '750px',
+                            confirmButtonText: sag_module.tt('ok')
                         });
                         return;
                     } catch (error) {
@@ -254,9 +264,10 @@ $(function () {
                 } else {
                     Swal.fire({
                         icon: 'error',
-                        title: 'Something went wrong.',
+                        title: sag_module.tt('error_1'),
                         html: response.responseText,
-                        width: '900px'
+                        width: '900px',
+                        confirmButtonText: sag_module.tt('ok')
                     });
                 }
             })

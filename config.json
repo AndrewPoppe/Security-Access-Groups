@@ -1,7 +1,9 @@
 {
     "name": "Security Access Groups",
+    "tt_name": "module_name",
     "namespace": "YaleREDCap\\SecurityAccessGroups",
     "description": "Create and manage Security Access Groups, which define at the system level the set of allowable user rights a REDCap user is able to be granted in a project",
+    "tt_description": "module_description",
     "authors": [
         {
             "name": "Andrew Poppe",

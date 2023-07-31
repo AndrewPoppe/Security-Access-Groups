@@ -2,6 +2,8 @@
 
 namespace YaleREDCap\SecurityAccessGroups;
 
+use ExternalModules\Framework;
+
 
 class SAGProject
 {
@@ -77,7 +79,7 @@ class SAGProject
                 'project_role_name' => $projectRoleName,
                 'acceptable'        => $acceptableRights,
                 'current'           => $currentRights,
-                'bad'               => $bad
+                'bad'               => $this->module->framework->escape($bad)
             ];
         }
         return $badRights;
@@ -113,7 +115,7 @@ class SAGProject
                 'project_role_name' => $projectRoleName,
                 'acceptable'        => $acceptableRights,
                 'current'           => $currentRights,
-                'bad'               => $bad
+                'bad'               => $this->module->framework->escape($bad)
             ];
         }
         return $badRights;
