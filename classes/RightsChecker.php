@@ -177,7 +177,6 @@ class RightsChecker
             $this->badRights[] = RightsUtilities::getDisplayTextForRight('double_data_reviewer');
         } elseif ( intval($value) > 0 && !$ddePerson ) {
             $this->badRights[] = RightsUtilities::getDisplayTextForRight('double_data_person');
-            ;
         }
     }
 

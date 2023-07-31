@@ -126,17 +126,7 @@ class SecurityAccessGroups extends AbstractExternalModule
     public function redcap_user_rights($projectId) : void
     {
         $this->framework->initializeJavascriptModuleObject();
-        $ttKeys = [
-            'ok',
-            'permissions_1',
-            'bad_user_1',
-            'bad_user_2',
-            'bad_user_3',
-            'bad_user_import_1',
-            'bad_user_import_2'
-        ];
-        //$this->framework->tt_transferToJavascriptModuleObject($ttKeys);
-        $this->framework->tt_transferToJavascriptModuleObject(); // If this slows things down, we can go back to the above line
+        $this->framework->tt_transferToJavascriptModuleObject(); // If this slows things down, we can send just the keys we need
         if ( isset($_SESSION['SAG_imported']) ) {
             echo "<script>window.import_type = '" . $_SESSION['SAG_imported'] . "';" .
                 "window.import_errors = JSON.parse('" . $_SESSION['SAG_bad_rights'] . "');</script>";
