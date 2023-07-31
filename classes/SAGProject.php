@@ -198,6 +198,25 @@ class SAGProject
         return $projectResult->fetch_assoc()['surveys_enabled'] == 1;
     }
 
+    public function isCDPorDDPEnabled() : bool
+    {
+        $systemSql     = 'SELECT value FROM redcap_config WHERE field_name IN ("realtime_webservice_global_enabled", "fhir_ddp_enabled")';
+        $systemResult  = $this->module->framework->query($systemSql, []);
+        $enabledGlobal = false;
+        while ( $row = $systemResult->fetch_assoc() ) {
+            if ( $row['value'] == 1 ) {
+                $enabledGlobal = true;
+            }
+        }
+        // If surveys are disabled at the system level, it doesn't matter what the project setting is
+        if ( !$enabledGlobal ) {
+            return false;
+        }
+        $projectSql    = 'SELECT realtime_webservice_enabled FROM redcap_projects WHERE project_id = ?';
+        $projectResult = $this->module->framework->query($projectSql, [ $this->projectId ]);
+        return $projectResult->fetch_assoc()['realtime_webservice_enabled'] == 1;
+    }
+
     public function isDataResolutionWorkflowEnabled() : bool
     {
         $sql    = 'SELECT data_resolution_enabled FROM redcap_projects WHERE project_id = ?';

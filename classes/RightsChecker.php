@@ -14,7 +14,9 @@ class RightsChecker
     private $accountedFor = false;
     private $projectId;
     private SAGProject $project;
-    public function __construct(SecurityAccessGroups $module, array $rightsToCheck, array $acceptableRights, $projectId)
+
+    private bool $checkAllRights;
+    public function __construct(SecurityAccessGroups $module, array $rightsToCheck, array $acceptableRights, $projectId, $checkAllRights = false)
     {
         $this->module           = $module;
         $this->rightsToCheck    = $rightsToCheck;
@@ -23,6 +25,7 @@ class RightsChecker
         $this->dataExport       = intval($acceptableRights["dataExport"]);
         $this->projectId        = $projectId;
         $this->project          = new SAGProject($this->module, $this->projectId);
+        $this->checkAllRights   = $checkAllRights;
     }
 
     private function isSafeRight($rightName)
@@ -74,8 +77,10 @@ class RightsChecker
             return;
         }
         $this->accountedFor = true;
-        // 0: no access, 2: read only, 1: view and edit
-        if ( $value === '1' && $this->dataViewing < 2 ) {
+        // 0: no access, 2: read only, 1: view and edit, 3: edit survey responses
+        if ( $value === '3' && $this->dataViewing < 3 ) {
+            $this->badRights[] = "Data Viewing - Edit Survey Responses";
+        } elseif ( $value === '1' && $this->dataViewing < 2 ) {
             $this->badRights[] = "Data Viewing - View & Edit";
         } elseif ( $value === '2' && $this->dataViewing < 1 ) {
             $this->badRights[] = "Data Viewing - Read Only";
@@ -153,7 +158,7 @@ class RightsChecker
 
         $this->accountedFor = true;
 
-        if ( !$this->project->isDoubleDataEnabled() ) {
+        if ( !$this->project->isDoubleDataEnabled() && !$this->checkAllRights ) {
             return;
         }
         // 0: reviewer
@@ -176,7 +181,7 @@ class RightsChecker
         }
         $this->accountedFor = true;
 
-        if ( !$this->project->isDataResolutionWorkflowEnabled() ) {
+        if ( !$this->project->isDataResolutionWorkflowEnabled() && !$this->checkAllRights ) {
             return;
         }
 
@@ -216,7 +221,7 @@ class RightsChecker
         }
         $this->accountedFor = true;
 
-        if ( !$this->project->areSurveysEnabled() ) {
+        if ( !$this->project->areSurveysEnabled() && !$this->checkAllRights ) {
             return;
         }
 
@@ -231,7 +236,7 @@ class RightsChecker
         $this->accountedFor = true;
 
 
-        if ( !$this->project->isMyCapEnabled() ) {
+        if ( !$this->project->isMyCapEnabled() && !$this->checkAllRights ) {
             return;
         }
 
@@ -245,7 +250,7 @@ class RightsChecker
         }
         $this->accountedFor = true;
 
-        if ( !$this->project->isStatsAndChartsEnabled() ) {
+        if ( !$this->project->isStatsAndChartsEnabled() && !$this->checkAllRights ) {
             return;
         }
 
@@ -254,13 +259,13 @@ class RightsChecker
 
     private function checkRandomizationRights($right)
     {
-        $isRandomizationRight = in_array($right, [ 'random_setup', 'random_dashboard', 'random_perform' ]);
+        $isRandomizationRight = in_array($right, [ 'random_setup', 'random_dashboard', 'random_perform' ], true);
         if ( !$isRandomizationRight ) {
             return;
         }
         $this->accountedFor = true;
 
-        if ( !$this->project->isRandomizationEnabled() ) {
+        if ( !$this->project->isRandomizationEnabled() && !$this->checkAllRights ) {
             return;
         }
 
@@ -268,14 +273,19 @@ class RightsChecker
 
     }
 
-    private function checkCDP($right)
+    private function checkCDPandDDP($right)
     {
+        $isCDPorDDPRight = in_array($right, [ 'realtime_webservice_mapping', 'realtime_webservice_adjudicate' ], true);
+        if ( !$isCDPorDDPRight ) {
+            return;
+        }
+        $this->accountedFor = true;
 
-    }
+        if ( !$this->project->isCDPorDDPEnabled() && !$this->checkAllRights ) {
+            return;
+        }
 
-    private function checkDDP($right)
-    {
-
+        $this->checkRight($right);
     }
 
     public function checkRights()
@@ -297,6 +307,7 @@ class RightsChecker
                 continue;
             }
 
+            $this->checkCDPandDDP($right);
             $this->checkMyCapRights($right);
             $this->checkRandomizationRights($right);
             $this->checkStatsAndCharts($right);
@@ -334,6 +345,7 @@ class RightsChecker
                 continue;
             }
 
+            $this->checkCDPandDDP($right);
             $this->checkMyCapRights($right);
             $this->checkRandomizationRights($right);
             $this->checkStatsAndCharts($right);

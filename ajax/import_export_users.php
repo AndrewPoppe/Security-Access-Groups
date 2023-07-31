@@ -43,7 +43,7 @@ if ( isset($_POST['csv_content']) && $_POST['csv_content'] != '' ) {
         $acceptableRights = $sagUser->getAcceptableRights();
         $currentRights    = $sagUser->getCurrentRights($project_id) ?? [];
         $requestedRights  = $thisUser;
-        $rightsChecker    = new RightsChecker($module, $requestedRights, $acceptableRights, $projectId);
+        $rightsChecker    = new RightsChecker($module, $requestedRights, $acceptableRights, $projectId, true);
         $theseBadRights   = $rightsChecker->checkRights();
 
         // Store for later logging
