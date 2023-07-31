@@ -12,13 +12,20 @@ class RightsChecker
     private $dataViewing;
     private $dataExport;
     private $accountedFor = false;
-    public function __construct(SecurityAccessGroups $module, array $rightsToCheck, array $acceptableRights)
+    private $projectId;
+    private SAGProject $project;
+
+    private bool $checkAllRights;
+    public function __construct(SecurityAccessGroups $module, array $rightsToCheck, array $acceptableRights, $projectId, $checkAllRights = false)
     {
         $this->module           = $module;
         $this->rightsToCheck    = $rightsToCheck;
         $this->acceptableRights = $acceptableRights;
         $this->dataViewing      = intval($acceptableRights["dataViewing"]);
         $this->dataExport       = intval($acceptableRights["dataExport"]);
+        $this->projectId        = $projectId;
+        $this->project          = new SAGProject($this->module, $this->projectId);
+        $this->checkAllRights   = $checkAllRights;
     }
 
     private function isSafeRight($rightName)
@@ -44,6 +51,13 @@ class RightsChecker
         return in_array($rightName, $safeRights, true);
     }
 
+    private function checkRight($right)
+    {
+        if ( $this->acceptableRights[$right] == 0 ) {
+            $this->badRights[] = RightsUtilities::getDisplayTextForRight($right);
+        }
+    }
+
     private function checkSurveyEditRights($right, $value)
     {
         $isSurveyResponseEditingRight = substr_compare($right, "form-editresp-", 0, strlen("form-editresp-")) === 0;
@@ -63,8 +77,10 @@ class RightsChecker
             return;
         }
         $this->accountedFor = true;
-        // 0: no access, 2: read only, 1: view and edit
-        if ( $value === '1' && $this->dataViewing < 2 ) {
+        // 0: no access, 2: read only, 1: view and edit, 3: edit survey responses
+        if ( $value === '3' && $this->dataViewing < 3 ) {
+            $this->badRights[] = "Data Viewing - Edit Survey Responses";
+        } elseif ( $value === '1' && $this->dataViewing < 2 ) {
             $this->badRights[] = "Data Viewing - View & Edit";
         } elseif ( $value === '2' && $this->dataViewing < 1 ) {
             $this->badRights[] = "Data Viewing - Read Only";
@@ -139,7 +155,12 @@ class RightsChecker
         if ( !$isDoubleDataRight ) {
             return;
         }
+
         $this->accountedFor = true;
+
+        if ( !$this->project->isDoubleDataEnabled() && !$this->checkAllRights ) {
+            return;
+        }
         // 0: reviewer
         // 1: double data person 1
         // 2: double data person 2
@@ -159,30 +180,112 @@ class RightsChecker
             return;
         }
         $this->accountedFor = true;
+
+        if ( !$this->project->isDataResolutionWorkflowEnabled() && !$this->checkAllRights ) {
+            return;
+        }
+
         // 0: no access
         // 1: view only
         // 4: open queries only
         // 2: respond only to opened queries
         // 5: open and respond to queries
         // 3: open, close, and respond to queries
-        $dqrView    = $this->acceptableRights["data_quality_resolution_view"] == 1;
-        $dqrOpen    = $this->acceptableRights["data_quality_resolution_open"] == 1;
-        $dqrRespond = $this->acceptableRights["data_quality_resolution_respond"] == 1;
-        $dqrClose   = $this->acceptableRights["data_quality_resolution_close"] == 1;
+        $dqrView    = $this->acceptableRights['data_quality_resolution_view'] == 1;
+        $dqrOpen    = $this->acceptableRights['data_quality_resolution_open'] == 1;
+        $dqrRespond = $this->acceptableRights['data_quality_resolution_respond'] == 1;
+        $dqrClose   = $this->acceptableRights['data_quality_resolution_close'] == 1;
 
-        if ( $value == '1' && !$dqrView ) {
-            $badRight          = RightsUtilities::getDisplayTextForRight("data_quality_resolution_view");
-            $this->badRights[] = $badRight;
-        } elseif ( ($value == '4' || $value == '5' || $value == '3') && !$dqrOpen ) {
-            $badRight          = RightsUtilities::getDisplayTextForRight("data_quality_resolution_open");
-            $this->badRights[] = $badRight;
-        } elseif ( ($value == '2' || $value == '5' || $value == '3') && !$dqrRespond ) {
-            $badRight          = RightsUtilities::getDisplayTextForRight("data_quality_resolution_respond");
-            $this->badRights[] = $badRight;
-        } elseif ( $value == '3' && !$dqrClose ) {
-            $badRight          = RightsUtilities::getDisplayTextForRight("data_quality_resolution_close");
+        if ( $value != '4' && !$dqrView ) {
+            $badRight          = RightsUtilities::getDisplayTextForRight('data_quality_resolution_view');
             $this->badRights[] = $badRight;
         }
+        if ( ($value == '4' || $value == '5' || $value == '3') && !$dqrOpen ) {
+            $badRight          = RightsUtilities::getDisplayTextForRight('data_quality_resolution_open');
+            $this->badRights[] = $badRight;
+        }
+        if ( ($value == '2' || $value == '5' || $value == '3') && !$dqrRespond ) {
+            $badRight          = RightsUtilities::getDisplayTextForRight('data_quality_resolution_respond');
+            $this->badRights[] = $badRight;
+        }
+        if ( $value == '3' && !$dqrClose ) {
+            $badRight          = RightsUtilities::getDisplayTextForRight('data_quality_resolution_close');
+            $this->badRights[] = $badRight;
+        }
+    }
+
+    private function checkSurveyRights($right)
+    {
+        if ( $right !== 'participants' ) {
+            return;
+        }
+        $this->accountedFor = true;
+
+        if ( !$this->project->areSurveysEnabled() && !$this->checkAllRights ) {
+            return;
+        }
+
+        $this->checkRight($right);
+    }
+
+    private function checkMyCapRights($right)
+    {
+        if ( $right !== 'mycap_participants' ) {
+            return;
+        }
+        $this->accountedFor = true;
+
+
+        if ( !$this->project->isMyCapEnabled() && !$this->checkAllRights ) {
+            return;
+        }
+
+        $this->checkRight($right);
+    }
+
+    private function checkStatsAndCharts($right)
+    {
+        if ( $right !== 'graphical' ) {
+            return;
+        }
+        $this->accountedFor = true;
+
+        if ( !$this->project->isStatsAndChartsEnabled() && !$this->checkAllRights ) {
+            return;
+        }
+
+        $this->checkRight($right);
+    }
+
+    private function checkRandomizationRights($right)
+    {
+        $isRandomizationRight = in_array($right, [ 'random_setup', 'random_dashboard', 'random_perform' ], true);
+        if ( !$isRandomizationRight ) {
+            return;
+        }
+        $this->accountedFor = true;
+
+        if ( !$this->project->isRandomizationEnabled() && !$this->checkAllRights ) {
+            return;
+        }
+
+        $this->checkRight($right);
+
+    }
+
+    private function checkCDPandDDP($right)
+    {
+        $isCDPorDDPRight = in_array($right, [ 'realtime_webservice_mapping', 'realtime_webservice_adjudicate' ], true);
+        if ( !$isCDPorDDPRight ) {
+            return;
+        }
+        $this->accountedFor = true;
+
+        if ( !$this->project->isCDPorDDPEnabled() && !$this->checkAllRights ) {
+            return;
+        }
+
+        $this->checkRight($right);
     }
 
     public function checkRights()
@@ -203,6 +306,12 @@ class RightsChecker
             if ( $this->isSafeRight($right) ) {
                 continue;
             }
+
+            $this->checkCDPandDDP($right);
+            $this->checkMyCapRights($right);
+            $this->checkRandomizationRights($right);
+            $this->checkStatsAndCharts($right);
+            $this->checkSurveyRights($right);
 
             $this->checkSurveyEditRights($right, $value);
             $this->checkDataViewingRights($right, $value);
@@ -235,6 +344,12 @@ class RightsChecker
             if ( $this->isSafeRight($right) ) {
                 continue;
             }
+
+            $this->checkCDPandDDP($right);
+            $this->checkMyCapRights($right);
+            $this->checkRandomizationRights($right);
+            $this->checkStatsAndCharts($right);
+            $this->checkSurveyRights($right);
 
             $this->checkDataViewingRights2($right);
             $this->checkDataExportRights2($right);
