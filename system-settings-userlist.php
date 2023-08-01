@@ -24,13 +24,13 @@ if ( !$module->framework->isSuperUser() ) {
 
 
 <h4 style='color:#900; margin: 0 0 10px;'>
-    <i class='fa-solid fa-users-between-lines'></i>&nbsp;<span>Security Access Groups</span>
+    <i class='fa-solid fa-users-between-lines'></i>&nbsp;<span>
+        <?= $module->framework->tt('module_name') ?>
+    </span>
 </h4>
-<p style='max-width:1000px; margin-bottom:0;font-size:14px;'>Security Access Groups (SAGs) are used to restrict which
-    user rights a REDCap user can be granted in a project. SAGs do not define the rights a user will have in a given
-    project; rather, they define the set of allowable rights the user is able to be granted. If a user is assigned to a
-    SAG that does not allow the Project Design right, then that user cannot have that user right granted in a project.
-    The Security Access Groups module must be enabled in a project for the SAG to have an effect.</p>
+<p style='max-width:1000px; margin-bottom:0;font-size:14px;'>
+    <?= $module->framework->tt('status_ui_44') ?>
+</p>
 <div class="SAG_Container" style="min-width: 900px;">
     <div id="sub-nav" class="mr-4 mb-0 ml-0" style="min-width: 900px;">
         <ul>
@@ -38,21 +38,21 @@ if ( !$module->framework->isSuperUser() ) {
                 <a href="<?= $module->framework->getUrl('system-settings-userlist.php') ?>"
                     style="font-size:13px;color:#393733;padding:7px 9px;">
                     <i class="fa-solid fa-users"></i>
-                    Users
+                    <?= $module->framework->tt('cc_user_1') ?>
                 </a>
             </li>
             <li>
                 <a href="<?= $module->framework->getUrl('system-settings-sags.php') ?>"
                     style="font-size:13px;color:#393733;padding:7px 9px;">
                     <i class="fa-solid fa-user-tag"></i>
-                    Security Access Groups
+                    <?= $module->framework->tt('cc_user_2') ?>
                 </a>
             </li>
             <li>
                 <a href="<?= $module->framework->getUrl('system-reports.php') ?>"
                     style="font-size:13px;color:#393733;padding:7px 9px;">
                     <i class="fa-solid fa-memo"></i>
-                    Reports
+                    <?= $module->framework->tt('cc_user_3') ?>
                 </a>
             </li>
         </ul>
@@ -70,8 +70,10 @@ if ( !$module->framework->isSuperUser() ) {
     }
     $userListHtml = file_get_contents($module->framework->getSafePath('html/system-settings-userlist.html'));
     $userListHtml = str_replace('{{SAG_ROWS}}', $sagRows, $userListHtml);
+    $userListHtml = $module->replaceAllTranslations($userListHtml);
     echo $userListHtml;
     echo $module->framework->initializeJavascriptModuleObject();
+    $module->framework->tt_transferToJavascriptModuleObject();
 
     $basicSagsJson = json_encode($basicSags);
     $js            = file_get_contents($module->framework->getSafePath('js/system-settings-userlist.js'));

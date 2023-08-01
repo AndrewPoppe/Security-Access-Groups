@@ -17,11 +17,11 @@ sag_module.toggleEditMode = function (event) {
     $(button).data('editing', editing);
     let style = 'none';
     if (editing) {
-        $(button).find('span').text('Stop Editing');
+        $(button).find('span').text(sag_module.tt('cc_user_13'));
         $(button).addClass('btn-outline-danger');
         $(button).removeClass('btn-danger');
     } else {
-        $(button).find('span').text('Edit Users');
+        $(button).find('span').text(sag_module.tt('cc_user_14'));
         $(button).addClass('btn-danger');
         $(button).removeClass('btn-outline-danger');
         style = 'user-select:all; cursor: text; margin-left: 1px; margin-right: 1px;';
@@ -47,13 +47,14 @@ sag_module.toggleEditMode = function (event) {
 sag_module.handleCsvExport = function () {
     if (sag_module.dt.search() != '') {
         Swal.fire({
-            title: 'Export Filtered Data?',
-            text: 'You have a filter applied to the table. Do you want to export the filtered data or all data?',
+            title: sag_module.tt('cc_user_15'),
+            text: sag_module.tt('cc_user_16'),
             icon: 'question',
             showCancelButton: true,
             showDenyButton: true,
-            confirmButtonText: 'Export Filtered Data',
-            denyButtonText: 'Export All Data'
+            confirmButtonText: sag_module.tt('cc_user_17'),
+            denyButtonText: sag_module.tt('cc_user_18'),
+            cancelButtonText: sag_module.tt('cancel')
         }).then((result) => {
             if (result.isConfirmed) {
                 sag_module.exportCsv(true);
@@ -106,9 +107,7 @@ sag_module.exportCsv = function (useFilter = false) {
                 if (col === 0) {
                     return allData[row]["username"];
                 } else if (col === 1) {
-                    return allData[row]["user_firstname"] + " " + allData[row][
-                        "user_lastname"
-                    ];
+                    return allData[row]["user_firstname"] + " " + allData[row]["user_lastname"];
                 } else if (col === 2) {
                     return allData[row]["user_email"];
                 } else if (col === 3) {
@@ -154,7 +153,7 @@ sag_module.handleImportError = function (errorData) {
     if (errorData.users.length) {
         body +=
             "<div class='row justify-content-center m-2'>" +
-            "<table><thead><tr><th>Username</th></tr></thead><tbody>";
+            `<table><thead><tr><th>${sag_module.tt('status_ui_59')}</th></tr></thead><tbody>`;
         errorData.users.forEach((user) => {
             body += `<tr><td>${user}</td></tr>`;
         });
@@ -163,7 +162,7 @@ sag_module.handleImportError = function (errorData) {
     if (errorData.sags.length) {
         body +=
             "<div class='row justify-content-center m-2'>" +
-            "<table><thead><tr><th>SAG ID</th></tr></thead><tbody>";
+            `<table><thead><tr><th>${sag_module.tt('cc_user_12')}</th></tr></thead><tbody>`;
         errorData.sags.forEach((sag) => {
             body += `<tr><td>${sag}</td></tr>`;
         });
@@ -171,7 +170,7 @@ sag_module.handleImportError = function (errorData) {
     }
     body += "</div>";
     Swal.fire({
-        title: 'Error',
+        title: sag_module.tt('error_2'),
         html: body,
         icon: 'error'
     });
@@ -188,7 +187,7 @@ sag_module.handleFiles = function () {
         return;
     }
 
-    Swal.fire('Loading...');
+    Swal.fire(sag_module.tt('alerts_16'));
     Swal.showLoading();
 
     const reader = new FileReader();
@@ -224,7 +223,7 @@ sag_module.confirmImport = function () {
                 sag_module.dt.ajax.reload();
                 Swal.fire({
                     icon: 'success',
-                    html: "Successfully imported assignments.",
+                    html: sag_module.tt('cc_user_19'),
                     customClass: {
                         confirmButton: 'btn btn-primary',
                     },
@@ -233,14 +232,14 @@ sag_module.confirmImport = function () {
             } else {
                 Toast.fire({
                     icon: 'error',
-                    html: "Error importing CSV"
+                    html: sag_module.tt('cc_user_20')
                 });
             }
         })
         .catch((error) => {
             Toast.fire({
                 icon: 'error',
-                html: "Error importing CSV"
+                html: sag_module.tt('cc_user_20')
             });
             console.error(error);
         });
@@ -287,7 +286,6 @@ sag_module.saveSag = function (selectNode) {
     sag_module.ajax('assignSag', { username: user, sag: newSag })
         .then((response) => {
             const result = JSON.parse(response);
-            console.log('result', result);
             if (result.status != 'error') {
                 select.closest('td').data('sag', newSag);
                 select.closest('td').attr('data-sag', newSag);
@@ -297,7 +295,7 @@ sag_module.saveSag = function (selectNode) {
                 color = "#ff3300";
                 Toast.fire({
                     icon: 'error',
-                    title: 'Error assigning SAG'
+                    title: sag_module.tt('cc_user_21')
                 });
                 sag_module.dt.ajax.reload();
             }
@@ -373,7 +371,7 @@ $(document).ready(function () {
         pageLength: 10,
         info: true,
         columns: [{
-            title: 'Username',
+            title: sag_module.tt('status_ui_59'),
             data: function (row, type, set, meta) {
                 if (type === 'display') {
                     const root = `${app_path_webroot_full}redcap_v${redcap_version}`;
@@ -386,12 +384,12 @@ $(document).ready(function () {
                 }
             },
         }, {
-            title: 'Name',
+            title: sag_module.tt('status_ui_60'),
             data: function (row, type, set, meta) {
                 return row.user_firstname + ' ' + row.user_lastname;
             }
         }, {
-            title: 'Email',
+            title: sag_module.tt('status_ui_61'),
             data: function (row, type, set, meta) {
                 if (type === 'display') {
                     return `<a href="mailto:${row.user_email}">${row.user_email}</a>`;
@@ -400,7 +398,7 @@ $(document).ready(function () {
                 }
             }
         }, {
-            title: 'Security Access Group',
+            title: sag_module.tt('status_ui_63'),
             data: function (row, type, set, meta) {
                 if (row.sag === null) {
                     row.sag = '{{DEFAULT_SAG_ID}}';
@@ -425,7 +423,7 @@ $(document).ready(function () {
             }
         },
         {
-            title: 'Hidden SAG',
+            title: sag_module.tt('cc_user_22'),
             data: 'sag'
         }
         ],
@@ -462,18 +460,35 @@ $(document).ready(function () {
         },
         lengthMenu: [
             [10, 25, 50, 100, -1],
-            [10, 25, 50, 100, "All"]
+            [10, 25, 50, 100, sag_module.tt('users_37')]
         ],
         language: {
             search: "_INPUT_",
-            searchPlaceholder: "Search Users...",
-            infoFiltered: " - filtered from _MAX_ total users",
-            emptyTable: "No users found in this project",
-            info: "Showing _START_ to _END_ of _TOTAL_ users",
-            infoEmpty: "Showing 0 to 0 of 0 users",
-            lengthMenu: "Show _MENU_ users",
-            loadingRecords: "Loading...",
-            zeroRecords: "No matching users found"
+            searchPlaceholder: sag_module.tt('dt_cc_users_search_placeholder'),
+            infoFiltered: " - " + sag_module.tt('dt_cc_users_info_filtered', '_MAX_'),
+            emptyTable: sag_module.tt('dt_cc_users_empty_table'),
+            info: sag_module.tt('dt_cc_users_info', { start: '_START_', end: '_END_', total: '_TOTAL_' }),
+            infoEmpty: sag_module.tt('dt_cc_users_info_empty'),
+            lengthMenu: sag_module.tt('dt_cc_users_length_menu', '_MENU_'),
+            loadingRecords: sag_module.tt('dt_cc_users_loading_records'),
+            zeroRecords: sag_module.tt('dt_cc_users_zero_records'),
+            select: {
+                rows: {
+                    _: sag_module.tt('dt_cc_users_select_rows_other'),
+                    0: sag_module.tt('dt_cc_users_select_rows_zero'),
+                    1: sag_module.tt('dt_cc_users_select_rows_one')
+                }
+            },
+            paginate: {
+                first: sag_module.tt('dt_cc_users_paginate_first'),
+                last: sag_module.tt('dt_cc_users_paginate_last'),
+                next: sag_module.tt('dt_cc_users_paginate_next'),
+                previous: sag_module.tt('dt_cc_users_paginate_previous')
+            },
+            aria: {
+                sortAscending: sag_module.tt('dt_cc_users_aria_sort_ascending'),
+                sortDescending: sag_module.tt('dt_cc_users_aria_sort_descending')
+            }
         }
     });
 
