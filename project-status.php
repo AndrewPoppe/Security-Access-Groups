@@ -347,8 +347,12 @@ if ( !$module->framework->isSuperUser() ) {
     <div class="mt-4">
         <?= $module->framework->tt('status_ui_46') ?>
         <ol>
-            <li><?= $module->framework->tt('status_ui_47') ?></li>
-            <li><?= $module->framework->tt('status_ui_48') ?></li>
+            <li>
+                <?= $module->framework->tt('status_ui_47') ?>
+            </li>
+            <li>
+                <?= $module->framework->tt('status_ui_48') ?>
+            </li>
         </ol>
         <?= $module->framework->tt('status_ui_49') ?>
         <i class="fa-solid fa-circle-info fa-lg align-self-center text-info" style="font-size: 16.25px;"></i>
@@ -359,44 +363,50 @@ if ( !$module->framework->isSuperUser() ) {
             <div class="btn-group">
                 <button id="displayUsersButton" type="button" class="btn btn-xs btn-outline-secondary dropdown-toggle"
                     data-toggle="dropdown" aria-expanded="false">
-                    <i class="fa-sharp fa-regular fa-eye"></i> Display Users
+                    <i class="fa-sharp fa-regular fa-eye"></i>
+                    <?= $module->framework->tt('status_ui_51') ?>
                 </button>
                 <div class="dropdown-menu" id="userFilter">
                     <div class="form-check pl-4 mr-2">
                         <input class="form-check-input" type="checkbox" value="1" id="expiredUsers" checked>
                         <label class="form-check-label" for="expiredUsers">
-                            Expired users
+                            <?= $module->framework->tt('status_ui_52') ?>
                         </label>
                     </div>
                     <div class="form-check pl-4 mr-2">
                         <input class="form-check-input" type="checkbox" value="1" id="nonExpiredUsers" checked>
                         <label class="form-check-label" for="nonExpiredUsers">
-                            Non-Expired users
+                            <?= $module->framework->tt('status_ui_53') ?>
                         </label>
                     </div>
                     <div class="dropdown-divider"></div>
                     <div class="form-check pl-4 mr-2">
                         <input class="form-check-input" type="checkbox" value="1" id="discrepantUsers" checked>
                         <label class="form-check-label" for="discrepantUsers">
-                            Users with noncompliant rights
+                            <?= $module->framework->tt('status_ui_54') ?>
                         </label>
                     </div>
                     <div class="form-check pl-4 mr-2">
                         <input class="form-check-input" type="checkbox" value="1" id="nonDiscrepantUsers" checked>
                         <label class="form-check-label" for="nonDiscrepantUsers">
-                            Users without noncompliant rights
+                            <?= $module->framework->tt('status_ui_55') ?>
                         </label>
                     </div>
                 </div>
             </div>
             <button type="button" class="btn btn-xs btn-primary action" onclick="sag_module.openEmailUsersModal();"
-                disabled><i class="fa-sharp fa-regular fa-envelope"></i> Email User(s)</button>
+                disabled><i class="fa-sharp fa-regular fa-envelope"></i>
+                <?= $module->framework->tt('status_ui_56') ?>
+            </button>
             <button type="button" class="btn btn-xs btn-warning action"
                 onclick="sag_module.openEmailUserRightsHoldersModal();" disabled><i
-                    class="fa-kit fa-sharp-regular-envelope-circle-exclamation"></i> Email User Rights
-                Holders</button>
+                    class="fa-kit fa-sharp-regular-envelope-circle-exclamation"></i>
+                <?= $module->framework->tt('status_ui_57') ?>
+            </button>
             <button type="button" class="btn btn-xs btn-danger action" onclick="sag_module.openExpireUsersModal();"
-                disabled><i class="fa-regular fa-user-xmark fa-fw"></i> Expire User(s)</button>
+                disabled><i class="fa-regular fa-user-xmark fa-fw"></i>
+                <?= $module->framework->tt('status_ui_58') ?>
+            </button>
             <div class="btn-group" role="group">
                 <i class="fa-solid fa-circle-info fa-lg align-self-center text-info infoButton" style="cursor:pointer;"
                     onclick="$('#infoModal').modal('show');">
@@ -410,13 +420,27 @@ if ( !$module->framework->isSuperUser() ) {
                         <th style="vertical-align: middle !important;"><input style="display:block; margin: 0 auto;"
                                 type="checkbox" onchange="sag_module.handleCheckboxes(this);"></input>
                         </th>
-                        <th>Username</th>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th class="dt-head-center">Expiration</th>
-                        <th class="dt-head-center">Security Access Group</th>
-                        <th class="dt-head-center">Noncompliant Rights</th>
-                        <th class="dt-head-center">Project Role</th>
+                        <th>
+                            <?= $module->framework->tt('status_ui_59') ?>
+                        </th>
+                        <th>
+                            <?= $module->framework->tt('status_ui_60') ?>
+                        </th>
+                        <th>
+                            <?= $module->framework->tt('status_ui_61') ?>
+                        </th>
+                        <th class="dt-head-center">
+                            <?= $module->framework->tt('status_ui_62') ?>
+                        </th>
+                        <th class="dt-head-center">
+                            <?= $module->framework->tt('status_ui_63') ?>
+                        </th>
+                        <th class="dt-head-center">
+                            <?= $module->framework->tt('status_ui_64') ?>
+                        </th>
+                        <th class="dt-head-center">
+                            <?= $module->framework->tt('status_ui_65') ?>
+                        </th>
                     </tr>
                 </thead>
                 <tbody>
@@ -442,6 +466,7 @@ if ( $usersCount <= $userThreshold ) {
     $config = '';
 }
 echo $module->framework->initializeJavascriptModuleObject();
+$module->framework->tt_transferToJavascriptModuleObject();
 $js = file_get_contents($module->framework->getSafePath('js/project-status.js'));
 $js = str_replace('{{CONFIG}}', $config, $js);
 $js = str_replace('{{USER_EMAIL_BODY_TEMPLATE}}', $module->getSystemSetting('user-email-body-template') ?? "", $js);
