@@ -30,13 +30,13 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
 
 
 <h4 style='color:#900; margin: 0 0 10px;'>
-    <i class='fa-solid fa-users-between-lines'></i>&nbsp;<span>Security Access Groups</span>
+    <i class='fa-solid fa-users-between-lines'></i>&nbsp;<span>
+        <?= $module->framework->tt('module_name') ?>
+    </span>
 </h4>
-<p style='max-width:1000px; margin-bottom:0;font-size:14px;'>Security Access Groups (SAGs) are used to restrict which
-    user rights a REDCap user can be granted in a project. SAGs do not define the rights a user will have in a given
-    project; rather, they define the set of allowable rights the user is able to be granted. If a user is assigned to a
-    SAG that does not allow the Project Design right, then that user cannot have that user right granted in a project.
-    The Security Access Groups module must be enabled in a project for the SAG to have an effect.</p>
+<p style='max-width:1000px; margin-bottom:0;font-size:14px;'>
+    <?= $module->framework->tt('status_ui_44') ?>
+</p>
 <div class="SAG_Container" style="min-width: 900px;">
     <div id="sub-nav" class="mr-4 mb-0 ml-0" style="min-width: 900px;">
         <ul>
@@ -44,21 +44,21 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
                 <a href="<?= $module->framework->getUrl('system-settings-userlist.php') ?>"
                     style="font-size:13px;color:#393733;padding:7px 9px;">
                     <i class="fa-solid fa-users"></i>
-                    Users
+                    <?= $module->framework->tt('cc_user_1') ?>
                 </a>
             </li>
             <li>
                 <a href="<?= $module->framework->getUrl('system-settings-sags.php') ?>"
                     style="font-size:13px;color:#393733;padding:7px 9px;">
                     <i class="fa-solid fa-user-tag"></i>
-                    Security Access Groups
+                    <?= $module->framework->tt('cc_user_2') ?>
                 </a>
             </li>
             <li class="active">
                 <a href="<?= $module->framework->getUrl('system-reports.php') ?>"
                     style="font-size:13px;color:#393733;padding:7px 9px;">
                     <i class="fa-solid fa-memo"></i>
-                    Reports
+                    <?= $module->framework->tt('cc_user_3') ?>
                 </a>
             </li>
         </ul>
@@ -67,60 +67,56 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
 
 
 
-    <div style='margin-top: 20px; margin-bottom: 0px; max-width:1000px;font-size:14px;'>Select a report type from the
-        dropdown below. The report will be generated and displayed in a table below. You can then export the report to
-        Excel by clicking the <em>Export Excel</em> button.
+    <div style='margin-top: 20px; margin-bottom: 0px; max-width:1000px;font-size:14px;'>
+        <?= $module->framework->tt('cc_reports_1') ?>
     </div>
     <button class="btn btn-link btn-xs p-0" data-target=".collapse-group-1" aria-controls="helpLinkContainer help"
         data-toggle="collapse"
-        onclick="this.textContent=this.textContent === 'More...' ? 'Less...' : 'More...';">More...</button>
+        onclick="this.textContent=this.textContent.trim() === sag_module.tt('cc_reports_2') ? sag_module.tt('cc_reports_3') : sag_module.tt('cc_reports_2');">
+        <?= $module->framework->tt('cc_reports_2') ?>
+    </button>
     <div id="help" class="collapse collapse-group-1 mb-2">
-        <strong><i class="fa-light fa-users fa-fw mr-1 text-danger"></i>Users with Noncompliant Rights
-            (non-expired)</strong>
+        <strong><i class="fa-light fa-users fa-fw text-danger"></i>
+            <?= $module->framework->tt('cc_reports_4') ?>
+        </strong>
         <br>
-        This report lists all users who are assigned to a SAG that does not allow the user to be granted all of the
-        rights they currently have in a project. This report only includes users if they are not currently expired
-        in the project(s).
-        <br>
-        <br>
-        <strong><i class="fa-solid fa-users fa-fw mr-1 text-danger"></i>Users with Noncompliant Rights
-            (all)</strong>
-        <br>
-        This report lists all users who are assigned to a SAG that does not allow the user to be granted all of the
-        rights they currently have in a project. This report includes all users, regardless of whether they are
-        currently expired in the project(s).
+        <?= $module->framework->tt('cc_reports_5') ?>
         <br>
         <br>
-        <strong><i class="fa-sharp fa-light fa-rectangle-history-circle-user fa-fw mr-1 text-successrc"></i>Projects
-            with Noncompliant Rights (non-expired)</strong>
+        <strong><i class="fa-solid fa-users fa-fw text-danger"></i>
+            <?= $module->framework->tt('cc_reports_6') ?>
+        </strong>
         <br>
-        This report lists all projects that have at least one user who is assigned to a SAG that does not allow the
-        user to be granted all of the rights they currently have in the project. This report only includes users
-        who have a non-expired user account.
-        <br>
-        <br>
-        <strong><i class="fa-sharp fa-solid fa-rectangle-history-circle-user fa-fw mr-1 text-successrc"></i>Projects
-            with Noncompliant Rights (all)</strong>
-        <br>
-        This report lists all projects that have at least one user who is assigned to a SAG that does not allow the
-        user to be granted all of the rights they currently have in the project. This report includes all users,
-        regardless of whether their user account is expired.
+        <?= $module->framework->tt('cc_reports_7') ?>
         <br>
         <br>
-        <strong><i class="fa-sharp fa-light fa-rectangle-list fa-fw mr-1 text-info"></i>Users and Projects with
-            Noncompliant Rights (non-expired)</strong>
+        <strong><i class="fa-sharp fa-light fa-rectangle-history-circle-user fa-fw text-successrc">
+            </i>
+            <?= $module->framework->tt('cc_reports_8') ?>
+        </strong>
         <br>
-        This report lists every user and project combination in which the user is assigned to a SAG that does not
-        allow the user to be granted all of the rights they currently have in the project. This report only
-        includes users who are not currently expired in the project.
+        <?= $module->framework->tt('cc_reports_9') ?>
         <br>
         <br>
-        <strong><i class="fa-sharp fa-solid fa-rectangle-list fa-fw mr-1 text-info"></i>Users and Projects with
-            Noncompliant Rights (all)</strong>
+        <strong><i class="fa-sharp fa-solid fa-rectangle-history-circle-user fa-fw text-successrc"></i>
+            <?= $module->framework->tt('cc_reports_10') ?>
+        </strong>
         <br>
-        This report lists every user and project combination in which the user is assigned to a SAG that does not
-        allow the user to be granted all of the rights they currently have in the project. This report includes
-        all users, regardless of whether they are currently expired in the project.
+        <?= $module->framework->tt('cc_reports_11') ?>
+        <br>
+        <br>
+        <strong><i class="fa-sharp fa-light fa-rectangle-list fa-fw text-info"></i>
+            <?= $module->framework->tt('cc_reports_12') ?>
+        </strong>
+        <br>
+        <?= $module->framework->tt('cc_reports_13') ?>
+        <br>
+        <br>
+        <strong><i class="fa-sharp fa-solid fa-rectangle-list fa-fw text-info"></i>
+            <?= $module->framework->tt('cc_reports_14') ?>
+        </strong>
+        <br>
+        <?= $module->framework->tt('cc_reports_15') ?>
     </div>
 
     <!-- Controls Container -->
@@ -128,28 +124,38 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
         <button type="button" class="btn btn-primary btn-xs border dropdown-toggle mr-2" data-toggle="dropdown"
             data-bs-toggle="dropdown" aria-expanded="false">
             <i class="fa-sharp fa-file-excel"></i>
-            <span>Select Report Type</span>
-            <span class="sr-only">Toggle Dropdown</span>
+            <span>
+                <?= $module->framework->tt('cc_reports_16') ?>
+            </span>
+            <span class="sr-only">
+                <?= $module->framework->tt('cc_user_7') ?>
+            </span>
         </button>
         <ul class="dropdown-menu">
             <li><a class="dropdown-item" onclick="sag_module.showUserTable(false);"><i
-                        class="fa-light fa-users fa-fw mr-1 text-danger"></i>Users with
-                    Noncompliant Rights (non-expired)</a></li>
+                        class="fa-light fa-users fa-fw text-danger"></i>
+                    <?= $module->framework->tt('cc_reports_4') ?>
+                </a></li>
             <li><a class="dropdown-item" onclick="sag_module.showUserTable(true);"><i
-                        class="fa-solid fa-users fa-fw mr-1 text-danger"></i>Users with
-                    Noncompliant Rights (all)</a></li>
+                        class="fa-solid fa-users fa-fw text-danger"></i>
+                    <?= $module->framework->tt('cc_reports_6') ?>
+                </a></li>
             <li><a class="dropdown-item" onclick="sag_module.showProjectTable(false);"><i
-                        class="fa-sharp fa-light fa-rectangle-history-circle-user fa-fw mr-1 text-successrc"></i>Projects
-                    with Noncompliant Rights (non-expired)</a></li>
+                        class="fa-sharp fa-light fa-rectangle-history-circle-user fa-fw text-successrc"></i>
+                    <?= $module->framework->tt('cc_reports_8') ?>
+                </a></li>
             <li><a class="dropdown-item" onclick="sag_module.showProjectTable(true);"><i
-                        class="fa-sharp fa-solid fa-rectangle-history-circle-user fa-fw mr-1 text-successrc"></i>Projects
-                    with Noncompliant Rights (all)</a></li>
+                        class="fa-sharp fa-solid fa-rectangle-history-circle-user fa-fw text-successrc"></i>
+                    <?= $module->framework->tt('cc_reports_10') ?>
+                </a></li>
             <li><a class="dropdown-item" onclick="sag_module.showUserAndProjectTable(false);"><i
-                        class="fa-sharp fa-light fa-rectangle-list fa-fw mr-1 text-info"></i>Users
-                    and Projects with Noncompliant Rights (non-expired)</a></li>
+                        class="fa-sharp fa-light fa-rectangle-list fa-fw text-info"></i>
+                    <?= $module->framework->tt('cc_reports_12') ?>
+                </a></li>
             <li><a class="dropdown-item" onclick="sag_module.showUserAndProjectTable(true);"><i
-                        class="fa-sharp fa-solid fa-rectangle-list fa-fw mr-1 text-info"></i>Users
-                    and Projects with Noncompliant Rights (all)</a></li>
+                        class="fa-sharp fa-solid fa-rectangle-list fa-fw text-info"></i>
+                    <?= $module->framework->tt('cc_reports_14') ?>
+                </a></li>
         </ul>
     </div>
     <!-- SAG Table -->
@@ -201,15 +207,25 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
                 </tr>
                 <tr>
                     <!--0-->
-                    <th scope="col">Project</th>
+                    <th scope="col">
+                        <?= $module->framework->tt('cc_reports_17') ?>
+                    </th>
                     <!--1-->
-                    <th scope="col">Count of Noncompliant Users</th>
+                    <th scope="col">
+                        <?= $module->framework->tt('cc_reports_18') ?>
+                    </th>
                     <!--2-->
-                    <th scope="col">Noncompliant Users</th>
+                    <th scope="col">
+                        <?= $module->framework->tt('cc_reports_19') ?>
+                    </th>
                     <!--3-->
-                    <th scope="col">Security Access Groups</th>
+                    <th scope="col">
+                        <?= $module->framework->tt('cc_reports_20') ?>
+                    </th>
                     <!--4-->
-                    <th scope="col">Noncompliant Rights</th>
+                    <th scope="col">
+                        <?= $module->framework->tt('cc_reports_21') ?>
+                    </th>
                     <!--5-->
                     <th scope="col">PID for CSV</th>
                     <!--6-->
@@ -274,19 +290,33 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
                 </tr>
                 <tr>
                     <!--0-->
-                    <th scope="col">User</th>
+                    <th scope="col">
+                        <?= $module->framework->tt('user') ?>
+                    </th>
                     <!--1-->
-                    <th scope="col">Name</th>
+                    <th scope="col">
+                        <?= $module->framework->tt('status_ui_60') ?>
+                    </th>
                     <!--2-->
-                    <th scope="col">Email</th>
+                    <th scope="col">
+                        <?= $module->framework->tt('status_ui_61') ?>
+                    </th>
                     <!--3-->
-                    <th scope="col">Security Access Group</th>
+                    <th scope="col">
+                        <?= $module->framework->tt('cc_reports_20') ?>
+                    </th>
                     <!--4-->
-                    <th scope="col">Count of Projects</th>
+                    <th scope="col">
+                        <?= $module->framework->tt('cc_reports_22') ?>
+                    </th>
                     <!--5-->
-                    <th scope="col">Projects</th>
+                    <th scope="col">
+                        <?= $module->framework->tt('cc_reports_23') ?>
+                    </th>
                     <!--6-->
-                    <th scope="col">Noncompliant Rights</th>
+                    <th scope="col">
+                        <?= $module->framework->tt('cc_reports_21') ?>
+                    </th>
                     <!--7-->
                     <th scope="col">Username for CSV</th>
                     <!--8-->
@@ -351,17 +381,29 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
                 </tr>
                 <tr>
                     <!--0-->
-                    <th scope="col">User</th>
+                    <th scope="col">
+                        <?= $module->framework->tt('user') ?>
+                    </th>
                     <!--1-->
-                    <th scope="col">Name</th>
+                    <th scope="col">
+                        <?= $module->framework->tt('status_ui_60') ?>
+                    </th>
                     <!--2-->
-                    <th scope="col">Email</th>
+                    <th scope="col">
+                        <?= $module->framework->tt('status_ui_61') ?>
+                    </th>
                     <!--3-->
-                    <th scope="col">Security Access Group</th>
+                    <th scope="col">
+                        <?= $module->framework->tt('status_ui_63') ?>
+                    </th>
                     <!--4-->
-                    <th scope="col">Project</th>
+                    <th scope="col">
+                        <?= $module->framework->tt('cc_reports_17') ?>
+                    </th>
                     <!--5-->
-                    <th scope="col">Noncompliant Rights</th>
+                    <th scope="col">
+                        <?= $module->framework->tt('cc_reports_21') ?>
+                    </th>
                     <!--6-->
                     <th scope="col">Username for CSV</th>
                     <!--7-->
@@ -397,6 +439,7 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
 </div> <!-- End SAG_Container -->
 <?php
 echo $module->framework->initializeJavascriptModuleObject();
+$module->framework->tt_transferToJavascriptModuleObject();
 $js = file_get_contents($module->framework->getSafePath('js/system-reports.js'));
 $js = str_replace('{{MODULE_DIRECTORY_PREFIX}}', $module->getModuleDirectoryPrefix(), $js);
 $js = str_replace('__MODULE__', $module->framework->getJavascriptModuleObjectName(), $js);

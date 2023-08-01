@@ -16,14 +16,14 @@ sag_module.dehover = function () {
 
 sag_module.makeUserTable = function (usersString) {
     let tableString =
-        '<table class="table table-sm table-bordered"><thead><tr><th>Username</th><th>Name</th><th>Email</th><th>Security Access Group</th></tr></thead><tbody>';
+        `<table class="table table-sm table-bordered"><thead><tr><th>${sag_module.tt('status_ui_59')}</th><th>${sag_module.tt('status_ui_60')}</th><th>${sag_module.tt('status_ui_61')}</th><th>${sag_module.tt('status_ui_63')}</th></tr></thead><tbody>`;
     JSON.parse(usersString).forEach(user => {
         tableString +=
             `<tr><td>${user.username}</td><td>${user.name}</td><td>${user.email}</td><td><strong>${user.sag}</strong><br><small>${user.sag_name}</small></td></tr>`;
     });
     tableString += '</tbody></table>';
     return Swal.fire({
-        title: 'Users with Noncompliant Rights',
+        title: sag_module.tt('status_ui_54'),
         html: tableString,
         width: '900px',
         showConfirmButton: false,
@@ -45,12 +45,11 @@ sag_module.clearTables = function () {
 sag_module.showProjectTable = function (includeExpired = false) {
     sag_module.clearTables();
     $('.tableWrapper').hide();
-    $('#projectTableTitle').text('Projects with Noncompliant Rights' + (includeExpired ?
-        ' (including expired users)' :
-        ' (excluding expired users)'));
+    $('#projectTableTitle').text(sag_module.tt('cc_reports_24') + ' ' + (includeExpired ?
+        sag_module.tt('cc_reports_25') : sag_module.tt('cc_reports_26')));
     if ($('#projectTableWrapper').is(':hidden')) {
         Swal.fire({
-            title: 'Loading...',
+            title: sag_module.tt('users_16'),
             didOpen: () => {
                 Swal.showLoading()
             }
@@ -76,7 +75,7 @@ sag_module.showProjectTable = function (includeExpired = false) {
 
             // Users filter
             const usersSelect = $('#usersSelectProject').select2({
-                placeholder: "Filter users...",
+                placeholder: sag_module.tt('cc_reports_27'),
                 templateResult: function (user) {
                     return $(`<span>${user.text}</span>`);
                 },
@@ -87,7 +86,7 @@ sag_module.showProjectTable = function (includeExpired = false) {
 
             // SAGs filter
             const sagsSelect = $('#sagsSelectProject').select2({
-                placeholder: "Filter SAGs...",
+                placeholder: sag_module.tt('cc_reports_28'),
                 templateResult: function (sag) {
                     return $(`<span>${sag.text}</span>`);
                 },
@@ -98,7 +97,7 @@ sag_module.showProjectTable = function (includeExpired = false) {
 
             // Projects filter
             const projectsSelect = $('#projectsSelectProject').select2({
-                placeholder: "Filter projects...",
+                placeholder: sag_module.tt('cc_reports_29'),
                 templateResult: function (project) {
                     return $(`<span>${project.text}</span>`);
                 },
@@ -109,7 +108,7 @@ sag_module.showProjectTable = function (includeExpired = false) {
 
             // Rights filter
             const rightsSelect = $('#rightsSelectProject').select2({
-                placeholder: "Filter rights...",
+                placeholder: sag_module.tt('cc_reports_30'),
                 templateResult: function (right) {
                     return $(`<span>${right.text}</span>`);
                 }
@@ -181,7 +180,7 @@ sag_module.showProjectTable = function (includeExpired = false) {
         },
         buttons: [{
             extend: 'excelHtml5',
-            text: '<span style="font-size: .875rem;"><i class="fa-sharp fa-solid fa-file-excel fa-fw"></i>Export Excel</span>',
+            text: `<span style="font-size: .875rem;"><i class="fa-sharp fa-solid fa-file-excel fa-fw"></i>${sag_module.tt('cc_reports_31')}</span>`,
             exportOptions: {
                 columns: [5, 6, 1, 7, 8, 9, 10]
             },
@@ -192,7 +191,7 @@ sag_module.showProjectTable = function (includeExpired = false) {
         dom: 'lBftip',
 
         columns: [{
-            title: "Project",
+            title: sag_module.tt('cc_reports_17'),
             data: function (row, type, set, meta) {
                 const pid = row.project_id;
                 const projectUrl =
@@ -203,7 +202,7 @@ sag_module.showProjectTable = function (includeExpired = false) {
             width: '20%'
         },
         {
-            title: "Count of Users",
+            title: sag_module.tt('cc_reports_32'),
             data: function (row, type, set, meta) {
                 const users = row.users_with_bad_rights;
                 const usersString = JSON.stringify(users);
@@ -213,7 +212,7 @@ sag_module.showProjectTable = function (includeExpired = false) {
             width: '5%'
         },
         {
-            title: "Noncompliant Users",
+            title: sag_module.tt('cc_reports_19'),
             data: function (row, type, set, meta) {
                 const users = row.users_with_bad_rights ?? [];
                 return users.map(user => {
@@ -226,7 +225,7 @@ sag_module.showProjectTable = function (includeExpired = false) {
             width: '20%'
         },
         {
-            title: "Security Access Groups",
+            title: sag_module.tt('cc_reports_20'),
             data: function (row, type, set, meta) {
                 const sags = row.sags ?? [];
                 return sags.map(sag => {
@@ -236,7 +235,7 @@ sag_module.showProjectTable = function (includeExpired = false) {
             width: '20%'
         },
         {
-            title: "Noncompliant Rights",
+            title: sag_module.tt('cc_reports_21'),
             data: function (row, type, set, meta) {
                 if (type === 'display') {
                     return row.bad_rights.join('<br>');
@@ -246,17 +245,17 @@ sag_module.showProjectTable = function (includeExpired = false) {
             width: '35%'
         },
         {
-            title: "Project ID",
+            title: sag_module.tt('cc_reports_33'),
             data: "project_id",
             visible: false
         },
         {
-            title: "Project Title",
+            title: sag_module.tt('cc_reports_34'),
             data: "project_title",
             visible: false
         },
         {
-            title: "Noncompliant Users",
+            title: sag_module.tt('cc_reports_19'),
             data: function (row, type, set, meta) {
                 const users = row.users_with_bad_rights ?? [];
                 return users.map(user => user.username).join(", ");
@@ -264,7 +263,7 @@ sag_module.showProjectTable = function (includeExpired = false) {
             visible: false
         },
         {
-            title: "SAG IDs",
+            title: sag_module.tt('cc_reports_35'),
             data: function (row, type, set, meta) {
                 const sags = row.sags ?? [];
                 return sags.map(sag => sag.sag).join(", ");
@@ -272,7 +271,7 @@ sag_module.showProjectTable = function (includeExpired = false) {
             visible: false
         },
         {
-            title: "SAG Names",
+            title: sag_module.tt('cc_reports_36'),
             data: function (row, type, set, meta) {
                 const sags = row.sags ?? [];
                 return sags.map(sag => sag.sag_name).join(", ");
@@ -280,7 +279,7 @@ sag_module.showProjectTable = function (includeExpired = false) {
             visible: false
         },
         {
-            title: "Noncompliant Rights",
+            title: sag_module.tt('cc_reports_21'),
             data: function (row, type, set, meta) {
                 return row.bad_rights.join(', ');
             },
@@ -292,7 +291,7 @@ sag_module.showProjectTable = function (includeExpired = false) {
             "targets": "_all"
         }],
         language: {
-            searchPlaceholder: "Search...",
+            searchPlaceholder: sag_module.tt('cc_reports_37'),
             search: "",
         }
     });
@@ -302,11 +301,10 @@ sag_module.showProjectTable = function (includeExpired = false) {
 sag_module.showUserTable = function (includeExpired = false) {
     sag_module.clearTables();
     $('.tableWrapper').hide();
-    $('#userTableTitle').text('Users with Noncompliant Rights' + (includeExpired ? ' (including expired users)' :
-        ' (excluding expired users)'));
+    $('#userTableTitle').text(sag_module.tt('cc_reports_38') + ' ' + (includeExpired ? sag_module.tt('cc_reports_25') : sag_module.tt('cc_reports_26')));
     if ($('#userTableWrapper').is(':hidden')) {
         Swal.fire({
-            title: 'Loading...',
+            title: sag_module.tt('users_16'),
             didOpen: () => {
                 Swal.showLoading()
             }
@@ -332,7 +330,7 @@ sag_module.showUserTable = function (includeExpired = false) {
 
             // Users filter
             const usersSelect = $('#usersSelectUser').select2({
-                placeholder: "Filter users...",
+                placeholder: sag_module.tt('cc_reports_27'),
                 templateResult: function (user) {
                     return $(`<span>${user.text}</span>`);
                 },
@@ -343,7 +341,7 @@ sag_module.showUserTable = function (includeExpired = false) {
 
             // SAG filter
             const sagsSelect = $('#sagsSelectUser').select2({
-                placeholder: "Filter SAGs...",
+                placeholder: sag_module.tt('cc_reports_28'),
                 templateResult: function (sag) {
                     return $(`<span>${sag.text}</span>`);
                 },
@@ -353,7 +351,7 @@ sag_module.showUserTable = function (includeExpired = false) {
             });
             // Project filter
             const projectsSelect = $('#projectsSelectUser').select2({
-                placeholder: "Filter projects...",
+                placeholder: sag_module.tt('cc_reports_29'),
                 templateResult: function (pid) {
                     return $(`<span>${pid.text}</span>`);
                 },
@@ -363,7 +361,7 @@ sag_module.showUserTable = function (includeExpired = false) {
             });
             // Rights filter
             const rightsSelect = $('#rightsSelectUser').select2({
-                placeholder: "Filter rights...",
+                placeholder: sag_module.tt('cc_reports_30'),
                 templateResult: function (right) {
                     return $(`<span>${right.text}</span>`);
                 }
@@ -423,7 +421,7 @@ sag_module.showUserTable = function (includeExpired = false) {
         },
         buttons: [{
             extend: 'excelHtml5',
-            text: '<i class="fa-sharp fa-solid fa-file-excel"></i> Export Excel',
+            text: `<i class="fa-sharp fa-solid fa-file-excel"></i> ${sag_module.tt('cc_reports_31')}`,
             exportOptions: {
                 columns: [7, 1, 2, 11, 12, 4, 8, 9, 10]
             },
@@ -434,7 +432,7 @@ sag_module.showUserTable = function (includeExpired = false) {
         }],
         dom: 'lBfrtip',
         columns: [{
-            title: "User",
+            title: sag_module.tt('user'),
             data: function (row, type, set, meta) {
                 if (type === 'display') {
                     const url =
@@ -448,12 +446,12 @@ sag_module.showUserTable = function (includeExpired = false) {
             width: '15%'
         },
         {
-            title: "Name",
+            title: sag_module.tt('status_ui_60'),
             data: "name",
             visible: false
         },
         {
-            title: "Email",
+            title: sag_module.tt('status_ui_61'),
             data: function (row, type, set, meta) {
                 if (type === 'display') {
                     return '<a href="mailto:' + row.email + '">' + row.email +
@@ -464,14 +462,14 @@ sag_module.showUserTable = function (includeExpired = false) {
             visible: false
         },
         {
-            title: "Security Access Group",
+            title: sag_module.tt('status_ui_63'),
             data: function (row, type, set, meta) {
                 return `<strong>${row.sag_name}</strong><br><small>${row.sag}</small>`;
             },
             width: '20%'
         },
         {
-            title: "Count of Projects",
+            title: sag_module.tt('cc_reports_22'),
             data: function (row, type, set, meta) {
                 if (type === 'display') {
                     return row.projects.length;
@@ -482,7 +480,7 @@ sag_module.showUserTable = function (includeExpired = false) {
             width: '5%'
         },
         {
-            title: "Projects granting Noncompliant Rights to this User",
+            title: sag_module.tt('cc_reports_39'),
             data: function (row, type, set, meta) {
                 const projects = row.projects ?? [];
                 return projects.map(project => {
@@ -498,7 +496,7 @@ sag_module.showUserTable = function (includeExpired = false) {
             width: '25%'
         },
         {
-            title: 'Noncompliant Rights',
+            title: sag_module.tt('cc_reports_21'),
             data: function (row, type, set, meta) {
                 if (type === "display") {
                     return row.bad_rights.join('<br>');
@@ -508,12 +506,12 @@ sag_module.showUserTable = function (includeExpired = false) {
             width: '35%'
         },
         {
-            title: 'Username',
+            title: sag_module.tt('status_ui_59'),
             data: 'username',
             visible: false
         },
         {
-            title: "Projects granting Noncompliant Rights to this User",
+            title: sag_module.tt('cc_reports_39'),
             data: function (row, type, set, meta) {
                 const projects = row.projects ?? [];
                 return projects.map(project => project.project_id).join(", ");
@@ -521,7 +519,7 @@ sag_module.showUserTable = function (includeExpired = false) {
             visible: false
         },
         {
-            title: "Project Titles",
+            title: sag_module.tt('cc_reports_40'),
             data: function (row, type, set, meta) {
                 const projects = row.projects ?? [];
                 return projects.map(project => project.project_title).join(", ");
@@ -529,19 +527,19 @@ sag_module.showUserTable = function (includeExpired = false) {
             visible: false
         },
         {
-            title: 'Noncompliant Rights',
+            title: sag_module.tt('cc_reports_21'),
             data: function (row, type, set, meta) {
                 return row.bad_rights.join(', ');
             },
             visible: false
         },
         {
-            title: 'SAG',
+            title: sag_module.tt('sag'),
             data: 'sag',
             visible: false
         },
         {
-            title: 'SAG Name',
+            title: sag_module.tt('cc_user_11'),
             data: 'sag_name',
             visible: false
         }
@@ -552,11 +550,37 @@ sag_module.showUserTable = function (includeExpired = false) {
             "targets": "_all"
         }],
         language: {
-            searchPlaceholder: "Search...",
-            search: "",
+            search: "_INPUT_",
+            searchPlaceholder: sag_module.tt('dt_cc_reports_search_placeholder'),
+            infoFiltered: " - " + sag_module.tt('dt_cc_reports_info_filtered', '_MAX_'),
+            emptyTable: sag_module.tt('dt_cc_reports_empty_table'),
+            info: sag_module.tt('dt_cc_reports_info', { start: '_START_', end: '_END_', total: '_TOTAL_' }),
+            infoEmpty: sag_module.tt('dt_cc_reports_info_empty'),
+            lengthMenu: sag_module.tt('dt_cc_reports_length_menu', '_MENU_'),
+            loadingRecords: sag_module.tt('dt_cc_reports_loading_records'),
+            zeroRecords: sag_module.tt('dt_cc_reports_zero_records'),
+            select: {
+                rows: {
+                    _: sag_module.tt('dt_cc_reports_select_rows_other'),
+                    0: sag_module.tt('dt_cc_reports_select_rows_zero'),
+                    1: sag_module.tt('dt_cc_reports_select_rows_one')
+                }
+            },
+            paginate: {
+                first: sag_module.tt('dt_cc_reports_paginate_first'),
+                last: sag_module.tt('dt_cc_reports_paginate_last'),
+                next: sag_module.tt('dt_cc_reports_paginate_next'),
+                previous: sag_module.tt('dt_cc_reports_paginate_previous')
+            },
+            aria: {
+                sortAscending: sag_module.tt('dt_cc_reports_aria_sort_ascending'),
+                sortDescending: sag_module.tt('dt_cc_reports_aria_sort_descending')
+            }
         }
     });
 }
+
+// TODO: Stopped here!
 
 // Users and Projects Table
 sag_module.showUserAndProjectTable = function (includeExpired = false) {
