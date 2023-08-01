@@ -25,13 +25,13 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
 
 
 <h4 style='color:#900; margin: 0 0 10px;'>
-    <i class='fa-solid fa-users-between-lines'></i>&nbsp;<span>Security Access Groups</span>
+    <i class='fa-solid fa-users-between-lines'></i>&nbsp;<span>
+        <?= $module->framework->tt('module_name') ?>
+    </span>
 </h4>
-<p style='max-width:1000px; margin-bottom:0;font-size:14px;'>Security Access Groups (SAGs) are used to restrict which
-    user rights a REDCap user can be granted in a project. SAGs do not define the rights a user will have in a given
-    project; rather, they define the set of allowable rights the user is able to be granted. If a user is assigned to a
-    SAG that does not allow the Project Design right, then that user cannot have that user right granted in a project.
-    The Security Access Groups module must be enabled in a project for the SAG to have an effect.</p>
+<p style='max-width:1000px; margin-bottom:0;font-size:14px;'>
+    <?= $module->framework->tt('status_ui_44') ?>
+</p>
 <div class="SAG_Container" style="min-width: 900px;">
     <div id="sub-nav" class="mr-4 mb-0 ml-0" style="min-width: 900px;">
         <ul>
@@ -39,21 +39,21 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
                 <a href="<?= $module->framework->getUrl('system-settings-userlist.php') ?>"
                     style="font-size:13px;color:#393733;padding:7px 9px;">
                     <i class="fa-solid fa-users"></i>
-                    Users
+                    <?= $module->framework->tt('cc_user_1') ?>
                 </a>
             </li>
             <li class="active">
                 <a href="<?= $module->framework->getUrl('system-settings-sags.php') ?>"
                     style="font-size:13px;color:#393733;padding:7px 9px;">
                     <i class="fa-solid fa-user-tag"></i>
-                    Security Access Groups
+                    <?= $module->framework->tt('cc_user_2') ?>
                 </a>
             </li>
             <li>
                 <a href="<?= $module->framework->getUrl('system-reports.php') ?>"
                     style="font-size:13px;color:#393733;padding:7px 9px;">
                     <i class="fa-solid fa-memo"></i>
-                    Reports
+                    <?= $module->framework->tt('cc_user_3') ?>
                 </a>
             </li>
         </ul>
@@ -69,8 +69,10 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
 
     $sagsHtml = file_get_contents($module->framework->getSafePath('html/system-settings-sags.html'));
     $sagsHtml = str_replace('{{HEADERS}}', $headers, $sagsHtml);
+    $sagsHtml = $module->replaceAllTranslations($sagsHtml);
     echo $sagsHtml;
     echo $module->framework->initializeJavascriptModuleObject();
+    $module->framework->tt_transferToJavascriptModuleObject();
 
     $js = file_get_contents($module->framework->getSafePath('js/system-settings-sags.js'));
     $js = str_replace('{{USER_RIGHTS_ERROR_MESSAGE}}', $lang['rights_358'], $js);
