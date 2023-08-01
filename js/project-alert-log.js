@@ -9,7 +9,8 @@ sag_module.uniqueArray = function (a) {
 
 sag_module.openAlertPreview = function (alert_id) {
     Swal.fire({
-        title: 'Loading...',
+        title: sag_module.tt('alerts_16'),
+        confirmButtonText: sag_module.tt('ok'),
         didOpen: () => {
             Swal.showLoading()
         }
@@ -22,7 +23,8 @@ sag_module.openAlertPreview = function (alert_id) {
         })
         .catch(function (data) {
             Swal.fire({
-                title: 'There was an error loading the alert preview.',
+                title: sag_module.tt('alerts_17'),
+                confirmButtonText: sag_module.tt('ok'),
                 icon: 'error'
             });
         });
@@ -30,19 +32,19 @@ sag_module.openAlertPreview = function (alert_id) {
 
 sag_module.createAlertPreviewModal = function (data) {
     $('#alertPreviewModal .modal-body').html(data.table);
-    let title = 'Alert Preview - ';
+    let title = sag_module.tt('alerts_15') + ' - ';
     if (data.alertType === "users") {
         $('#alertPreviewModal .modal-header')[0].classList = 'modal-header bg-primary text-light';
-        title += 'User Alert';
+        title += sag_module.tt('alerts_18');
     } else if (data.alertType === "userRightsHolders") {
         $('#alertPreviewModal .modal-header')[0].classList = 'modal-header bg-warning text-body';
-        title += 'User Rights Holder Alert';
+        title += sag_module.tt('alerts_19');
     } else if (data.alertType === "expiration") {
         $('#alertPreviewModal .modal-header')[0].classList = 'modal-header bg-danger text-light';
-        title += 'User Expiration Alert';
+        title += sag_module.tt('alerts_20');
     }
     if (data.reminder) {
-        title += " (Reminder)";
+        title += sag_module.tt('alerts_21');
         $('#alertPreviewModal .modal-body')[0].classList = 'modal-body bg-reminder';
     } else {
         $('#alertPreviewModal .modal-body')[0].classList = 'modal-body';
@@ -53,11 +55,12 @@ sag_module.createAlertPreviewModal = function (data) {
 
 sag_module.deleteAlert = function (alert_id) {
     Swal.fire({
-        title: 'Are you sure?',
-        text: "You are about to delete this alert. This action cannot be undone.",
+        title: sag_module.tt('alerts_22'),
+        text: sag_module.tt('alerts_23'),
         icon: 'warning',
         showCancelButton: true,
-        confirmButtonText: 'Delete Alert',
+        confirmButtonText: sag_module.tt('alerts_24'),
+        cancelButtonText: sag_module.tt('cancel'),
         customClass: {
             confirmButton: 'btn btn-danger m-1',
             cancelButton: 'btn btn-secondary m-1'
@@ -72,22 +75,24 @@ sag_module.deleteAlert = function (alert_id) {
                         if (data) {
                             Toast.fire({
                                 icon: 'success',
-                                title: 'Alert deleted successfully.'
+                                title: sag_module.tt('alerts_25')
                             });
                             $('#alertLogTable').DataTable().ajax.reload();
                         } else {
                             Swal.fire({
-                                title: 'There was an error deleting the alert.',
+                                title: sag_module.tt('alerts_26'),
                                 html: data.message,
-                                icon: 'error'
+                                icon: 'error',
+                                confirmButtonText: sag_module.tt('ok')
                             })
                         }
                     })
                     .catch(function (data) {
                         Swal.fire({
-                            title: 'There was an error deleting the alert.',
+                            title: sag_module.tt('alerts_26'),
                             html: data.responseText,
-                            icon: 'error'
+                            icon: 'error',
+                            confirmButtonText: sag_module.tt('ok')
                         })
                     });
             }
@@ -211,11 +216,11 @@ $(document).ready(function () {
                             `<span class="fa-stack fa-sm default-cursor" ` +
                             `style="width: 1.15em; height: 1.15em; vertical-align: top;">` +
                             `<i class='fa-solid fa-circle-exclamation fa-stack-1x' ` +
-                            `title="Error sending reminder"></i></span>` :
+                            `title="${sag_module.tt('alerts_27')}"></i></span>` :
                             `<span class="fa-stack fa-sm default-cursor" ` +
                             `style="width: 1.15em; height: 1.15em; vertical-align: top;">` +
                             `<i class='fa-sharp fa-solid fa-check-circle fa-stack-1x' ` +
-                            `title="Reminder sent"></i></span>`;
+                            `title="${sag_module.tt('alerts_28')}"></i></span>`;
                     } else {
                         const sent = moment.now() > (row.sendTime * 1000);
                         color = sent ? "text-success" : "text-secondary";
@@ -225,18 +230,18 @@ $(document).ready(function () {
                         icon = sent ?
                             `<span class="fa-stack fa-sm default-cursor" ` +
                             `style="width: 1.15em; height: 1.15em; vertical-align: top;">` +
-                            `<i class='fa-sharp fa-solid fa-check-circle fa-stack-1x' title="Alert sent"></i>` +
+                            `<i class='fa-sharp fa-solid fa-check-circle fa-stack-1x' title="${sag_module.tt('alerts_29')}"></i>` +
                             `</span>` :
                             `<span class="fa-stack fa-sm default-cursor" ` +
                             `style="width: 1.15em; height: 1.15em; vertical-align: top; opacity: 0.5;" ` +
-                            `title="Reminder scheduled">` +
+                            `title="${sag_module.tt('alerts_30')}">` +
                             `<i class="fa-duotone fa-clock-three fa-stack-1x text-dark" ` +
                             `style="${style}"></i>` +
                             `<i class="fa-regular fa-circle fa-stack-1x text-dark"></i></span>`;
                         deleteButton = sent ? "" :
                             `<a class='deleteAlertButton' href='javascript:;' ` +
                             `onclick='sag_module.deleteAlert(${row.id});'>` +
-                            `<i class='fa-solid fa-xmark text-danger' title="Delete alert"></i></a>`;
+                            `<i class='fa-solid fa-xmark text-danger' title="${sag_module.tt('alerts_31')}"></i></a>`;
                     }
                     const formattedDate = moment(row.sendTime * 1000).format(
                         'MM/DD/YYYY hh:mm A');
@@ -254,15 +259,15 @@ $(document).ready(function () {
                     if (row.alertType === 'users') {
                         result =
                             `<span class="badge-primary text-light badge-pill py-1 px-2 default-cursor">` +
-                            `User</span>`;
+                            `${sag_module.tt('user')}</span>`;
                     } else if (row.alertType === 'userRightsHolders') {
                         result =
                             `<span class="badge-warning text-body badge-pill py-1 px-2 default-cursor">` +
-                            `User Rights Holder</span>`;
+                            `${sag_module.tt('alerts_6')}</span>`;
                     } else if (row.alertType === 'expiration') {
                         result =
                             `<span class="badge-danger text-light badge-pill py-1 px-2 default-cursor">` +
-                            `Expiration</span>`;
+                            `${sag_module.tt('status_ui_62')}</span>`;
                     }
 
                     return result;
@@ -277,7 +282,7 @@ $(document).ready(function () {
                 if (type === 'display') {
                     return row.reminder ?
                         `<span class="badge badge-pill bg-reminder border font-weight-normal default-cursor text-dark">` +
-                        `Reminder</span>` :
+                        `${sag_module.tt('status_ui_24')}</span>` :
                         '';
                 } else if (type === 'filter') {
                     return row.reminder ? 'Reminder' : '';
@@ -293,7 +298,7 @@ $(document).ready(function () {
                 } else {
                     return `<button class='btn btn-xs btn-outline-info' ` +
                         `onclick='sag_module.openAlertPreview("${row.id}");'>` +
-                        `<i class="fa-solid fa-envelope"></i> View</button>`;
+                        `<i class="fa-solid fa-envelope"></i> ${sag_module.tt('alerts_32')}</button>`;
                 }
             }
         },
@@ -368,7 +373,7 @@ $(document).ready(function () {
             const users = sag_module.uniqueArray(usersAll.flatten());
             const usersSelect = $('#usersSelect').select2({
                 minimumResultsForSearch: 20,
-                placeholder: "Filter users",
+                placeholder: sag_module.tt('alerts_33'),
                 allowClear: false,
                 templateResult: function (user) {
                     return $(`<span>${user.text}</span>`);
@@ -389,7 +394,7 @@ $(document).ready(function () {
             const recipients = sag_module.uniqueArray(recipientsAll);
             const recipientSelect = $('#recipientSelect').select2({
                 minimumResultsForSearch: 20,
-                placeholder: "Filter recipients",
+                placeholder: sag_module.tt('alerts_34'),
                 allowClear: false,
                 templateResult: function (recipient) {
                     return $(`<span>${recipient.text}</span>`);
@@ -412,7 +417,7 @@ $(document).ready(function () {
 
             const alertTypeSelect = $('#alertTypeSelect').select2({
                 minimumResultsForSearch: 20,
-                placeholder: "Filter alert types",
+                placeholder: sag_module.tt('alerts_35'),
                 allowClear: false
             });
             alertTypeSelect.on('change', function () {
@@ -421,7 +426,7 @@ $(document).ready(function () {
 
             const notificationTypeSelect = $('#notificationTypeSelect').select2({
                 minimumResultsForSearch: 20,
-                placeholder: "Filter notification types",
+                placeholder: sag_module.tt('alerts_36'),
                 allowClear: false
             });
             notificationTypeSelect.on('change', function () {
@@ -435,18 +440,35 @@ $(document).ready(function () {
         },
         lengthMenu: [
             [10, 25, 50, 100, -1],
-            [10, 25, 50, 100, "All"]
+            [10, 25, 50, 100, sag_module.tt('alerts_37')]
         ],
         language: {
             search: "_INPUT_",
-            searchPlaceholder: "Search Alerts...",
-            infoFiltered: " - filtered from _MAX_ total alerts",
-            emptyTable: "No alerts found in this project",
-            info: "Showing _START_ to _END_ of _TOTAL_ alerts",
-            infoEmpty: "Showing 0 to 0 of 0 alerts",
-            lengthMenu: "Show _MENU_ alerts",
-            loadingRecords: "Loading...",
-            zeroRecords: "No matching alerts found"
+            searchPlaceholder: sag_module.tt('dt_alerts_search_placeholder'),
+            infoFiltered: " - " + sag_module.tt('dt_alerts_info_filtered', '_MAX_'),
+            emptyTable: sag_module.tt('dt_alerts_empty_table'),
+            info: sag_module.tt('dt_alerts_info', { start: '_START_', end: '_END_', total: '_TOTAL_' }),
+            infoEmpty: sag_module.tt('dt_alerts_info_empty'),
+            lengthMenu: sag_module.tt('dt_alerts_length_menu', '_MENU_'),
+            loadingRecords: sag_module.tt('dt_alerts_loading_records'),
+            zeroRecords: sag_module.tt('dt_alerts_zero_records'),
+            select: {
+                rows: {
+                    _: sag_module.tt('dt_alerts_select_rows_other'),
+                    0: sag_module.tt('dt_alerts_select_rows_zero'),
+                    1: sag_module.tt('dt_alerts_select_rows_one')
+                }
+            },
+            paginate: {
+                first: sag_module.tt('dt_alerts_paginate_first'),
+                last: sag_module.tt('dt_alerts_paginate_last'),
+                next: sag_module.tt('dt_alerts_paginate_next'),
+                previous: sag_module.tt('dt_alerts_paginate_previous')
+            },
+            aria: {
+                sortAscending: sag_module.tt('dt_alerts_aria_sort_ascending'),
+                sortDescending: sag_module.tt('dt_alerts_aria_sort_descending')
+            }
         }
     });
 });

@@ -61,6 +61,7 @@ class Alerts
         $html = file_get_contents($this->module->framework->getSafePath('html/userEmailModal.html'));
         $html = str_replace('{{EMAIL_OPTIONS}}', $this->getEmailOptions(), $html);
         $html = str_replace('{{PLACEHOLDERS}}', $this->getPlaceholdersText('user'), $html);
+        $html = $this->module->replaceAllTranslations($html);
         echo $html;
     }
 
@@ -71,6 +72,7 @@ class Alerts
         $html = str_replace('{{EMAIL_OPTIONS}}', $this->getEmailOptions(), $html);
         $html = str_replace('{{PLACEHOLDERS}}', $this->getPlaceholdersText('userRightsHolders'), $html);
         $html = str_replace('{{USER_RIGHTS_HOLDERS}}', $this->getUserRightsHoldersText(), $html);
+        $html = $this->module->replaceAllTranslations($html);
         echo $html;
     }
 
@@ -82,6 +84,7 @@ class Alerts
         $html = str_replace('{{PLACEHOLDERS_USERS}}', $this->getPlaceholdersText('user', true), $html);
         $html = str_replace('{{PLACEHOLDERS_USER_RIGHTS_HOLDERS}}', $this->getPlaceholdersText('userRightsHolders', true), $html);
         $html = str_replace('{{USER_RIGHTS_HOLDERS}}', $this->getUserRightsHoldersText(), $html);
+        $html = $this->module->replaceAllTranslations($html);
         echo $html;
     }
 
@@ -97,7 +100,7 @@ class Alerts
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
-                    data-dismiss="modal">Close</button>
+                    data-dismiss="modal"><?=$this->module->framework->tt('cancel')?></button>
             </div>
         </div>
     </div>

@@ -158,7 +158,7 @@ class RightsUtilities
             $rights['random_setup']                    = $lang['app_21'] . ' - ' . $lang['rights_142'];
             $rights['random_dashboard']                = $lang['app_21'] . ' - ' . $lang['rights_143'];
             $rights['random_perform']                  = $lang['app_21'] . ' - ' . $lang['rights_144'];
-            $rights['data_quality_resolution_view']    = $lang['app_20'] . ' Resolution - View Queries';
+            $rights['data_quality_resolution_view']    = $lang['dataqueries_140'];
             $rights['data_quality_resolution_open']    = $lang['dataqueries_137'] . ' - ' . $lang['messaging_175'];
             $rights['data_quality_resolution_respond'] = $lang['dataqueries_137'] . ' - ' . $lang['dataqueries_152'];
             $rights['data_quality_resolution_close']   = $lang['dataqueries_137'] . ' - ' . $lang['bottom_90'];

@@ -547,4 +547,15 @@ class SecurityAccessGroups extends AbstractExternalModule
         }
         return $allResults;
     }
+
+    // Translation Utilities
+    public function replaceAllTranslations(string $textToTranslate) : string
+    {
+        $fields = parse_ini_file($this->framework->getSafePath('lang/English.ini'));
+        foreach ( $fields as $key => $value ) {
+            $replacementText = $this->framework->tt($key);
+            $textToTranslate = str_replace('{{' . $key . '}}', $replacementText, $textToTranslate);
+        }
+        return $textToTranslate;
+    }
 }
