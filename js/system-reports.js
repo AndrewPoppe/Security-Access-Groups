@@ -291,8 +291,32 @@ sag_module.showProjectTable = function (includeExpired = false) {
             "targets": "_all"
         }],
         language: {
-            searchPlaceholder: sag_module.tt('cc_reports_37'),
-            search: "",
+            search: "_INPUT_",
+            searchPlaceholder: sag_module.tt('dt_cc_reports_search_placeholder'),
+            infoFiltered: " - " + sag_module.tt('dt_cc_reports_info_filtered', '_MAX_'),
+            emptyTable: sag_module.tt('dt_cc_reports_empty_table'),
+            info: sag_module.tt('dt_cc_reports_info', { start: '_START_', end: '_END_', total: '_TOTAL_' }),
+            infoEmpty: sag_module.tt('dt_cc_reports_info_empty'),
+            lengthMenu: sag_module.tt('dt_cc_reports_length_menu', '_MENU_'),
+            loadingRecords: sag_module.tt('dt_cc_reports_loading_records'),
+            zeroRecords: sag_module.tt('dt_cc_reports_zero_records'),
+            select: {
+                rows: {
+                    _: sag_module.tt('dt_cc_reports_select_rows_other'),
+                    0: sag_module.tt('dt_cc_reports_select_rows_zero'),
+                    1: sag_module.tt('dt_cc_reports_select_rows_one')
+                }
+            },
+            paginate: {
+                first: sag_module.tt('dt_cc_reports_paginate_first'),
+                last: sag_module.tt('dt_cc_reports_paginate_last'),
+                next: sag_module.tt('dt_cc_reports_paginate_next'),
+                previous: sag_module.tt('dt_cc_reports_paginate_previous')
+            },
+            aria: {
+                sortAscending: sag_module.tt('dt_cc_reports_aria_sort_ascending'),
+                sortDescending: sag_module.tt('dt_cc_reports_aria_sort_descending')
+            }
         }
     });
 }
@@ -580,18 +604,14 @@ sag_module.showUserTable = function (includeExpired = false) {
     });
 }
 
-// TODO: Stopped here!
-
 // Users and Projects Table
 sag_module.showUserAndProjectTable = function (includeExpired = false) {
     sag_module.clearTables();
     $('.tableWrapper').hide();
-    $('#allTableTitle').text('Users and Projects with Noncompliant Rights' + (includeExpired ?
-        ' (including expired users)' :
-        ' (excluding expired users)'));
+    $('#allTableTitle').text(sag_module.tt('cc_reports_42') + ' ' + (includeExpired ? sag_module.tt('cc_reports_25') : sag_module.tt('cc_reports_26')));
     if ($('#allTableWrapper').is(':hidden')) {
         Swal.fire({
-            title: 'Loading...',
+            title: sag_module.tt('users_16'),
             didOpen: () => {
                 Swal.showLoading()
             }
@@ -617,7 +637,7 @@ sag_module.showUserAndProjectTable = function (includeExpired = false) {
 
             // Users filter
             const usersSelect = $('#usersSelectAll').select2({
-                placeholder: "Filter users...",
+                placeholder: sag_module.tt('cc_reports_27'),
                 templateResult: function (user) {
                     return $(`<span>${user.text}</span>`);
                 },
@@ -628,7 +648,7 @@ sag_module.showUserAndProjectTable = function (includeExpired = false) {
 
             // SAG filter
             const sagsSelect = $('#sagsSelectAll').select2({
-                placeholder: "Filter SAGs...",
+                placeholder: sag_module.tt('cc_reports_28'),
                 templateResult: function (sag) {
                     return $(`<span>${sag.text}</span>`);
                 },
@@ -639,7 +659,7 @@ sag_module.showUserAndProjectTable = function (includeExpired = false) {
 
             // Project filter
             const projectsSelect = $('#projectsSelectAll').select2({
-                placeholder: "Filter projects...",
+                placeholder: sag_module.tt('cc_reports_29'),
                 templateResult: function (pid) {
                     return $(`<span>${pid.text}</span>`);
                 },
@@ -650,7 +670,7 @@ sag_module.showUserAndProjectTable = function (includeExpired = false) {
 
             // Rights filter
             const rightsSelect = $('#rightsSelectAll').select2({
-                placeholder: "Filter rights...",
+                placeholder: sag_module.tt('cc_reports_30'),
                 templateResult: function (right) {
                     return $(`<span>${right.text}</span>`);
                 }
@@ -708,7 +728,7 @@ sag_module.showUserAndProjectTable = function (includeExpired = false) {
         },
         buttons: [{
             extend: 'excelHtml5',
-            text: '<i class="fa-sharp fa-solid fa-file-excel"></i> Export Excel',
+            text: `<i class="fa-sharp fa-solid fa-file-excel"></i> ${sag_module.tt('cc_reports_31')}`,
             exportOptions: {
                 columns: [6, 1, 2, 10, 11, 7, 8, 9]
             },
@@ -720,7 +740,7 @@ sag_module.showUserAndProjectTable = function (includeExpired = false) {
         }],
         dom: 'lBfrtip',
         columns: [{
-            title: "User",
+            title: sag_module.tt('user'),
             data: function (row, type, set, meta) {
                 if (type === 'display') {
                     const url =
@@ -734,12 +754,12 @@ sag_module.showUserAndProjectTable = function (includeExpired = false) {
             width: '20%'
         },
         {
-            title: "Name",
+            title: sag_module.tt('status_ui_60'),
             data: "name",
             visible: false
         },
         {
-            title: "Email",
+            title: sag_module.tt('status_ui_61'),
             data: function (row, type, set, meta) {
                 if (type === 'display') {
                     return '<a href="mailto:' + row.email + '">' + row.email +
@@ -750,14 +770,14 @@ sag_module.showUserAndProjectTable = function (includeExpired = false) {
             visible: false
         },
         {
-            title: "Security Access Group",
+            title: sag_module.tt('status_ui_63'),
             data: function (row, type, set, meta) {
                 return `<strong>${row.sag_name}</strong><br><small>${row.sag}</small>`;
             },
             width: '20%'
         },
         {
-            title: "Project granting Noncompliant Rights to this User",
+            title: sag_module.tt('cc_reports_41'),
             data: function (row, type, set, meta) {
                 const pid = row.project_id;
                 const projectUrl =
@@ -768,7 +788,7 @@ sag_module.showUserAndProjectTable = function (includeExpired = false) {
             width: '20%'
         },
         {
-            title: 'Noncompliant Rights',
+            title: sag_module.tt('cc_reports_21'),
             data: function (row, type, set, meta) {
                 if (type === "display") {
                     return row.bad_rights.join('<br>');
@@ -778,34 +798,34 @@ sag_module.showUserAndProjectTable = function (includeExpired = false) {
             width: '40%'
         },
         {
-            title: 'Username',
+            title: sag_module.tt('status_ui_59'),
             data: 'username',
             visible: false
         },
         {
-            title: "Project ID",
+            title: sag_module.tt('cc_reports_33'),
             data: 'project_id',
             visible: false
         },
         {
-            title: "Project Title",
+            title: sag_module.tt('cc_reports_34'),
             data: 'project_title',
             visible: false
         },
         {
-            title: 'Noncompliant Rights',
+            title: sag_module.tt('cc_reports_21'),
             data: function (row, type, set, meta) {
                 return row.bad_rights.join(', ');
             },
             visible: false
         },
         {
-            title: 'SAG',
+            title: sag_module.tt('sag'),
             data: 'sag',
             visible: false
         },
         {
-            title: 'SAG Name',
+            title: sag_module.tt('cc_user_11'),
             data: 'sag_name',
             visible: false
         }
@@ -815,8 +835,32 @@ sag_module.showUserAndProjectTable = function (includeExpired = false) {
             "targets": "_all"
         }],
         language: {
-            searchPlaceholder: "Search...",
-            search: "",
+            search: "_INPUT_",
+            searchPlaceholder: sag_module.tt('dt_cc_reports_search_placeholder'),
+            infoFiltered: " - " + sag_module.tt('dt_cc_reports_info_filtered', '_MAX_'),
+            emptyTable: sag_module.tt('dt_cc_reports_empty_table'),
+            info: sag_module.tt('dt_cc_reports_info', { start: '_START_', end: '_END_', total: '_TOTAL_' }),
+            infoEmpty: sag_module.tt('dt_cc_reports_info_empty'),
+            lengthMenu: sag_module.tt('dt_cc_reports_length_menu', '_MENU_'),
+            loadingRecords: sag_module.tt('dt_cc_reports_loading_records'),
+            zeroRecords: sag_module.tt('dt_cc_reports_zero_records'),
+            select: {
+                rows: {
+                    _: sag_module.tt('dt_cc_reports_select_rows_other'),
+                    0: sag_module.tt('dt_cc_reports_select_rows_zero'),
+                    1: sag_module.tt('dt_cc_reports_select_rows_one')
+                }
+            },
+            paginate: {
+                first: sag_module.tt('dt_cc_reports_paginate_first'),
+                last: sag_module.tt('dt_cc_reports_paginate_last'),
+                next: sag_module.tt('dt_cc_reports_paginate_next'),
+                previous: sag_module.tt('dt_cc_reports_paginate_previous')
+            },
+            aria: {
+                sortAscending: sag_module.tt('dt_cc_reports_aria_sort_ascending'),
+                sortDescending: sag_module.tt('dt_cc_reports_aria_sort_descending')
+            }
         }
     });
 }
