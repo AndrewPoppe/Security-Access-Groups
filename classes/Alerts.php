@@ -100,7 +100,7 @@ class Alerts
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
-                    data-dismiss="modal"><?=$this->module->framework->tt('cancel')?></button>
+                    data-dismiss="modal"><?= $this->module->framework->tt('cancel') ?></button>
             </div>
         </div>
     </div>
@@ -111,18 +111,17 @@ class Alerts
     public function getPlaceholdersUserRightsHolders($expiration = false) : array
     {
         $placeholders = [
-            'sag-users'            => 'A formatted list of usernames',
-            'sag-user-fullnames'   => 'A formatted list of users\' full names',
-            'sag-user-emails'      => 'A formatted list of user emails',
-            'sag-user-sags'        => 'A formatted list of users\' current security access groups',
-            'sag-users-table'      => 'A formatted table of usernames, full names, email addresses, and SAGs',
-            'sag-users-table-full' =>
-            'A formatted table of usernames, full names, email addresses, SAGs, and non-compliant rights',
-            'sag-project-title'    => 'The title of the project',
+            'sag-users'            => $this->module->framework->tt('placeholder_1'),
+            'sag-user-fullnames'   => $this->module->framework->tt('placeholder_2'),
+            'sag-user-emails'      => $this->module->framework->tt('placeholder_3'),
+            'sag-user-sags'        => $this->module->framework->tt('placeholder_4'),
+            'sag-users-table'      => $this->module->framework->tt('placeholder_5'),
+            'sag-users-table-full' => $this->module->framework->tt('placeholder_6'),
+            'sag-project-title'    => $this->module->framework->tt('placeholder_7'),
         ];
 
         if ( $expiration ) {
-            $placeholders['sag-expiration-date'] = 'The date the users will be expired from the project';
+            $placeholders['sag-expiration-date'] = $this->module->framework->tt('placeholder_13');
         }
 
         return $placeholders;
@@ -131,17 +130,16 @@ class Alerts
     public function getPlaceholdersUsers($expiration = false) : array
     {
         $placeholders = [
-            'sag-user'          => 'The user\'s username',
-            'sag-user-fullname' => 'The user\'s full name',
-            'sag-user-email'    => 'The user\'s email address',
-            'sag-user-sag'      => 'The user\'s current security access group',
-            'sag-rights'        => '<span>A formatted list of the rights that do not</span>' .
-            '<br><span>conform with the user\'s security access group.</span>',
-            'sag-project-title' => 'The title of the project',
+            'sag-user'          => $this->module->framework->tt('placeholder_8'),
+            'sag-user-fullname' => $this->module->framework->tt('placeholder_9'),
+            'sag-user-email'    => $this->module->framework->tt('placeholder_10'),
+            'sag-user-sag'      => $this->module->framework->tt('placeholder_11'),
+            'sag-rights'        => $this->module->framework->tt('placeholder_12'),
+            'sag-project-title' => $this->module->framework->tt('placeholder_7'),
         ];
 
         if ( $expiration ) {
-            $placeholders['sag-expiration-date'] = 'The date the user will be expired from the project';
+            $placeholders['sag-expiration-date'] = $this->module->framework->tt('placeholder_13');
         }
 
         return $placeholders;
@@ -229,7 +227,7 @@ class Alerts
 
     private function getUserRemindersToSend($projectId) : array
     {
-        $sql             = 'SELECT log_id,
+        $sql = 'SELECT log_id,
         user,
         users,
          alertType,
@@ -244,6 +242,7 @@ class Alerts
         AND status = \'scheduled\'
         AND reminderDate < ?
         AND project_id = ?';
+
         $params          = [ time(), $projectId ];
         $result          = $this->module->queryLogs($sql, $params);
         $remindersToSend = [];
@@ -390,7 +389,7 @@ class Alerts
             $sql    = 'log_id = ?';
             $result = $this->module->framework->removeLogs($sql, [ $alertId ]);
             if ( !$result ) {
-                throw new \Error('Error deleting alert');
+                throw new SAGException($this->module->framework->tt('alerts_26'));
             }
             $this->module->framework->log('Alert deleted', [ 'alertId' => $alertId ]);
             return $result;
