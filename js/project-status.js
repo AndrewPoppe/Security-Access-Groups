@@ -124,6 +124,7 @@ sag_module.expireUsers = async function () {
                 title: sag_module.tt('error_2'),
                 html: error.responseText,
                 icon: 'error',
+                confirmButtonText: sag_module.tt('ok'),
                 customClass: {
                     confirmButton: 'btn btn-primary',
                 },
@@ -1115,7 +1116,7 @@ $(document).ready(function () {
         },
         lengthMenu: [
             [10, 25, 50, 100, -1],
-            [10, 25, 50, 100, sag_module.tt('users_37')]
+            [10, 25, 50, 100, sag_module.tt('alerts_37')]
         ],
         language: {
             search: "_INPUT_",

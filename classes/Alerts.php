@@ -375,10 +375,10 @@ class Alerts
     {
         $endRow = '</td></tr>';
         $table  = '<table aria-label=\'alerts\' class=\'table bg-white\' style=\'border:1px solid #dee2e6\'>';
-        $table .= '<tr><th>From:</th><td>' . \REDCap::filterHtml($alert['from']) . $endRow;
-        $table .= '<tr><th>To:</th><td>' . \REDCap::filterHtml($alert['to']) . $endRow;
-        $table .= '<tr><th>Subject:</th><td>' . \REDCap::filterHtml($alert['subject']) . $endRow;
-        $table .= '<tr><th>Message:</th><td>' . \REDCap::filterHtml($alert['body']) . $endRow;
+        $table .= '<tr><th>' . $this->module->framework->tt('status_ui_77') . '</th><td>' . \REDCap::filterHtml($alert['from']) . $endRow;
+        $table .= '<tr><th>' . $this->module->framework->tt('status_ui_109') . '</th><td>' . \REDCap::filterHtml($alert['to']) . $endRow;
+        $table .= '<tr><th>' . $this->module->framework->tt('status_ui_79') . '</th><td>' . \REDCap::filterHtml($alert['subject']) . $endRow;
+        $table .= '<tr><th>' . $this->module->framework->tt('status_ui_110') . '</th><td>' . \REDCap::filterHtml($alert['body']) . $endRow;
         $table .= '</table>';
         return $table;
     }

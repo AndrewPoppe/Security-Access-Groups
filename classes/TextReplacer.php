@@ -201,7 +201,13 @@ class TextReplacer
             return "<a href='mailto:$email'>$email</a>";
         }, $emails);
         $sags      = $this->data['sag_sags'] ?? [];
-        $table     = "<table class='sag_users' style='border: 1px solid #666; border-collapse: collapse; width: 100%;'><thead><tr><th style='text-align: left;padding: 8px;border: 1px solid #666;background-color: #f2f2f2;'>Name</th><th style='text-align: left;padding: 8px;border: 1px solid #666;background-color: #f2f2f2;'>REDCap Username</th><th style='text-align: left;padding: 8px;border: 1px solid #666;background-color: #f2f2f2;'>Email Address</th><th style='text-align: left;padding: 8px;border: 1px solid #666;background-color: #f2f2f2;'>Current SAG</th></tr></thead><tbody>";
+        $thStyle   = "style='text-align: left;padding: 8px;border: 1px solid #666;background-color: #f2f2f2;'";
+        $table     = "<table class='sag_users' style='border: 1px solid #666; border-collapse: collapse; width: 100%;'><thead><tr>" .
+            "<th " . $thStyle . ">" . $this->module->framework->tt('status_ui_60') . "</th>" .
+            "<th " . $thStyle . ">" . $this->module->framework->tt('status_ui_97') . "</th>" .
+            "<th " . $thStyle . ">" . $this->module->framework->tt('status_ui_107') . "</th>" .
+            "<th " . $thStyle . ">" . $this->module->framework->tt('status_ui_108') . "</th>" .
+            "</tr></thead><tbody>";
         foreach ( $users as $index => $username ) {
             $bg          = $index % 2 == 0 ? 'transparent' : '#f2f2f2';
             $fullname    = $fullnames[$index] ?? '';
@@ -230,8 +236,14 @@ class TextReplacer
         }, $emails);
         $sags      = $this->data['sag_sags'] ?? [];
         $rights    = $this->data['sag_rights'] ?? [];
-
-        $table = "<table class='sag_users' style='border: 1px solid #666; border-collapse: collapse; width: 100%;'><thead><tr><th style='text-align: left;padding: 8px;border: 1px solid #666;background-color: #f2f2f2;'>Name</th><th style='text-align: left;padding: 8px;border: 1px solid #666;background-color: #f2f2f2;'>REDCap Username</th><th style='text-align: left;padding: 8px;border: 1px solid #666;background-color: #f2f2f2;'>Email Address</th><th style='text-align: left;padding: 8px;border: 1px solid #666;background-color: #f2f2f2;'>Current SAG</th><th style='text-align: left;padding: 8px;border: 1px solid #666;background-color: #f2f2f2;'>Noncompliant Rights</th></tr></thead><tbody>";
+        $thStyle   = "style='text-align: left;padding: 8px;border: 1px solid #666;background-color: #f2f2f2;'";
+        $table     = "<table class='sag_users' style='border: 1px solid #666; border-collapse: collapse; width: 100%;'><thead><tr>" .
+            "<th " . $thStyle . ">" . $this->module->framework->tt('status_ui_60') . "</th>" .
+            "<th " . $thStyle . ">" . $this->module->framework->tt('status_ui_97') . "</th>" .
+            "<th " . $thStyle . ">" . $this->module->framework->tt('status_ui_107') . "</th>" .
+            "<th " . $thStyle . ">" . $this->module->framework->tt('status_ui_108') . "</th>" .
+            "<th " . $thStyle . ">" . $this->module->framework->tt('cc_reports_21') . "</th>" .
+            "</tr></thead><tbody>";
         foreach ( $users as $index => $username ) {
             $bg          = $index % 2 == 0 ? 'transparent' : '#f2f2f2';
             $fullname    = $fullnames[$index] ?? '';

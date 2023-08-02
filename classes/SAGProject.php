@@ -210,7 +210,7 @@ class SAGProject
                 $enabledGlobal = true;
             }
         }
-        // If surveys are disabled at the system level, it doesn't matter what the project setting is
+        // If CDP/DDP is disabled at the system level, it doesn't matter what the project setting is
         if ( !$enabledGlobal ) {
             return false;
         }
@@ -237,7 +237,7 @@ class SAGProject
     {
         $systemSql    = 'SELECT value FROM redcap_config WHERE field_name = "mycap_enabled_global"';
         $systemResult = $this->module->framework->query($systemSql, []);
-        // If surveys are disabled at the system level, it doesn't matter what the project setting is
+        // If MyCap is disabled at the system level, it doesn't matter what the project setting is
         if ( $systemResult->fetch_assoc()['value'] == 0 ) {
             return false;
         }
@@ -250,7 +250,7 @@ class SAGProject
     {
         $systemSql    = 'SELECT value FROM redcap_config WHERE field_name = "randomization_global"';
         $systemResult = $this->module->framework->query($systemSql, []);
-        // If surveys are disabled at the system level, it doesn't matter what the project setting is
+        // If Randomization is disabled at the system level, it doesn't matter what the project setting is
         if ( $systemResult->fetch_assoc()['value'] == 0 ) {
             return false;
         }

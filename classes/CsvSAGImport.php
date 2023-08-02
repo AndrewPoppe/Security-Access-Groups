@@ -51,8 +51,9 @@ class CsvSAGImport
                 continue;
             }
             if ( !in_array($permission, $this->permissions, true) ) {
-                $this->errorMessages[] = 'One or more permissions was invalid.' . $permission;
+                $this->errorMessages[] = $this->module->framework->tt('misc_8', $this->module->framework->escape($permission));
                 $this->rowValid        = false;
+                $this->valid           = false;
             }
         }
     }
@@ -61,7 +62,7 @@ class CsvSAGImport
     {
         $sagName = htmlspecialchars(trim($sagName), ENT_QUOTES);
         if ( empty($sagName) ) {
-            $this->errorMessages[] = 'One or more SAG name was invalid.';
+            $this->errorMessages[] = $this->module->framework->tt('misc_9', $sagName);
             $this->rowValid        = false;
         }
         return $sagName;
@@ -84,7 +85,7 @@ class CsvSAGImport
         $sagNameIndex = array_search('sag_name', $this->header, true);
         $sagIdIndex   = array_search('sag_id', $this->header, true);
         if ( $sagNameIndex === false || $sagIdIndex === false ) {
-            $this->errorMessages[] = 'Input file did not contain \'sag_name\' and/or \'sag_id\' columns.';
+            $this->errorMessages[] = $this->module->framework->tt('misc_10', [ 'sag_name', 'sag_id' ]);
             return false;
         }
 
@@ -110,7 +111,7 @@ class CsvSAGImport
             }
         }
         if ( empty($this->cleanContents) ) {
-            $this->errorMessages[] = 'No valid SAGs were present in the import file.';
+            $this->errorMessages[] = $this->module->framework->tt('misc_11');
             $this->valid           = false;
         }
 
@@ -174,8 +175,10 @@ class CsvSAGImport
         if ( !is_array($cellValue) ) {
             return '<td class="' . ($centerText ? 'text-center' : '') . '">' . $cellValue . '</td>';
         }
-        return '<td class="table-warning">New: <span class="text-primary font-weight-bold">' .
-            $cellValue['proposed'] . '</span><br>Current: <span class="text-danger font-weight-bold">' .
+        return '<td class="table-warning">' . $this->module->framework->tt('misc_12') .
+            ' <span class="text-primary font-weight-bold">' . $cellValue['proposed'] .
+            '</span><br>' . $this->module->framework->tt('misc_13') .
+            ' <span class="text-danger font-weight-bold">' .
             $cellValue['current'] . '</span></td>';
     }
 
@@ -186,17 +189,20 @@ class CsvSAGImport
             <div class="modal-lg modal-dialog modal-dialog-scrollable">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">Confirm SAG definitions</h5>
+                        <h5 class="modal-title">' .
+            $this->module->framework->tt('misc_14') .
+            '</h5>
                         <button type="button" class="btn-close align-self-center" data-bs-dismiss="modal" data-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                    <div class="container mb-4 w-90" style="font-size:larger;">Examine the table of proposed changes below to verify it is correct.
-                    Only SAGs in highlighted rows or with highlighted cells will be affected.</div>
+                    <div class="container mb-4 w-90" style="font-size:larger;">' .
+            $this->module->framework->tt('misc_15') .
+            '</div>
                     <table class="table table-bordered">
                         <thead class="thead-dark">
                             <tr>
-                                <th>SAG ID</th>
-                                <th>SAG</th>';
+                                <th>' . $this->module->framework->tt('cc_user_12') . '</th>
+                                <th>' . $this->module->framework->tt('cc_user_11') . '</th>';
         foreach ( $this->permissions as $permission ) {
             $html .= '<th>' . $permission . '</th>';
         }
@@ -226,10 +232,10 @@ class CsvSAGImport
                     </table>
                 </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal" data-bs-dismiss="modal">' . $this->module->framework->tt('cancel') . '</button>
                         <button type="button" class="btn btn-primary" onclick="sag_module.confirmImport()" ' .
             ($nothingToDo ? 'title="There are no changes to make" disabled' : '') .
-            '>Confirm</button>
+            '>' . $this->module->framework->tt('misc_16') . '</button>
                     </div>
                 </div>
             </div>

@@ -49,10 +49,11 @@ sag_module.showProjectTable = function (includeExpired = false) {
         sag_module.tt('cc_reports_25') : sag_module.tt('cc_reports_26')));
     if ($('#projectTableWrapper').is(':hidden')) {
         Swal.fire({
-            title: sag_module.tt('users_16'),
+            title: sag_module.tt('alerts_16'),
             didOpen: () => {
                 Swal.showLoading()
-            }
+            },
+            confirmButtonText: sag_module.tt('ok'),
         });
     }
     $('#SAG-System-Table.projectTable').DataTable({
@@ -328,10 +329,11 @@ sag_module.showUserTable = function (includeExpired = false) {
     $('#userTableTitle').text(sag_module.tt('cc_reports_38') + ' ' + (includeExpired ? sag_module.tt('cc_reports_25') : sag_module.tt('cc_reports_26')));
     if ($('#userTableWrapper').is(':hidden')) {
         Swal.fire({
-            title: sag_module.tt('users_16'),
+            title: sag_module.tt('alerts_16'),
             didOpen: () => {
                 Swal.showLoading()
-            }
+            },
+            confirmButtonText: sag_module.tt('ok'),
         });
     }
     $('#SAG-System-Table.userTable').DataTable({
@@ -611,10 +613,11 @@ sag_module.showUserAndProjectTable = function (includeExpired = false) {
     $('#allTableTitle').text(sag_module.tt('cc_reports_42') + ' ' + (includeExpired ? sag_module.tt('cc_reports_25') : sag_module.tt('cc_reports_26')));
     if ($('#allTableWrapper').is(':hidden')) {
         Swal.fire({
-            title: sag_module.tt('users_16'),
+            title: sag_module.tt('alerts_16'),
             didOpen: () => {
                 Swal.showLoading()
-            }
+            },
+            confirmButtonText: sag_module.tt('ok'),
         });
     }
     $('#SAG-System-Table.allTable').DataTable({

@@ -172,7 +172,8 @@ sag_module.handleImportError = function (errorData) {
     Swal.fire({
         title: sag_module.tt('error_2'),
         html: body,
-        icon: 'error'
+        icon: 'error',
+        confirmButtonText: sag_module.tt('ok'),
     });
 }
 
@@ -187,8 +188,13 @@ sag_module.handleFiles = function () {
         return;
     }
 
-    Swal.fire(sag_module.tt('alerts_16'));
-    Swal.showLoading();
+    Swal.fire({
+        title: sag_module.tt('alerts_16'),
+        didOpen: () => {
+            Swal.showLoading();
+        }
+    });
+
 
     const reader = new FileReader();
     reader.onload = (e) => {
@@ -227,7 +233,8 @@ sag_module.confirmImport = function () {
                     customClass: {
                         confirmButton: 'btn btn-primary',
                     },
-                    buttonsStyling: false
+                    buttonsStyling: false,
+                    confirmButtonText: sag_module.tt('ok'),
                 });
             } else {
                 Toast.fire({
@@ -460,7 +467,7 @@ $(document).ready(function () {
         },
         lengthMenu: [
             [10, 25, 50, 100, -1],
-            [10, 25, 50, 100, sag_module.tt('users_37')]
+            [10, 25, 50, 100, sag_module.tt('alerts_37')]
         ],
         language: {
             search: "_INPUT_",

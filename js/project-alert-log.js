@@ -440,7 +440,7 @@ $(document).ready(function () {
         },
         lengthMenu: [
             [10, 25, 50, 100, -1],
-            [10, 25, 50, 100, sag_module.tt('users_37')]
+            [10, 25, 50, 100, sag_module.tt('alerts_37')]
         ],
         language: {
             search: "_INPUT_",

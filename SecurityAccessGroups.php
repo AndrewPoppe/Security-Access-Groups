@@ -256,7 +256,14 @@ class SecurityAccessGroups extends AbstractExternalModule
      */
     public function getModuleDirectoryPrefix() : string
     {
-        return strrev(preg_replace('/^.*v_/', '', strrev($this->framework->getModuleDirectoryName()), 1));
+        return strrev(
+            preg_replace(
+                '/^.*v_/',
+                '',
+                strrev($this->framework->getModuleDirectoryName()),
+                1
+            )
+        );
     }
 
 

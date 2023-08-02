@@ -399,7 +399,7 @@ sag_module.confirmImport = function () {
             if (result.status != 'error') {
                 Swal.fire({
                     icon: 'success',
-                    html: sag_module.tt('cc_user_24'),
+                    html: sag_module.tt('cc_sags_24'),
                     confirmButtonText: sag_module.tt('ok'),
                     customClass: {
                         confirmButton: 'btn btn-primary',
