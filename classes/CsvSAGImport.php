@@ -234,7 +234,7 @@ class CsvSAGImport
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal" data-bs-dismiss="modal">' . $this->module->framework->tt('cancel') . '</button>
                         <button type="button" class="btn btn-primary" onclick="sag_module.confirmImport()" ' .
-            ($nothingToDo ? 'title="There are no changes to make" disabled' : '') .
+            ($nothingToDo ? 'title="' . $this->module->framework->tt('misc_25') . '" disabled' : '') .
             '>' . $this->module->framework->tt('misc_16') . '</button>
                     </div>
                 </div>
