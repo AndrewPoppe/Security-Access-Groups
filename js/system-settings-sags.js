@@ -50,7 +50,7 @@ sag_module.openSagEditor = function (sag_id = "", sag_name = "", newSag = false)
         Swal.fire({
             title: sag_module.tt('cc_sags_14'),
             input: 'text',
-            inputValue: `${data["sag_name_edit"]} ${sag_module.tt('cc_sags_15')}}`,
+            inputValue: `${data["sag_name_edit"]} ${sag_module.tt('cc_sags_15')}`,
             showCancelButton: true,
             confirmButtonText: sag_module.tt('cc_sags_16'),
             cancelButtonText: sag_module.tt('cancel'),

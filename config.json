@@ -15,87 +15,104 @@
     "system-settings": [
         {
             "key": "user-email-descriptive",
-            "name": "<div class='bg-primary text-light p-2'><strong>User Alert Email Settings</strong><p>These settings control the default text present in email alerts to users whose rights are not in compliance in a project. The text can be modified in the project prior to sending the alerts. These settings act only as handy templates.</p></div><br><div class='p-2' style='background-color: #b8daff;'><table class='table table-sm table-borderless'><thead><tr><th colspan=2><span><strong>You can use the following placeholders to insert information into your email subject and body:</strong></span></th></tr></thead><tbody><tr><td><code>[sag-user]</code></td><td>The user's username</td></tr><tr><td><code>[sag-user-fullname]</code></td><td>The user's full name</td></tr><tr><td><code>[sag-user-email]</code></td><td>The user's email address</td></tr><tr><td><code>[sag-user-sag]</code></td><td>The user's current security access group</td></tr><tr><td><code>[sag-rights]</code></td><td>A formatted list of the rights that do not conform with the user's security access group.</td></tr><tr><td><code>[sag-project-title]</code></td><td>The title of the project</td></tr></tbody></table><strong>You can also use any REDCap Smart Variable</strong></div>",
+            "name": "user_email_descriptive",
+            "tt_name": true,
             "type": "descriptive"
         },
         {
             "key": "user-email-subject-template",
-            "name": "<strong>User Alert Email Default Subject</strong>",
+            "name": "user_email_subject_template",
+            "tt_name": true,
             "type": "text"
         },
         {
             "key": "user-email-body-template",
-            "name": "<strong>User Alert Email Default Body</strong>",
+            "name": "user_email_body_template",
+            "tt_name": true,
             "type": "rich-text"
         },
         {
             "key": "user-reminder-email-descriptive",
-            "name": "<div class='bg-primary text-light p-2'><strong>User Reminder Alert Settings</strong></div><div style='border: 1px solid #ff000020; background-color: #ff000014;' class='p-2'><p>These settings control the default text present in reminder email alerts to users whose rights are not in compliance in a project. The alerts will not send if the rights are brought into compliance prior to the alert's send time.</p><div>",
+            "name": "user_reminder_email_descriptive",
+            "tt_name": true,
             "type": "descriptive"
         },
         {
             "key": "user-reminder-email-subject-template",
-            "name": "<span style='border: 1px solid #ff000020; background-color: #ff000014;' class='p-2'><strong>User Reminder Alert Email Default Subject</strong>",
+            "name": "user_reminder_email_subject_template",
+            "tt_name": true,
             "type": "text"
         },
         {
             "key": "user-reminder-email-body-template",
-            "name": "<span style='border: 1px solid #ff000020; background-color: #ff000014;' class='p-2'><strong>User Reminder Email Default Body</strong>",
+            "name": "user_reminder_email_body_template",
+            "tt_name": true,
             "type": "rich-text"
         },
         {
             "key": "user-rights-holders-email-descriptive",
-            "name": "<div class='bg-warning text-body p-2'><strong>User Rights Holder Alert Email Settings</strong><p>These settings control the default text present in email alerts to users with user rights permissions in projects with users whose rights are not in compliance. The text can be modified in the project prior to sending the alerts. These settings act only as handy templates.</p></div><br><div class='p-2' style='background-color: #ffeeba;'><table class='table table-sm table-borderless'><thead><tr><th colspan=2><span><strong>You can use the following placeholders to insert information into your email subject and body:</strong></span></th></tr></thead><tbody><tr><td><code>[sag-users]</code></td><td>A formatted list of usernames</td></tr><tr><td><code>[sag-user-fullnames]</code></td><td>A formatted list of users' full names</td></tr><tr><td><code>[sag-user-emails]</code></td><td>A formatted list of users' emails</td></tr><tr><td><code>[sag-user-sags]</code></td><td>A formatted list of users' current security access groups</td></tr><tr><td><code>[sag-users-table]</code></td><td>A formatted table of usernames, full names, email addresses, and SAGs</td></tr><tr><td><code>[sag-users-table-full]</code></td><td>A formatted table of usernames, full names, email addresses, SAGs, and non-compliant rights</td></tr><tr><td><code>[sag-project-title]</code></td><td>The title of the project</td></tr></tbody></table><strong>You can also use any REDCap Smart Variable</strong></div>",
+            "name": "user_rights_holders_email_descriptive",
+            "tt_name": true,
             "type": "descriptive"
         },
         {
             "key": "user-rights-holders-email-subject-template",
-            "name": "<strong>User Rights Holders Alert Email Default Subject</strong>",
+            "name": "user_rights_holders_email_subject_template",
+            "tt_name": true,
             "type": "text"
         },
         {
             "key": "user-rights-holders-email-body-template",
-            "name": "<strong>User Rights Holders Alert Email Default Body</strong>",
+            "name": "user_rights_holders_email_body_template",
+            "tt_name": true,
             "type": "rich-text"
         },
         {
             "key": "user-rights-holders-reminder-email-descriptive",
-            "name": "<div class='bg-warning text-body p-2'><strong>User Rights Holder Reminder Alert Email Settings</strong></div><div style='border: 1px solid #ff000020; background-color: #ff000014;' class='p-2'><p>These settings control the default text present in reminder email alerts to users with user rights permissions in projects with users whose rights are not in compliance</p></div>",
+            "name": "user_rights_holders_reminder_email_descriptive",
+            "tt_name": true,
             "type": "descriptive"
         },
         {
             "key": "user-rights-holders-reminder-email-subject-template",
-            "name": "<span style='border: 1px solid #ff000020; background-color: #ff000014;' class='p-2'><strong>User Rights Holders Reminder Alert Email Default Subject</strong>",
+            "name": "user_rights_holders_reminder_email_subject_template",
+            "tt_name": true,
             "type": "text"
         },
         {
             "key": "user-rights-holders-reminder-email-body-template",
-            "name": "<span style='border: 1px solid #ff000020; background-color: #ff000014;' class='p-2'><strong>User Rights Holders Reminder Alert Email Default Body</strong>",
+            "name": "user_rights_holders_reminder_email_body_template",
+            "tt_name": true,
             "type": "rich-text"
         },
         {
             "key": "user-expiration-email-descriptive",
-            "name": "<div class='bg-danger text-light p-2'><strong>User Expiration Alert Email Settings</strong><p>These settings control the default text present in email alerts to users and user rights holders upon user expiration. The text can be modified in the project prior to sending the alerts. These settings act only as handy templates.</p></div><br><div class='p-2' style='background-color: #f5c6cbaa;'><table class='table table-sm table-borderless'><thead><tr><th colspan=2><span><strong>In addition to the placeholders described above, you can use the following placeholder in an expiration alert email subject and body:</strong></span></th></tr></thead><tbody><tr><td><code>[sag-expiration-date]</code></td><td>The date the user(s) will be expired from the proejct</td></tr></tbody></table><strong>You can also use any REDCap Smart Variable</strong></div>",
+            "name": "user_expiration_email_descriptive",
+            "tt_name": true,
             "type": "descriptive"
         },
         {
             "key": "user-expiration-email-subject-template",
-            "name": "<span style='border: 1px solid #7abaff; background-color: #b8daff;' class='p-2'><strong>User Expiration Alert Email Default Subject</strong>",
+            "name": "user_expiration_email_subject_template",
+            "tt_name": true,
             "type": "text"
         },
         {
             "key": "user-expiration-email-body-template",
-            "name": "<span style='border: 1px solid #7abaff; background-color: #b8daff;' class='p-2'><strong>User Expiration Alert Email Default Body</strong>",
+            "name": "user_expiration_email_body_template",
+            "tt_name": true,
             "type": "rich-text"
         },
         {
             "key": "user-expiration-user-rights-holders-email-subject-template",
-            "name": "<span style='border: 1px solid #ffdf7e; background-color: #ffeeba;' class='p-2'><strong>User Rights Holders Alert Email Default Subject</strong>",
+            "name": "user_expiration_user_rights_holders_email_subject_template",
+            "tt_name": true,
             "type": "text"
         },
         {
             "key": "user-expiration-user-rights-holders-email-body-template",
-            "name": "<span style='border: 1px solid #ffdf7e; background-color: #ffeeba;' class='p-2'><strong>User Rights Holders Alert Email Default Body</strong>",
+            "name": "user_expiration_user_rights_holders_email_body_template",
+            "tt_name": true,
             "type": "rich-text"
         }
     ],
@@ -103,7 +120,8 @@
         "project": [
             {
                 "key": "project-status",
-                "name": "Security Access Groups",
+                "name": "module_name",
+                "tt_name": true,
                 "icon": "fa-solid  fa-users-between-lines",
                 "url": "project-status.php",
                 "show-header-and-footer": true
@@ -117,7 +135,8 @@
         "control-center": [
             {
                 "key": "system-settings",
-                "name": "Security Access Groups",
+                "name": "module_name",
+                "tt_name": true,
                 "icon": "fa-solid  fa-users-between-lines",
                 "url": "system-settings-userlist.php",
                 "show-header-and-footer": true
