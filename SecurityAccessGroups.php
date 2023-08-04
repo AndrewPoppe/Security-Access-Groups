@@ -687,7 +687,7 @@ class SecurityAccessGroups extends AbstractExternalModule
                 ($htmlOnly ? ', "tag_handling": "html"' : '') .
                 '}',
                 CURLOPT_HTTPHEADER     => array(
-                    'Authorization: DeepL-Auth-Key f484202f-d8ec-503b-505e-dc9e145073a1',
+                    'Authorization: DeepL-Auth-Key %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%',
                     'Content-Type: application/json'
                 ),
             )
