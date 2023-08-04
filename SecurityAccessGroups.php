@@ -712,4 +712,82 @@ class SecurityAccessGroups extends AbstractExternalModule
         }
 
     }
+
+    public function translateIni2(string $language, bool $htmlOnly = false) : void
+    {
+        $fields = parse_ini_file($this->framework->getSafePath('lang/English.ini'));
+
+        if ( $htmlOnly ) {
+            $fields = array_filter($fields, function ($key) {
+                return in_array($key, [
+                    'user_email_descriptive',
+                    'user_email_subject_template',
+                    'user_email_body_template',
+                    'user_reminder_email_descriptive',
+                    'user_reminder_email_subject_template',
+                    'user_reminder_email_body_template',
+                    'user_rights_holders_email_descriptive',
+                    'user_rights_holders_email_subject_template',
+                    'user_rights_holders_email_body_template',
+                    'user_rights_holders_reminder_email_descriptive',
+                    'user_rights_holders_reminder_email_subject_template',
+                    'user_rights_holders_reminder_email_body_template',
+                    'user_expiration_email_descriptive',
+                    'user_expiration_email_subject_template',
+                    'user_expiration_email_body_template',
+                    'user_expiration_user_rights_holders_email_subject_template',
+                    'user_expiration_user_rights_holders_email_body_template'
+                ]);
+            }, ARRAY_FILTER_USE_KEY);
+        }
+
+        $values = array_values($fields);
+        $keys   = array_keys($fields);
+
+        $curl = curl_init();
+
+        curl_setopt_array(
+            $curl,
+            array(
+                CURLOPT_URL            => 'https://translation.googleapis.com/v3/projects/redcap-364614:translateText',
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_ENCODING       => '',
+                CURLOPT_MAXREDIRS      => 10,
+                CURLOPT_TIMEOUT        => 0,
+                CURLOPT_FOLLOWLOCATION => true,
+                CURLOPT_HTTP_VERSION   => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST  => 'POST',
+                CURLOPT_POSTFIELDS     => '{
+                    "sourceLanguageCode": "en",
+                    "targetLanguageCode": "' . $language . '",
+                    "contents": ' . json_encode($values) . ',
+                    "mimeType": "' . ($htmlOnly ? 'text/html' : 'text/plain') . '"
+                  }',
+                CURLOPT_HTTPHEADER     => array(
+                    'x-goog-user-project: redcap-364614',
+                    'Content-Type: application/json',
+                    'Authorization: Bearer %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%'
+                ),
+            )
+        );
+
+        $response = curl_exec($curl);
+        var_dump($response);
+
+        curl_close($curl);
+
+        if ( $response ) {
+
+            $result = [];
+            foreach ( $keys as $index => $key ) {
+                $result[$key] = json_decode($response, true)['translations'][$index]['translatedText'];
+            }
+
+            $this->write_ini_file(
+                $this->framework->getSafePath('lang/' . $language . ($htmlOnly ? '_html' : '') . '.ini'),
+                $result
+            );
+        }
+
+    }
 }
