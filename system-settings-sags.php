@@ -9,6 +9,14 @@ if ( !$module->framework->isSuperUser() ) {
 }
 require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
 
+// $module->translateIni('FR', true);
+// $module->translateIni('ES', true);
+// $module->translateIni('DE', true);
+// $module->translateIni('IT', true);
+// $module->translateIni('ZH', true);
+// $module->translateIni('UK', true);
+
+
 ?>
 <link href="<?= $module->framework->getUrl('lib/DataTables/datatables.min.css') ?>" rel="stylesheet" />
 <script src="<?= $module->framework->getUrl('lib/DataTables/datatables.min.js') ?>"></script>

@@ -565,4 +565,151 @@ class SecurityAccessGroups extends AbstractExternalModule
         }
         return $textToTranslate;
     }
+
+    // Write ini file
+    /**
+     * Write an ini configuration file
+     * 
+     * @param string $file
+     * @param array  $array
+     * @return bool
+     */
+    private function write_ini_file($file, $array = [])
+    {
+        if ( !is_string($file) ) {
+            throw new \InvalidArgumentException('Function argument 1 must be a string.');
+        }
+
+        if ( !is_array($array) ) {
+            throw new \InvalidArgumentException('Function argument 2 must be an array.');
+        }
+
+        $data = array();
+        foreach ( $array as $key => $val ) {
+            if ( is_array($val) ) {
+                $data[] = "[$key]";
+                foreach ( $val as $skey => $sval ) {
+                    if ( is_array($sval) ) {
+                        foreach ( $sval as $_skey => $_sval ) {
+                            if ( is_numeric($_skey) ) {
+                                $data[] = $skey . '[] = ' . (is_numeric($_sval) ? $_sval : (ctype_upper($_sval) ? $_sval : '"' . $_sval . '"'));
+                            } else {
+                                $data[] = $skey . '[' . $_skey . '] = ' . (is_numeric($_sval) ? $_sval : (ctype_upper($_sval) ? $_sval : '"' . $_sval . '"'));
+                            }
+                        }
+                    } else {
+                        $data[] = $skey . ' = ' . (is_numeric($sval) ? $sval : (ctype_upper($sval) ? $sval : '"' . $sval . '"'));
+                    }
+                }
+            } else {
+                $data[] = $key . ' = ' . (is_numeric($val) ? $val : (ctype_upper($val) ? $val : '"' . $val . '"'));
+            }
+            $data[] = null;
+        }
+
+        $fp          = fopen($file, 'w');
+        $retries     = 0;
+        $max_retries = 100;
+
+        if ( !$fp ) {
+            return false;
+        }
+
+        do {
+            if ( $retries > 0 ) {
+                usleep(rand(1, 5000));
+            }
+            $retries += 1;
+        } while ( !flock($fp, LOCK_EX) && $retries <= $max_retries );
+
+        if ( $retries == $max_retries ) {
+            return false;
+        }
+
+        fwrite($fp, implode(PHP_EOL, $data) . PHP_EOL);
+        flock($fp, LOCK_UN);
+        fclose($fp);
+
+        return true;
+    }
+
+    // Get translations
+    public function translateIni(string $language, bool $htmlOnly = false) : void
+    {
+        $fields = parse_ini_file($this->framework->getSafePath('lang/English.ini'));
+
+        if ( $htmlOnly ) {
+            $fields = array_filter($fields, function ($key) {
+                return in_array($key, [
+                    'user_email_descriptive',
+                    'user_email_subject_template',
+                    'user_email_body_template',
+                    'user_reminder_email_descriptive',
+                    'user_reminder_email_subject_template',
+                    'user_reminder_email_body_template',
+                    'user_rights_holders_email_descriptive',
+                    'user_rights_holders_email_subject_template',
+                    'user_rights_holders_email_body_template',
+                    'user_rights_holders_reminder_email_descriptive',
+                    'user_rights_holders_reminder_email_subject_template',
+                    'user_rights_holders_reminder_email_body_template',
+                    'user_expiration_email_descriptive',
+                    'user_expiration_email_subject_template',
+                    'user_expiration_email_body_template',
+                    'user_expiration_user_rights_holders_email_subject_template',
+                    'user_expiration_user_rights_holders_email_body_template'
+                ]);
+            }, ARRAY_FILTER_USE_KEY);
+        }
+
+        $values = array_values($fields);
+        $keys   = array_keys($fields);
+
+        $curl = curl_init();
+
+        curl_setopt_array(
+            $curl,
+            array(
+                CURLOPT_URL            => 'https://api.deepl.com/v2/translate',
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_ENCODING       => '',
+                CURLOPT_MAXREDIRS      => 10,
+                CURLOPT_TIMEOUT        => 0,
+                CURLOPT_FOLLOWLOCATION => true,
+                CURLOPT_HTTP_VERSION   => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST  => 'POST',
+                CURLOPT_POSTFIELDS     => '{
+                    "text": ' . json_encode($values) . ',
+                    "target_lang": "' . $language . '",
+                    "source_lang": "EN",
+                    "preserve_formatting": true,
+                    "formality": "prefer_more"' .
+                ($htmlOnly ? ', "tag_handling": "html"' : '') .
+                '}',
+                CURLOPT_HTTPHEADER     => array(
+                    'Authorization: DeepL-Auth-Key f484202f-d8ec-503b-505e-dc9e145073a1',
+                    'Content-Type: application/json'
+                ),
+            )
+        );
+
+        $response = curl_exec($curl);
+        var_dump($response);
+
+        curl_close($curl);
+
+        if ( $response ) {
+
+            $result = [];
+            foreach ( $keys as $index => $key ) {
+                $result[$key] = json_decode($response, true)['translations'][$index]['text'];
+            }
+
+            $this->write_ini_file(
+                $this->framework->getSafePath('lang/' . $language . ($htmlOnly ? '_html' : '') . '.ini'),
+                $result
+            );
+        }
+
+    }
 }
