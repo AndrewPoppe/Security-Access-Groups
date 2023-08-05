@@ -196,7 +196,7 @@ class SAGProject
                 'project_role_name' => $projectRoleName,
                 'acceptable'        => $acceptableRights,
                 'current'           => $currentRights,
-                'bad'               => $this->module->framework->escape($bad)
+                'bad'               => $bad //$this->module->framework->escape($bad)
             ];
         }
         return $badRights;
