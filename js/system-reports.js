@@ -40,6 +40,12 @@ sag_module.clearTables = function () {
     $('.tableSelect').empty();
 }
 
+sag_module.getProjectStatusFormatted = function (projectStatus) {
+    if (!projectStatus) return;
+    //if (projectStatus.status == 'DONE') {
+    return `<span class="badge badge-light"><i class="fa-solid fa-archive fs11" style="color: #C00000; font-size:14px;"></i>${projectStatus.label}</span>`;
+    //}
+}
 
 // Projects Table
 sag_module.showProjectTable = function (includeExpired = false) {
@@ -792,7 +798,7 @@ sag_module.showUserAndProjectTable = function (includeExpired = false) {
                 const projectUrl =
                     `${app_path_webroot_full}redcap_v${redcap_version}/ExternalModules/?prefix={{MODULE_DIRECTORY_PREFIX}}&page=project-status&pid=${pid}`;
                 const projectTitle = row.project_title.replaceAll('"', '');
-                return `<strong><a target="_blank" rel="noreferrer noopener" href="${projectUrl}">PID: ${pid}</a></strong> ${projectTitle}`;
+                return `<strong><a target="_blank" rel="noreferrer noopener" href="${projectUrl}">PID: ${pid}</a></strong> ${projectTitle}<br>${sag_module.getProjectStatusFormatted(row.project_status)}`;
             },
             width: '20%'
         },
