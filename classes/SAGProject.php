@@ -5,19 +5,88 @@ namespace YaleREDCap\SecurityAccessGroups;
 use ExternalModules\Framework;
 
 
+/**
+ * A class to represent a REDCap project that has the Security Access Groups module enabled
+ */
 class SAGProject
 {
+    /**
+     * Instance of main EM class
+     * @var SecurityAccessGroups
+     */
     private SecurityAccessGroups $module;
+    /**
+     * REDCap project ID
+     * @var string
+     */
     public string $projectId;
+    /**
+     * REDCap title of project
+     * @var string
+     */
     public string $projectName;
+    /**
+     * Various project-level settings
+     * @var array
+     */
+    public array $projectConfig;
+    /**
+     * Current system configuration
+     * @var array
+     */
+    public array $systemConfig;
+
+    private bool $getConfig;
 
 
-    public function __construct(SecurityAccessGroups $module, string $projectId = '')
+    /**
+     * Summary of __construct
+     * @param \YaleREDCap\SecurityAccessGroups\SecurityAccessGroups $module
+     * @param string $projectId
+     * @param bool $getConfig
+     */
+    public function __construct(SecurityAccessGroups $module, string $projectId = '', bool $getConfig = false)
     {
         $this->module    = $module;
         $this->projectId = $projectId;
+        $this->getConfig = $getConfig;
+
+        if ( $getConfig ) {
+            $this->projectConfig = $this->getProjectConfig();
+            $this->systemConfig  = $this->getSystemConfig();
+        }
     }
 
+    /**
+     * Get array of project configuration values from redcap_projects table
+     * @return array
+     */
+    private function getProjectConfig() : array
+    {
+        $sql    = 'SELECT * FROM redcap_projects WHERE project_id = ?';
+        $result = $this->module->framework->query($sql, [ $this->projectId ]);
+        return $result->fetch_assoc();
+    }
+
+    /**
+     * Get array of system configuration values from redcap_config table
+     * @return array
+     */
+    private function getSystemConfig() : array
+    {
+        $sql    = 'SELECT * FROM redcap_config';
+        $result = $this->module->framework->query($sql, []);
+        $config = [];
+        while ( $row = $result->fetch_assoc() ) {
+            $config[$row['field_name']] = $row['value'];
+        }
+        return $config;
+    }
+
+    /**
+     * Summary of getBasicProjectUsers
+     * @return array
+     */
     public function getBasicProjectUsers()
     {
         $sql = 'SELECT rights.username,
@@ -49,6 +118,10 @@ class SAGProject
         }
     }
 
+    /**
+     * Summary of getUsersWithBadRightsOld
+     * @return array<array>
+     */
     public function getUsersWithBadRightsOld()
     {
         $users     = $this->getBasicProjectUsers();
@@ -85,12 +158,20 @@ class SAGProject
         return $badRights;
     }
 
+    /**
+     * Summary of getUsersWithBadRights
+     * @return array<array>
+     */
     public function getUsersWithBadRights()
     {
         $users            = $this->getBasicProjectUsers();
         $sags             = $this->module->getAllSags(true, true);
         $allCurrentRights = $this->getAllCurrentRights();
         $badRights        = [];
+        if ( !$this->getConfig ) {
+            $this->projectConfig = $this->getProjectConfig();
+            $this->systemConfig  = $this->getSystemConfig();
+        }
         foreach ( $users as $user ) {
             $expiration            = $user['expiration'];
             $isExpired             = $expiration != '' && strtotime($expiration) < strtotime('today');
@@ -98,7 +179,7 @@ class SAGProject
             $sag                   = $sags[$user['sag']] ?? $sags[$this->module->defaultSagId];
             $acceptableRights      = $sag->permissions;
             $currentRights         = $allCurrentRights[$username];
-            $rightsChecker         = new RightsChecker($this->module, $currentRights, $acceptableRights, $this->projectId);
+            $rightsChecker         = new RightsChecker($this->module, $currentRights, $acceptableRights, null, false, $this);
             $bad                   = $rightsChecker->checkRights2();
             $sagName               = $sag->sagName;
             $projectRoleUniqueName = $user['unique_role_name'];
@@ -121,11 +202,19 @@ class SAGProject
         return $badRights;
     }
 
+    /**
+     * Summary of getTitle
+     * @return mixed
+     */
     public function getTitle()
     {
         return $this->module->getProject($this->projectId)->getTitle();
     }
 
+    /**
+     * Summary of getUserRightsHolders
+     * @return mixed
+     */
     public function getUserRightsHolders()
     {
         try {
@@ -148,6 +237,10 @@ class SAGProject
         }
     }
 
+    /**
+     * Summary of getAllCurrentRights
+     * @return mixed
+     */
     private function getAllCurrentRights()
     {
         $result = $this->module->framework->query('SELECT r.*,
@@ -187,82 +280,80 @@ class SAGProject
         return $this->module->framework->escape($rights);
     }
 
+    /**
+     * Summary of areSurveysEnabled
+     * @return bool
+     */
     public function areSurveysEnabled() : bool
     {
-        $systemSql    = 'SELECT value FROM redcap_config WHERE field_name = "enable_projecttype_singlesurveyforms"';
-        $systemResult = $this->module->framework->query($systemSql, []);
-        // If surveys are disabled at the system level, it doesn't matter what the project setting is
-        if ( $systemResult->fetch_assoc()['value'] == 0 ) {
+
+        if ( $this->systemConfig['enable_projecttype_singlesurveyforms'] == 0 ) {
             return false;
         }
-        $projectSql    = 'SELECT surveys_enabled FROM redcap_projects WHERE project_id = ?';
-        $projectResult = $this->module->framework->query($projectSql, [ $this->projectId ]);
-        return $projectResult->fetch_assoc()['surveys_enabled'] == 1;
+        return $this->projectConfig['surveys_enabled'] == 1;
     }
 
+    /**
+     * Summary of isCDPorDDPEnabled
+     * @return bool
+     */
     public function isCDPorDDPEnabled() : bool
     {
-        $systemSql     = 'SELECT value FROM redcap_config WHERE field_name IN ("realtime_webservice_global_enabled", "fhir_ddp_enabled")';
-        $systemResult  = $this->module->framework->query($systemSql, []);
-        $enabledGlobal = false;
-        while ( $row = $systemResult->fetch_assoc() ) {
-            if ( $row['value'] == 1 ) {
-                $enabledGlobal = true;
-            }
-        }
-        // If CDP/DDP is disabled at the system level, it doesn't matter what the project setting is
-        if ( !$enabledGlobal ) {
+        if ( $this->systemConfig['realtime_webservice_global_enabled'] == 0 && $this->systemConfig['fhir_ddp_enabled'] == 0 ) {
             return false;
         }
-        $projectSql    = 'SELECT realtime_webservice_enabled FROM redcap_projects WHERE project_id = ?';
-        $projectResult = $this->module->framework->query($projectSql, [ $this->projectId ]);
-        return $projectResult->fetch_assoc()['realtime_webservice_enabled'] == 1;
+
+        return $this->projectConfig['realtime_webservice_enabled'] == 1;
     }
 
+    /**
+     * Summary of isDataResolutionWorkflowEnabled
+     * @return bool
+     */
     public function isDataResolutionWorkflowEnabled() : bool
     {
-        $sql    = 'SELECT data_resolution_enabled FROM redcap_projects WHERE project_id = ?';
-        $result = $this->module->framework->query($sql, [ $this->projectId ]);
-        return $result->fetch_assoc()['data_resolution_enabled'] == 2; // 2 = DRW, 1 = Field Comment Log
+        return $this->projectConfig['data_resolution_enabled'] == 2; // 2 = DRW, 1 = Field Comment Log
     }
 
+    /**
+     * Summary of isDoubleDataEnabled
+     * @return bool
+     */
     public function isDoubleDataEnabled() : bool
     {
-        $sql    = 'SELECT double_data_entry FROM redcap_projects WHERE project_id = ?';
-        $result = $this->module->framework->query($sql, [ $this->projectId ]);
-        return $result->fetch_assoc()['double_data_entry'];
+        return $this->projectConfig['double_data_entry'] == 1;
     }
 
+    /**
+     * Summary of isMyCapEnabled
+     * @return bool
+     */
     public function isMyCapEnabled() : bool
     {
-        $systemSql    = 'SELECT value FROM redcap_config WHERE field_name = "mycap_enabled_global"';
-        $systemResult = $this->module->framework->query($systemSql, []);
-        // If MyCap is disabled at the system level, it doesn't matter what the project setting is
-        if ( $systemResult->fetch_assoc()['value'] == 0 ) {
+        if ( $this->systemConfig['mycap_enabled_global'] == 0 ) {
             return false;
         }
-        $projectSql    = 'SELECT mycap_enabled FROM redcap_projects WHERE project_id = ?';
-        $projectResult = $this->module->framework->query($projectSql, [ $this->projectId ]);
-        return $projectResult->fetch_assoc()['mycap_enabled'] == 1;
+        return $this->projectConfig['mycap_enabled'] == 1;
     }
 
+    /**
+     * Summary of isRandomizationEnabled
+     * @return bool
+     */
     public function isRandomizationEnabled() : bool
     {
-        $systemSql    = 'SELECT value FROM redcap_config WHERE field_name = "randomization_global"';
-        $systemResult = $this->module->framework->query($systemSql, []);
-        // If Randomization is disabled at the system level, it doesn't matter what the project setting is
-        if ( $systemResult->fetch_assoc()['value'] == 0 ) {
+        if ( $this->systemConfig['randomization_global'] == 0 ) {
             return false;
         }
-        $projectSql    = 'SELECT randomization FROM redcap_projects WHERE project_id = ?';
-        $projectResult = $this->module->framework->query($projectSql, [ $this->projectId ]);
-        return $projectResult->fetch_assoc()['randomization'] == 1;
+        return $this->projectConfig['randomization'] == 1;
     }
 
+    /**
+     * Summary of isStatsAndChartsEnabled
+     * @return bool
+     */
     public function isStatsAndChartsEnabled() : bool
     {
-        $sql          = 'SELECT value FROM redcap_config WHERE field_name = "enable_plotting"';
-        $systemResult = $this->module->framework->query($sql, []);
-        return $systemResult->fetch_assoc()['value'] == 2; // 2 = enabled... yes, really
+        return $this->systemConfig['enable plotting'] == 2; // 2 = enabled... yes, really
     }
 }

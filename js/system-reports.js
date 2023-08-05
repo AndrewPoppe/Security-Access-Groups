@@ -606,6 +606,10 @@ sag_module.showUserTable = function (includeExpired = false) {
     });
 }
 
+$(document).on('preXhr.dt', function (e, settings, data) {
+    console.time('report');
+});
+
 // Users and Projects Table
 sag_module.showUserAndProjectTable = function (includeExpired = false) {
     sag_module.clearTables();
@@ -728,6 +732,8 @@ sag_module.showUserAndProjectTable = function (includeExpired = false) {
             });
             table.columns.adjust().draw();
             $('div.dt-buttons button').removeClass('dt-button');
+
+            console.timeEnd('report');
         },
         buttons: [{
             extend: 'excelHtml5',
