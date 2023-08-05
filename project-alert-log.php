@@ -25,13 +25,12 @@ if ( !$module->framework->isSuperUser() ) {
 
 <div class="SAG-Container">
     <div class="projhdr">
-        <i class='fa-solid fa-users-between-lines'></i>&nbsp;<span>Security Access Groups</span>
+        <i class='fa-solid fa-users-between-lines'></i>&nbsp;<span>
+            <?= $module->framework->tt('module_name') ?>
+        </span>
     </div>
     <div style="width:950px;max-width:950px;font-size:14px;" class="d-none d-md-block mt-3 mb-2">
-        Security Access Groups (SAGs) are used to restrict which user rights a REDCap user can be granted in a project.
-        SAGs do not define the rights a user will have in a given project; rather, they define the set of allowable
-        rights the user is able to be granted. SAGs are defined at the system level and are used in any project that has
-        this module enabled.
+        <?= $module->framework->tt('status_ui_44') ?>
     </div>
     <div class="clearfix">
         <div id="sub-nav" class="mr-4 mb-0 ml-0" style="max-width: 1100px;">
@@ -40,21 +39,21 @@ if ( !$module->framework->isSuperUser() ) {
                     <a href="<?= $module->framework->getUrl('project-status.php') ?>"
                         style="font-size:13px;color:#393733;padding:7px 9px;">
                         <i class="fa-regular fa-clipboard-check"></i>
-                        Project Status
+                        <?= $module->framework->tt('status_ui_2') ?>
                     </a>
                 </li>
                 <li class="active">
                     <a href="<?= $module->framework->getUrl('project-alert-log.php') ?>"
                         style="font-size:13px;color:#393733;padding:7px 9px;">
                         <i class="fa-regular fa-envelopes-bulk"></i>
-                        Alert Log
+                        <?= $module->framework->tt('status_ui_45') ?>
                     </a>
                 </li>
             </ul>
         </div>
     </div>
     <div class="mt-4">
-        This page shows all alerts sent by the SAG module as well as all currently scheduled reminders.
+        <?= $module->framework->tt('alerts_1') ?>
     </div>
     <div class="alertLogWrapper mt-4 mr-3 card card-body bg-light" style="width: 1100px; display: none;">
         <table aria-label="alert log table" id="alertLogTable" class="border sagTable" style="width:100%;">
@@ -67,39 +66,47 @@ if ( !$module->framework->isSuperUser() ) {
                                     <div class="row px-3 pt-2">
                                         <div class="col pl-0 pr-1"><input id="mindatetime"
                                                 class="timePicker form-control form-control-sm input" type="text"
-                                                placeholder="Begin time">
+                                                placeholder="<?= $module->framework->tt('alerts_2') ?>">
                                         </div>
                                         <div class="col p-0">
                                             <input id="maxdatetime"
                                                 class="timePicker form-control form-control-sm input" type="text"
-                                                placeholder="End time">
+                                                placeholder="<?= $module->framework->tt('alerts_3') ?>">
                                         </div>
                                     </div>
                                     <div class="row pl-4 py-2">
                                         <div class="col">
                                             <button class="btn btn-xs btn-success"
-                                                onclick="sag_module.showPastAlerts()">View past
-                                                alerts</button>
+                                                onclick="sag_module.showPastAlerts()"><?= $module->framework->tt('alerts_4') ?></button>
                                         </div>
                                         <div class="col">
                                             <button class="btn btn-xs btn-primaryrc"
-                                                onclick="sag_module.showFutureAlerts()">View
-                                                future alerts</button>
+                                                onclick="sag_module.showFutureAlerts()"><?= $module->framework->tt('alerts_5') ?></button>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-4 px-4" style="border-left: 1px solid #ccc">
                                     <div class="row pt-2 pb-1">
                                         <select class="" id="alertTypeSelect" multiple="multiple">
-                                            <option value="users">User</option>
-                                            <option value="userRightsHolders">User Rights Holder</option>
-                                            <option value="expiration">Expiration</option>
+                                            <option value="users">
+                                                <?= $module->framework->tt('user') ?>
+                                            </option>
+                                            <option value="userRightsHolders">
+                                                <?= $module->framework->tt('alerts_6') ?>
+                                            </option>
+                                            <option value="expiration">
+                                                <?= $module->framework->tt('status_ui_62') ?>
+                                            </option>
                                         </select>
                                     </div>
                                     <div class="row ">
                                         <select class="form-control" id="notificationTypeSelect" multiple="multiple">
-                                            <option value="false">Original alert</option>
-                                            <option value="true">Reminder</option>
+                                            <option value="false">
+                                                <?= $module->framework->tt('alerts_7') ?>
+                                            </option>
+                                            <option value="true">
+                                                <?= $module->framework->tt('status_ui_24') ?>
+                                            </option>
                                         </select>
                                     </div>
                                 </div>
@@ -118,14 +125,30 @@ if ( !$module->framework->isSuperUser() ) {
                     </th>
                 </tr>
                 <tr>
-                    <th scope="col">Alert ID</th>
-                    <th scope="col">Send Time</th>
-                    <th scope="col">Alert Type</th>
-                    <th scope="col">Reminder</th>
-                    <th scope="col">View Alert</th>
-                    <th scope="col">User(s)</th>
-                    <th scope="col">Recipient</th>
-                    <th scope="col">Status</th>
+                    <th scope="col">
+                        <?= $module->framework->tt('alerts_8') ?>
+                    </th>
+                    <th scope="col">
+                        <?= $module->framework->tt('alerts_9') ?>
+                    </th>
+                    <th scope="col">
+                        <?= $module->framework->tt('alerts_10') ?>
+                    </th>
+                    <th scope="col">
+                        <?= $module->framework->tt('status_ui_24') ?>
+                    </th>
+                    <th scope="col">
+                        <?= $module->framework->tt('alerts_11') ?>
+                    </th>
+                    <th scope="col">
+                        <?= $module->framework->tt('alerts_12') ?>
+                    </th>
+                    <th scope="col">
+                        <?= $module->framework->tt('alerts_13') ?>
+                    </th>
+                    <th scope="col">
+                        <?= $module->framework->tt('alerts_14') ?>
+                    </th>
                 </tr>
             </thead>
         </table>
@@ -136,7 +159,9 @@ if ( !$module->framework->isSuperUser() ) {
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title" id="alertPreviewModalLabel">Alert Preview</h4>
+                <h4 class="modal-title" id="alertPreviewModalLabel">
+                    <?= $module->framework->tt('alerts_15') ?>
+                </h4>
                 <button type="button" class="close" data-bs-dismiss="modal" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -149,6 +174,7 @@ if ( !$module->framework->isSuperUser() ) {
 </div>
 <?php
 echo $module->framework->initializeJavascriptModuleObject();
+$module->framework->tt_transferToJavascriptModuleObject();
 $js = file_get_contents($module->framework->getSafePath('js/project-alert-log.js'));
 $js = str_replace('__MODULE__', $module->framework->getJavascriptModuleObjectName(), $js);
 echo '<script type="text/javascript">' . $js . '</script>';

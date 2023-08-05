@@ -27,8 +27,8 @@ class SAGEditForm
         $rightsUtilities = new RightsUtilities($module);
         $this->allRights = $rightsUtilities->getAllRights();
 
-        $newMessage           = 'Creating new Security Access Group';
-        $existingMessage      = 'Editing existing Security Access Group';
+        $newMessage           = $this->module->framework->tt('misc_26');
+        $existingMessage      = $this->module->framework->tt('misc_27');
         $messageSuffix        = ' "<strong>' . \REDCap::escapeHtml($sagName) . '</strong>"';
         $this->contextMessage = ($newSag ? $newMessage : $existingMessage) . $messageSuffix;
     }
@@ -74,6 +74,7 @@ class SAGEditForm
     {
         $alertClass = $this->newSag ? "alert-success" : "alert-primary";
         $label      = $this->lang['rights_431'];
+        $close      = $this->module->framework->tt('close');
         return <<<"EOT"
         <div class="modal-xl modal-dialog modal-dialog-scrollable">
             <div class="modal-content">
@@ -82,7 +83,7 @@ class SAGEditForm
                         <i class="fa-solid fa-fw fa-user-tag"></i> $this->contextMessage
                     </span>
                     <button type="button" class="btn-close align-self-center" data-bs-dismiss="modal" data-dismiss="modal"
-                    aria-label="Close"></button>
+                    aria-label="$close"></button>
                 </div>
                 <div class="modal-body">
                 <div style="text-align:center; margin: 15px 0;" class="fs14 alert $alertClass">
@@ -104,7 +105,7 @@ class SAGEditForm
 
     private function getSagNameField()
     {
-        $label   = 'SAG name:';
+        $label   = $this->module->framework->tt('misc_28');
         $sagName = $this->module->escape($this->sagName);
         $hidden  = $this->newSag ? "hidden" : '';
         return <<<"EOT"
@@ -517,11 +518,15 @@ class SAGEditForm
     private function getDataQualityResolution()
     {
         if ( isset($this->allRights['data_quality_resolution']) ) {
-            $label    = $this->lang['dataqueries_137'];
-            $checked1 = $this->rights['data_quality_resolution_view'] == 1 ? 'checked' : '';
-            $checked2 = $this->rights['data_quality_resolution_open'] == 1 ? 'checked' : '';
-            $checked3 = $this->rights['data_quality_resolution_respond'] == 1 ? 'checked' : '';
-            $checked4 = $this->rights['data_quality_resolution_close'] == 1 ? 'checked' : '';
+            $label     = $this->lang['dataqueries_137'];
+            $dqrLabel1 = $this->module->framework->tt('misc_29');
+            $dqrLabel2 = $this->module->framework->tt('misc_30');
+            $dqrLabel3 = $this->module->framework->tt('misc_31');
+            $dqrLabel4 = $this->module->framework->tt('misc_32');
+            $checked1  = $this->rights['data_quality_resolution_view'] == 1 ? 'checked' : '';
+            $checked2  = $this->rights['data_quality_resolution_open'] == 1 ? 'checked' : '';
+            $checked3  = $this->rights['data_quality_resolution_respond'] == 1 ? 'checked' : '';
+            $checked4  = $this->rights['data_quality_resolution_close'] == 1 ? 'checked' : '';
             return <<<"EOT"
             <div class="SAG-form-row row">
                 <div class="col mt-1">
@@ -535,7 +540,7 @@ class SAGEditForm
                             type='checkbox' id='data_quality_resolution_view'
                             name='data_quality_resolution_view' $checked1
                             onchange="if(!this.checked) {\$('.data_quality_resolution').prop('checked', false);}">
-                        <label class='form-check-label' for='data_quality_resolution_view'>View Queries</label>
+                        <label class='form-check-label' for='data_quality_resolution_view'>$dqrLabel1</label>
                     </div>
                     <div class='form-check'>
                         <input
@@ -543,7 +548,7 @@ class SAGEditForm
                             type='checkbox' id='data_quality_resolution_open'
                             name='data_quality_resolution_open' $checked2
                             onchange="if(!this.checked) {\$('.data_quality_resolution_close').prop('checked', false);} else {\$('.data_quality_resolution_view').prop('checked', true);}">
-                        <label class='form-check-label' for='data_quality_resolution_open'>Open Queries</label>
+                        <label class='form-check-label' for='data_quality_resolution_open'>$dqrLabel2</label>
                     </div>
                     <div class='form-check'>
                         <input
@@ -552,7 +557,7 @@ class SAGEditForm
                             name='data_quality_resolution_respond' $checked3
                             onchange="if(!this.checked) {\$('.data_quality_resolution_close').prop('checked', false);} else {\$('.data_quality_resolution_view').prop('checked', true);}">
                         <label class='form-check-label'
-                            for='data_quality_resolution_respond'>Respond to Queries</label>
+                            for='data_quality_resolution_respond'>$dqrLabel3</label>
                     </div>
                     <div class='form-check'>
                         <input
@@ -560,7 +565,7 @@ class SAGEditForm
                             type='checkbox' id='data_quality_resolution_close'
                             name='data_quality_resolution_close' $checked4
                             onchange="if(this.checked) {\$('.data_quality_resolution').prop('checked', true);}">
-                        <label class='form-check-label' for='data_quality_resolution_close'>Close Queries</label>
+                        <label class='form-check-label' for='data_quality_resolution_close'>$dqrLabel4</label>
                     </div>
                 </div>
             </div>
@@ -600,15 +605,14 @@ class SAGEditForm
         if ( isset($this->allRights['realtime_webservice_mapping']) ) {
             $label1   = $this->lang['ws_19'];
             $label2   = $this->lang['ws_20'];
+            $label3   = $this->module->framework->tt('misc_33');
             $checked1 = $this->rights['realtime_webservice_mapping'] == 1 ? 'checked' : '';
             $checked2 = $this->rights['realtime_webservice_adjudicate'] == 1 ? 'checked' : '';
             return <<<"EOT"
             <div class="SAG-form-row row">
                 <div class="col mt-1">
                     <div>
-                        <i class="fa-solid fa-fw fa-database"></i>&nbsp;&nbsp; Clinical
-                        Data Pull from EHR -or- Dynamic Data Pull from External Source
-                        System
+                        <i class="fa-solid fa-fw fa-database"></i>&nbsp;&nbsp; $label3
                     </div>
                 </div>
                 <div class="col">
@@ -964,7 +968,10 @@ class SAGEditForm
     private function getFormEnd()
     {
         $buttonClass = $this->newSag ? 'btn-success' : 'btn-primary';
-        $label       = $this->newSag ? 'Save New SAG' : 'Save Changes';
+        $label       = $this->newSag ? $this->module->framework->tt('misc_34') : $this->module->framework->tt('misc_35');
+        $copyLabel   = $this->module->framework->tt('cc_sags_16');
+        $deleteLabel = $this->module->framework->tt('cc_sags_12');
+        $cancelLabel = $this->module->framework->tt('cancel');
         $result      = <<<"EOT"
                                 </div>
                             </div>
@@ -977,13 +984,13 @@ class SAGEditForm
             <button id="SAG_Save" type="button"
                 class="btn $buttonClass">$label</button>
             <button id="SAG_Cancel" type="button" class="btn btn-secondary" data-bs-dismiss="modal"
-                data-dismiss="modal">Cancel
+                data-dismiss="modal">$cancelLabel
             </button>
         EOT;
         if ( !$this->newSag ) {
             $result .= <<<"EOT"
-            <button id="SAG_Copy" type="button" class="btn btn-info btn-sm">Copy SAG</button>
-            <button id="SAG_Delete" type="button" class="btn btn-danger btn-sm">Delete SAG</button>
+            <button id="SAG_Copy" type="button" class="btn btn-info btn-sm">$copyLabel</button>
+            <button id="SAG_Delete" type="button" class="btn btn-danger btn-sm">$deleteLabel</button>
             EOT;
         }
         $result .= <<<"EOT"

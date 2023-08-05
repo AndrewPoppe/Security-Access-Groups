@@ -1,7 +1,4 @@
-<p style='margin:20px 0;max-width:1000px;font-size:14px;'>This table shows all the SAGs that currently exist in the
-    system. A SAG must be created here before it can be assigned to a user. The current list of SAGs can be exported
-    as a CSV file, and a CSV file can be imported to update existing SAGs or to create new SAGs.
-</p>
+<p style='margin:20px 0;max-width:1000px;font-size:14px;'>{{cc_sags_1}}</p>
 
 <!-- Modal -->
 <div class="modal" id="edit_sag_popup" data-backdrop="static" data-keyboard="false"
@@ -15,22 +12,19 @@
             <button type="button" class="btn btn-primary btn-xs dropdown-toggle mr-2" data-toggle="dropdown"
                 data-bs-toggle="dropdown" aria-expanded="false">
                 <i class="fa-solid fa-file-excel"></i>
-                <span>Import or Export SAGs</span>
-                <span class="sr-only">Toggle Dropdown</span>
+                <span>{{cc_sags_2}}</span>
+                <span class="sr-only">{{cc_user_7}}</span>
             </button>
             <ul class="dropdown-menu">
                 <li><a class="dropdown-item" onclick="sag_module.exportRawCsv();"><i
-                            class=" fa-regular fa-file-arrow-down fa-fw mr-1 text-info"></i>Export SAGs
-                        (raw)</a></li>
+                            class=" fa-regular fa-file-arrow-down fa-fw mr-1 text-info"></i>{{cc_sags_3}}</a></li>
                 <li><a class="dropdown-item" onclick="sag_module.exportCsv();"><i
-                            class=" fa-regular fa-file-arrow-down fa-fw mr-1 text-success"></i>Export SAGs
-                        (labels)</a></li>
+                            class=" fa-regular fa-file-arrow-down fa-fw mr-1 text-success"></i>{{cc_sags_4}}</a></li>
                 <li><a class="dropdown-item" onclick="sag_module.importCsv();"><i
-                            class=" fa-solid fa-file-arrow-up fa-fw mr-1 text-danger"></i>Import SAGs</a>
+                            class=" fa-solid fa-file-arrow-up fa-fw mr-1 text-danger"></i>{{cc_sags_5}}</a>
                 </li>
                 <li><a class="dropdown-item" onclick="sag_module.exportRawCsv(false);"><i
-                            class=" fa-solid fa-download fa-fw mr-1 text-primary"></i>Download Import
-                        Template</a></li>
+                            class=" fa-solid fa-download fa-fw mr-1 text-primary"></i>{{cc_sags_6}}</a></li>
             </ul>
         </div>
         <div class="hidden">
@@ -38,17 +32,17 @@
         </div>
     </div>
     <div class="row ml-2">
-        <span><strong>Create new Security Access Group:</strong></span>
+        <span><strong>{{cc_sags_7}}</strong></span>
     </div>
     <div class="row ml-2 mb-2 mt-1 justify-content-start">
         <div class="col-6 px-0">
-            <input id="newSagName" class="form-control form-control-sm" type="text" placeholder="Enter new SAG name">
+            <input id="newSagName" class="form-control form-control-sm" type="text" placeholder="{{cc_sags_8}}">
         </div>
         <div class="col ml-1 px-0 justify-content-start">
             <button class="btn btn-success btn-sm" id="addSagButton" onclick="sag_module.addNewSag();"
                 title="Add a New Security Access Group">
                 <i class="fa-solid fa-tag fa-fw"></i>
-                <span>Create SAG</span>
+                <span>{{cc_sags_9}}</span>
             </button>
         </div>
     </div>
@@ -62,9 +56,9 @@
     <table aria-label="SAGs Table" id="sagTable" class="sagTable cell-border" style="width: 100%">
         <thead>
             <tr style="vertical-align: bottom; text-align: center;">
-                <th>Order</th>
-                <th data-key="sag_name">SAG Name</th>
-                <th data-key="sag_id">SAG ID</th>
+                <th>{{cc_sags_10}}</th>
+                <th data-key="sag_name">{{cc_user_11}}</th>
+                <th data-key="sag_id">{{cc_user_12}}</th>
                 {{HEADERS}}
             </tr>
         </thead>

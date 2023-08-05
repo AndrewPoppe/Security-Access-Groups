@@ -3,7 +3,7 @@
     <div class="modal-lg modal-dialog modal-dialog-scrollable" id="userExpirationModalSecondary">
         <div class="modal-content">
             <div class="modal-header bg-danger text-light">
-                <h5 class="modal-title" id="userExpirationTitle">Expire Project Users</h5>
+                <h5 class="modal-title" id="userExpirationTitle">{{status_ui_9}}</h5>
                 <button type="button" class="btn-close btn-danger align-self-center" data-bs-dismiss="modal"
                     data-dismiss="modal" aria-label="Close"></button>
             </div>
@@ -14,17 +14,17 @@
                         <div class="col">
                             <div class="border bg-light">
                                 <div class="row ml-4 mt-3 text-dangerrc">
-                                    <h5><strong><i class="fa-solid fa-triangle-exclamation"></i> The following users
-                                            will be expired in this project:</strong></h5>
+                                    <h5><strong><i class="fa-solid fa-triangle-exclamation"></i>
+                                            {{status_ui_99}}</strong></h5>
                                 </div>
                                 <div class="form-group row ml-4 my-0">
                                     <table aria-label="users to be expired" id="userExpirationTable"
                                         class="table table-sm table-hover table-borderless w-50 ml-2">
                                         <thead>
                                             <tr style="border-bottom: 1px solid #bdbdbd;">
-                                                <th>REDCap Username</th>
-                                                <th>Name</th>
-                                                <th>Email Address</th>
+                                                <th>{{status_ui_97}}</th>
+                                                <th>{{status_ui_60}}</th>
+                                                <th>{{status_ui_61}}</th>
                                             </tr>
                                         </thead>
                                         <tbody></tbody>
@@ -34,19 +34,16 @@
                                 <div class="form-group row mx-3">
                                     <div class="col-sm-7">
                                         <div class="row">
-                                            <label class="col-form-label col-form-label-sm">Set the number of days until
-                                                the users are expired</label>
+                                            <label class="col-form-label col-form-label-sm">{{status_ui_100}}</label>
                                         </div>
                                         <div class="row">
-                                            <span class="text-dangerrc">Choose a value of "0" to expire the users
-                                                immediately</span>
+                                            <span class="text-dangerrc">{{status_ui_101}}</span>
                                         </div>
                                     </div>
                                     <div class="col-sm-5 mt-2">
                                         <input id="delayDays-expiration" name="delayDays-expiration" type="number"
                                             min="0" value="0" class="form-control form-control-sm">
-                                        <div class="invalid-feedback">You must provide a number of days of at least 0
-                                        </div>
+                                        <div class="invalid-feedback">{{status_ui_102}}</div>
                                     </div>
                                 </div>
                             </div>
@@ -57,26 +54,25 @@
                         <div class="col">
                             <div class="border bg-users p-4">
                                 <div class="form-group row mb-0">
-                                    <label class="col-sm col-form-label col-form-label-sm">Send Notification to
-                                        User(s)?</label>
+                                    <label class="col-sm col-form-label col-form-label-sm">{{status_ui_103}}</label>
                                     <div class="col-sm">
                                         <div class="form-check">
                                             <input id="sendUserNotification" name="sendUserNotification" type="checkbox"
                                                 class="form-check-input" value="1"
                                                 onchange="$('#userNotificationInfo').collapse(this.checked ? 'show' : 'hide');">
-                                            <label class="form-check-label" for="sendUserNotification">Yes, send a
-                                                notification</label>
+                                            <label class="form-check-label"
+                                                for="sendUserNotification">{{status_ui_104}}</label>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="collapse mt-2" id="userNotificationInfo">
                                     <div class="form-group row">
                                         <label for="fromEmail"
-                                            class="col-sm-3 col-form-label col-form-label-sm">From:</label>
+                                            class="col-sm-3 col-form-label col-form-label-sm">{{status_ui_77}}</label>
                                         <div class="col-sm-4">
                                             <input id="displayFromName-userExpiration" name="displayFromName"
                                                 type="text" class="form-control form-control-sm"
-                                                placeholder="Display name (optional)">
+                                                placeholder="{{status_ui_78}}">
                                         </div>
                                         <div class="col-sm-5 pl-0">
                                             <select id="fromEmail-userExpiration" name="fromEmail"
@@ -87,27 +83,27 @@
                                     </div>
                                     <div class="form-group row">
                                         <label for="emailSubject-userExpiration"
-                                            class="col-sm-3 col-form-label col-form-label-sm">Subject:</label>
+                                            class="col-sm-3 col-form-label col-form-label-sm">{{status_ui_79}}</label>
                                         <div class="col-sm-9">
                                             <input id="emailSubject-userExpiration" name="emailSubject" type="text"
                                                 class="form-control form-control-sm" required aria-required="true">
-                                            <div class="invalid-feedback">You must provide a subject for the email</div>
+                                            <div class="invalid-feedback">{{status_ui_80}}</div>
                                         </div>
                                     </div>
                                     <div class="form-group row mb-1">
                                         <div class="col">
                                             <label for="emailBody-userExpiration"
-                                                class="col-form-label col-form-label-sm">Email Body:</label>
+                                                class="col-form-label col-form-label-sm">{{status_ui_81}}</label>
                                             <textarea id="emailBody-userExpiration" name="emailBody" type="text"
                                                 class="form-control form-control-sm richtext emailBody"></textarea>
-                                            <div class="invalid-feedback">You must provide a body for the email</div>
+                                            <div class="invalid-feedback">{{status_ui_82}}</div>
                                         </div>
                                     </div>
                                     <div class="form-group row mb-1">
                                         <div class="col text-right">
                                             <button class="btn btn-info btn-xs" type="button"
                                                 onclick="sag_module.previewEmail($('#userExpirationForm .userNotification'));"><i
-                                                    class="fa-eye fa-regular mr-1"></i>Preview</button>
+                                                    class="fa-eye fa-regular mr-1"></i>{{status_ui_83}}</button>
                                         </div>
                                     </div>
                                     <div class="form-group row mt-2" style="font-size: small;">
@@ -115,22 +111,20 @@
                                             <table aria-label="placeholders">
                                                 <thead>
                                                     <tr>
-                                                        <th colspan=2><span><strong>You can use the following
-                                                                    placeholders
-                                                                    to insert information into
-                                                                    your email subject and body:</strong></span></th>
+                                                        <th colspan=2><span><strong>{{status_ui_84}}</strong></span>
+                                                        </th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
                                                     {{PLACEHOLDERS_USERS}}
                                                 </tbody>
                                             </table>
-                                            <p><span>You can also use <button
+                                            <p><span>{{status_ui_85}} <button
                                                         class="btn btn-xs btn-rcgreen btn-rcgreen-light"
                                                         style="margin-left:3px;font-size:11px;padding:0px 3px 1px;line-height:14px;"
                                                         onclick="smartVariableExplainPopup();setTimeout(function() {$('#smart_variable_explain_popup').parent().css('z-index', 1061);},300); return false;">[<i
                                                             class="fa-solid fa-bolt fa-xs" style="margin:0 1px;"></i>]
-                                                        Smart Variables</button></span></p>
+                                                        {{status_ui_86}}</button></span></p>
                                         </div>
                                     </div>
                                 </div>
@@ -142,8 +136,7 @@
                         <div class="col">
                             <div class="border bg-userRightsHolders p-4">
                                 <div class="form-group row mb-0">
-                                    <label class="col-sm col-form-label col-form-label-sm">Send Notification to User
-                                        Rights Holders?</label>
+                                    <label class="col-sm col-form-label col-form-label-sm">{{status_ui_105}}</label>
                                     <div class="col-sm">
                                         <div class="form-check">
                                             <input id="sendNotification-userExpiration-UserRightsHolders"
@@ -151,20 +144,18 @@
                                                 class="form-check-input" value="1"
                                                 onchange="userExpirationUserRightsHoldersToggle(this.checked);">
                                             <label class="form-check-label"
-                                                for="sendNotification-userExpiration-UserRightsHolders">Yes, send a
-                                                notification</label>
+                                                for="sendNotification-userExpiration-UserRightsHolders">{{status_ui_104}}</label>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="collapse mt-2" id="notificationInfo-userExpiration-UserRightsHolders">
                                     <div class="form-group row">
                                         <label for="displayFromName-userExpiration-UserRightsHolders"
-                                            class="col-sm-3 col-form-label col-form-label-sm">From:</label>
+                                            class="col-sm-3 col-form-label col-form-label-sm">{{status_ui_77}}</label>
                                         <div class="col-sm-4">
                                             <input id="displayFromName-userExpiration-UserRightsHolders"
                                                 name="displayFromName-userExpiration-UserRightsHolders" type="text"
-                                                class="form-control form-control-sm"
-                                                placeholder="Display name (optional)">
+                                                class="form-control form-control-sm" placeholder="{{status_ui_78}}">
                                         </div>
                                         <div class="col-sm-5 pl-0">
                                             <select id="fromEmail-userExpiration-UserRightsHolders"
@@ -176,19 +167,19 @@
                                     </div>
                                     <div class="form-group row">
                                         <label for="emailSubject-userExpiration-UserRightsHolders"
-                                            class="col-sm-3 col-form-label col-form-label-sm">Subject:</label>
+                                            class="col-sm-3 col-form-label col-form-label-sm">{{status_ui_79}}</label>
                                         <div class="col-sm-9">
                                             <input id="emailSubject-userExpiration-UserRightsHolders"
                                                 name="emailSubject-userExpiration-UserRightsHolders" type="text"
                                                 class="form-control form-control-sm">
-                                            <div class="invalid-feedback">You must provide a subject for the email</div>
+                                            <div class="invalid-feedback">{{status_ui_80}}</div>
                                         </div>
                                     </div>
                                     <div class="form-group row mb-1">
                                         <div class="col">
                                             <label for="emailBody-userExpiration-UserRightsHolders"
-                                                class="col-form-label col-form-label-sm">Email Body:</label>
-                                            <div class="invalid-feedback">You must provide a body for the email</div>
+                                                class="col-form-label col-form-label-sm">{{status_ui_81}}</label>
+                                            <div class="invalid-feedback">{{status_ui_82}}</div>
                                             <textarea id="emailBody-userExpiration-UserRightsHolders" name="emailBody"
                                                 type="text"
                                                 class="form-control form-control-sm richtext emailBody"></textarea>
@@ -198,7 +189,7 @@
                                         <div class="col text-right">
                                             <button class="btn btn-info btn-xs" type="button"
                                                 onclick="sag_module.previewEmailUserRightsHolders($('#userExpirationForm .userRightsHoldersNotification'));"><i
-                                                    class="fa-eye fa-regular mr-1"></i>Preview</button>
+                                                    class="fa-eye fa-regular mr-1"></i>{{status_ui_83}}</button>
                                         </div>
                                     </div>
                                     <div class="form-group row mt-2" style="font-size: small;">
@@ -206,22 +197,20 @@
                                             <table aria-label="placeholders">
                                                 <thead>
                                                     <tr>
-                                                        <th colspan=2><span><strong>You can use the following
-                                                                    placeholders
-                                                                    to insert information into
-                                                                    your email subject and body:</strong></span></th>
+                                                        <th colspan=2><span><strong>{{status_ui_84}}</strong></span>
+                                                        </th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
                                                     {{PLACEHOLDERS_USER_RIGHTS_HOLDERS}}
                                                 </tbody>
                                             </table>
-                                            <p><span>You can also use <button
+                                            <p><span>{{status_ui_85}} <button
                                                         class="btn btn-xs btn-rcgreen btn-rcgreen-light"
                                                         style="margin-left:3px;font-size:11px;padding:0px 3px 1px;line-height:14px;"
                                                         onclick="smartVariableExplainPopup();setTimeout(function() {$('#smart_variable_explain_popup').parent().css('z-index', 1061);},300); return false;">[<i
                                                             class="fa-solid fa-bolt fa-xs" style="margin:0 1px;"></i>]
-                                                        Smart Variables</button></span></p>
+                                                        {{status_ui_86}}</button></span></p>
                                         </div>
                                     </div>
                                 </div>
@@ -230,7 +219,7 @@
                         <div class="col-4 pl-0" id="expireUsersUserRightsHolderSelection">
 
                             <div class="mb-1" style="font-size: 14px;">
-                                <strong>Select the recipients:</strong>
+                                <strong>{{status_ui_96}}</strong>
                             </div>
                             <table aria-label="alert recipients - user rights holders"
                                 id="recipientTable_userExpiration_UserRightsHolders"
@@ -241,16 +230,16 @@
                                                 class="selectAll" id="selectAllUserRightsHolders"
                                                 onchange="$('.user-rights-holder-selector input').prop('checked', $(this).prop('checked')).trigger('change');">
                                         </th>
-                                        <th scope="col">REDCap Username</th>
-                                        <th scope="col">Name</th>
-                                        <th scope="col">Email</th>
+                                        <th scope="col">{{status_ui_97}}</th>
+                                        <th scope="col">{{status_ui_60}}</th>
+                                        <th scope="col">{{status_ui_61}}</th>
                                     </tr>
                                 </thead>
                                 <tbody class="word-wrap" style="word-wrap: anywhere;">
                                     {{USER_RIGHTS_HOLDERS}}
                                 </tbody>
                             </table>
-                            <div class="invalid-feedback">You must select at least one recipient</div>
+                            <div class="invalid-feedback">{{status_ui_98}}</div>
 
                         </div>
                     </div>
@@ -258,9 +247,9 @@
             </div>
             <div class=" modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal"
-                    data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-danger" onclick="sag_module.expireUsersAndSendAlerts();">Expire
-                    Users</button>
+                    data-bs-dismiss="modal">{{cancel}}</button>
+                <button type="button" class="btn btn-danger"
+                    onclick="sag_module.expireUsersAndSendAlerts();">{{status_ui_106}}</button>
             </div>
         </div>
     </div>
@@ -299,6 +288,5 @@
             $('#notificationInfo-userExpiration-UserRightsHolders').collapse("hide");
             $('#userExpirationModalSecondary').addClass("modal-lg").removeClass("modal-xl");
         }
-
     }
 </script>

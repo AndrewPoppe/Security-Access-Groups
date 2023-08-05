@@ -5,10 +5,11 @@ console.time('dt');
 sag_module.openSagEditor = function (sag_id = "", sag_name = "", newSag = false) {
     const deleteSagButtonCallback = function () {
         Swal.fire({
-            title: 'Are you sure you want to delete this SAG?',
+            title: sag_module.tt('cc_sags_11'),
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonText: 'Delete SAG',
+            confirmButtonText: sag_module.tt('cc_sags_12'),
+            cancelButtonText: sag_module.tt('cancel'),
             customClass: {
                 confirmButton: 'btn btn-danger m-1',
                 cancelButton: 'btn btn-secondary m-1'
@@ -22,14 +23,15 @@ sag_module.openSagEditor = function (sag_id = "", sag_name = "", newSag = false)
                         const result = JSON.parse(response);
                         if (result.status != 'error') {
                             Toast.fire({
-                                title: 'The SAG was deleted',
+                                title: sag_module.tt('cc_sags_13'),
                                 icon: 'success'
                             }).then(() => window.location.reload());
                         } else {
                             Swal.fire({
-                                title: 'Error',
+                                title: sag_module.tt('error_2'),
                                 html: result.message,
                                 icon: 'error',
+                                confirmButtonText: sag_module.tt('ok'),
                                 customClass: {
                                     confirmButton: 'btn btn-primary',
                                 },
@@ -46,11 +48,12 @@ sag_module.openSagEditor = function (sag_id = "", sag_name = "", newSag = false)
     const copySagButtonCallback = function () {
         const data = $("#SAG_Setting").serializeObject();
         Swal.fire({
-            title: 'What would you like the new SAG to be called?',
+            title: sag_module.tt('cc_sags_14'),
             input: 'text',
-            inputValue: `${data["sag_name_edit"]} Copy`,
+            inputValue: `${data["sag_name_edit"]} ${sag_module.tt('cc_sags_15')}`,
             showCancelButton: true,
-            confirmButtonText: 'Copy SAG',
+            confirmButtonText: sag_module.tt('cc_sags_16'),
+            cancelButtonText: sag_module.tt('cancel'),
             customClass: {
                 confirmButton: 'btn btn-info m-1',
                 cancelButton: 'btn btn-secondary m-1'
@@ -69,14 +72,14 @@ sag_module.openSagEditor = function (sag_id = "", sag_name = "", newSag = false)
                             if (result.status != 'error') {
                                 Toast.fire({
                                     icon: "success",
-                                    title: `SAG Successfully Copied`
+                                    title: sag_module.tt('cc_sags_17')
                                 }).then(function () {
                                     window.location.reload();
                                 });
                             } else {
                                 Toast.fire({
                                     icon: "error",
-                                    title: `Error Copying SAG`
+                                    title: sag_module.tt('cc_sags_18')
                                 });
                             }
                         })
@@ -100,14 +103,14 @@ sag_module.openSagEditor = function (sag_id = "", sag_name = "", newSag = false)
                     if (result.status != 'error') {
                         Toast.fire({
                             icon: "success",
-                            title: `SAG "${sag_name_edit}" Successfully Saved`
+                            title: sag_module.tt('cc_sags_19', sag_name_edit)
                         }).then(function () {
                             window.location.reload();
                         });
                     } else {
                         Toast.fire({
                             icon: "error",
-                            title: `Error Saving SAG "${sag_name_edit}"`
+                            title: sag_module.tt('cc_sags_20', sag_name_edit)
                         });
                     }
                 })
@@ -129,14 +132,14 @@ sag_module.openSagEditor = function (sag_id = "", sag_name = "", newSag = false)
                     if (result.status != 'error') {
                         Toast.fire({
                             icon: "success",
-                            title: `SAG Successfully Created`
+                            title: sag_module.tt('cc_sags_21')
                         }).then(function () {
                             window.location.reload();
                         });
                     } else {
                         Toast.fire({
                             icon: "error",
-                            title: `Error Creating SAG`
+                            title: sag_module.tt('cc_sags_22')
                         });
                     }
                 })
@@ -157,6 +160,7 @@ sag_module.openSagEditor = function (sag_id = "", sag_name = "", newSag = false)
                         Swal.fire({
                             title: '{{USER_RIGHTS_ERROR_MESSAGE}}',
                             icon: 'error',
+                            confirmButtonText: sag_module.tt('ok'),
                             customClass: {
                                 confirmButton: 'btn btn-primary',
                             },
@@ -188,7 +192,7 @@ sag_module.addNewSag = function () {
     const newSagName = $('#newSagName').val().trim();
     if (newSagName == "") {
         Toast.fire({
-            title: "You must specify a SAG name",
+            title: sag_module.tt('cc_sags_23'),
             icon: "error",
             showConfirmButton: false,
             didClose: () => {
@@ -370,7 +374,7 @@ sag_module.handleFiles = function () {
                 } else {
                     Swal.fire({
                         icon: 'error',
-                        title: "Error importing CSV",
+                        title: sag_module.tt('cc_user_20'),
                         html: result.message,
                         showConfirmButton: false
                     });
@@ -395,7 +399,8 @@ sag_module.confirmImport = function () {
             if (result.status != 'error') {
                 Swal.fire({
                     icon: 'success',
-                    html: "Successfully imported Security Access Group definitions.",
+                    html: sag_module.tt('cc_sags_24'),
+                    confirmButtonText: sag_module.tt('ok'),
                     customClass: {
                         confirmButton: 'btn btn-primary',
                     },
@@ -407,14 +412,14 @@ sag_module.confirmImport = function () {
             } else {
                 Toast.fire({
                     icon: 'error',
-                    html: "Error importing CSV"
+                    html: sag_module.tt('cc_user_20')
                 });
             }
         })
         .catch((error) => {
             Toast.fire({
                 icon: 'error',
-                html: "Error importing CSV"
+                html: sag_module.tt('cc_user_20')
             });
             console.error(error);
         });
@@ -593,11 +598,11 @@ $(document).ready(function () {
                 if (type === 'display') {
                     switch (String(row.permissions.dataViewing)) {
                         case '3':
-                            return 'View & Edit Forms and Survey Responses';
+                            return sag_module.tt('cc_sags_25');
                         case '2':
-                            return 'View & Edit Forms';
+                            return sag_module.tt('cc_sags_26');
                         case '1':
-                            return 'Read Only';
+                            return sag_module.tt('cc_sags_27');
                         default:
                             return x;
                     }
@@ -612,11 +617,11 @@ $(document).ready(function () {
                 if (type === 'display') {
                     switch (String(row.permissions.dataExport)) {
                         case '3':
-                            return 'Full Data Set';
+                            return sag_module.tt('cc_sags_28');
                         case '2':
-                            return 'Remove Identifiers';
+                            return sag_module.tt('cc_sags_29');
                         case '1':
-                            return 'De-Identified';
+                            return sag_module.tt('cc_sags_30');
                         default:
                             return x;
                     }
@@ -719,8 +724,8 @@ $(document).ready(function () {
             className: 'dt-center dt-body-nowrap',
             data: function (row, type, set, meta) {
                 if (type === 'display') {
-                    const reviewer = row.permissions.double_data_reviewer ? "Reviewer" : null;
-                    const person = row.permissions.double_data_person ? "Entry Person" : null;
+                    const reviewer = row.permissions.double_data_reviewer ? sag_module.tt('cc_sags_31') : null;
+                    const person = row.permissions.double_data_person ? sag_module.tt('cc_sags_32') : null;
                     const cellValue = [reviewer, person].filter(el => el).join("<br/>");
                     return cellValue || x;
                 } else {
@@ -760,11 +765,11 @@ $(document).ready(function () {
             className: 'dt-center',
             data: function (row, type, set, meta) {
                 if (type === 'display') {
-                    const random_setup = row.permissions.random_setup ? "Setup" : null;
+                    const random_setup = row.permissions.random_setup ? sag_module.tt('cc_sags_33') : null;
                     const random_dashboard = row.permissions.random_dashboard ?
-                        "Dashboard" : null;
+                        sag_module.tt('cc_sags_34') : null;
                     const random_perform = row.permissions.random_perform ?
-                        "Randomize" : null;
+                        sag_module.tt('cc_sags_35') : null;
                     const cellValue = [random_setup, random_dashboard, random_perform]
                         .filter(el => el).join("<br/>");
                     return cellValue || x;
@@ -799,13 +804,13 @@ $(document).ready(function () {
             data: function (row, type, set, meta) {
                 if (type === 'display') {
                     const view = row.permissions.data_quality_resolution_view ?
-                        "View" : null;
+                        sag_module.tt('cc_sags_36') : null;
                     const respond = row.permissions.data_quality_resolution_respond ?
-                        "Respond" : null;
+                        sag_module.tt('cc_sags_37') : null;
                     const open = row.permissions.data_quality_resolution_open ?
-                        "Open" : null;
+                        sag_module.tt('cc_sags_38') : null;
                     const close = row.permissions.data_quality_resolution_close ?
-                        "Close" : null;
+                        sag_module.tt('cc_sags_39') : null;
                     const cellValue = [view, respond, open, close].filter(el => el)
                         .join("<br/>");
                     return cellValue || x;
@@ -819,8 +824,8 @@ $(document).ready(function () {
             className: 'dt-center',
             data: function (row, type, set, meta) {
                 if (type === 'display') {
-                    const api_export = row.permissions.api_export ? "Export" : null;
-                    const api_import = row.permissions.api_import ? "Import" : null;
+                    const api_export = row.permissions.api_export ? sag_module.tt('cc_sags_40') : null;
+                    const api_import = row.permissions.api_import ? sag_module.tt('cc_sags_41') : null;
                     const cellValue = [api_export, api_import].filter(el => el).join(
                         "<br/>");
                     return cellValue || x;

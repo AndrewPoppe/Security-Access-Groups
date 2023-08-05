@@ -1,7 +1,4 @@
-<p style='margin:20px 0;max-width:1000px;font-size:14px;'>This table shows all users in the REDCap system and their
-    current SAG assignment. Use the <strong>Edit Users</strong> button to change a user's SAG assignment. You may
-    export the current list of SAG assignments or import a CSV file of assignments using the buttons below.
-</p>
+<p style='margin:20px 0;max-width:1000px;font-size:14px;'>{{cc_user_4}}</p>
 
 <!-- Modals -->
 <div id="loading" class="modal">
@@ -9,9 +6,9 @@
         <div class="modal-content">
             <div class="modal-body p-4 text-center">
                 <div class="spinner-border text-primary" role="status">
-                    <span class="sr-only">Loading...</span>
+                    <span class="sr-only">{{alerts_16}}</span>
                 </div>
-                <div class="mt-2">Loading...</div>
+                <div class="mt-2">{{alerts_16}}</div>
             </div>
         </div>
     </div>
@@ -39,25 +36,23 @@
             <button class="btn btn-danger btn-xs mr-1 editUsersButton" style="width: 8em;" data-editing="false"
                 onclick="sag_module.toggleEditMode(event);">
                 <i class="fa-solid fa-user-pen"></i>
-                <span>Edit Users</span>
+                <span>{{cc_user_5}}</span>
             </button>
             <div class="d-flex dropdown">
                 <button type="button" class="btn btn-primary btn-xs dropdown-toggle mr-2" data-toggle="dropdown"
                     data-bs-toggle="dropdown" aria-expanded="false">
                     <i class="fa-solid fa-file-excel mr-1"></i>
-                    <span>Import or Export User Assignments</span>
-                    <span class="sr-only">Toggle Dropdown</span>
+                    <span>{{cc_user_6}}</span>
+                    <span class="sr-only">{{cc_user_7}}</span>
                 </button>
                 <ul class="dropdown-menu">
                     <li><a class="dropdown-item" onclick="sag_module.handleCsvExport();"><i
                                 class="fa-regular fa-file-arrow-down fa-fw mr-1 text-success">
-                            </i>Export User Assignments</a></li>
+                            </i>{{cc_user_8}}</a></li>
                     <li><a class="dropdown-item" onclick="sag_module.importCsv();"><i
-                                class="fa-solid fa-file-arrow-up fa-fw mr-1 text-danger"></i>Import User
-                            Assignments</a></li>
+                                class="fa-solid fa-file-arrow-up fa-fw mr-1 text-danger"></i>{{cc_user_9}}</a></li>
                     <li><a class="dropdown-item" onclick="sag_module.downloadTemplate();"><i
-                                class="fa-solid fa-download fa-fw mr-1 text-primary"></i>Download Import
-                            Template</a></li>
+                                class="fa-solid fa-download fa-fw mr-1 text-primary"></i>{{cc_user_10}}</a></li>
                 </ul>
             </div>
 
@@ -66,11 +61,11 @@
     <table aria-label='Users Table' id='SAG-System-Table' class="sagTable compact cell-border border">
         <thead>
             <tr>
-                <th data-id="username" class="py-3">Username</th>
-                <th data-id="name" class="py-3">Name</th>
-                <th data-id="email" class="py-3">Email</th>
-                <th data-id="sag" class="py-3">SAG Name</th>
-                <th data-id="sag_id" class="py-3">SAG ID</th>
+                <th data-id="username" class="py-3">{{status_ui_59}}</th>
+                <th data-id="name" class="py-3">{{status_ui_60}}</th>
+                <th data-id="email" class="py-3">{{status_ui_61}}</th>
+                <th data-id="sag" class="py-3">{{cc_user_11}}</th>
+                <th data-id="sag_id" class="py-3">{{cc_user_12}}</th>
             </tr>
         </thead>
         <tbody>

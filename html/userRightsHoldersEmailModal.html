@@ -3,7 +3,7 @@
     <div class="modal-xl modal-dialog modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header bg-warning text-body">
-                <h5 class="modal-title" id="emailUserRightsHoldersTitle">Alert Project User Rights Holders</h5>
+                <h5 class="modal-title" id="emailUserRightsHoldersTitle">{{status_ui_8}}</h5>
                 <button type="button" class="btn-close btn-warning align-self-center" data-bs-dismiss="modal"
                     data-dismiss="modal" aria-label="Close"></button>
             </div>
@@ -16,11 +16,11 @@
                                     <div class="border bg-light p-4">
                                         <div class="form-group row">
                                             <label for="displayFromName-UserRightsHolders"
-                                                class="col-sm-3 col-form-label col-form-label-sm">From:</label>
+                                                class="col-sm-3 col-form-label col-form-label-sm">{{status_ui_77}}</label>
                                             <div class="col-sm-4">
                                                 <input id="displayFromName-UserRightsHolders" name="displayFromName"
                                                     type="text" class="form-control form-control-sm"
-                                                    placeholder="Display name (optional)">
+                                                    placeholder="{{status_ui_78}}">
                                             </div>
                                             <div class="col-sm-5 pl-0">
                                                 <select id="fromEmail-UserRightsHolders" name="fromEmail"
@@ -31,21 +31,21 @@
                                         </div>
                                         <div class="form-group row">
                                             <label for="emailSubject-UserRightsHolders"
-                                                class="col-sm-3 col-form-label col-form-label-sm">Subject:</label>
+                                                class="col-sm-3 col-form-label col-form-label-sm">{{status_ui_79}}</label>
                                             <div class="col-sm-9">
                                                 <input id="emailSubject-UserRightsHolders" name="emailSubject"
                                                     type="text" class="form-control form-control-sm">
-                                                <div class="invalid-feedback">You must provide a subject for the email
+                                                <div class="invalid-feedback">{{status_ui_80}}
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="form-group row mb-1">
                                             <div class="col">
                                                 <label for="emailBody-UserRightsHolders"
-                                                    class="col-form-label col-form-label-sm">Email Body:</label>
+                                                    class="col-form-label col-form-label-sm">{{status_ui_81}}</label>
                                                 <textarea id="emailBody-UserRightsHolders" name="emailBody" type="text"
                                                     class="form-control form-control-sm richtext emailBody"></textarea>
-                                                <div class="invalid-feedback">You must provide a body for the email
+                                                <div class="invalid-feedback">{{status_ui_82}}
                                                 </div>
                                             </div>
                                         </div>
@@ -53,7 +53,7 @@
                                             <div class="col text-right">
                                                 <button class="btn btn-info btn-xs" type="button"
                                                     onclick="sag_module.previewEmailUserRightsHolders($('.primaryEmail-UserRightsHolders'));"><i
-                                                        class="fa-eye fa-regular mr-1"></i>Preview</button>
+                                                        class="fa-eye fa-regular mr-1"></i>{{status_ui_83}}</button>
                                             </div>
                                         </div>
                                         <div class="form-group row" style="font-size: small;">
@@ -61,10 +61,7 @@
                                                 <table aria-label="placeholders">
                                                     <thead>
                                                         <tr>
-                                                            <th colspan=2><span><strong>You can use the following
-                                                                        placeholders
-                                                                        to insert information into
-                                                                        your email subject and body:</strong></span>
+                                                            <th colspan=2><span><strong>{{status_ui_84}}</strong></span>
                                                             </th>
                                                         </tr>
                                                     </thead>
@@ -72,13 +69,13 @@
                                                         {{PLACEHOLDERS}}
                                                     </tbody>
                                                 </table>
-                                                <p><span>You can also use <button
+                                                <p><span>{{status_ui_85}} <button
                                                             class="btn btn-xs btn-rcgreen btn-rcgreen-light"
                                                             style="margin-left:3px;font-size:11px;padding:0 3px 1px;line-height:14px;"
                                                             onclick="smartVariableExplainPopup();setTimeout(function() {$('#smart_variable_explain_popup').parent().css('z-index', 1061);},300); return false;">[<i
                                                                 class="fa-solid fa-bolt fa-xs"
-                                                                style="margin:0 1px;"></i>] Smart
-                                                            Variables</button></span></p>
+                                                                style="margin:0 1px;"></i>]
+                                                            {{status_ui_86}}</button></span></p>
                                             </div>
                                         </div>
                                     </div>
@@ -88,8 +85,8 @@
                                 <div class="col">
                                     <div class="border bg-reminder p-4">
                                         <div class="form-group row mb-0">
-                                            <label class="col-sm-3 col-form-label col-form-label-sm">Send
-                                                Reminder?</label>
+                                            <label
+                                                class="col-sm-3 col-form-label col-form-label-sm">{{status_ui_87}}</label>
                                             <div class="col-sm-9">
                                                 <div class="form-check">
                                                     <input id="sendReminder-UserRightsHolders" name="sendReminder"
@@ -98,42 +95,36 @@
                                                         data-target="#reminderInfo-UserRightsHolders"
                                                         aria-expanded="false" aria-controls="reminderInfo">
                                                     <label class="form-check-label"
-                                                        for="sendReminder-UserRightsHolders">Yes, send a
-                                                        reminder</label>
+                                                        for="sendReminder-UserRightsHolders">{{status_ui_88}}</label>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="collapse mt-2" id="reminderInfo-UserRightsHolders">
                                             <div class="form-group row">
                                                 <label for="delayDays-UserRightsHolders"
-                                                    class="col-sm-3 col-form-label col-form-label-sm">How many days
-                                                    until the reminder is sent?</label>
+                                                    class="col-sm-3 col-form-label col-form-label-sm">{{status_ui_89}}</label>
                                                 <div class="col-sm-9 mt-2">
                                                     <input id="delayDays-UserRightsHolders"
                                                         name="delayDays-UserRightsHolders" type="number" min="1"
                                                         value="14" class="form-control form-control-sm">
-                                                    <div class="invalid-feedback">You must provide a number of days
-                                                        greater than 1</div>
+                                                    <div class="invalid-feedback">{{status_ui_90}}</div>
                                                 </div>
                                             </div>
                                             <hr>
                                             <div class="form-group row">
                                                 <label for="reminderSubject-UserRightsHolders"
-                                                    class="col-sm-3 col-form-label col-form-label-sm">Reminder
-                                                    Subject:</label>
+                                                    class="col-sm-3 col-form-label col-form-label-sm">{{status_ui_91}}</label>
                                                 <div class="col-sm-9">
                                                     <input id="reminderSubject-UserRightsHolders" name="reminderSubject"
                                                         type="text" class="form-control form-control-sm">
-                                                    <div class="invalid-feedback">You must provide a subject for the
-                                                        reminder email</div>
+                                                    <div class="invalid-feedback">{{status_ui_92}}</div>
                                                 </div>
                                             </div>
                                             <div class="form-group row mb-1">
                                                 <div class="col">
                                                     <label for="reminderBody-UserRightsHolders"
-                                                        class="col-form-label col-form-label-sm">Reminder Body:</label>
-                                                    <div class="invalid-feedback">You must provide a body for the
-                                                        reminder email</div>
+                                                        class="col-form-label col-form-label-sm">{{status_ui_93}}</label>
+                                                    <div class="invalid-feedback">{{status_ui_94}}</div>
                                                     <textarea id="reminderBody-UserRightsHolders" name="reminderBody"
                                                         type="text"
                                                         class="form-control form-control-sm richtext emailBody"></textarea>
@@ -143,7 +134,7 @@
                                                 <div class="col text-right">
                                                     <button class="btn btn-info btn-xs" type="button"
                                                         onclick="sag_module.previewEmailUserRightsHolders($('.reminderEmail-UserRightsHolders'));"><i
-                                                            class="fa-eye fa-regular mr-1"></i>Preview</button>
+                                                            class="fa-eye fa-regular mr-1"></i>{{status_ui_83}}</button>
                                                 </div>
                                             </div>
                                             <div class="form-group row" style="font-size: small;">
@@ -151,10 +142,8 @@
                                                     <table aria-label="placeholders">
                                                         <thead>
                                                             <tr>
-                                                                <th colspan=2><span><strong>You can use the following
-                                                                            placeholders
-                                                                            to insert information into
-                                                                            your email subject and body:</strong></span>
+                                                                <th colspan=2>
+                                                                    <span><strong>{{status_ui_84}}</strong></span>
                                                                 </th>
                                                             </tr>
                                                         </thead>
@@ -162,13 +151,13 @@
                                                             {{PLACEHOLDERS}}
                                                         </tbody>
                                                     </table>
-                                                    <p><span>You can also use <button
+                                                    <p><span>{{status_ui_85}} <button
                                                                 class="btn btn-xs btn-rcgreen btn-rcgreen-light"
                                                                 style="margin-left:3px;font-size:11px;padding:0 3px 1px;line-height:14px;"
                                                                 onclick="smartVariableExplainPopup();setTimeout(function() {$('#smart_variable_explain_popup').parent().css('z-index', 1061);},300); return false;">[<i
                                                                     class="fa-solid fa-bolt fa-xs"
-                                                                    style="margin:0 1px;"></i>] Smart
-                                                                Variables</button></span>
+                                                                    style="margin:0 1px;"></i>]
+                                                                {{status_ui_86}}</button></span>
                                                     </p>
                                                 </div>
                                             </div>
@@ -181,7 +170,7 @@
                             <div class="row mb-2">
                                 <div class="col">
                                     <div class="mb-1" style="font-size: 14px;">
-                                        <strong>Select the recipients:</strong>
+                                        <strong>{{status_ui_96}}</strong>
                                     </div>
                                     <table aria-label="alert recipients" id="recipientTable_UserRightsHolders"
                                         class="table table-sm table-bordered" style="font-size: 12px;">
@@ -192,16 +181,16 @@
                                                         class="selectAll" id="selectAllUserRightsHolders"
                                                         onchange="$('.user-rights-holder-selector input').prop('checked', $(this).prop('checked')).trigger('change');">
                                                 </th>
-                                                <th scope="col" style="color: #333 !important;">REDCap Username</th>
-                                                <th scope="col" style="color: #333 !important;">Name</th>
-                                                <th scope="col" style="color: #333 !important;">Email</th>
+                                                <th scope="col" style="color: #333 !important;">{{status_ui_97}}</th>
+                                                <th scope="col" style="color: #333 !important;">{{status_ui_60}}</th>
+                                                <th scope="col" style="color: #333 !important;">{{status_ui_61}}</th>
                                             </tr>
                                         </thead>
                                         <tbody class="word-wrap" style="word-wrap: anywhere;">
                                             {{USER_RIGHTS_HOLDERS}}
                                         </tbody>
                                     </table>
-                                    <div class="invalid-feedback">You must select at least one recipient</div>
+                                    <div class="invalid-feedback">{{status_ui_98}}</div>
                                 </div>
                             </div>
                         </div>
@@ -210,10 +199,9 @@
             </div>
             <div class=" modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal"
-                    data-bs-dismiss="modal">Cancel</button>
+                    data-bs-dismiss="modal">{{cancel}}</button>
                 <button type="button" class="btn btn-warning"
-                    onclick="sag_module.sendEmailAlerts_UserRightsHolders();">Send
-                    Alerts</button>
+                    onclick="sag_module.sendEmailAlerts_UserRightsHolders();">{{status_ui_95}}</button>
             </div>
         </div>
     </div>

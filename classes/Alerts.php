@@ -61,6 +61,7 @@ class Alerts
         $html = file_get_contents($this->module->framework->getSafePath('html/userEmailModal.html'));
         $html = str_replace('{{EMAIL_OPTIONS}}', $this->getEmailOptions(), $html);
         $html = str_replace('{{PLACEHOLDERS}}', $this->getPlaceholdersText('user'), $html);
+        $html = $this->module->replaceAllTranslations($html);
         echo $html;
     }
 
@@ -71,6 +72,7 @@ class Alerts
         $html = str_replace('{{EMAIL_OPTIONS}}', $this->getEmailOptions(), $html);
         $html = str_replace('{{PLACEHOLDERS}}', $this->getPlaceholdersText('userRightsHolders'), $html);
         $html = str_replace('{{USER_RIGHTS_HOLDERS}}', $this->getUserRightsHoldersText(), $html);
+        $html = $this->module->replaceAllTranslations($html);
         echo $html;
     }
 
@@ -82,6 +84,7 @@ class Alerts
         $html = str_replace('{{PLACEHOLDERS_USERS}}', $this->getPlaceholdersText('user', true), $html);
         $html = str_replace('{{PLACEHOLDERS_USER_RIGHTS_HOLDERS}}', $this->getPlaceholdersText('userRightsHolders', true), $html);
         $html = str_replace('{{USER_RIGHTS_HOLDERS}}', $this->getUserRightsHoldersText(), $html);
+        $html = $this->module->replaceAllTranslations($html);
         echo $html;
     }
 
@@ -97,7 +100,7 @@ class Alerts
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
-                    data-dismiss="modal">Close</button>
+                    data-dismiss="modal"><?= $this->module->framework->tt('cancel') ?></button>
             </div>
         </div>
     </div>
@@ -108,18 +111,17 @@ class Alerts
     public function getPlaceholdersUserRightsHolders($expiration = false) : array
     {
         $placeholders = [
-            'sag-users'            => 'A formatted list of usernames',
-            'sag-user-fullnames'   => 'A formatted list of users\' full names',
-            'sag-user-emails'      => 'A formatted list of user emails',
-            'sag-user-sags'        => 'A formatted list of users\' current security access groups',
-            'sag-users-table'      => 'A formatted table of usernames, full names, email addresses, and SAGs',
-            'sag-users-table-full' =>
-            'A formatted table of usernames, full names, email addresses, SAGs, and non-compliant rights',
-            'sag-project-title'    => 'The title of the project',
+            'sag-users'            => $this->module->framework->tt('placeholder_1'),
+            'sag-user-fullnames'   => $this->module->framework->tt('placeholder_2'),
+            'sag-user-emails'      => $this->module->framework->tt('placeholder_3'),
+            'sag-user-sags'        => $this->module->framework->tt('placeholder_4'),
+            'sag-users-table'      => $this->module->framework->tt('placeholder_5'),
+            'sag-users-table-full' => $this->module->framework->tt('placeholder_6'),
+            'sag-project-title'    => $this->module->framework->tt('placeholder_7'),
         ];
 
         if ( $expiration ) {
-            $placeholders['sag-expiration-date'] = 'The date the users will be expired from the project';
+            $placeholders['sag-expiration-date'] = $this->module->framework->tt('placeholder_13');
         }
 
         return $placeholders;
@@ -128,17 +130,16 @@ class Alerts
     public function getPlaceholdersUsers($expiration = false) : array
     {
         $placeholders = [
-            'sag-user'          => 'The user\'s username',
-            'sag-user-fullname' => 'The user\'s full name',
-            'sag-user-email'    => 'The user\'s email address',
-            'sag-user-sag'      => 'The user\'s current security access group',
-            'sag-rights'        => '<span>A formatted list of the rights that do not</span>' .
-            '<br><span>conform with the user\'s security access group.</span>',
-            'sag-project-title' => 'The title of the project',
+            'sag-user'          => $this->module->framework->tt('placeholder_8'),
+            'sag-user-fullname' => $this->module->framework->tt('placeholder_9'),
+            'sag-user-email'    => $this->module->framework->tt('placeholder_10'),
+            'sag-user-sag'      => $this->module->framework->tt('placeholder_11'),
+            'sag-rights'        => $this->module->framework->tt('placeholder_12'),
+            'sag-project-title' => $this->module->framework->tt('placeholder_7'),
         ];
 
         if ( $expiration ) {
-            $placeholders['sag-expiration-date'] = 'The date the user will be expired from the project';
+            $placeholders['sag-expiration-date'] = $this->module->framework->tt('placeholder_13');
         }
 
         return $placeholders;
@@ -226,7 +227,7 @@ class Alerts
 
     private function getUserRemindersToSend($projectId) : array
     {
-        $sql             = 'SELECT log_id,
+        $sql = 'SELECT log_id,
         user,
         users,
          alertType,
@@ -241,6 +242,7 @@ class Alerts
         AND status = \'scheduled\'
         AND reminderDate < ?
         AND project_id = ?';
+
         $params          = [ time(), $projectId ];
         $result          = $this->module->queryLogs($sql, $params);
         $remindersToSend = [];
@@ -373,10 +375,10 @@ class Alerts
     {
         $endRow = '</td></tr>';
         $table  = '<table aria-label=\'alerts\' class=\'table bg-white\' style=\'border:1px solid #dee2e6\'>';
-        $table .= '<tr><th>From:</th><td>' . \REDCap::filterHtml($alert['from']) . $endRow;
-        $table .= '<tr><th>To:</th><td>' . \REDCap::filterHtml($alert['to']) . $endRow;
-        $table .= '<tr><th>Subject:</th><td>' . \REDCap::filterHtml($alert['subject']) . $endRow;
-        $table .= '<tr><th>Message:</th><td>' . \REDCap::filterHtml($alert['body']) . $endRow;
+        $table .= '<tr><th>' . $this->module->framework->tt('status_ui_77') . '</th><td>' . \REDCap::filterHtml($alert['from']) . $endRow;
+        $table .= '<tr><th>' . $this->module->framework->tt('status_ui_109') . '</th><td>' . \REDCap::filterHtml($alert['to']) . $endRow;
+        $table .= '<tr><th>' . $this->module->framework->tt('status_ui_79') . '</th><td>' . \REDCap::filterHtml($alert['subject']) . $endRow;
+        $table .= '<tr><th>' . $this->module->framework->tt('status_ui_110') . '</th><td>' . \REDCap::filterHtml($alert['body']) . $endRow;
         $table .= '</table>';
         return $table;
     }
@@ -387,7 +389,7 @@ class Alerts
             $sql    = 'log_id = ?';
             $result = $this->module->framework->removeLogs($sql, [ $alertId ]);
             if ( !$result ) {
-                throw new \Error('Error deleting alert');
+                throw new SAGException($this->module->framework->tt('alerts_26'));
             }
             $this->module->framework->log('Alert deleted', [ 'alertId' => $alertId ]);
             return $result;

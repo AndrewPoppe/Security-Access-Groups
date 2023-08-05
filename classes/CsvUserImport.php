@@ -34,7 +34,7 @@ class CsvUserImport
     {
         $username = trim($username);
         if ( empty($username) ) {
-            $this->errorMessages[] = 'One or more username was invalid.';
+            $this->errorMessages[] = $this->module->framework->tt('misc_17');
             $this->rowValid        = false;
         }
         return $username;
@@ -56,7 +56,7 @@ class CsvUserImport
         $sagId = trim($sagId);
         $sag   = new SAG($this->module, $sagId);
         if ( empty($sagId) ) {
-            $this->errorMessages[] = 'One or more SAG id was invalid.';
+            $this->errorMessages[] = $this->module->framework->tt('misc_18');
             $this->rowValid        = false;
         }
         if ( !$sag->sagExists() ) {
@@ -73,7 +73,7 @@ class CsvUserImport
         $usernameIndex = array_search('username', $header, true);
         $sagIdIndex    = array_search('sag_id', $header, true);
         if ( $usernameIndex === false || $sagIdIndex === false ) {
-            $this->errorMessages[] = 'Input file did not contain \'username\' and/or \'sag_id\' columns.';
+            $this->errorMessages[] = $this->module->framework->tt('misc_10', [ 'username', 'sag_id' ]);
             return false;
         }
 
@@ -95,12 +95,12 @@ class CsvUserImport
         }
 
         if ( !empty($this->badUsers) || !empty($this->badSags) ) {
-            $this->errorMessages[] = 'The following users and/or SAGs do not exist.';
+            $this->errorMessages[] = $this->module->framework->tt('misc_19');
             $this->valid           = false;
         }
 
         if ( empty($this->cleanContents) ) {
-            $this->errorMessages[] = 'No valid SAG assignments were present in the import file.';
+            $this->errorMessages[] = $this->module->framework->tt('misc_20');
             $this->valid           = false;
         }
 
@@ -139,19 +139,22 @@ class CsvUserImport
             <div class="modal-lg modal-dialog modal-dialog-scrollable">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">Confirm SAG assignments</h5>
+                        <h5 class="modal-title">' . $this->module->framework->tt('misc_21') . '</h5>
                         <button type="button" class="btn-close align-self-center" data-bs-dismiss="modal" data-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                    <div class="container mb-4 w-90" style="font-size:larger;">Examine the table of proposed changes below to verify it is correct.
-                    Only users in highlighted rows will be affected, and for those users the "SAG"
-                    column will show both the <span class="text-primary font-weight-bold"">proposed SAG</span> as well as the <span class="text-danger font-weight-bold"">current SAG</span>.</div>
+                    <div class="container mb-4 w-90" style="font-size:larger;">' .
+            $this->module->framework->tt('misc_22', [
+                '<span class="text-primary font-weight-bold"">' . $this->module->framework->tt('misc_23') . '</span>',
+                '<span class="text-danger font-weight-bold"">' . $this->module->framework->tt('misc_24') . '</span>'
+            ]) .
+            '</div>
                     <table class="table table-bordered">
                         <thead class="thead-dark">
                             <tr>
-                                <th>Username</th>
-                                <th>Name</th>
-                                <th>SAG</th>
+                                <th>' . $this->module->framework->tt('status_ui_59') . '</th>
+                                <th>' . $this->module->framework->tt('status_ui_60') . '</th>
+                                <th>' . $this->module->framework->tt('sag') . '</th>
                             </tr>
                         </thead>
                         <tbody>';
@@ -163,7 +166,10 @@ class CsvUserImport
                 $nothingToDo = false;
                 $rowClass    = 'table-warning';
                 $cellClass   = 'font-weight-bold';
-                $sagText     = '<span>New: </span><span class="text-primary">' . $row["newSag"] . '</span><br><span>Current: </span><span class="text-danger">' . $row["currentSag"] . '</span>';
+                $sagText     = '<span>' . $this->module->framework->tt('misc_12') .
+                    ' </span><span class="text-primary">' . $row["newSag"] .
+                    '</span><br><span>' . $this->module->framework->tt('misc_13') .
+                    ' </span><span class="text-danger">' . $row["currentSag"] . '</span>';
             } else {
                 $sagText = '<span>' . $row['currentSag'] . '</span>';
             }
@@ -178,8 +184,12 @@ class CsvUserImport
                     </table>
                 </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal" data-bs-dismiss="modal">Cancel</button>
-                        <button type="button" class="btn btn-primary" onclick="sag_module.confirmImport()" ' . ($nothingToDo ? 'title="There are no changes to make" disabled' : '') . '>Confirm</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal" data-bs-dismiss="modal">' .
+            $this->module->framework->tt('cancel') .
+            '</button>
+                        <button type="button" class="btn btn-primary" onclick="sag_module.confirmImport()" ' .
+            ($nothingToDo ? 'title="' . $this->module->framework->tt('misc_25') . '" disabled' : '') . '>' .
+            $this->module->framework->tt('misc_16') . '</button>
                     </div>
                 </div>
             </div>

@@ -121,9 +121,10 @@ sag_module.expireUsers = async function () {
         .catch(function (error) {
             console.error(error);
             Swal.fire({
-                title: 'Error',
+                title: sag_module.tt('error_2'),
                 html: error.responseText,
                 icon: 'error',
+                confirmButtonText: sag_module.tt('ok'),
                 customClass: {
                     confirmButton: 'btn btn-primary',
                 },
@@ -150,16 +151,16 @@ sag_module.sendEmailAlerts = function () {
     sag_module.ajax('sendAlerts', { config: emailFormContents })
         .then(response => {
             const multiple = emailFormContents.users.length > 1;
+            const title = multiple ? sag_module.tt('status_ui_66') : sag_module.tt('status_ui_67');
             Toast.fire({
-                title: 'The alert' + (multiple ? "s were " : " was ") +
-                    'successfully sent.',
+                title: title,
                 icon: 'success'
             });
         })
         .catch(error => {
             console.error(error);
             Toast.fire({
-                title: 'There was an error sending the alert.',
+                title: sag_module.tt('status_ui_68'),
                 icon: 'error'
             });
         });
@@ -245,16 +246,16 @@ sag_module.sendEmailAlerts_UserRightsHolders = function () {
     sag_module.ajax('sendAlerts', { config: emailFormContents })
         .then(response => {
             const multiple = emailFormContents.recipients.length > 1;
+            const title = multiple ? sag_module.tt('status_ui_66') : sag_module.tt('status_ui_67');
             Toast.fire({
-                title: 'The alert' + (multiple ? "s were " : " was ") +
-                    'successfully sent.',
+                title: title,
                 icon: 'success'
             });
         })
         .catch(error => {
             console.error(error);
             Toast.fire({
-                title: 'There was an error sending the alert.',
+                title: sag_module.tt('status_ui_68'),
                 icon: 'error'
             });
         });
@@ -337,9 +338,10 @@ sag_module.expireUsersAndSendAlerts = function () {
     sag_module.expireUsers().then(() => {
         if (!formContents.sendUserNotification && !formContents[
             "sendNotification-userExpiration-UserRightsHolders"]) {
+            const multiple = users.length > 1;
+            const title = multiple ? sag_module.tt('status_ui_69') : sag_module.tt('status_ui_70');
             Toast.fire({
-                title: 'The user' + (users.length > 1 ? "s were " : " was ") +
-                    'successfully expired.',
+                title: title,
                 icon: 'success'
             })
                 .then(function () {
@@ -348,16 +350,17 @@ sag_module.expireUsersAndSendAlerts = function () {
         } else {
             sag_module.ajax('sendAlerts', { config: formContents })
                 .then(response => {
+                    const multiple = users.length > 1;
+                    const title = multiple ? sag_module.tt('status_ui_66') : sag_module.tt('status_ui_67');
                     Toast.fire({
-                        title: 'The alert' + (users.length > 1 ? "s were " : " was ") +
-                            'successfully sent.',
+                        title: title,
                         icon: 'success'
                     });
                 })
                 .catch(error => {
                     console.error(error);
                     Toast.fire({
-                        title: 'There was an error sending the alert.',
+                        title: sag_module.tt('status_ui_68'),
                         icon: 'error'
                     });
                 });
@@ -529,7 +532,319 @@ sag_module.handleActionButtons = function () {
     }
 }
 
+sag_module.addTinyMCETranslations = function () {
+    tinymce.util.I18n.add('en', {
+        "Redo": sag_module.tt('tiny_mce_ui_1'),
+        "Undo": sag_module.tt('tiny_mce_ui_2'),
+        "Cut": sag_module.tt('tiny_mce_ui_3'),
+        "Copy": sag_module.tt('tiny_mce_ui_4'),
+        "Paste": sag_module.tt('tiny_mce_ui_5'),
+        "Select all": sag_module.tt('tiny_mce_ui_6'),
+        "New document": sag_module.tt('tiny_mce_ui_7'),
+        "Ok": sag_module.tt('tiny_mce_ui_8'),
+        "Cancel": sag_module.tt('tiny_mce_ui_9'),
+        "Visual aids": sag_module.tt('tiny_mce_ui_10'),
+        "Bold": sag_module.tt('tiny_mce_ui_11'),
+        "Italic": sag_module.tt('tiny_mce_ui_12'),
+        "Underline": sag_module.tt('tiny_mce_ui_13'),
+        "Strikethrough": sag_module.tt('tiny_mce_ui_14'),
+        "Superscript": sag_module.tt('tiny_mce_ui_15'),
+        "Subscript": sag_module.tt('tiny_mce_ui_16'),
+        "Clear formatting": sag_module.tt('tiny_mce_ui_17'),
+        "Align left": sag_module.tt('tiny_mce_ui_18'),
+        "Align center": sag_module.tt('tiny_mce_ui_19'),
+        "Align right": sag_module.tt('tiny_mce_ui_20'),
+        "Justify": sag_module.tt('tiny_mce_ui_21'),
+        "Bullet list": sag_module.tt('tiny_mce_ui_22'),
+        "Numbered list": sag_module.tt('tiny_mce_ui_23'),
+        "Decrease indent": sag_module.tt('tiny_mce_ui_24'),
+        "Increase indent": sag_module.tt('tiny_mce_ui_25'),
+        "Close": sag_module.tt('tiny_mce_ui_26'),
+        "Formats": sag_module.tt('tiny_mce_ui_27'),
+        "Your browser doesn't support direct access to the clipboard. Please use the Ctrl+X\/C\/V keyboard shortcuts instead.": sag_module.tt('tiny_mce_ui_28'),
+        "Headers": sag_module.tt('tiny_mce_ui_29'),
+        "Header 1": sag_module.tt('tiny_mce_ui_30'),
+        "Header 2": sag_module.tt('tiny_mce_ui_31'),
+        "Header 3": sag_module.tt('tiny_mce_ui_32'),
+        "Header 4": sag_module.tt('tiny_mce_ui_33'),
+        "Header 5": sag_module.tt('tiny_mce_ui_34'),
+        "Header 6": sag_module.tt('tiny_mce_ui_35'),
+        "Headings": sag_module.tt('tiny_mce_ui_36'),
+        "Heading 1": sag_module.tt('tiny_mce_ui_37'),
+        "Heading 2": sag_module.tt('tiny_mce_ui_38'),
+        "Heading 3": sag_module.tt('tiny_mce_ui_39'),
+        "Heading 4": sag_module.tt('tiny_mce_ui_40'),
+        "Heading 5": sag_module.tt('tiny_mce_ui_41'),
+        "Heading 6": sag_module.tt('tiny_mce_ui_42'),
+        "Preformatted": sag_module.tt('tiny_mce_ui_43'),
+        "Div": sag_module.tt('tiny_mce_ui_44'),
+        "Pre": sag_module.tt('tiny_mce_ui_45'),
+        "Code": sag_module.tt('tiny_mce_ui_46'),
+        "Paragraph": sag_module.tt('tiny_mce_ui_47'),
+        "Blockquote": sag_module.tt('tiny_mce_ui_48'),
+        "Inline": sag_module.tt('tiny_mce_ui_49'),
+        "Blocks": sag_module.tt('tiny_mce_ui_50'),
+        "Paste is now in plain text mode. Contents will now be pasted as plain text until you toggle this option off.": sag_module.tt('tiny_mce_ui_51'),
+        "Font Family": sag_module.tt('tiny_mce_ui_52'),
+        "Font Sizes": sag_module.tt('tiny_mce_ui_53'),
+        "Class": sag_module.tt('tiny_mce_ui_54'),
+        "Browse for an image": sag_module.tt('tiny_mce_ui_55'),
+        "OR": sag_module.tt('tiny_mce_ui_56'),
+        "Drop an image here": sag_module.tt('tiny_mce_ui_57'),
+        "Upload": sag_module.tt('tiny_mce_ui_58'),
+        "Block": sag_module.tt('tiny_mce_ui_59'),
+        "Align": sag_module.tt('tiny_mce_ui_60'),
+        "Default": sag_module.tt('tiny_mce_ui_61'),
+        "Circle": sag_module.tt('tiny_mce_ui_62'),
+        "Disc": sag_module.tt('tiny_mce_ui_63'),
+        "Square": sag_module.tt('tiny_mce_ui_64'),
+        "Lower Alpha": sag_module.tt('tiny_mce_ui_65'),
+        "Lower Greek": sag_module.tt('tiny_mce_ui_66'),
+        "Lower Roman": sag_module.tt('tiny_mce_ui_67'),
+        "Upper Alpha": sag_module.tt('tiny_mce_ui_68'),
+        "Upper Roman": sag_module.tt('tiny_mce_ui_69'),
+        "Anchor": sag_module.tt('tiny_mce_ui_70'),
+        "Name": sag_module.tt('tiny_mce_ui_71'),
+        "Id": sag_module.tt('tiny_mce_ui_72'),
+        "Id should start with a letter, followed only by letters, numbers, dashes, dots, colons or underscores.": sag_module.tt('tiny_mce_ui_73'),
+        "You have unsaved changes are you sure you want to navigate away?": sag_module.tt('tiny_mce_ui_74'),
+        "Restore last draft": sag_module.tt('tiny_mce_ui_75'),
+        "Special character": sag_module.tt('tiny_mce_ui_76'),
+        "Source code": sag_module.tt('tiny_mce_ui_77'),
+        "Insert\/Edit code sample": sag_module.tt('tiny_mce_ui_78'),
+        "Language": sag_module.tt('tiny_mce_ui_79'),
+        "Code sample": sag_module.tt('tiny_mce_ui_80'),
+        "Color": sag_module.tt('tiny_mce_ui_81'),
+        "R": sag_module.tt('tiny_mce_ui_82'),
+        "G": sag_module.tt('tiny_mce_ui_83'),
+        "B": sag_module.tt('tiny_mce_ui_84'),
+        "Left to right": sag_module.tt('tiny_mce_ui_85'),
+        "Right to left": sag_module.tt('tiny_mce_ui_86'),
+        "Emoticons": sag_module.tt('tiny_mce_ui_87'),
+        "Document properties": sag_module.tt('tiny_mce_ui_88'),
+        "Title": sag_module.tt('tiny_mce_ui_89'),
+        "Keywords": sag_module.tt('tiny_mce_ui_90'),
+        "Description": sag_module.tt('tiny_mce_ui_91'),
+        "Robots": sag_module.tt('tiny_mce_ui_92'),
+        "Author": sag_module.tt('tiny_mce_ui_93'),
+        "Encoding": sag_module.tt('tiny_mce_ui_94'),
+        "Fullscreen": sag_module.tt('tiny_mce_ui_95'),
+        "Action": sag_module.tt('tiny_mce_ui_96'),
+        "Shortcut": sag_module.tt('tiny_mce_ui_97'),
+        "Help": sag_module.tt('tiny_mce_ui_98'),
+        "Address": sag_module.tt('tiny_mce_ui_99'),
+        "Focus to menubar": sag_module.tt('tiny_mce_ui_100'),
+        "Focus to toolbar": sag_module.tt('tiny_mce_ui_101'),
+        "Focus to element path": sag_module.tt('tiny_mce_ui_102'),
+        "Focus to contextual toolbar": sag_module.tt('tiny_mce_ui_103'),
+        "Insert link (if link plugin activated)": sag_module.tt('tiny_mce_ui_104'),
+        "Save (if save plugin activated)": sag_module.tt('tiny_mce_ui_105'),
+        "Find (if searchreplace plugin activated)": sag_module.tt('tiny_mce_ui_106'),
+        "Plugins installed ({0}):": sag_module.tt('tiny_mce_ui_107'),
+        "Premium plugins:": sag_module.tt('tiny_mce_ui_108'),
+        "Learn more...": sag_module.tt('tiny_mce_ui_109'),
+        "You are using {0}": sag_module.tt('tiny_mce_ui_110'),
+        "Plugins": sag_module.tt('tiny_mce_ui_111'),
+        "Handy Shortcuts": sag_module.tt('tiny_mce_ui_112'),
+        "Horizontal line": sag_module.tt('tiny_mce_ui_113'),
+        "Insert\/edit image": sag_module.tt('tiny_mce_ui_114'),
+        "Image description": sag_module.tt('tiny_mce_ui_115'),
+        "Source": sag_module.tt('tiny_mce_ui_116'),
+        "Dimensions": sag_module.tt('tiny_mce_ui_117'),
+        "Constrain proportions": sag_module.tt('tiny_mce_ui_118'),
+        "General": sag_module.tt('tiny_mce_ui_119'),
+        "Advanced": sag_module.tt('tiny_mce_ui_120'),
+        "Style": sag_module.tt('tiny_mce_ui_121'),
+        "Vertical space": sag_module.tt('tiny_mce_ui_122'),
+        "Horizontal space": sag_module.tt('tiny_mce_ui_123'),
+        "Border": sag_module.tt('tiny_mce_ui_124'),
+        "Insert image": sag_module.tt('tiny_mce_ui_125'),
+        "Image": sag_module.tt('tiny_mce_ui_126'),
+        "Image list": sag_module.tt('tiny_mce_ui_127'),
+        "Rotate counterclockwise": sag_module.tt('tiny_mce_ui_128'),
+        "Rotate clockwise": sag_module.tt('tiny_mce_ui_129'),
+        "Flip vertically": sag_module.tt('tiny_mce_ui_130'),
+        "Flip horizontally": sag_module.tt('tiny_mce_ui_131'),
+        "Edit image": sag_module.tt('tiny_mce_ui_132'),
+        "Image options": sag_module.tt('tiny_mce_ui_133'),
+        "Zoom in": sag_module.tt('tiny_mce_ui_134'),
+        "Zoom out": sag_module.tt('tiny_mce_ui_135'),
+        "Crop": sag_module.tt('tiny_mce_ui_136'),
+        "Resize": sag_module.tt('tiny_mce_ui_137'),
+        "Orientation": sag_module.tt('tiny_mce_ui_138'),
+        "Brightness": sag_module.tt('tiny_mce_ui_139'),
+        "Sharpen": sag_module.tt('tiny_mce_ui_140'),
+        "Contrast": sag_module.tt('tiny_mce_ui_141'),
+        "Color levels": sag_module.tt('tiny_mce_ui_142'),
+        "Gamma": sag_module.tt('tiny_mce_ui_143'),
+        "Invert": sag_module.tt('tiny_mce_ui_144'),
+        "Apply": sag_module.tt('tiny_mce_ui_145'),
+        "Back": sag_module.tt('tiny_mce_ui_146'),
+        "Insert date\/time": sag_module.tt('tiny_mce_ui_147'),
+        "Date\/time": sag_module.tt('tiny_mce_ui_148'),
+        "Insert link": sag_module.tt('tiny_mce_ui_149'),
+        "Insert\/edit link": sag_module.tt('tiny_mce_ui_150'),
+        "Text to display": sag_module.tt('tiny_mce_ui_151'),
+        "Url": sag_module.tt('tiny_mce_ui_152'),
+        "Target": sag_module.tt('tiny_mce_ui_153'),
+        "None": sag_module.tt('tiny_mce_ui_154'),
+        "New window": sag_module.tt('tiny_mce_ui_155'),
+        "Remove link": sag_module.tt('tiny_mce_ui_156'),
+        "Anchors": sag_module.tt('tiny_mce_ui_157'),
+        "Link": sag_module.tt('tiny_mce_ui_158'),
+        "Paste or type a link": sag_module.tt('tiny_mce_ui_159'),
+        "The URL you entered seems to be an email address. Do you want to add the required mailto: prefix?": sag_module.tt('tiny_mce_ui_160'),
+        "The URL you entered seems to be an external link. Do you want to add the required http:\/\/ prefix?": sag_module.tt('tiny_mce_ui_161'),
+        "Link list": sag_module.tt('tiny_mce_ui_162'),
+        "Insert video": sag_module.tt('tiny_mce_ui_163'),
+        "Insert\/edit video": sag_module.tt('tiny_mce_ui_164'),
+        "Insert\/edit media": sag_module.tt('tiny_mce_ui_165'),
+        "Alternative source": sag_module.tt('tiny_mce_ui_166'),
+        "Poster": sag_module.tt('tiny_mce_ui_167'),
+        "Paste your embed code below:": sag_module.tt('tiny_mce_ui_168'),
+        "Embed": sag_module.tt('tiny_mce_ui_169'),
+        "Media": sag_module.tt('tiny_mce_ui_170'),
+        "Nonbreaking space": sag_module.tt('tiny_mce_ui_171'),
+        "Page break": sag_module.tt('tiny_mce_ui_172'),
+        "Paste as text": sag_module.tt('tiny_mce_ui_173'),
+        "Preview": sag_module.tt('tiny_mce_ui_174'),
+        "Print": sag_module.tt('tiny_mce_ui_175'),
+        "Save": sag_module.tt('tiny_mce_ui_176'),
+        "Find": sag_module.tt('tiny_mce_ui_177'),
+        "Replace with": sag_module.tt('tiny_mce_ui_178'),
+        "Replace": sag_module.tt('tiny_mce_ui_179'),
+        "Replace all": sag_module.tt('tiny_mce_ui_180'),
+        "Prev": sag_module.tt('tiny_mce_ui_181'),
+        "Next": sag_module.tt('tiny_mce_ui_182'),
+        "Find and replace...": sag_module.tt('tiny_mce_ui_183'),
+        "Could not find the specified string.": sag_module.tt('tiny_mce_ui_184'),
+        "Match case": sag_module.tt('tiny_mce_ui_185'),
+        "Whole words": sag_module.tt('tiny_mce_ui_186'),
+        "Spellcheck": sag_module.tt('tiny_mce_ui_187'),
+        "Ignore": sag_module.tt('tiny_mce_ui_188'),
+        "Ignore all": sag_module.tt('tiny_mce_ui_189'),
+        "Finish": sag_module.tt('tiny_mce_ui_190'),
+        "Add to Dictionary": sag_module.tt('tiny_mce_ui_191'),
+        "Insert table": sag_module.tt('tiny_mce_ui_192'),
+        "Table properties": sag_module.tt('tiny_mce_ui_193'),
+        "Delete table": sag_module.tt('tiny_mce_ui_194'),
+        "Cell": sag_module.tt('tiny_mce_ui_195'),
+        "Row": sag_module.tt('tiny_mce_ui_196'),
+        "Column": sag_module.tt('tiny_mce_ui_197'),
+        "Cell properties": sag_module.tt('tiny_mce_ui_198'),
+        "Merge cells": sag_module.tt('tiny_mce_ui_199'),
+        "Split cell": sag_module.tt('tiny_mce_ui_200'),
+        "Insert row before": sag_module.tt('tiny_mce_ui_201'),
+        "Insert row after": sag_module.tt('tiny_mce_ui_202'),
+        "Delete row": sag_module.tt('tiny_mce_ui_203'),
+        "Row properties": sag_module.tt('tiny_mce_ui_204'),
+        "Cut row": sag_module.tt('tiny_mce_ui_205'),
+        "Copy row": sag_module.tt('tiny_mce_ui_206'),
+        "Paste row before": sag_module.tt('tiny_mce_ui_207'),
+        "Paste row after": sag_module.tt('tiny_mce_ui_208'),
+        "Insert column before": sag_module.tt('tiny_mce_ui_209'),
+        "Insert column after": sag_module.tt('tiny_mce_ui_210'),
+        "Delete column": sag_module.tt('tiny_mce_ui_211'),
+        "Cols": sag_module.tt('tiny_mce_ui_212'),
+        "Rows": sag_module.tt('tiny_mce_ui_213'),
+        "Width": sag_module.tt('tiny_mce_ui_214'),
+        "Height": sag_module.tt('tiny_mce_ui_215'),
+        "Cell spacing": sag_module.tt('tiny_mce_ui_216'),
+        "Cell padding": sag_module.tt('tiny_mce_ui_217'),
+        "Caption": sag_module.tt('tiny_mce_ui_218'),
+        "Left": sag_module.tt('tiny_mce_ui_219'),
+        "Center": sag_module.tt('tiny_mce_ui_220'),
+        "Right": sag_module.tt('tiny_mce_ui_221'),
+        "Cell type": sag_module.tt('tiny_mce_ui_222'),
+        "Scope": sag_module.tt('tiny_mce_ui_223'),
+        "Alignment": sag_module.tt('tiny_mce_ui_224'),
+        "H Align": sag_module.tt('tiny_mce_ui_225'),
+        "V Align": sag_module.tt('tiny_mce_ui_226'),
+        "Top": sag_module.tt('tiny_mce_ui_227'),
+        "Middle": sag_module.tt('tiny_mce_ui_228'),
+        "Bottom": sag_module.tt('tiny_mce_ui_229'),
+        "Header cell": sag_module.tt('tiny_mce_ui_230'),
+        "Row group": sag_module.tt('tiny_mce_ui_231'),
+        "Column group": sag_module.tt('tiny_mce_ui_232'),
+        "Row type": sag_module.tt('tiny_mce_ui_233'),
+        "Header": sag_module.tt('tiny_mce_ui_234'),
+        "Body": sag_module.tt('tiny_mce_ui_235'),
+        "Footer": sag_module.tt('tiny_mce_ui_236'),
+        "Border color": sag_module.tt('tiny_mce_ui_237'),
+        "Insert template": sag_module.tt('tiny_mce_ui_238'),
+        "Templates": sag_module.tt('tiny_mce_ui_239'),
+        "Template": sag_module.tt('tiny_mce_ui_240'),
+        "Text color": sag_module.tt('tiny_mce_ui_241'),
+        "Background color": sag_module.tt('tiny_mce_ui_242'),
+        "Custom...": sag_module.tt('tiny_mce_ui_243'),
+        "Custom color": sag_module.tt('tiny_mce_ui_244'),
+        "No color": sag_module.tt('tiny_mce_ui_245'),
+        "Table of Contents": sag_module.tt('tiny_mce_ui_246'),
+        "Show blocks": sag_module.tt('tiny_mce_ui_247'),
+        "Show invisible characters": sag_module.tt('tiny_mce_ui_248'),
+        "Words {0}": sag_module.tt('tiny_mce_ui_249'),
+        "{0} words": sag_module.tt('tiny_mce_ui_250'),
+        "File": sag_module.tt('tiny_mce_ui_251'),
+        "Edit": sag_module.tt('tiny_mce_ui_252'),
+        "Insert": sag_module.tt('tiny_mce_ui_253'),
+        "View": sag_module.tt('tiny_mce_ui_254'),
+        "Format": sag_module.tt('tiny_mce_ui_255'),
+        "Table": sag_module.tt('tiny_mce_ui_256'),
+        "Tools": sag_module.tt('tiny_mce_ui_257'),
+        "Powered by {0}": sag_module.tt('tiny_mce_ui_258'),
+        "Rich Text Area. Press ALT-F9 for menu. Press ALT-F10 for toolbar. Press ALT-0 for help": sag_module.tt('tiny_mce_ui_259'),
+        "Find and replace": sag_module.tt('tiny_mce_ui_260'),
+        "Open link in...": sag_module.tt('tiny_mce_ui_261'),
+        "Current window": sag_module.tt('tiny_mce_ui_262'),
+        "Link...": sag_module.tt('tiny_mce_ui_263'),
+        "Fonts": sag_module.tt('tiny_mce_ui_264'),
+        "Line height": sag_module.tt('tiny_mce_ui_265'),
+        "Cut column": sag_module.tt('tiny_mce_ui_266'),
+        "Copy column": sag_module.tt('tiny_mce_ui_267'),
+        "Paste column before": sag_module.tt('tiny_mce_ui_268'),
+        "Paste column after": sag_module.tt('tiny_mce_ui_269'),
+        "Border width": sag_module.tt('tiny_mce_ui_270'),
+        "Show caption": sag_module.tt('tiny_mce_ui_271'),
+        "Border style": sag_module.tt('tiny_mce_ui_272'),
+        "Select...": sag_module.tt('tiny_mce_ui_273'),
+        "Solid": sag_module.tt('tiny_mce_ui_274'),
+        "Dotted": sag_module.tt('tiny_mce_ui_275'),
+        "Dashed": sag_module.tt('tiny_mce_ui_276'),
+        "Double": sag_module.tt('tiny_mce_ui_277'),
+        "Groove": sag_module.tt('tiny_mce_ui_278'),
+        "Ridge": sag_module.tt('tiny_mce_ui_279'),
+        "Inset": sag_module.tt('tiny_mce_ui_280'),
+        "Outset": sag_module.tt('tiny_mce_ui_281'),
+        "Hidden": sag_module.tt('tiny_mce_ui_282'),
+        "Light Green": sag_module.tt('tiny_mce_ui_283'),
+        "Light Yellow": sag_module.tt('tiny_mce_ui_284'),
+        "Light Red": sag_module.tt('tiny_mce_ui_285'),
+        "Light Purple": sag_module.tt('tiny_mce_ui_286'),
+        "Light Blue": sag_module.tt('tiny_mce_ui_287'),
+        "Green": sag_module.tt('tiny_mce_ui_288'),
+        "Yellow": sag_module.tt('tiny_mce_ui_289'),
+        "Red": sag_module.tt('tiny_mce_ui_290'),
+        "Purple": sag_module.tt('tiny_mce_ui_291'),
+        "Blue": sag_module.tt('tiny_mce_ui_292'),
+        "Dark Turquoise": sag_module.tt('tiny_mce_ui_293'),
+        "Orange": sag_module.tt('tiny_mce_ui_294'),
+        "Dark Red": sag_module.tt('tiny_mce_ui_295'),
+        "Dark Purple": sag_module.tt('tiny_mce_ui_296'),
+        "Dark Blue": sag_module.tt('tiny_mce_ui_297'),
+        "Light Gray": sag_module.tt('tiny_mce_ui_298'),
+        "Medium Gray": sag_module.tt('tiny_mce_ui_299'),
+        "Gray": sag_module.tt('tiny_mce_ui_300'),
+        "Dark Gray": sag_module.tt('tiny_mce_ui_301'),
+        "Navy Blue": sag_module.tt('tiny_mce_ui_302'),
+        "Black": sag_module.tt('tiny_mce_ui_303'),
+        "White": sag_module.tt('tiny_mce_ui_304'),
+        "Remove color": sag_module.tt('tiny_mce_ui_305'),
+        "Color Picker": sag_module.tt('tiny_mce_ui_306'),
+    });
+}
+
 sag_module.initTinyMCE = function () {
+    sag_module.addTinyMCETranslations();
     tinymce.init({
         entity_encoding: "raw",
         default_link_target: '_blank',
@@ -558,7 +873,8 @@ sag_module.initTinyMCE = function () {
         paste_postprocess: function (plugin, args) {
             args.node.innerHTML = cleanHTML(args.node.innerHTML);
         },
-        remove_linebreaks: true
+        remove_linebreaks: true,
+        language: 'en'
     });
 }
 
@@ -567,7 +883,7 @@ sag_module.initClipboard = function () {
     $('.dataPlaceholder').popover({
         placement: 'top',
         html: true,
-        content: '<span class="text-danger">Copied!</span>',
+        content: `<span class="text-danger">${sag_module.tt('status_ui_71')}</span>`,
         show: function () {
             $(this).fadeIn();
         },
@@ -672,7 +988,7 @@ $(document).ready(function () {
                 $(td).addClass('user-selector');
             }
         }, {
-            title: 'Username',
+            title: sag_module.tt('status_ui_59'),
             data: function (row, type, set, meta) {
                 if (type === 'display') {
                     return !row.isExpired ? `<strong>${row.username}</strong>` :
@@ -682,11 +998,11 @@ $(document).ready(function () {
                 }
             },
         }, {
-            title: 'Name',
+            title: sag_module.tt('status_ui_60'),
             data: 'name'
         },
         {
-            title: 'Email',
+            title: sag_module.tt('status_ui_61'),
             data: function (row, type, set, meta) {
                 if (type === 'display') {
                     return `<a href="mailto:${row.email}">${row.email}</a>`;
@@ -696,22 +1012,22 @@ $(document).ready(function () {
             }
         },
         {
-            title: 'Expiration',
+            title: sag_module.tt('status_ui_62'),
             data: 'expiration'
         },
         {
-            title: 'Security Access Group',
+            title: sag_module.tt('status_ui_63'),
             data: function (row, type, set, meta) {
                 if (row.sag) {
                     return `<strong>${row.sag_name}</strong> <span>(<span class="user-select-all">` +
                         `${row.sag}</span>)</span>`;
                 } else {
-                    return `<span class="text-secondary">None</span>`;
+                    return `<span class="text-secondary">${sag_module.tt('status_ui_72')}</span>`;
                 }
             }
         },
         {
-            title: 'Noncompliant Rights',
+            title: sag_module.tt('status_ui_64'),
             data: function (row, type, set, meta) {
                 const hasDiscrepancy = row.bad.length > 0;
                 if (hasDiscrepancy) {
@@ -724,14 +1040,14 @@ $(document).ready(function () {
                     return `<a class="${row.isExpired ? "text-secondary" : "text-primary"}" ` +
                         `style="text-decoration: underline; cursor: pointer;" data-bs-toggle="modal" data-toggle="modal" ` +
                         `data-target="#modal-${row.username}" data-bs-target="#modal-${row.username}">${row.bad.length} ` +
-                        (row.bad.length > 1 ? " Rights" : " Right") +
+                        (row.bad.length > 1 ? sag_module.tt('status_ui_73') : sag_module.tt('status_ui_74')) +
                         `</a>` +
                         `<div class="modal fade" id="modal-${row.username}" tabindex="-1" aria-hidden="true">` +
                         `<div class="modal-dialog modal-dialog-scrollable">` +
                         `<div class="modal-content">` +
                         `<div class="modal-header bg-dark text-light">` +
                         `<h5 class="m-0">` +
-                        `Noncompliant Rights for ${row.name} (${row.username})` +
+                        sag_module.tt('status_ui_75', [row.name, row.username]) +
                         `</h5>` +
                         `</div>` +
                         `<div class="modal-body">` +
@@ -745,19 +1061,19 @@ $(document).ready(function () {
                         `</div>` +
                         `</div>`;
                 } else {
-                    return "<i class='fa-sharp fa-check mr-1 text-success'></i>None";
+                    return "<i class='fa-sharp fa-check mr-1 text-success'></i>" + sag_module.tt('status_ui_72');
                 }
             }
         },
         {
-            title: 'Project Role',
+            title: sag_module.tt('status_ui_65'),
             data: function (row, type, set, meta) {
                 if (row.project_role) {
                     return `<strong>${row.project_role_name}</strong> <span>(<span class="user-select-all">` +
                         row.project_role +
                         `</span>)</span>`;
                 } else {
-                    return `<span class="text-secondary">None</span>`;
+                    return `<span class="text-secondary">${sag_module.tt('status_ui_72')}</span>`;
                 }
             }
         }
@@ -800,24 +1116,34 @@ $(document).ready(function () {
         },
         lengthMenu: [
             [10, 25, 50, 100, -1],
-            [10, 25, 50, 100, "All"]
+            [10, 25, 50, 100, sag_module.tt('alerts_37')]
         ],
         language: {
             search: "_INPUT_",
-            searchPlaceholder: "Search Users...",
-            infoFiltered: " - filtered from _MAX_ total users",
-            emptyTable: "No users found in this project",
-            info: "Showing _START_ to _END_ of _TOTAL_ users",
-            infoEmpty: "Showing 0 to 0 of 0 users",
-            lengthMenu: "Show _MENU_ users",
-            loadingRecords: "Loading...",
-            zeroRecords: "No matching users found",
+            searchPlaceholder: sag_module.tt('dt_status_search_placeholder'),
+            infoFiltered: " - " + sag_module.tt('dt_status_info_filtered', '_MAX_'),
+            emptyTable: sag_module.tt('dt_status_empty_table'),
+            info: sag_module.tt('dt_status_info', { start: '_START_', end: '_END_', total: '_TOTAL_' }),
+            infoEmpty: sag_module.tt('dt_status_info_empty'),
+            lengthMenu: sag_module.tt('dt_status_length_menu', '_MENU_'),
+            loadingRecords: sag_module.tt('dt_status_loading_records'),
+            zeroRecords: sag_module.tt('dt_status_zero_records'),
             select: {
                 rows: {
-                    _: '%d users selected',
-                    0: '',
-                    1: 'One user selected'
+                    _: sag_module.tt('dt_status_select_rows_other'),
+                    0: sag_module.tt('dt_status_select_rows_zero'),
+                    1: sag_module.tt('dt_status_select_rows_one')
                 }
+            },
+            paginate: {
+                first: sag_module.tt('dt_status_paginate_first'),
+                last: sag_module.tt('dt_status_paginate_last'),
+                next: sag_module.tt('dt_status_paginate_next'),
+                previous: sag_module.tt('dt_status_paginate_previous')
+            },
+            aria: {
+                sortAscending: sag_module.tt('dt_status_aria_sort_ascending'),
+                sortDescending: sag_module.tt('dt_status_aria_sort_descending')
             }
         }
     }));

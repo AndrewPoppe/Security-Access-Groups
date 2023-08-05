@@ -200,15 +200,11 @@ div#pagecontainer {
 div#sagTableWrapper {
     border-top: 1px solid rgba(0, 0, 0, 0.30);
     border-right: 1px solid rgba(0, 0, 0, 0.30);
-    border: 1px solid rgba(0, 0, 0, 0.30);
+    border-left: 1px solid rgba(0, 0, 0, 0.30);
 }
 
 table.sagTable.cell-border thead th {
     border-right: solid 1px rgba(0, 0, 0, 0.15);
-}
-
-div#sagTableWrapper div.dataTables_wrapper.no-footer .dataTables_scrollBody {
-    border-bottom: none !important;
 }
 
 table.sagTable.cell-border tbody td.dtfc-fixed-left {
@@ -477,6 +473,10 @@ div#discrepancy-table_wrapper div.dataTables_scrollHead {
 
 .table.discrepancy-table td.SAG {
     border-top: none !important;
+}
+
+.table.discrepancy-table tr:not(:last-child) td.SAG {
+
     border-bottom: 1px solid #bbb !important;
 }
 

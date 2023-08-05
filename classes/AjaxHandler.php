@@ -61,7 +61,7 @@ class AjaxHandler
         $alert   = $alerts->getAlertById($alertId);
         if ( !$alert ) {
             http_response_code(400);
-            return 'Alert not found';
+            return $this->module->framework->tt('misc_3');
         }
         return json_encode($this->module->escape($alerts->deleteAlert($alertId)));
     }
@@ -73,7 +73,7 @@ class AjaxHandler
         $alert   = $alerts->getAlertById($alertId);
         if ( !$alert ) {
             http_response_code(400);
-            return 'Alert not found';
+            return $this->module->framework->tt('misc_3');
         }
         return json_encode($alert);
     }
@@ -198,14 +198,14 @@ class AjaxHandler
         if ( empty($sagId) || !$sag->sagExists() ) {
             return json_encode([
                 'status'  => 'error',
-                'message' => 'The provided SAG ID was bad.'
+                'message' => $this->module->framework->tt('misc_1')
             ]);
         }
 
         $sag->throttleDeleteSag();
         return json_encode([
             'status'  => 'ok',
-            'message' => 'SAG deleted'
+            'message' => $this->module->framework->tt('misc_2')
         ]);
     }
 
@@ -313,7 +313,7 @@ class AjaxHandler
         if ( empty($this->module->framework->getUser($username)->getEmail()) ) {
             return json_encode([
                 'status'  => 'error',
-                'message' => 'Username not found'
+                'message' => $this->module->framework->tt('misc_4')
             ]);
         }
 
@@ -321,7 +321,7 @@ class AjaxHandler
         if ( !$sag->sagExists() ) {
             return json_encode([
                 'status'  => 'error',
-                'message' => 'SAG not found'
+                'message' => $this->module->framework->tt('misc_5')
             ]);
         }
 
@@ -330,7 +330,7 @@ class AjaxHandler
         $this->module->framework->log('Assigned SAG', [ 'user' => $username, 'sag' => $sagId ]);
         return json_encode([
             'status'  => 'ok',
-            'message' => 'SAG assigned'
+            'message' => $this->module->framework->tt('misc_6')
         ]);
     }
 
@@ -391,7 +391,7 @@ class AjaxHandler
         } catch ( \Throwable $e ) {
             $this->module->framework->log('Error setting Expiration Date', [ "user" => $user, "expiration" => $expiration, "error" => $e->getMessage() ]);
             http_response_code(500);
-            return "Error setting Expiration Date";
+            return $this->module->framework->tt('misc_7');
         }
     }
 
