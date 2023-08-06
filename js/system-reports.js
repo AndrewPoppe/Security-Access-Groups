@@ -41,10 +41,33 @@ sag_module.clearTables = function () {
 }
 
 sag_module.getProjectStatusFormatted = function (projectStatus) {
-    if (!projectStatus) return;
-    //if (projectStatus.status == 'DONE') {
-    return `<span class="badge badge-light"><i class="fa-solid fa-archive fs11" style="color: #C00000; font-size:14px;"></i>${projectStatus.label}</span>`;
-    //}
+    if (!projectStatus) return '';
+    let result;
+    if (projectStatus.status == 'DONE') {
+        result = `<span class="font-weight-bold text-danger" style="font-size:14;"><i class="mr-1 fa-solid fa-archive" style="color: #C00000;"></i>${projectStatus.label}</span>`;
+    } else if (projectStatus.status == 'AC') {
+        result = `<span class="mt-1 font-weight-bold" style="font-size:14;color:#A00000;"><i class="mr-1 fa-solid fa-minus-circle" style="color: #A00000;"></i>${projectStatus.label}</span>`;
+    } else if (projectStatus.status == 'PROD') {
+        result = `<span class="mt-1 font-weight-bold" style="font-size:14;color:#00A000;""><i class="mr-1 fa-regular fa-check-square" style="color: #00A000;"></i>${projectStatus.label}</span>`;
+    } else if (projectStatus.status == 'DEV') {
+        result = `<span class="mt-1 font-weight-bold" style="font-size:14;color:#444"><i class="mr-1 fa-solid fa-wrench" style="color: #444;"></i>${projectStatus.label}</span>`;
+    }
+    return result;
+}
+
+sag_module.getProjectStatusIcon = function (projectStatus) {
+    if (!projectStatus) return '';
+    let result;
+    if (projectStatus.status == 'DONE') {
+        result = `<span title="${projectStatus.label}" class="text-danger" style="font-size:14;"><i class="fa-solid fa-archive" style="color: #C00000;"></i></span>`;
+    } else if (projectStatus.status == 'AC') {
+        result = `<span title="${projectStatus.label}" style="font-size:14;color:#A00000;"><i class="fa-solid fa-minus-circle" style="color: #A00000;"></i></span>`;
+    } else if (projectStatus.status == 'PROD') {
+        result = `<span title="${projectStatus.label}" style="font-size:14;color:#00A000;""><i class="fa-regular fa-check-square" style="color: #00A000;"></i></span>`;
+    } else if (projectStatus.status == 'DEV') {
+        result = `<span title="${projectStatus.label}" style="font-size:14;color:#444"><i class="fa-solid fa-wrench" style="color: #444;"></i></span>`;
+    }
+    return result;
 }
 
 // Projects Table
@@ -189,7 +212,7 @@ sag_module.showProjectTable = function (includeExpired = false) {
             extend: 'excelHtml5',
             text: `<span style="font-size: .875rem;"><i class="fa-sharp fa-solid fa-file-excel fa-fw"></i>${sag_module.tt('cc_reports_31')}</span>`,
             exportOptions: {
-                columns: [5, 6, 1, 7, 8, 9, 10]
+                columns: [5, 6, 7, 1, 8, 9, 10, 11]
             },
             className: 'btn btn-sm btn-success border mb-1',
             title: 'ProjectsWithNoncompliantRights' + (includeExpired ? '_all_' : '_nonexpired_') +
@@ -204,7 +227,7 @@ sag_module.showProjectTable = function (includeExpired = false) {
                 const projectUrl =
                     `${app_path_webroot_full}redcap_v${redcap_version}/ExternalModules/?prefix={{MODULE_DIRECTORY_PREFIX}}&page=project-status&pid=${pid}`;
                 const projectTitle = row.project_title.replaceAll('"', '');
-                return `<strong><a target="_blank" rel="noreferrer noopener" href="${projectUrl}">PID: ${pid}</a></strong><br>${projectTitle}`;
+                return `<strong><a target="_blank" rel="noreferrer noopener" href="${projectUrl}">PID: ${pid}</a></strong><br>${projectTitle}<br>${sag_module.getProjectStatusFormatted(row.project_status)}`;
             },
             width: '20%'
         },
@@ -259,6 +282,13 @@ sag_module.showProjectTable = function (includeExpired = false) {
         {
             title: sag_module.tt('cc_reports_34'),
             data: "project_title",
+            visible: false
+        },
+        {
+            title: sag_module.tt('status_ui_2'),
+            data: function (row, type, set, meta) {
+                return row.project_status.label;
+            },
             visible: false
         },
         {
@@ -455,7 +485,7 @@ sag_module.showUserTable = function (includeExpired = false) {
             extend: 'excelHtml5',
             text: `<i class="fa-sharp fa-solid fa-file-excel"></i> ${sag_module.tt('cc_reports_31')}`,
             exportOptions: {
-                columns: [7, 1, 2, 11, 12, 4, 8, 9, 10]
+                columns: [7, 1, 2, 11, 12, 13, 4, 8, 9, 10]
             },
             className: 'btn btn-sm btn-success border mb-1',
             title: 'UsersWithNoncompliantRights' + (includeExpired ? '_all_' :
@@ -522,7 +552,7 @@ sag_module.showUserTable = function (includeExpired = false) {
                     const projectTitle = project.project_title.replaceAll(
                         '"',
                         '');
-                    return `<strong><a target="_blank" rel="noreferrer noopener" href="${projectUrl}">PID: ${pid}</a></strong> ${projectTitle}`;
+                    return `${sag_module.getProjectStatusIcon(project.project_status)} <strong><a target="_blank" rel="noreferrer noopener" href="${projectUrl}">PID: ${pid}</a></strong> ${projectTitle}`;
                 }).join("<br>");
             },
             width: '25%'
@@ -555,6 +585,14 @@ sag_module.showUserTable = function (includeExpired = false) {
             data: function (row, type, set, meta) {
                 const projects = row.projects ?? [];
                 return projects.map(project => project.project_title).join(", ");
+            },
+            visible: false
+        },
+        {
+            title: sag_module.tt('status_ui_2'),
+            data: function (row, type, set, meta) {
+                const projects = row.projects ?? [];
+                return [...new Set(projects.map(project => project.project_status.label))].join(", ");
             },
             visible: false
         },
@@ -745,7 +783,7 @@ sag_module.showUserAndProjectTable = function (includeExpired = false) {
             extend: 'excelHtml5',
             text: `<i class="fa-sharp fa-solid fa-file-excel"></i> ${sag_module.tt('cc_reports_31')}`,
             exportOptions: {
-                columns: [6, 1, 2, 10, 11, 7, 8, 9]
+                columns: [6, 1, 2, 10, 11, 12, 7, 8, 9]
             },
             className: 'btn btn-sm btn-success border mb-1',
             title: 'UsersAndProjectsWithNoncompliantRights' + (includeExpired ?
@@ -825,6 +863,13 @@ sag_module.showUserAndProjectTable = function (includeExpired = false) {
         {
             title: sag_module.tt('cc_reports_34'),
             data: 'project_title',
+            visible: false
+        },
+        {
+            title: sag_module.tt('status_ui_2'),
+            data: function (row, type, set, meta) {
+                return row.project_status.label;
+            },
             visible: false
         },
         {
