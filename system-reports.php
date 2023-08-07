@@ -231,12 +231,14 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
                     <!--6-->
                     <th scope="col">Project Title for CSV</th>
                     <!--7-->
-                    <th scope="col">Usernames for CSV</th>
+                    <th scope="col">Project Status for CSV</th>
                     <!--8-->
-                    <th scope="col">SAG IDs for CSV</th>
+                    <th scope="col">Usernames for CSV</th>
                     <!--9-->
-                    <th scope="col">SAG Names for CSV</th>
+                    <th scope="col">SAG IDs for CSV</th>
                     <!--10-->
+                    <th scope="col">SAG Names for CSV</th>
+                    <!--11-->
                     <th scope="col">Rights for CSV</th>
                 </tr>
             </thead>
@@ -324,10 +326,12 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
                     <!--9-->
                     <th scope="col">Project Titles for CSV</th>
                     <!--10-->
-                    <th scope="col">Rights for CSV</th>
+                    <th scope="col">Project Statuses for CSV</th>
                     <!--11-->
-                    <th scope="col">SAG ID for CSV</th>
+                    <th scope="col">Rights for CSV</th>
                     <!--12-->
+                    <th scope="col">SAG ID for CSV</th>
+                    <!--13-->
                     <th scope="col">SAG Name for CSV</th>
                 </tr>
             </thead>
@@ -411,10 +415,12 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
                     <!--8-->
                     <th scope="col">Project Title for CSV</th>
                     <!--9-->
-                    <th scope="col">Rights for CSV</th>
+                    <th scope="col">Project Status for CSV</th>
                     <!--10-->
-                    <th scope="col">SAG ID for CSV</th>
+                    <th scope="col">Rights for CSV</th>
                     <!--11-->
+                    <th scope="col">SAG ID for CSV</th>
+                    <!--12-->
                     <th scope="col">SAG Name for CSV</th>
                 </tr>
             </thead>

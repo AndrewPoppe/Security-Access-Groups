@@ -343,6 +343,22 @@ sag_module.handleSelects = function () {
     $('.sagSelect').attr('disabled', !editing);
 }
 
+// Set up "OR" search
+sag_module.setUpOrSearch = function (table) {
+    let searchTerm = '';
+    $('.dataTables_filter input').off().on('input', function () {
+        searchTerm = $(this).val().replaceAll(/[()]/g, '')
+        if (searchTerm.includes('|')) {
+            const newTerm = searchTerm.split('|').map(term => '(' + term.replaceAll('"', '').trim() + ')').filter(term => term && term != '()').join('|');
+            table.search(newTerm, true, false, true).draw();
+        } else {
+            table.search(searchTerm, false, true, true).draw();
+        }
+        this.value = searchTerm;
+    });
+    table.on('search.dt', () => $('.dataTables_filter input').val(searchTerm));
+}
+
 $(document).ready(function () {
 
     window.Toast = Swal.mixin({
@@ -407,11 +423,14 @@ $(document).ready(function () {
         }, {
             title: sag_module.tt('status_ui_63'),
             data: function (row, type, set, meta) {
-                if (row.sag === null) {
+                if (row.sag === null || sag_module.sags[row.sag] === undefined) {
                     row.sag = '{{DEFAULT_SAG_ID}}';
                 }
-                if (type === 'filter') {
-                    return row.sag + ' ' + sag_module.sags[row.sag];
+                if (type === 'filter' || type === 'search') {
+                    const sag_id = row.sag;
+                    const sag_label = sag_module.sags[sag_id];
+                    const result = sag_id + ' ' + sag_label;
+                    return result;
                 } else if (type === 'sort') {
                     return sag_module.sags[row.sag];
                 } else {
@@ -462,6 +481,7 @@ $(document).ready(function () {
                 $(this).DataTable().columns.adjust().draw();
             }, 0);
             sag_module.handleSelects();
+            sag_module.setUpOrSearch(this.api());
             console.log(performance.now());
             console.timeEnd('dt');
         },

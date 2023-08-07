@@ -13,9 +13,9 @@ require_once 'classes/RightsChecker.php';
 require_once 'classes/RightsUtilities.php';
 require_once 'classes/Role.php';
 require_once 'classes/SAG.php';
-require_once 'classes/SAGProject.php';
 require_once 'classes/SAGEditForm.php';
 require_once 'classes/SAGException.php';
+require_once 'classes/SAGProject.php';
 require_once 'classes/SAGUser.php';
 require_once 'classes/TextReplacer.php';
 use ExternalModules\AbstractExternalModule;
@@ -433,6 +433,7 @@ class SecurityAccessGroups extends AbstractExternalModule
                 $projects[] = [
                     'project_id'            => $projectId,
                     'project_title'         => $sagProject->getTitle(),
+                    'project_status'        => $sagProject->getProjectStatus(),
                     'users_with_bad_rights' => array_values(array_map(function ($thisUser) {
                         return [
                             'username' => $thisUser['username'],
@@ -494,9 +495,10 @@ class SecurityAccessGroups extends AbstractExternalModule
             foreach ( $discrepantRights as $user ) {
                 if ( !empty($user['bad']) && ($includeExpired || !$user['isExpired']) ) {
                     $users[$user['username']]['projects'][] = [
-                        'project_id'    => $projectId,
-                        'project_title' => $sagProject->getTitle(),
-                        'bad_rights'    => $user['bad'],
+                        'project_id'     => $projectId,
+                        'project_title'  => $sagProject->getTitle(),
+                        'project_status' => $sagProject->getProjectStatus(),
+                        'bad_rights'     => $user['bad'],
                     ];
                     $users[$user['username']]['username']   = $user['username'];
                     $users[$user['username']]['name']       = $user['name'];
@@ -540,14 +542,15 @@ class SecurityAccessGroups extends AbstractExternalModule
             foreach ( $discrepantRights as $user ) {
                 if ( !empty($user['bad']) && ($includeExpired || !$user['isExpired']) ) {
                     $allResults[] = [
-                        'project_id'    => $projectId,
-                        'project_title' => $sagProject->getTitle(),
-                        'bad_rights'    => $user['bad'],
-                        'username'      => $user['username'],
-                        'name'          => $user['name'],
-                        'email'         => $user['email'],
-                        'sag'           => $user['sag'],
-                        'sag_name'      => $user['sag_name']
+                        'project_id'     => $projectId,
+                        'project_title'  => $sagProject->getTitle(),
+                        'bad_rights'     => $user['bad'],
+                        'username'       => $user['username'],
+                        'name'           => $user['name'],
+                        'email'          => $user['email'],
+                        'sag'            => $user['sag'],
+                        'sag_name'       => $user['sag_name'],
+                        'project_status' => $sagProject->getProjectStatus()
                     ];
                 }
             }

@@ -58,6 +58,39 @@ class SAGProject
     }
 
     /**
+     * Return status of project
+     *
+     * Status can be:
+     *     "DEV" (development mode)
+     *     "PROD" (production mode)
+     *     "AC" (analysis/cleanup mode)
+     *     "DONE" (completed)
+     *     In case the project does not exist, NULL is returned.
+     *
+     * @return array
+     */
+    public function getProjectStatus()
+    {
+        global $lang;
+        $labels = [
+            'DEV'  => $lang['global_29'],
+            'PROD' => $lang['global_30'],
+            'AC'   => $lang['global_159'],
+            'DONE' => $lang['edit_project_207']
+        ];
+        $status = $this->module->framework->getProjectStatus($this->projectId);
+        if ( $status === null ) {
+            $result = [ 'status' => null, 'label' => '' ];
+        } else {
+            $result = [
+                'status' => $status,
+                'label'  => $labels[$status]
+            ];
+        }
+        return $this->module->framework->escape($result);
+    }
+
+    /**
      * Get array of project configuration values from redcap_projects table
      * @return array
      */

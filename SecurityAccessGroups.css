@@ -203,7 +203,7 @@ div#sagTableWrapper {
     border-left: 1px solid rgba(0, 0, 0, 0.30);
 }
 
-table.sagTable.cell-border thead th {
+table.sagTable.cell-border thead th:not(:last-child) {
     border-right: solid 1px rgba(0, 0, 0, 0.15);
 }
 
