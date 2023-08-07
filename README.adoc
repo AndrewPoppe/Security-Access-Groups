@@ -621,10 +621,10 @@ The report options are as follows:
 .Report example
 image::cc_report_example_2.png[report example]
 
-TIP: You can filter based on project status by including "project_status=" and then the status you want to filter on. For example, to only include projects that are active, you would use "project_status=Production". To only include projects that are Completed, you would use "project_status=Completed". To include both Production and Development projects, you would use "project_status=Production | project_status=Development".
+TIP: You can filter based on project status by including "project_status=" and then the status you want to filter on. For example, to only include projects that are in Production, you would use `project_status=Production`. To only include projects that are Completed, you would use `project_status=Completed`. To include both Production and Development projects, you would use `project_status=Production | project_status=Development`. See the <<searching>> section for more information.
 
-[#reports_table]
-[%header,cols="1,3"]
+.Filtering based on project status example
+image::cc_report_filter_example_2.png[report filter example]
 
 ---
 
@@ -641,6 +641,8 @@ The module adds a page that shows the status of all users in the project. The st
 * Grey - expired in the project
 
 You can also check the *Noncompliant Rights* column to see which rights the user has that are not allowed by their SAG.
+
+TIP: If you want to see only users who inappropriately have particular rights, you can use the search box. For example, if you are only interested in the **User Rights** and/or *Project Design and Setup* rights, type `"user rights" | "project design"` in the search box. See the <<searching>> section for more information.
 
 .Project status tab
 image::p_status_2.png[project status]
@@ -750,10 +752,9 @@ image::p_alert_log_2.png[alert log]
 .Alert preview example
 image::p_logs_preview_2.png[alert preview]
 
----
 
 [#logging]
-== Logging
+=== Logging
 
 One of the benefits of using this module is the enhanced logging it provides. The module creates detailed logs in the project's own logs for all changes to user rights, including
 
@@ -776,6 +777,58 @@ image::p_logging_user_2.png[user log]
 
 .Example log of a role's rights being changed
 image::p_logging_role_2.png[role log]
+
+
+---
+
+[#miscellaneous]
+== Miscellaneous
+
+[#searching]
+=== Searching
+
+==== General
+
+Many of the tables in the module have a search box that can be used to filter the table. The search box will search all columns in the table. 
+
+For example, if you want to find all users that are currently assigned to the SAG whose label has the word 'Nothing' in it, you can type 'Nothing' in the search box and the table will be filtered to only show rows that have the text 'Nothing' in any column.
+
+.Searching example
+image::searching_example_2.png[searching example]
+
+==== "AND" Searches
+
+By default, the search box will be an 'AND' seach, meaning that it will split your search term into separate words and only show results that match all of those search words. For example, if you type 'joe admin' in the search box, the table will be filtered to only show rows with BOTH 'joe' AND 'admin' in any column. It *will not* show rows that have _either_ 'joe' _or_ 'admin' but it *will* show rows that have e.g., 'admin' in column 1 and 'joe' in column 2.
+
+.AND example
+image::searching_example_AND_2.png[searching example AND]
+
+
+==== "OR" Searches
+
+If you want to show all rows that match one value OR match another value, you have to use an "OR" search.
+
+You can use the "|" operator to search for multiple terms like this in an either/or manner. For example, if you want to find all users with the username "alice" or "bob", you can type "alice | bob" in the search box and the table will be filtered to only show users with "alice" or "bob" in any column.
+
+TIP: including the '|' symbol has the side effect of making the search a Regular Expression search (see <<regular_expression_searches, below>>).
+
+.OR example
+image::searching_example_OR_2.png[searching example OR]
+
+==== Exact Phrase Searches
+
+If you want to filter based on a phrase, you can out your phrase in double quotes. For example, if you want to find all rows with the exact phrase 'joe admin,' you can type '"joe admin"' in the search box and the table will be filtered to only show rows with 'joe admin' in any column.
+
+.Exact phrase example
+image::searching_example_exact_phrase_2.png[searching example exact phrase]
+
+[#regular_expression_searches]
+==== Regular Expression Searches
+
+By including a '|' character anywhere in your search term, your search turns into a https://en.wikipedia.org/wiki/Regular_expression[Regular Expression^] search. This allows you to compose complex searches that are not possible with the default search.
+
+.*Regular Expression example* - showing all rows where a "d" is followed by any number of letters and then an "n" - as in "admin" and "dan"
+image::searching_example_regular_expression_2.png[searching example regex]
 
 ---
 

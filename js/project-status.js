@@ -911,8 +911,9 @@ sag_module.initClipboard = function () {
 
 // Set up "OR" search
 sag_module.setUpOrSearch = function (table) {
+    let searchTerm = '';
     $('.dataTables_filter input').off().on('input', function () {
-        const searchTerm = $(this).val();
+        searchTerm = $(this).val().replaceAll(/[()]/g, '')
         if (searchTerm.includes('|')) {
             const newTerm = searchTerm.split('|').map(term => '(' + term.replaceAll('"', '').trim() + ')').filter(term => term && term != '()').join('|');
             table.search(newTerm, true, false, true).draw();
@@ -921,6 +922,7 @@ sag_module.setUpOrSearch = function (table) {
         }
         this.value = searchTerm;
     });
+    table.on('search.dt', () => $('.dataTables_filter input').val(searchTerm));
 }
 
 $(document).ready(function () {

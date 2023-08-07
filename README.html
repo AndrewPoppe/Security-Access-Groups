@@ -552,9 +552,14 @@ code {
 <ul class="sectlevel2">
 <li><a href="#project_status_tab">Project Status Tab</a></li>
 <li><a href="#alert_log_tab">Alert Log Tab</a></li>
+<li><a href="#logging">Logging</a></li>
 </ul>
 </li>
-<li><a href="#logging">Logging</a></li>
+<li><a href="#miscellaneous">Miscellaneous</a>
+<ul class="sectlevel2">
+<li><a href="#searching">Searching</a></li>
+</ul>
+</li>
 <li><a href="#_changelog">Changelog</a></li>
 </ul>
 </div>
@@ -1535,6 +1540,24 @@ You can also <strong>Copy</strong> and <strong>Delete</strong> the SAG from the 
 </div>
 <div class="title">Figure 12. Report example</div>
 </div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<div class="title">💡</div>
+</td>
+<td class="content">
+You can filter based on project status by including "project_status=" and then the status you want to filter on. For example, to only include projects that are in Production, you would use <code>project_status=Production</code>. To only include projects that are Completed, you would use <code>project_status=Completed</code>. To include both Production and Development projects, you would use <code>project_status=Production | project_status=Development</code>. See the <a href="#searching">Searching</a> section for more information.
+</td>
+</tr>
+</table>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="docs/images/cc_report_filter_example_2.png" alt="report filter example">
+</div>
+<div class="title">Figure 13. Filtering based on project status example</div>
+</div>
 <hr>
 </div>
 </div>
@@ -1563,11 +1586,23 @@ You can also <strong>Copy</strong> and <strong>Delete</strong> the SAG from the 
 <div class="paragraph">
 <p>You can also check the <strong>Noncompliant Rights</strong> column to see which rights the user has that are not allowed by their SAG.</p>
 </div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<div class="title">💡</div>
+</td>
+<td class="content">
+If you want to see only users who inappropriately have particular rights, you can use the search box. For example, if you are only interested in the <strong>User Rights</strong> and/or <strong>Project Design and Setup</strong> rights, type <code>"user rights" | "project design"</code> in the search box. See the <a href="#searching">Searching</a> section for more information.
+</td>
+</tr>
+</table>
+</div>
 <div class="imageblock">
 <div class="content">
 <img src="docs/images/p_status_2.png" alt="project status">
 </div>
-<div class="title">Figure 13. Project status tab</div>
+<div class="title">Figure 14. Project status tab</div>
 </div>
 <div class="admonitionblock tip">
 <table>
@@ -1585,43 +1620,43 @@ If there are any users that are non-compliant with their SAG, you can use one of
 <div class="content">
 <img src="docs/images/p_status_alert_user_2.png" alt="alert user">
 </div>
-<div class="title">Figure 14. Alert user</div>
+<div class="title">Figure 15. Alert user</div>
 </div>
 <div class="imageblock">
 <div class="content">
 <img src="docs/images/p_status_alert_user_reminder_2.png" alt="remind user">
 </div>
-<div class="title">Figure 15. Remind user</div>
+<div class="title">Figure 16. Remind user</div>
 </div>
 <div class="imageblock">
 <div class="content">
 <img src="docs/images/p_status_alert_user-rights-holder_2.png" alt="alert user rights holders">
 </div>
-<div class="title">Figure 16. Alert user rights holders</div>
+<div class="title">Figure 17. Alert user rights holders</div>
 </div>
 <div class="imageblock">
 <div class="content">
 <img src="docs/images/p_status_alert_user-rights-holder_reminder_2.png" alt="remind user rights holders">
 </div>
-<div class="title">Figure 17. Remind user rights holders</div>
+<div class="title">Figure 18. Remind user rights holders</div>
 </div>
 <div class="imageblock">
 <div class="content">
 <img src="docs/images/p_status_expiration_2.png" alt="expire users">
 </div>
-<div class="title">Figure 18. Expire users</div>
+<div class="title">Figure 19. Expire users</div>
 </div>
 <div class="imageblock">
 <div class="content">
 <img src="docs/images/p_status_expiration_alert_user_2.png" alt="alert users upon expiration">
 </div>
-<div class="title">Figure 19. Alert users upon expiration</div>
+<div class="title">Figure 20. Alert users upon expiration</div>
 </div>
 <div class="imageblock">
 <div class="content">
 <img src="docs/images/p_status_expiration_alert_user-rights-holder_2.png" alt="alert user rights holders upon expiration">
 </div>
-<div class="title">Figure 20. Alert user rights holders upon expiration</div>
+<div class="title">Figure 21. Alert user rights holders upon expiration</div>
 </div>
 <div class="sect3">
 <h4 id="placeholders"><a class="link" href="#placeholders">Placeholders</a></h4>
@@ -1771,21 +1806,17 @@ Scheduled reminders can be canceled from this tab.
 <div class="content">
 <img src="docs/images/p_alert_log_2.png" alt="alert log">
 </div>
-<div class="title">Figure 21. Alert log tab</div>
+<div class="title">Figure 22. Alert log tab</div>
 </div>
 <div class="imageblock">
 <div class="content">
 <img src="docs/images/p_logs_preview_2.png" alt="alert preview">
 </div>
-<div class="title">Figure 22. Alert preview example</div>
-</div>
-<hr>
+<div class="title">Figure 23. Alert preview example</div>
 </div>
 </div>
-</div>
-<div class="sect1">
-<h2 id="logging"><a class="link" href="#logging">Logging</a></h2>
-<div class="sectionbody">
+<div class="sect2">
+<h3 id="logging"><a class="link" href="#logging">Logging</a></h3>
 <div class="paragraph">
 <p>One of the benefits of using this module is the enhanced logging it provides. The module creates detailed logs in the project&#8217;s own logs for all changes to user rights, including</p>
 </div>
@@ -1836,15 +1867,103 @@ Scheduled reminders can be canceled from this tab.
 <div class="content">
 <img src="docs/images/p_logging_user_2.png" alt="user log">
 </div>
-<div class="title">Figure 23. Example log of a user&#8217;s rights being changed</div>
+<div class="title">Figure 24. Example log of a user&#8217;s rights being changed</div>
 </div>
 <div class="imageblock">
 <div class="content">
 <img src="docs/images/p_logging_role_2.png" alt="role log">
 </div>
-<div class="title">Figure 24. Example log of a role&#8217;s rights being changed</div>
+<div class="title">Figure 25. Example log of a role&#8217;s rights being changed</div>
 </div>
 <hr>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="miscellaneous"><a class="link" href="#miscellaneous">Miscellaneous</a></h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="searching"><a class="link" href="#searching">Searching</a></h3>
+<div class="sect3">
+<h4 id="_general"><a class="link" href="#_general">General</a></h4>
+<div class="paragraph">
+<p>Many of the tables in the module have a search box that can be used to filter the table. The search box will search all columns in the table.</p>
+</div>
+<div class="paragraph">
+<p>For example, if you want to find all users that are currently assigned to the SAG whose label has the word 'Nothing' in it, you can type 'Nothing' in the search box and the table will be filtered to only show rows that have the text 'Nothing' in any column.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="docs/images/searching_example_2.png" alt="searching example">
+</div>
+<div class="title">Figure 26. Searching example</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_and_searches"><a class="link" href="#_and_searches">"AND" Searches</a></h4>
+<div class="paragraph">
+<p>By default, the search box will be an 'AND' seach, meaning that it will split your search term into separate words and only show results that match all of those search words. For example, if you type 'joe admin' in the search box, the table will be filtered to only show rows with BOTH 'joe' AND 'admin' in any column. It <strong>will not</strong> show rows that have <em>either</em> 'joe' <em>or</em> 'admin' but it <strong>will</strong> show rows that have e.g., 'admin' in column 1 and 'joe' in column 2.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="docs/images/searching_example_AND_2.png" alt="searching example AND">
+</div>
+<div class="title">Figure 27. AND example</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_or_searches"><a class="link" href="#_or_searches">"OR" Searches</a></h4>
+<div class="paragraph">
+<p>If you want to show all rows that match one value OR match another value, you have to use an "OR" search.</p>
+</div>
+<div class="paragraph">
+<p>You can use the "|" operator to search for multiple terms like this in an either/or manner. For example, if you want to find all users with the username "alice" or "bob", you can type "alice | bob" in the search box and the table will be filtered to only show users with "alice" or "bob" in any column.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<div class="title">💡</div>
+</td>
+<td class="content">
+including the '|' symbol has the side effect of making the search a Regular Expression search (see <a href="#regular_expression_searches">below</a>).
+</td>
+</tr>
+</table>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="docs/images/searching_example_OR_2.png" alt="searching example OR">
+</div>
+<div class="title">Figure 28. OR example</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_exact_phrase_searches"><a class="link" href="#_exact_phrase_searches">Exact Phrase Searches</a></h4>
+<div class="paragraph">
+<p>If you want to filter based on a phrase, you can out your phrase in double quotes. For example, if you want to find all rows with the exact phrase 'joe admin,' you can type '"joe admin"' in the search box and the table will be filtered to only show rows with 'joe admin' in any column.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="docs/images/searching_example_exact_phrase_2.png" alt="searching example exact phrase">
+</div>
+<div class="title">Figure 29. Exact phrase example</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="regular_expression_searches"><a class="link" href="#regular_expression_searches">Regular Expression Searches</a></h4>
+<div class="paragraph">
+<p>By including a '|' character anywhere in your search term, your search turns into a <a href="https://en.wikipedia.org/wiki/Regular_expression" target="_blank" rel="noopener">Regular Expression</a> search. This allows you to compose complex searches that are not possible with the default search.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="docs/images/searching_example_regular_expression_2.png" alt="searching example regex">
+</div>
+<div class="title">Figure 30. <strong>Regular Expression example</strong> - showing all rows where a "d" is followed by any number of letters and then an "n" - as in "admin" and "dan"</div>
+</div>
+<hr>
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -1856,7 +1975,7 @@ Scheduled reminders can be canceled from this tab.
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2023-07-29 11:21:03 -0400
+Last updated 2023-08-07 15:41:59 -0400
 </div>
 </div>
 </body>
