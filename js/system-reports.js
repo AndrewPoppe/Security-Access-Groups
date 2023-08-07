@@ -70,14 +70,17 @@ sag_module.getProjectStatusIcon = function (projectStatus) {
     return result;
 }
 
+// Set up "OR" search
 sag_module.setUpOrSearch = function (table) {
-    $('div.dataTables_filter input').on('keyup focus', function (e) {
-        const searchTerm = $('div.dataTables_filter input').val().trim().toLowerCase();
-        if (searchTerm === '' || !searchTerm.includes('|')) {
-            return true;
+    $('.dataTables_filter input').off().on('input', function () {
+        const searchTerm = $(this).val();
+        if (searchTerm.includes('|')) {
+            const newTerm = searchTerm.split('|').map(term => '(' + term.replaceAll('"', '').trim() + ')').filter(term => term && term != '()').join('|');
+            table.search(newTerm, true, false, true).draw();
+        } else {
+            table.search(searchTerm, false, true, true).draw();
         }
-        const newTerm = searchTerm.split('|').map(term => term.trim()).join('|');
-        table.search(newTerm, true, false).draw();
+        this.value = searchTerm;
     });
 }
 

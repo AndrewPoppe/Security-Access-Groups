@@ -909,6 +909,20 @@ sag_module.initClipboard = function () {
     });
 }
 
+// Set up "OR" search
+sag_module.setUpOrSearch = function (table) {
+    $('.dataTables_filter input').off().on('input', function () {
+        const searchTerm = $(this).val();
+        if (searchTerm.includes('|')) {
+            const newTerm = searchTerm.split('|').map(term => '(' + term.replaceAll('"', '').trim() + ')').filter(term => term && term != '()').join('|');
+            table.search(newTerm, true, false, true).draw();
+        } else {
+            table.search(searchTerm, false, true, true).draw();
+        }
+        this.value = searchTerm;
+    });
+}
+
 $(document).ready(function () {
 
     window.Toast = Swal.mixin({
@@ -1112,6 +1126,7 @@ $(document).ready(function () {
             this.api().columns.adjust().draw();
             sag_module.initTinyMCE();
             sag_module.initClipboard();
+            sag_module.setUpOrSearch(this.api());
             console.log(performance.now());
         },
         lengthMenu: [

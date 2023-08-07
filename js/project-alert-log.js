@@ -116,6 +116,20 @@ sag_module.searchUsers = function () {
     dt.columns(5).search(users.join('|'), true).draw();
 }
 
+// Set up "OR" search
+sag_module.setUpOrSearch = function (table) {
+    $('.dataTables_filter input').off().on('input', function () {
+        const searchTerm = $(this).val();
+        if (searchTerm.includes('|')) {
+            const newTerm = searchTerm.split('|').map(term => '(' + term.replaceAll('"', '').trim() + ')').filter(term => term && term != '()').join('|');
+            table.search(newTerm, true, false, true).draw();
+        } else {
+            table.search(searchTerm, false, true, true).draw();
+        }
+        this.value = searchTerm;
+    });
+}
+
 $(document).ready(function () {
     window.Toast = Swal.mixin({
         toast: true,
@@ -435,6 +449,7 @@ $(document).ready(function () {
 
             $('.alertLogWrapper').show();
             $('table#alertLogTable select').val(null).trigger('change');
+            sag_module.setUpOrSearch(dt);
             dt.columns.adjust();
             console.log(performance.now());
         },
