@@ -752,6 +752,9 @@ image::p_alert_log_2.png[alert log]
 .Alert preview example
 image::p_logs_preview_2.png[alert preview]
 
+TIP: Use the search bar to search for the text of an alert, the username of the user the alert is about, or the username of the user the alert is being sent to, and more. See the <<searching>> section for more information.
+
+[#user_rights_tab]
 
 [#logging]
 === Logging
