@@ -621,6 +621,11 @@ The report options are as follows:
 .Report example
 image::cc_report_example_2.png[report example]
 
+TIP: You can filter based on project status by including "project_status=" and then the status you want to filter on. For example, to only include projects that are active, you would use "project_status=Production". To only include projects that are Completed, you would use "project_status=Completed". To include both Production and Development projects, you would use "project_status=Production | project_status=Development".
+
+[#reports_table]
+[%header,cols="1,3"]
+
 ---
 
 [#project_page]

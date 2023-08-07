@@ -70,6 +70,21 @@ sag_module.getProjectStatusIcon = function (projectStatus) {
     return result;
 }
 
+sag_module.setUpOrSearch = function (table) {
+    $('div.dataTables_filter input').on('keyup focus', function (e) {
+        const searchTerm = $('div.dataTables_filter input').val().trim().toLowerCase();
+        if (searchTerm === '' || !searchTerm.includes('|')) {
+            return true;
+        }
+        const newTerm = searchTerm.split('|').map(term => term.trim()).join('|');
+        table.search(newTerm, true, false).draw();
+    });
+}
+
+$(document).on('preXhr.dt', function (e, settings, data) {
+    console.time('report');
+});
+
 // Projects Table
 sag_module.showProjectTable = function (includeExpired = false) {
     sag_module.clearTables();
@@ -207,6 +222,7 @@ sag_module.showProjectTable = function (includeExpired = false) {
             });
             $('div.dt-buttons button').removeClass('dt-button');
             table.columns.adjust().draw();
+            sag_module.setUpOrSearch(table);
         },
         buttons: [{
             extend: 'excelHtml5',
@@ -287,6 +303,9 @@ sag_module.showProjectTable = function (includeExpired = false) {
         {
             title: sag_module.tt('status_ui_2'),
             data: function (row, type, set, meta) {
+                if (type === 'filter') {
+                    return 'project_status=' + row.project_status.label;
+                }
                 return row.project_status.label;
             },
             visible: false
@@ -480,6 +499,7 @@ sag_module.showUserTable = function (includeExpired = false) {
             table.columns.adjust().draw();
             $('div.dt-buttons button').removeClass(
                 'dt-button');
+            sag_module.setUpOrSearch(table);
         },
         buttons: [{
             extend: 'excelHtml5',
@@ -592,7 +612,8 @@ sag_module.showUserTable = function (includeExpired = false) {
             title: sag_module.tt('status_ui_2'),
             data: function (row, type, set, meta) {
                 const projects = row.projects ?? [];
-                return [...new Set(projects.map(project => project.project_status.label))].join(", ");
+                const prefix = type === 'filter' ? 'project_status=' : '';
+                return [...new Set(projects.map(project => prefix + project.project_status.label))].join(", ");
             },
             visible: false
         },
@@ -649,10 +670,6 @@ sag_module.showUserTable = function (includeExpired = false) {
         }
     });
 }
-
-$(document).on('preXhr.dt', function (e, settings, data) {
-    console.time('report');
-});
 
 // Users and Projects Table
 sag_module.showUserAndProjectTable = function (includeExpired = false) {
@@ -757,6 +774,8 @@ sag_module.showUserAndProjectTable = function (includeExpired = false) {
                         rightsSelect.append(new Option(right, right, false, false));
                     }
                 });
+
+
             });
 
             $('.allTableSelect').trigger('change');
@@ -777,6 +796,7 @@ sag_module.showUserAndProjectTable = function (includeExpired = false) {
             table.columns.adjust().draw();
             $('div.dt-buttons button').removeClass('dt-button');
 
+            sag_module.setUpOrSearch(table);
             console.timeEnd('report');
         },
         buttons: [{
@@ -868,6 +888,9 @@ sag_module.showUserAndProjectTable = function (includeExpired = false) {
         {
             title: sag_module.tt('status_ui_2'),
             data: function (row, type, set, meta) {
+                if (type === 'filter') {
+                    return 'project_status=' + row.project_status.label;
+                }
                 return row.project_status.label;
             },
             visible: false
