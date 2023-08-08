@@ -144,10 +144,10 @@ class CsvUserImport
                     </div>
                     <div class="modal-body">
                     <div class="container mb-4 w-90" style="font-size:larger;">' .
-            $this->module->framework->tt('misc_22', [
+            html_entity_decode($this->module->framework->tt('misc_22', [
                 '<span class="text-primary font-weight-bold"">' . $this->module->framework->tt('misc_23') . '</span>',
                 '<span class="text-danger font-weight-bold"">' . $this->module->framework->tt('misc_24') . '</span>'
-            ]) .
+            ])) .
             '</div>
                     <table class="table table-bordered">
                         <thead class="thead-dark">

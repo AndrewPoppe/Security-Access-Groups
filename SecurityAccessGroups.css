@@ -493,7 +493,9 @@ table.discrepancy-table tr.table-success-light>td.SAG {
 table.discrepancy-table tr.table-expired,
 table.discrepancy-table tr.table-expired>td.SAG {
     background-color: rgba(var(--bs-light-rgb), var(--bs-bg-opacity)) !important;
+    background-color: #fdfdfe !important;
     color: rgb(var(--bs-secondary-rgb)) !important;
+    color: var(--secondary) !important;
 }
 
 div.is-invalid div.tox.tox-tinymce {
