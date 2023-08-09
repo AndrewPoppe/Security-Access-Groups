@@ -812,7 +812,7 @@ You can override the system-wide language at the project level by visiting the P
 These languages are currently available to be used in the module:
 
 * English (default)
-* lang/Arabic (عربي)
+* Arabic (عربي)
 * Bangla (বাংলা)
 * Chinese (中文)
 * French (Français)
