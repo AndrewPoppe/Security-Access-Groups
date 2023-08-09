@@ -555,6 +555,14 @@ code {
 <li><a href="#logging">Logging</a></li>
 </ul>
 </li>
+<li><a href="#translation">Translation (i18n and l10n)</a>
+<ul class="sectlevel2">
+<li><a href="#_general_information">General Information</a></li>
+<li><a href="#_available_translations">Available Translations</a></li>
+<li><a href="#_limitations">Limitations</a></li>
+<li><a href="#_translating_the_module">Translating the Module</a></li>
+</ul>
+</li>
 <li><a href="#miscellaneous">Miscellaneous</a>
 <ul class="sectlevel2">
 <li><a href="#searching">Searching</a></li>
@@ -652,7 +660,6 @@ The module must be enabled in a project for it to restrict User Rights in that p
 </div>
 <div class="title">Figure 1. Example of a user being blocked from being granted a User Right</div>
 </div>
-<hr>
 </div>
 </div>
 </div>
@@ -769,7 +776,6 @@ The module must be enabled in a project for it to restrict User Rights in that p
 </tr>
 </tbody>
 </table>
-<hr>
 </div>
 </div>
 </div>
@@ -1558,7 +1564,6 @@ You can filter based on project status by including "project_status=" and then t
 </div>
 <div class="title">Figure 13. Filtering based on project status example</div>
 </div>
-<hr>
 </div>
 </div>
 </div>
@@ -1830,7 +1835,8 @@ Use the search bar to search for the text of an alert, the username of the user 
 <div class="sect2">
 <h3 id="logging"><a class="link" href="#logging">Logging</a></h3>
 <div class="paragraph">
-<p>One of the benefits of using this module is the enhanced logging it provides. The module creates detailed logs in the project&#8217;s own logs for all changes to user rights, including</p>
+<p>One of the benefits of using this module is the enhanced logging it provides. The module creates detailed logs in the
+project&#8217;s own logs for all changes to user rights, including</p>
 </div>
 <div class="ulist">
 <ul>
@@ -1887,7 +1893,149 @@ Use the search bar to search for the text of an alert, the username of the user 
 </div>
 <div class="title">Figure 25. Example log of a role&#8217;s rights being changed</div>
 </div>
-<hr>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="translation"><a class="link" href="#translation">Translation (i18n and l10n)</a></h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_general_information"><a class="link" href="#_general_information">General Information</a></h3>
+<div class="paragraph">
+<p>The module is capable of being translated into other languages via the External Module Framework&#8217;s language selection
+feature. To set the language for the module system-wide, go to Control Center &gt; External Modules &gt; Manage External
+Modules and click the "Configure" button for the module. Then select the language you want to use from the "Language"
+dropdown and click "Save".</p>
+</div>
+<div class="paragraph">
+<p>You can override the system-wide language at the project level by visiting the Project Module Manager and clicking the
+"Configure" button for the module. Then select the language you want to use from the "Language" dropdown and click
+"Save".</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_available_translations"><a class="link" href="#_available_translations">Available Translations</a></h3>
+<div class="paragraph">
+<p>These languages are currently available to be used in the module:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>English (default)</p>
+</li>
+<li>
+<p>lang/Arabic (عربي)</p>
+</li>
+<li>
+<p>Bangla (বাংলা)</p>
+</li>
+<li>
+<p>Chinese (中文)</p>
+</li>
+<li>
+<p>French (Français)</p>
+</li>
+<li>
+<p>German (Deutsch)</p>
+</li>
+<li>
+<p>Hindi (हिंदी)</p>
+</li>
+<li>
+<p>Italian (Italiana)</p>
+</li>
+<li>
+<p>Portuguese (Português)</p>
+</li>
+<li>
+<p>Spanish (Español)</p>
+</li>
+<li>
+<p>Ukrainian (українська)</p>
+</li>
+<li>
+<p>Urdu (اردو)</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_limitations"><a class="link" href="#_limitations">Limitations</a></h3>
+<div class="sect3">
+<h4 id="_right_to_left_languages"><a class="link" href="#_right_to_left_languages">Right-to-Left Languages</a></h4>
+<div class="paragraph">
+<p>Currently there is limited support for RTL lanuages. The module will display RTL languages correctly, but the
+structure/formatting of UI elements will still be LTR. There are options for more fully supporting RTL, but this will be
+low priority unless we hear from groups that need this feature.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_translating_the_module"><a class="link" href="#_translating_the_module">Translating the Module</a></h3>
+<div class="paragraph">
+<p>The translations provided with the module were created using automatic translation software and may not be accurate. If
+you would like to correct a translation or contribute a new translation, please follow the instructions below.</p>
+</div>
+<div class="sect3">
+<h4 id="_creating_a_new_translation"><a class="link" href="#_creating_a_new_translation">Creating a new translation</a></h4>
+<div class="paragraph">
+<p>If you want to translate the module into a new language, you can do so by following these steps:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Find the <code>lang</code> directory in the module&#8217;s source code.</p>
+</li>
+<li>
+<p>Copy the <code>English.ini</code> file and change the name of the copy to the language you want to translate to. Name the file
+with the English name for the language (capitalized) followed by the language&#8217;s endonym (using that language&#8217;s glyphs)
+in parentheses. For example, if you want to translate the module into Japanese, you would name the file
+<code>Japanese (日本語).ini</code>.</p>
+</li>
+<li>
+<p>Open the file you just created in a text editor and translate the text on the right side of the equal sign for each
+line. For example, if you wanted to translate the text <code>User Rights</code> into Japanese, you would change the line
+<code>status_ui_3 = "Introduction"</code> to <code>status_ui_3 = "序章"</code>.</p>
+</li>
+<li>
+<p>Repeat the process for each line.</p>
+</li>
+<li>
+<p>Save the file and upload it to the "lang" folder of the module&#8217;s source code.</p>
+</li>
+<li>
+<p>Submit a pull request with your changes to the master branch of the
+<a href="https://github.com/AndrewPoppe/Security-Access-Groups">Github repository</a>.</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_correcting_an_existing_translation"><a class="link" href="#_correcting_an_existing_translation">Correcting an existing translation</a></h4>
+<div class="paragraph">
+<p>If you want to correct an existing translation, you can do so by following these steps:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Find the <code>lang</code> directory in the module&#8217;s source code.</p>
+</li>
+<li>
+<p>Open the file for the language you want to correct in a text editor.</p>
+</li>
+<li>
+<p>Correct the text on the right side of the equal sign for each line you want to change.</p>
+</li>
+<li>
+<p>Save the file and upload it to the "lang" folder of the module&#8217;s source code.</p>
+</li>
+<li>
+<p>Submit a pull request with your changes to the master branch of the
+<a href="https://github.com/AndrewPoppe/Security-Access-Groups">Github repository</a>.</p>
+</li>
+</ol>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -1973,7 +2121,6 @@ including the '|' symbol has the side effect of making the search a Regular Expr
 </div>
 <div class="title">Figure 30. <strong>Regular Expression example</strong> - showing all rows where a "d" is followed by any number of letters and then an "n" - as in "admin" and "dan"</div>
 </div>
-<hr>
 </div>
 </div>
 </div>
@@ -1987,7 +2134,7 @@ including the '|' symbol has the side effect of making the search a Regular Expr
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2023-08-08 09:08:05 -0400
+Last updated 2023-08-09 14:59:53 -0400
 </div>
 </div>
 </body>

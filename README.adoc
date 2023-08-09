@@ -142,7 +142,9 @@ The module provides a convenient way to expire users in a project on the <<proje
 .Example of a user being blocked from being granted a User Right
 image::p_blocked_2.png[blocked]
 
+ifdef::env-github[]
 ---
+endif::[]
 
 == Module Configuration
 
@@ -218,7 +220,9 @@ NOTE: <<placeholders, Placeholders>> may be used in any of these default setting
 |The default body for emails sent to user rights holders upon expiration.
 |===
 
+ifdef::env-github[]
 ---
+endif::[]
 
 == Control Center Page
 
@@ -626,7 +630,9 @@ TIP: You can filter based on project status by including "project_status=" and t
 .Filtering based on project status example
 image::cc_report_filter_example_2.png[report filter example]
 
+ifdef::env-github[]
 ---
+endif::[]
 
 [#project_page]
 == Project Page
@@ -759,7 +765,8 @@ TIP: Use the search bar to search for the text of an alert, the username of the 
 [#logging]
 === Logging
 
-One of the benefits of using this module is the enhanced logging it provides. The module creates detailed logs in the project's own logs for all changes to user rights, including
+One of the benefits of using this module is the enhanced logging it provides. The module creates detailed logs in the 
+project's own logs for all changes to user rights, including
 
 * When a user is added to a project with custom rights
 * When a user is added to a project in an existing User Role
@@ -782,7 +789,87 @@ image::p_logging_user_2.png[user log]
 image::p_logging_role_2.png[role log]
 
 
+ifdef::env-github[]
 ---
+endif::[]
+
+[#translation]
+== Translation (i18n and l10n)
+
+=== General Information
+
+The module is capable of being translated into other languages via the External Module Framework's language selection 
+feature. To set the language for the module system-wide, go to Control Center > External Modules > Manage External 
+Modules and click the "Configure" button for the module. Then select the language you want to use from the "Language" 
+dropdown and click "Save".
+
+You can override the system-wide language at the project level by visiting the Project Module Manager and clicking the
+"Configure" button for the module. Then select the language you want to use from the "Language" dropdown and click 
+"Save".
+
+=== Available Translations
+
+These languages are currently available to be used in the module:
+
+* English (default)
+* lang/Arabic (عربي)
+* Bangla (বাংলা)
+* Chinese (中文)
+* French (Français)
+* German (Deutsch)
+* Hindi (हिंदी)
+* Italian (Italiana)
+* Portuguese (Português)
+* Spanish (Español)
+* Ukrainian (українська)
+* Urdu (اردو)
+
+=== Limitations
+
+==== Right-to-Left Languages
+
+Currently there is limited support for RTL lanuages. The module will display RTL languages correctly, but the 
+structure/formatting of UI elements will still be LTR. There are options for more fully supporting RTL, but this will be
+low priority unless we hear from groups that need this feature.
+
+=== Translating the Module
+
+The translations provided with the module were created using automatic translation software and may not be accurate. If 
+you would like to correct a translation or contribute a new translation, please follow the instructions below.
+
+==== Creating a new translation
+
+If you want to translate the module into a new language, you can do so by following these steps:
+
+1. Find the `lang` directory in the module's source code.
+2. Copy the `English.ini` file and change the name of the copy to the language you want to translate to. Name the file 
+with the English name for the language (capitalized) followed by the language's endonym (using that language's glyphs) 
+in parentheses. For example, if you want to translate the module into Japanese, you would name the file 
+`Japanese (日本語).ini`.
+3. Open the file you just created in a text editor and translate the text on the right side of the equal sign for each
+line. For example, if you wanted to translate the text `Introduction` into Japanese, you would change the line
+`status_ui_3 = "Introduction"` to `status_ui_3 = "序章"`.
+4. Repeat the process for each line.
+5. Save the file and upload it to the "lang" folder of the module's source code.
+6. Submit a pull request with your changes to the master branch of the 
+https://github.com/AndrewPoppe/Security-Access-Groups[Github repository].
+
+
+==== Correcting an existing translation
+
+If you want to correct an existing translation, you can do so by following these steps:
+
+1. Find the `lang` directory in the module's source code.
+2. Open the file for the language you want to correct in a text editor.
+3. Correct the text on the right side of the equal sign for each line you want to change.
+4. Save the file and upload it to the "lang" folder of the module's source code.
+5. Submit a pull request with your changes to the master branch of the 
+https://github.com/AndrewPoppe/Security-Access-Groups[Github repository].
+
+
+ifdef::env-github[]
+---
+endif::[]
 
 [#miscellaneous]
 == Miscellaneous
@@ -833,7 +920,9 @@ By including a '|' character anywhere in your search term, your search turns int
 .*Regular Expression example* - showing all rows where a "d" is followed by any number of letters and then an "n" - as in "admin" and "dan"
 image::searching_example_regular_expression_2.png[searching example regex]
 
+ifdef::env-github[]
 ---
+endif::[]
 
 == Changelog
 
