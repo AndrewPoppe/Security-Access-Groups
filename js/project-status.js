@@ -967,6 +967,7 @@ $(document).ready(function () {
             localStorage.setItem('DataTables_' + settings.sInstance, JSON.stringify(data))
         },
         stateLoadCallback: function (settings) {
+            settings.oPreviousSearch.sSearch = '';
             const dataString = localStorage.getItem('DataTables_' + settings.sInstance);
             if (!dataString) return settings;
             const data = JSON.parse(dataString);
@@ -979,6 +980,8 @@ $(document).ready(function () {
             }
             sag_module.handleDisplayUsersButton(allChecked);
             delete (data.checkboxStatus);
+            data.search.search = '';
+            console.log(data);
             return data;
         },
         columns: [{
