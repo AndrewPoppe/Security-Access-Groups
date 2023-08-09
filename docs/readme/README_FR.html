@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr-x-mtfrom-en">
 
 <head>
     <meta charset="UTF-8">
@@ -8,7 +8,7 @@
     <meta name="generator" content="Asciidoctor 2.0.17">
     <meta name="description"
         content="Il s&#39;agit d&#39;un module externe pour REDCap qui permet aux administrateurs de créer et de gérer des groupes d&#39;accès de sécurité qui restreignent les droits d&#39;utilisateur qu&#39;un utilisateur peut se voir accorder.">
-    <meta name="author" content="Andrew Poppe">
+    <meta name="author" content="André Poppe" class="notranslate">
     <title> Groupes d&#39;accès de sécurité </title>
     <link rel="stylesheet"
         href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
@@ -2457,8 +2457,8 @@
 <body class="article">
     <div id="header">
         <h1>Groupes d&#39;accès de sécurité</h1>
-        <div class="details"> <span id="author" class="author">Andrew Poppe</span><br> <span id="email" class="email"><a
-                    href="mailto:andrew.poppe@yale.edu">andrew.poppe@yale.edu</a></span><br></div>
+        <div class="details"> <span id="author" class="author notranslate">Andrew Poppe</span><br> <span id="email"
+                class="email"><a href="mailto:andrew.poppe@yale.edu">andrew.poppe@yale.edu</a></span><br></div>
     </div>
     <div id="content">
         <div id="preamble">
@@ -2565,7 +2565,7 @@
                         </li>
                         <li> <a href="#_control_center_page">Page du centre de contrôle</a>
                             <ul class="sectlevel2">
-                                <li> <a href="#users_tab">Onglet Utilisateurs</a></li>
+                                <li><a href="#users_tab">Onglet Utilisateurs</a></li>
                                 <li> <a href="#security_access_groups_tab">Onglet Groupes d&#39;accès de sécurité</a>
                                 </li>
                                 <li> <a href="#reports_tab">Onglet Rapports</a></li>
@@ -2576,6 +2576,14 @@
                                 <li> <a href="#project_status_tab">Onglet État du projet</a></li>
                                 <li> <a href="#alert_log_tab">Onglet Journal des alertes</a></li>
                                 <li> <a href="#logging">Enregistrement</a></li>
+                            </ul>
+                        </li>
+                        <li> <a href="#translation">Traduction (i18n / l10n)</a>
+                            <ul class="sectlevel2">
+                                <li> <a href="#_general_information">Informations générales</a></li>
+                                <li> <a href="#_available_translations">Traductions disponibles</a></li>
+                                <li> <a href="#_limitations">Limites</a></li>
+                                <li><a href="#_translating_the_module">Traduire le module</a></li>
                             </ul>
                         </li>
                         <li> <a href="#miscellaneous">Divers</a>
@@ -2596,13 +2604,13 @@
                     <div class="qlist qanda">
                         <ol>
                             <li>
-                                <p><em><strong>Qu&#39;est-ce que c&#39;est?</strong></em></p>
+                                <p> <em><strong>Qu&#39;est-ce que c&#39;est?</strong></em></p>
                                 <p> Il s&#39;agit d&#39;un module externe qui permet aux administrateurs REDCap de créer
                                     et de gérer <strong>des groupes d&#39;accès de sécurité</strong> dans un système
                                     REDCap.</p>
                             </li>
                             <li>
-                                <p> <em><strong>Que sont les groupes d&#39;accès sécurisé ?</strong></em></p>
+                                <p><em><strong>Que sont les groupes d&#39;accès sécurisé ?</strong></em></p>
                                 <p> <strong>Les groupes d&#39;accès de sécurité</strong> (SAG) sont utilisés pour
                                     restreindre les droits d&#39;utilisateur qu&#39;un utilisateur REDCap peut se voir
                                     accorder dans un projet. Les SAG ne définissent pas les droits qu&#39;un utilisateur
@@ -2613,20 +2621,20 @@
                             </li>
                             <li>
                                 <p> <em><strong>Quand cela serait-il utile ?</strong></em></p>
-                                <p> Par exemple, si votre institution exige une documentation de formation pour que les
+                                <p>Par exemple, si votre institution exige une documentation de formation pour que les
                                     utilisateurs exportent des données, vous pouvez créer un SAG qui n&#39;autorise pas
                                     l&#39;octroi du droit d&#39;utilisateur &quot;Outil d&#39;exportation de
                                     données&quot; aux utilisateurs qui lui sont attribués. Une fois qu&#39;un
                                     utilisateur a terminé la formation, il peut être déplacé vers un SAG qui autorise
                                     l&#39;octroi du droit d&#39;utilisateur &quot;Outil d&#39;exportation de
-                                    données&quot;.<br> <br>En d&#39;autres termes, vous souhaiterez peut-être proposer
+                                    données&quot;.<br><br> En d&#39;autres termes, vous souhaiterez peut-être proposer
                                     différents niveaux de formation à vos utilisateurs et n&#39;accorder des droits
                                     d&#39;utilisateur spécifiques au niveau du projet qu&#39;aux utilisateurs ayant
                                     suivi la formation appropriée. Bien que ce module n&#39;administre ni ne suive la
                                     formation, il gère tout le reste.</p>
                             </li>
                             <li>
-                                <p> <em><strong>N&#39;est-ce pas la responsabilité de l&#39;équipe d&#39;étude de gérer
+                                <p><em><strong>N&#39;est-ce pas la responsabilité de l&#39;équipe d&#39;étude de gérer
                                             les droits des utilisateurs ?</strong></em></p>
                                 <p> Oui et non. <strong><em>En tant qu&#39;administrateurs système, nous avons la
                                             responsabilité de nous assurer que les utilisateurs de notre système sont
@@ -2640,10 +2648,10 @@
                     </div>
                 </div>
                 <div class="sect2">
-                    <h3 id="_how_do_you_use_the_module"> <a class="link" href="#_how_do_you_use_the_module">Comment
+                    <h3 id="_how_do_you_use_the_module"><a class="link" href="#_how_do_you_use_the_module">Comment
                             utilisez-vous le module ?</a></h3>
                     <div class="paragraph">
-                        <p>Les administrateurs REDCap créent d&#39;abord des SAG à l&#39;aide d&#39;un <a
+                        <p> Les administrateurs REDCap créent d&#39;abord des SAG à l&#39;aide d&#39;un <a
                                 href="#security_access_groups_tab">menu</a> dans le centre de contrôle. Une fois
                             qu&#39;un SAG est créé, les utilisateurs peuvent lui être affectés dans un autre <a
                                 href="#users_tab">onglet</a> du même menu du centre de contrôle. Lorsqu&#39;un
@@ -2656,7 +2664,7 @@
                                 <td class="icon">
                                     <div class="title"> 🚩</div>
                                 </td>
-                                <td class="content"> Le module doit être activé dans un projet pour qu&#39;il restreigne
+                                <td class="content">Le module doit être activé dans un projet pour qu&#39;il restreigne
                                     les droits d&#39;utilisateur dans ce projet. Il est recommandé d&#39;activer le
                                     module dans tous les projets.</td>
                             </tr>
@@ -2674,8 +2682,8 @@
                                 <p> En utilisant les méthodes habituelles sur la page du projet User Rights</p>
                             </li>
                             <li>
-                                <p> Utilisation de la fonctionnalité <code>Upload users, role, and assignments</code>
-                                    sur la page du projet Droits des utilisateurs</p>
+                                <p>Utilisation de la fonctionnalité <strong>Charger des utilisateurs, des rôles et des
+                                        affectations</strong> sur la page du projet Droits des utilisateurs</p>
                             </li>
                             <li>
                                 <p> Utilisation de l&#39;API REDCap</p>
@@ -2683,7 +2691,7 @@
                         </ul>
                     </div>
                     <div class="paragraph">
-                        <p><strong>Toutes les tentatives de définition des droits d&#39;utilisateur seront bloquées si
+                        <p> <strong>Toutes les tentatives de définition des droits d&#39;utilisateur seront bloquées si
                                 l&#39;utilisateur n&#39;est pas autorisé à se voir accorder les droits en fonction de
                                 son SAG.</strong> Les tentatives de contournement du module sont détectées et
                             consignées.</p>
@@ -2696,7 +2704,7 @@
                                 </td>
                                 <td class="content">
                                     <div class="paragraph">
-                                        <p> Le module ignore les utilisateurs qui sont actuellement expirés dans le
+                                        <p>Le module ignore les utilisateurs qui sont actuellement expirés dans le
                                             projet. Cela permet à l&#39;utilisateur de rester dans le projet mais
                                             l&#39;empêche d&#39;utiliser ses droits d&#39;utilisateur non conformes
                                             jusqu&#39;à ce que ces droits non conformes soient supprimés.
@@ -2713,10 +2721,9 @@
                     </div>
                     <div class="imageblock">
                         <div class="content"><img src="../images/FR/p_blocked_2.png" alt="bloqué"></div>
-                        <div class="title"> Figure 1. Exemple d&#39;un utilisateur bloqué pour l&#39;octroi d&#39;un
+                        <div class="title">Figure 1. Exemple d&#39;un utilisateur bloqué pour l&#39;octroi d&#39;un
                             droit d&#39;utilisateur</div>
                     </div>
-                    <hr>
                 </div>
             </div>
         </div>
@@ -2728,14 +2735,14 @@
                     <h3 id="_default_email_settings"> <a class="link" href="#_default_email_settings">Paramètres de
                             messagerie par défaut</a></h3>
                     <div class="paragraph">
-                        <p>La page de configuration du module du centre de contrôle permet aux administrateurs de
+                        <p> La page de configuration du module du centre de contrôle permet aux administrateurs de
                             définir les valeurs par défaut pour toutes les alertes pouvant être envoyées aux
                             utilisateurs et aux détenteurs de droits d&#39;utilisateur à partir de la <a
                                 href="#project_status_tab">page d&#39;état du projet</a> .</p>
                     </div>
                     <div class="paragraph">
                         <p> C&#39;est un moyen pratique d&#39;être opérationnel lorsque vous activez le module pour la
-                            première fois, car de nombreux utilisateurs devront probablement être avertis. </p>
+                            première fois, car de nombreux utilisateurs devront probablement être avertis.</p>
                     </div>
                     <div class="imageblock">
                         <div class="content"><img src="../images/FR/cc_config_2.png" alt="configuration"></div>
@@ -2764,8 +2771,8 @@
                         <thead>
                             <tr>
                                 <th class="tableblock halign-left valign-top"> Section</th>
-                                <th class="tableblock halign-left valign-top"> Option</th>
-                                <th class="tableblock halign-left valign-top"> Taper</th>
+                                <th class="tableblock halign-left valign-top"> Option </th>
+                                <th class="tableblock halign-left valign-top">Taper</th>
                                 <th class="tableblock halign-left valign-top"> Description </th>
                             </tr>
                         </thead>
@@ -2790,7 +2797,7 @@
                             </tr>
                             <tr>
                                 <td class="tableblock halign-left valign-top">
-                                    <p class="tableblock"> Corps par défaut de l&#39;e-mail d&#39;alerte utilisateur</p>
+                                    <p class="tableblock">Corps par défaut de l&#39;e-mail d&#39;alerte utilisateur</p>
                                 </td>
                                 <td class="tableblock halign-left valign-top">
                                     <p class="tableblock"> Texte riche</p>
@@ -2818,16 +2825,16 @@
                                         l&#39;utilisateur</p>
                                 </td>
                                 <td class="tableblock halign-left valign-top">
-                                    <p class="tableblock"> Texte riche</p>
+                                    <p class="tableblock">Texte riche</p>
                                 </td>
                                 <td class="tableblock halign-left valign-top">
                                     <p class="tableblock"> Corps par défaut des e-mails de rappel envoyés aux
-                                        utilisateurs.</p>
+                                        utilisateurs. </p>
                                 </td>
                             </tr>
                             <tr>
                                 <td class="tableblock halign-left valign-middle" rowspan="4">
-                                    <p class="tableblock">Paramètres d&#39;e-mail d&#39;alerte du titulaire des droits
+                                    <p class="tableblock"> Paramètres d&#39;e-mail d&#39;alerte du titulaire des droits
                                         utilisateur</p>
                                 </td>
                                 <td class="tableblock halign-left valign-top">
@@ -2844,7 +2851,7 @@
                             </tr>
                             <tr>
                                 <td class="tableblock halign-left valign-top">
-                                    <p class="tableblock"> Corps par défaut de l&#39;e-mail d&#39;alerte des détenteurs
+                                    <p class="tableblock">Corps par défaut de l&#39;e-mail d&#39;alerte des détenteurs
                                         de droits utilisateur</p>
                                 </td>
                                 <td class="tableblock halign-left valign-top">
@@ -2870,7 +2877,7 @@
                             </tr>
                             <tr>
                                 <td class="tableblock halign-left valign-top">
-                                    <p class="tableblock"> Corps par défaut de l&#39;e-mail d&#39;alerte de rappel des
+                                    <p class="tableblock">Corps par défaut de l&#39;e-mail d&#39;alerte de rappel des
                                         détenteurs de droits utilisateur</p>
                                 </td>
                                 <td class="tableblock halign-left valign-top">
@@ -2895,13 +2902,13 @@
                                 </td>
                                 <td class="tableblock halign-left valign-top">
                                     <p class="tableblock"> L&#39;objet par défaut des e-mails envoyés aux utilisateurs à
-                                        l&#39;expiration.</p>
+                                        l&#39;expiration. </p>
                                 </td>
                             </tr>
                             <tr>
                                 <td class="tableblock halign-left valign-top">
-                                    <p class="tableblock"> Corps par défaut de l&#39;e-mail d&#39;alerte
-                                        d&#39;expiration de l&#39;utilisateur</p>
+                                    <p class="tableblock">Corps par défaut de l&#39;e-mail d&#39;alerte d&#39;expiration
+                                        de l&#39;utilisateur</p>
                                 </td>
                                 <td class="tableblock halign-left valign-top">
                                     <p class="tableblock"> Texte riche</p>
@@ -2921,25 +2928,24 @@
                                 </td>
                                 <td class="tableblock halign-left valign-top">
                                     <p class="tableblock"> L&#39;objet par défaut des e-mails envoyés aux détenteurs de
-                                        droits d&#39;utilisateur à l&#39;expiration.</p>
+                                        droits d&#39;utilisateur à l&#39;expiration. </p>
                                 </td>
                             </tr>
                             <tr>
                                 <td class="tableblock halign-left valign-top">
-                                    <p class="tableblock"> Corps par défaut de l&#39;e-mail d&#39;alerte des détenteurs
+                                    <p class="tableblock">Corps par défaut de l&#39;e-mail d&#39;alerte des détenteurs
                                         de droits utilisateur</p>
                                 </td>
                                 <td class="tableblock halign-left valign-top">
                                     <p class="tableblock"> Texte riche</p>
                                 </td>
                                 <td class="tableblock halign-left valign-top">
-                                    <p class="tableblock">Le corps par défaut des e-mails envoyés aux détenteurs de
-                                        droits d&#39;utilisateur à l&#39;expiration. </p>
+                                    <p class="tableblock"> Le corps par défaut des e-mails envoyés aux détenteurs de
+                                        droits d&#39;utilisateur à l&#39;expiration.</p>
                                 </td>
                             </tr>
                         </tbody>
                     </table>
-                    <hr>
                 </div>
             </div>
         </div>
@@ -2951,24 +2957,22 @@
                     <h3 id="users_tab"> <a class="link" href="#users_tab">Onglet Utilisateurs</a> </h3>
                     <div class="imageblock">
                         <div class="content"><img src="../images/FR/cc_users_2.png" alt="utilisateurs"></div>
-                        <div class="title"> Figure 3. Onglet Utilisateurs</div>
+                        <div class="title"> Figure 3. Onglet Utilisateurs </div>
                     </div>
                     <div class="paragraph">
-                        <p> Cet onglet permet aux administrateurs d&#39;affecter des utilisateurs aux SAG. Les
+                        <p>Cet onglet permet aux administrateurs d&#39;affecter des utilisateurs aux SAG. Les
                             utilisateurs peuvent être affectés à des SAG individuellement ou en bloc à l&#39;aide de la
-                            fonction <code>Import User Assignments</code> (voir <a href="#import_file_format">Format de
-                                fichier d&#39;importation</a> ). </p>
+                            fonction <strong>Importer des affectations d&#39;utilisateurs</strong> (voir <a
+                                href="#import_file_format">Format de fichier d&#39;importation</a> ). </p>
                     </div>
                     <div class="imageblock">
                         <div class="content"><img src="../images/FR/cc_users_edit_2.png"
-                                alt="les utilisateurs attribuent">
-                        </div>
+                                alt="les utilisateurs attribuent"></div>
                         <div class="title"> Figure 4. Affectation d&#39;utilisateur </div>
                     </div>
                     <div class="imageblock">
                         <div class="content"><img src="../images/FR/cc_users_actions_2.png"
-                                alt="actions des utilisateurs">
-                        </div>
+                                alt="actions des utilisateurs"></div>
                         <div class="title"> Figure 5. Actions des utilisateurs</div>
                     </div>
                     <div class="sect3">
@@ -2992,7 +2996,7 @@
                             <tbody>
                                 <tr>
                                     <td class="tableblock halign-left valign-top">
-                                        <p class="tableblock"> nom d&#39;utilisateur</p>
+                                        <p class="tableblock"> <code>username</code></p>
                                     </td>
                                     <td class="tableblock halign-left valign-top">
                                         <p class="tableblock"> Le nom d&#39;utilisateur REDCap de l&#39;utilisateur</p>
@@ -3000,10 +3004,10 @@
                                 </tr>
                                 <tr>
                                     <td class="tableblock halign-left valign-top">
-                                        <p class="tableblock"> sag_id</p>
+                                        <p class="tableblock"> <code>sag_id</code></p>
                                     </td>
                                     <td class="tableblock halign-left valign-top">
-                                        <p class="tableblock"> ID SAG du SAG auquel affecter l&#39;utilisateur. Les ID
+                                        <p class="tableblock">ID SAG du SAG auquel affecter l&#39;utilisateur. Les ID
                                             SAG se trouvent dans l&#39; <a href="#security_access_groups_tab">onglet
                                                 Groupes d&#39;accès de sécurité</a> du module.</p>
                                     </td>
@@ -3017,14 +3021,14 @@
                         <div class="imageblock">
                             <div class="content"><img src="../images/FR/cc_user_import_confirm_2.png"
                                     alt="confirmation de l&#39;importation de l&#39;utilisateur"></div>
-                            <div class="title">Figure 6. Fenêtre contextuelle de confirmation de l&#39;importation de
+                            <div class="title"> Figure 6. Fenêtre contextuelle de confirmation de l&#39;importation de
                                 l&#39;affectation SAG</div>
                         </div>
                     </div>
                 </div>
                 <div class="sect2">
                     <h3 id="security_access_groups_tab"> <a class="link" href="#security_access_groups_tab">Onglet
-                            Groupes d&#39;accès de sécurité</a> </h3>
+                            Groupes d&#39;accès de sécurité</a></h3>
                     <div class="imageblock">
                         <div class="content"><img src="../images/FR/cc_sags_2.png" alt="s&#39;affaisse"></div>
                         <div class="title"> Figure 7. Onglet Groupes d&#39;accès de sécurité</div>
@@ -3050,7 +3054,7 @@
                     <div class="imageblock">
                         <div class="content"><img src="../images/FR/cc_sags_editor_2.png" alt="affaissements modifier">
                         </div>
-                        <div class="title"> Figure 8. Éditeur SAG</div>
+                        <div class="title">Figure 8. Éditeur SAG</div>
                     </div>
                     <div class="paragraph">
                         <p> Les SAG peuvent également être créés ou modifiés en masse en important un fichier CSV à
@@ -3073,8 +3077,8 @@
                         </div>
                     </div>
                     <div class="sect3">
-                        <h4 id="sag_import_file_format"> <a class="link" href="#sag_import_file_format">Format de
-                                fichier d&#39;importation SAG</a></h4>
+                        <h4 id="sag_import_file_format"><a class="link" href="#sag_import_file_format">Format de fichier
+                                d&#39;importation SAG</a></h4>
                         <div class="paragraph">
                             <p> Le fichier utilisé pour importer les SAG doit être un fichier CSV avec les colonnes
                                 suivantes : </p>
@@ -3088,7 +3092,7 @@
                             <thead>
                                 <tr>
                                     <th class="tableblock halign-left valign-top"> En-tête de colonne</th>
-                                    <th class="tableblock halign-left valign-top">Description / Le droit
+                                    <th class="tableblock halign-left valign-top"> Description / Le droit
                                         d&#39;utilisateur restreint</th>
                                     <th class="tableblock halign-left valign-top"> Valeurs possibles</th>
                                 </tr>
@@ -3096,10 +3100,10 @@
                             <tbody>
                                 <tr>
                                     <td class="tableblock halign-left valign-middle">
-                                        <p class="tableblock">nom_affaissement</p>
+                                        <p class="tableblock"><code>sag_name</code></p>
                                     </td>
                                     <td class="tableblock halign-left valign-middle">
-                                        <p class="tableblock"> Le nom d&#39;affichage du SAG </p>
+                                        <p class="tableblock">Le nom d&#39;affichage du SAG </p>
                                     </td>
                                     <td class="tableblock halign-left valign-middle">
                                         <div class="content">
@@ -3111,12 +3115,12 @@
                                 </tr>
                                 <tr>
                                     <td class="tableblock halign-left valign-middle">
-                                        <p class="tableblock"> sag_id</p>
+                                        <p class="tableblock"> <code>sag_id</code></p>
                                     </td>
                                     <td class="tableblock halign-left valign-middle">
                                         <p class="tableblock"> Si vous modifiez un SAG existant, il s&#39;agit de
                                             l&#39;ID SAG du SAG à modifier. Si vous créez un nouveau SAG, cette colonne
-                                            doit rester vide. </p>
+                                            doit rester vide.</p>
                                     </td>
                                     <td class="tableblock halign-left valign-middle">
                                         <div class="content">
@@ -3128,7 +3132,7 @@
                                 </tr>
                                 <tr>
                                     <td class="tableblock halign-left valign-middle">
-                                        <p class="tableblock"> conception</p>
+                                        <p class="tableblock"> <code>design</code></p>
                                     </td>
                                     <td class="tableblock halign-left valign-middle">
                                         <p class="tableblock"> Conception et configuration du projet </p>
@@ -3141,7 +3145,7 @@
                                                         <p><code>0</code> - Non autorisé</p>
                                                     </li>
                                                     <li>
-                                                        <p> <code>1</code> - Autorisé </p>
+                                                        <p><code>1</code> - Autorisé </p>
                                                     </li>
                                                 </ul>
                                             </div>
@@ -3150,7 +3154,7 @@
                                 </tr>
                                 <tr>
                                     <td class="tableblock halign-left valign-middle">
-                                        <p class="tableblock"> droits de l&#39;utilisateur</p>
+                                        <p class="tableblock"> <code>user_rights</code></p>
                                     </td>
                                     <td class="tableblock halign-left valign-middle">
                                         <p class="tableblock"> Droits de l&#39;utilisateur </p>
@@ -3160,10 +3164,10 @@
                                             <div class="ulist">
                                                 <ul>
                                                     <li>
-                                                        <p><code>0</code> - Non autorisé</p>
+                                                        <p><code>0</code> - Non autorisé </p>
                                                     </li>
                                                     <li>
-                                                        <p> <code>1</code> - Autorisé </p>
+                                                        <p><code>1</code> - Autorisé </p>
                                                     </li>
                                                 </ul>
                                             </div>
@@ -3172,7 +3176,7 @@
                                 </tr>
                                 <tr>
                                     <td class="tableblock halign-left valign-middle">
-                                        <p class="tableblock"> data_access_groups</p>
+                                        <p class="tableblock"> <code>data_access_groups</code></p>
                                     </td>
                                     <td class="tableblock halign-left valign-middle">
                                         <p class="tableblock"> Groupes d&#39;accès aux données </p>
@@ -3194,7 +3198,7 @@
                                 </tr>
                                 <tr>
                                     <td class="tableblock halign-left valign-middle">
-                                        <p class="tableblock"> donnéesAffichage</p>
+                                        <p class="tableblock"> <code>dataViewing</code></p>
                                     </td>
                                     <td class="tableblock halign-left valign-middle">
                                         <p class="tableblock"> Droits de visualisation des données </p>
@@ -3217,7 +3221,7 @@
                                                             autorisés</p>
                                                     </li>
                                                     <li>
-                                                        <p> <code>3</code> - Tous les paramètres de droits de
+                                                        <p><code>3</code> - Tous les paramètres de droits de
                                                             visualisation des données sont autorisés </p>
                                                     </li>
                                                 </ul>
@@ -3227,7 +3231,7 @@
                                 </tr>
                                 <tr>
                                     <td class="tableblock halign-left valign-middle">
-                                        <p class="tableblock"> dataExport</p>
+                                        <p class="tableblock"> <code>dataExport</code></p>
                                     </td>
                                     <td class="tableblock halign-left valign-middle">
                                         <p class="tableblock"> Droits d&#39;exportation de données </p>
@@ -3252,7 +3256,7 @@
                                                     </li>
                                                     <li>
                                                         <p> <code>3</code> - Tous les paramètres de droits
-                                                            d&#39;exportation de données sont autorisés </p>
+                                                            d&#39;exportation de données sont autorisés</p>
                                                     </li>
                                                 </ul>
                                             </div>
@@ -3261,7 +3265,7 @@
                                 </tr>
                                 <tr>
                                     <td class="tableblock halign-left valign-middle">
-                                        <p class="tableblock"> alertes</p>
+                                        <p class="tableblock"> <code>alerts</code></p>
                                     </td>
                                     <td class="tableblock halign-left valign-middle">
                                         <p class="tableblock"> Alertes et notifications </p>
@@ -3274,7 +3278,7 @@
                                                         <p><code>0</code> - Non autorisé</p>
                                                     </li>
                                                     <li>
-                                                        <p> <code>1</code> - Autorisé </p>
+                                                        <p> <code>1</code> - Autorisé</p>
                                                     </li>
                                                 </ul>
                                             </div>
@@ -3283,7 +3287,7 @@
                                 </tr>
                                 <tr>
                                     <td class="tableblock halign-left valign-middle">
-                                        <p class="tableblock"> rapports</p>
+                                        <p class="tableblock"> <code>reports</code></p>
                                     </td>
                                     <td class="tableblock halign-left valign-middle">
                                         <p class="tableblock"> Rapports et générateur de rapports </p>
@@ -3305,7 +3309,7 @@
                                 </tr>
                                 <tr>
                                     <td class="tableblock halign-left valign-middle">
-                                        <p class="tableblock"> graphique</p>
+                                        <p class="tableblock"> <code>graphical</code></p>
                                     </td>
                                     <td class="tableblock halign-left valign-middle">
                                         <p class="tableblock"> Statistiques et graphiques </p>
@@ -3318,7 +3322,7 @@
                                                         <p><code>0</code> - Non autorisé</p>
                                                     </li>
                                                     <li>
-                                                        <p> <code>1</code> - Autorisé </p>
+                                                        <p><code>1</code> - Autorisé </p>
                                                     </li>
                                                 </ul>
                                             </div>
@@ -3327,7 +3331,7 @@
                                 </tr>
                                 <tr>
                                     <td class="tableblock halign-left valign-middle">
-                                        <p class="tableblock"> participants</p>
+                                        <p class="tableblock"> <code>participants</code></p>
                                     </td>
                                     <td class="tableblock halign-left valign-middle">
                                         <p class="tableblock"> Outils de diffusion des sondages </p>
@@ -3340,7 +3344,7 @@
                                                         <p><code>0</code> - Non autorisé</p>
                                                     </li>
                                                     <li>
-                                                        <p> <code>1</code> - Autorisé </p>
+                                                        <p><code>1</code> - Autorisé </p>
                                                     </li>
                                                 </ul>
                                             </div>
@@ -3349,7 +3353,7 @@
                                 </tr>
                                 <tr>
                                     <td class="tableblock halign-left valign-middle">
-                                        <p class="tableblock"> calendrier</p>
+                                        <p class="tableblock"> <code>calendar</code></p>
                                     </td>
                                     <td class="tableblock halign-left valign-middle">
                                         <p class="tableblock"> Calendrier et planification </p>
@@ -3359,10 +3363,10 @@
                                             <div class="ulist">
                                                 <ul>
                                                     <li>
-                                                        <p><code>0</code> - Non autorisé</p>
+                                                        <p><code>0</code> - Non autorisé </p>
                                                     </li>
                                                     <li>
-                                                        <p> <code>1</code> - Autorisé </p>
+                                                        <p><code>1</code> - Autorisé </p>
                                                     </li>
                                                 </ul>
                                             </div>
@@ -3371,7 +3375,7 @@
                                 </tr>
                                 <tr>
                                     <td class="tableblock halign-left valign-middle">
-                                        <p class="tableblock"> data_import_tool</p>
+                                        <p class="tableblock"> <code>data_import_tool</code></p>
                                     </td>
                                     <td class="tableblock halign-left valign-middle">
                                         <p class="tableblock"> Outil d&#39;importation de données </p>
@@ -3393,7 +3397,7 @@
                                 </tr>
                                 <tr>
                                     <td class="tableblock halign-left valign-middle">
-                                        <p class="tableblock"> data_comparison_tool</p>
+                                        <p class="tableblock"> <code>data_comparison_tool</code></p>
                                     </td>
                                     <td class="tableblock halign-left valign-middle">
                                         <p class="tableblock"> Outil de comparaison de données </p>
@@ -3415,32 +3419,10 @@
                                 </tr>
                                 <tr>
                                     <td class="tableblock halign-left valign-middle">
-                                        <p class="tableblock"> enregistrement de données</p>
+                                        <p class="tableblock"> <code>data_logging</code></p>
                                     </td>
                                     <td class="tableblock halign-left valign-middle">
-                                        <p class="tableblock"> Enregistrement </p>
-                                    </td>
-                                    <td class="tableblock halign-left valign-middle">
-                                        <div class="content">
-                                            <div class="ulist">
-                                                <ul>
-                                                    <li>
-                                                        <p><code>0</code> - Non autorisé</p>
-                                                    </li>
-                                                    <li>
-                                                        <p><code>1</code> - Autorisé </p>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="tableblock halign-left valign-middle">
-                                        <p class="tableblock"> file_repository</p>
-                                    </td>
-                                    <td class="tableblock halign-left valign-middle">
-                                        <p class="tableblock"> Référentiel de fichiers </p>
+                                        <p class="tableblock"> Enregistrement</p>
                                     </td>
                                     <td class="tableblock halign-left valign-middle">
                                         <div class="content">
@@ -3459,10 +3441,10 @@
                                 </tr>
                                 <tr>
                                     <td class="tableblock halign-left valign-middle">
-                                        <p class="tableblock"> lock_record_customize</p>
+                                        <p class="tableblock"> <code>file_repository</code></p>
                                     </td>
                                     <td class="tableblock halign-left valign-middle">
-                                        <p class="tableblock"> Personnalisation du verrouillage des enregistrements </p>
+                                        <p class="tableblock"> Référentiel de fichiers</p>
                                     </td>
                                     <td class="tableblock halign-left valign-middle">
                                         <div class="content">
@@ -3481,7 +3463,29 @@
                                 </tr>
                                 <tr>
                                     <td class="tableblock halign-left valign-middle">
-                                        <p class="tableblock"> lock_record</p>
+                                        <p class="tableblock"> <code>lock_record_customize</code></p>
+                                    </td>
+                                    <td class="tableblock halign-left valign-middle">
+                                        <p class="tableblock"> Personnalisation du verrouillage des enregistrements</p>
+                                    </td>
+                                    <td class="tableblock halign-left valign-middle">
+                                        <div class="content">
+                                            <div class="ulist">
+                                                <ul>
+                                                    <li>
+                                                        <p><code>0</code> - Non autorisé</p>
+                                                    </li>
+                                                    <li>
+                                                        <p> <code>1</code> - Autorisé </p>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="tableblock halign-left valign-middle">
+                                        <p class="tableblock"> <code>lock_record</code></p>
                                     </td>
                                     <td class="tableblock halign-left valign-middle">
                                         <p class="tableblock"> Verrouiller/Déverrouiller les enregistrements </p>
@@ -3500,7 +3504,7 @@
                                                     </li>
                                                     <li>
                                                         <p> <code>2</code> - Tous les paramètres de verrouillage
-                                                            d&#39;enregistrement sont autorisés </p>
+                                                            d&#39;enregistrement sont autorisés</p>
                                                     </li>
                                                 </ul>
                                             </div>
@@ -3509,7 +3513,7 @@
                                 </tr>
                                 <tr>
                                     <td class="tableblock halign-left valign-middle">
-                                        <p class="tableblock"> data_quality_design</p>
+                                        <p class="tableblock"> <code>data_quality_design</code></p>
                                     </td>
                                     <td class="tableblock halign-left valign-middle">
                                         <p class="tableblock"> Qualité des données (créer/modifier des règles) </p>
@@ -3531,7 +3535,7 @@
                                 </tr>
                                 <tr>
                                     <td class="tableblock halign-left valign-middle">
-                                        <p class="tableblock"> data_quality_execute</p>
+                                        <p class="tableblock"> <code>data_quality_execute</code></p>
                                     </td>
                                     <td class="tableblock halign-left valign-middle">
                                         <p class="tableblock"> Qualité des données (exécuter les règles) </p>
@@ -3544,7 +3548,7 @@
                                                         <p><code>0</code> - Non autorisé</p>
                                                     </li>
                                                     <li>
-                                                        <p> <code>1</code> - Autorisé </p>
+                                                        <p><code>1</code> - Autorisé </p>
                                                     </li>
                                                 </ul>
                                             </div>
@@ -3553,7 +3557,7 @@
                                 </tr>
                                 <tr>
                                     <td class="tableblock halign-left valign-middle">
-                                        <p class="tableblock"> application mobile</p>
+                                        <p class="tableblock"> <code>mobile_app</code></p>
                                     </td>
                                     <td class="tableblock halign-left valign-middle">
                                         <p class="tableblock"> Application mobile REDCap </p>
@@ -3566,7 +3570,7 @@
                                                         <p><code>0</code> - Non autorisé</p>
                                                     </li>
                                                     <li>
-                                                        <p> <code>1</code> - Autorisé </p>
+                                                        <p><code>1</code> - Autorisé </p>
                                                     </li>
                                                 </ul>
                                             </div>
@@ -3575,7 +3579,7 @@
                                 </tr>
                                 <tr>
                                     <td class="tableblock halign-left valign-middle">
-                                        <p class="tableblock"> mobile_app_download_data</p>
+                                        <p class="tableblock"> <code>mobile_app_download_data</code></p>
                                     </td>
                                     <td class="tableblock halign-left valign-middle">
                                         <p class="tableblock"> Autoriser l&#39;utilisateur à télécharger les données de
@@ -3598,32 +3602,10 @@
                                 </tr>
                                 <tr>
                                     <td class="tableblock halign-left valign-middle">
-                                        <p class="tableblock"> realtime_webservice_mapping</p>
+                                        <p class="tableblock"> <code>realtime_webservice_mapping</code></p>
                                     </td>
                                     <td class="tableblock halign-left valign-middle">
-                                        <p class="tableblock"> Configuration / Mappage CDP/DDP </p>
-                                    </td>
-                                    <td class="tableblock halign-left valign-middle">
-                                        <div class="content">
-                                            <div class="ulist">
-                                                <ul>
-                                                    <li>
-                                                        <p><code>0</code> - Non autorisé</p>
-                                                    </li>
-                                                    <li>
-                                                        <p> <code>1</code> - Autorisé </p>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="tableblock halign-left valign-middle">
-                                        <p class="tableblock"> realtime_webservice_adjudicate</p>
-                                    </td>
-                                    <td class="tableblock halign-left valign-middle">
-                                        <p class="tableblock"> Données d&#39;arbitrage CDP/DDP </p>
+                                        <p class="tableblock"> Configuration / Mappage CDP/DDP</p>
                                     </td>
                                     <td class="tableblock halign-left valign-middle">
                                         <div class="content">
@@ -3642,7 +3624,29 @@
                                 </tr>
                                 <tr>
                                     <td class="tableblock halign-left valign-middle">
-                                        <p class="tableblock"> dts</p>
+                                        <p class="tableblock"> <code>realtime_webservice_adjudicate</code></p>
+                                    </td>
+                                    <td class="tableblock halign-left valign-middle">
+                                        <p class="tableblock"> Données d&#39;arbitrage CDP/DDP</p>
+                                    </td>
+                                    <td class="tableblock halign-left valign-middle">
+                                        <div class="content">
+                                            <div class="ulist">
+                                                <ul>
+                                                    <li>
+                                                        <p><code>0</code> - Non autorisé</p>
+                                                    </li>
+                                                    <li>
+                                                        <p> <code>1</code> - Autorisé </p>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="tableblock halign-left valign-middle">
+                                        <p class="tableblock"> <code>dts</code></p>
                                     </td>
                                     <td class="tableblock halign-left valign-middle">
                                         <p class="tableblock"> DTS (services de transfert de données) </p>
@@ -3664,32 +3668,10 @@
                                 </tr>
                                 <tr>
                                     <td class="tableblock halign-left valign-middle">
-                                        <p class="tableblock"> mycap_participants</p>
+                                        <p class="tableblock"> <code>mycap_participants</code></p>
                                     </td>
                                     <td class="tableblock halign-left valign-middle">
-                                        <p class="tableblock"> Gérer les participants MyCap </p>
-                                    </td>
-                                    <td class="tableblock halign-left valign-middle">
-                                        <div class="content">
-                                            <div class="ulist">
-                                                <ul>
-                                                    <li>
-                                                        <p><code>0</code> - Non autorisé</p>
-                                                    </li>
-                                                    <li>
-                                                        <p> <code>1</code> - Autorisé </p>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="tableblock halign-left valign-middle">
-                                        <p class="tableblock"> record_create</p>
-                                    </td>
-                                    <td class="tableblock halign-left valign-middle">
-                                        <p class="tableblock"> Créer des enregistrements </p>
+                                        <p class="tableblock">Gérer les participants MyCap </p>
                                     </td>
                                     <td class="tableblock halign-left valign-middle">
                                         <div class="content">
@@ -3708,7 +3690,29 @@
                                 </tr>
                                 <tr>
                                     <td class="tableblock halign-left valign-middle">
-                                        <p class="tableblock"> record_rename</p>
+                                        <p class="tableblock"> <code>record_create</code> </p>
+                                    </td>
+                                    <td class="tableblock halign-left valign-middle">
+                                        <p class="tableblock">Créer des enregistrements </p>
+                                    </td>
+                                    <td class="tableblock halign-left valign-middle">
+                                        <div class="content">
+                                            <div class="ulist">
+                                                <ul>
+                                                    <li>
+                                                        <p><code>0</code> - Non autorisé</p>
+                                                    </li>
+                                                    <li>
+                                                        <p> <code>1</code> - Autorisé</p>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="tableblock halign-left valign-middle">
+                                        <p class="tableblock"><code>record_rename</code></p>
                                     </td>
                                     <td class="tableblock halign-left valign-middle">
                                         <p class="tableblock"> Renommer les enregistrements </p>
@@ -3721,7 +3725,7 @@
                                                         <p><code>0</code> - Non autorisé</p>
                                                     </li>
                                                     <li>
-                                                        <p> <code>1</code> - Autorisé </p>
+                                                        <p> <code>1</code> - Autorisé</p>
                                                     </li>
                                                 </ul>
                                             </div>
@@ -3730,7 +3734,7 @@
                                 </tr>
                                 <tr>
                                     <td class="tableblock halign-left valign-middle">
-                                        <p class="tableblock"> record_delete</p>
+                                        <p class="tableblock"><code>record_delete</code></p>
                                     </td>
                                     <td class="tableblock halign-left valign-middle">
                                         <p class="tableblock"> Supprimer les enregistrements </p>
@@ -3743,7 +3747,7 @@
                                                         <p><code>0</code> - Non autorisé</p>
                                                     </li>
                                                     <li>
-                                                        <p> <code>1</code> - Autorisé </p>
+                                                        <p> <code>1</code> - Autorisé</p>
                                                     </li>
                                                 </ul>
                                             </div>
@@ -3752,7 +3756,7 @@
                                 </tr>
                                 <tr>
                                     <td class="tableblock halign-left valign-middle">
-                                        <p class="tableblock"> configuration_aléatoire</p>
+                                        <p class="tableblock"><code>random_setup</code></p>
                                     </td>
                                     <td class="tableblock halign-left valign-middle">
                                         <p class="tableblock"> Randomisation - Configuration </p>
@@ -3765,7 +3769,7 @@
                                                         <p><code>0</code> - Non autorisé</p>
                                                     </li>
                                                     <li>
-                                                        <p> <code>1</code> - Autorisé </p>
+                                                        <p> <code>1</code> - Autorisé</p>
                                                     </li>
                                                 </ul>
                                             </div>
@@ -3774,7 +3778,7 @@
                                 </tr>
                                 <tr>
                                     <td class="tableblock halign-left valign-middle">
-                                        <p class="tableblock"> random_dashboard</p>
+                                        <p class="tableblock"> <code>random_dashboard</code></p>
                                     </td>
                                     <td class="tableblock halign-left valign-middle">
                                         <p class="tableblock"> Randomisation - Tableau de bord </p>
@@ -3787,7 +3791,7 @@
                                                         <p><code>0</code> - Non autorisé</p>
                                                     </li>
                                                     <li>
-                                                        <p> <code>1</code> - Autorisé </p>
+                                                        <p> <code>1</code> - Autorisé</p>
                                                     </li>
                                                 </ul>
                                             </div>
@@ -3796,7 +3800,7 @@
                                 </tr>
                                 <tr>
                                     <td class="tableblock halign-left valign-middle">
-                                        <p class="tableblock"> random_perform</p>
+                                        <p class="tableblock"> <code>random_perform</code></p>
                                     </td>
                                     <td class="tableblock halign-left valign-middle">
                                         <p class="tableblock"> Randomisation - Randomiser </p>
@@ -3818,10 +3822,10 @@
                                 </tr>
                                 <tr>
                                     <td class="tableblock halign-left valign-middle">
-                                        <p class="tableblock"> data_quality_resolution_view</p>
+                                        <p class="tableblock"> <code>data_quality_resolution_view</code></p>
                                     </td>
                                     <td class="tableblock halign-left valign-middle">
-                                        <p class="tableblock">Résolution de la qualité des données - Afficher les
+                                        <p class="tableblock"> Résolution de la qualité des données - Afficher les
                                             requêtes </p>
                                     </td>
                                     <td class="tableblock halign-left valign-middle">
@@ -3832,7 +3836,7 @@
                                                         <p><code>0</code> - Non autorisé</p>
                                                     </li>
                                                     <li>
-                                                        <p> <code>1</code> - Autorisé </p>
+                                                        <p><code>1</code> - Autorisé </p>
                                                     </li>
                                                 </ul>
                                             </div>
@@ -3841,7 +3845,7 @@
                                 </tr>
                                 <tr>
                                     <td class="tableblock halign-left valign-middle">
-                                        <p class="tableblock"> data_quality_resolution_open</p>
+                                        <p class="tableblock"> <code>data_quality_resolution_open</code></p>
                                     </td>
                                     <td class="tableblock halign-left valign-middle">
                                         <p class="tableblock"> Résolution de la qualité des données - Requêtes ouvertes
@@ -3852,10 +3856,10 @@
                                             <div class="ulist">
                                                 <ul>
                                                     <li>
-                                                        <p><code>0</code> - Non autorisé</p>
+                                                        <p><code>0</code> - Non autorisé </p>
                                                     </li>
                                                     <li>
-                                                        <p> <code>1</code> - Autorisé </p>
+                                                        <p><code>1</code> - Autorisé </p>
                                                     </li>
                                                 </ul>
                                             </div>
@@ -3864,7 +3868,7 @@
                                 </tr>
                                 <tr>
                                     <td class="tableblock halign-left valign-middle">
-                                        <p class="tableblock"> data_quality_resolution_respond</p>
+                                        <p class="tableblock"> <code>data_quality_resolution_respond</code></p>
                                     </td>
                                     <td class="tableblock halign-left valign-middle">
                                         <p class="tableblock"> Résolution de la qualité des données - Répondre aux
@@ -3887,11 +3891,11 @@
                                 </tr>
                                 <tr>
                                     <td class="tableblock halign-left valign-middle">
-                                        <p class="tableblock"> data_quality_resolution_close</p>
+                                        <p class="tableblock"> <code>data_quality_resolution_close</code></p>
                                     </td>
                                     <td class="tableblock halign-left valign-middle">
                                         <p class="tableblock"> Résolution de la qualité des données - Fermer les
-                                            requêtes </p>
+                                            requêtes</p>
                                     </td>
                                     <td class="tableblock halign-left valign-middle">
                                         <div class="content">
@@ -3910,10 +3914,10 @@
                                 </tr>
                                 <tr>
                                     <td class="tableblock halign-left valign-middle">
-                                        <p class="tableblock"> double_data_reviewer</p>
+                                        <p class="tableblock"> <code>double_data_reviewer</code></p>
                                     </td>
                                     <td class="tableblock halign-left valign-middle">
-                                        <p class="tableblock"> Double saisie de données - Réviseur </p>
+                                        <p class="tableblock"> Double saisie de données - Réviseur</p>
                                     </td>
                                     <td class="tableblock halign-left valign-middle">
                                         <div class="content">
@@ -3932,7 +3936,7 @@
                                 </tr>
                                 <tr>
                                     <td class="tableblock halign-left valign-middle">
-                                        <p class="tableblock"> double_data_person</p>
+                                        <p class="tableblock"> <code>double_data_person</code></p>
                                     </td>
                                     <td class="tableblock halign-left valign-middle">
                                         <p class="tableblock"> Double saisie de données - Personne </p>
@@ -3955,10 +3959,10 @@
                                 </tr>
                                 <tr>
                                     <td class="tableblock halign-left valign-middle">
-                                        <p class="tableblock"> api_export</p>
+                                        <p class="tableblock"> <code>api_export</code> </p>
                                     </td>
                                     <td class="tableblock halign-left valign-middle">
-                                        <p class="tableblock"> Exportation d&#39;API </p>
+                                        <p class="tableblock">Exportation d&#39;API </p>
                                     </td>
                                     <td class="tableblock halign-left valign-middle">
                                         <div class="content">
@@ -3968,7 +3972,7 @@
                                                         <p><code>0</code> - Non autorisé</p>
                                                     </li>
                                                     <li>
-                                                        <p> <code>1</code> - Autorisé </p>
+                                                        <p> <code>1</code> - Autorisé</p>
                                                     </li>
                                                 </ul>
                                             </div>
@@ -3977,7 +3981,7 @@
                                 </tr>
                                 <tr>
                                     <td class="tableblock halign-left valign-middle">
-                                        <p class="tableblock"> api_import</p>
+                                        <p class="tableblock"><code>api_import</code></p>
                                     </td>
                                     <td class="tableblock halign-left valign-middle">
                                         <p class="tableblock"> Importation/mise à jour de l&#39;API </p>
@@ -3990,7 +3994,7 @@
                                                         <p><code>0</code> - Non autorisé</p>
                                                     </li>
                                                     <li>
-                                                        <p> <code>1</code> - Autorisé </p>
+                                                        <p> <code>1</code> - Autorisé</p>
                                                     </li>
                                                 </ul>
                                             </div>
@@ -3999,10 +4003,10 @@
                                 </tr>
                                 <tr>
                                     <td class="tableblock halign-left valign-middle">
-                                        <p class="tableblock"> lock_record_multiform</p>
+                                        <p class="tableblock"><code>lock_record_multiform</code></p>
                                     </td>
                                     <td class="tableblock halign-left valign-middle">
-                                        <p class="tableblock">Verrouiller/déverrouiller les enregistrements * entiers *
+                                        <p class="tableblock"> Verrouiller/déverrouiller les enregistrements * entiers *
                                             (niveau d&#39;enregistrement) </p>
                                     </td>
                                     <td class="tableblock halign-left valign-middle">
@@ -4013,7 +4017,7 @@
                                                         <p><code>0</code> - Non autorisé</p>
                                                     </li>
                                                     <li>
-                                                        <p> <code>1</code> - Autorisé </p>
+                                                        <p> <code>1</code> - Autorisé</p>
                                                     </li>
                                                 </ul>
                                             </div>
@@ -4046,7 +4050,7 @@
                         </colgroup>
                         <thead>
                             <tr>
-                                <th class="tableblock halign-left valign-top"> Titre du rapport</th>
+                                <th class="tableblock halign-left valign-top">Titre du rapport</th>
                                 <th class="tableblock halign-left valign-top"> Description</th>
                             </tr>
                         </thead>
@@ -4064,7 +4068,7 @@
                             </tr>
                             <tr>
                                 <td class="tableblock halign-left valign-top">
-                                    <p class="tableblock"> Utilisateurs avec droits non conformes (tous)</p>
+                                    <p class="tableblock"> Utilisateurs avec droits non conformes (tous) </p>
                                 </td>
                                 <td class="tableblock halign-left valign-top">
                                     <p class="tableblock">Ce rapport répertorie tous les utilisateurs affectés à un SAG
@@ -4078,7 +4082,7 @@
                                     <p class="tableblock"> Projets avec droits non conformes (non expirés)</p>
                                 </td>
                                 <td class="tableblock halign-left valign-top">
-                                    <p class="tableblock"> Ce rapport répertorie tous les projets qui ont au moins un
+                                    <p class="tableblock">Ce rapport répertorie tous les projets qui ont au moins un
                                         utilisateur affecté à un SAG qui ne permet pas à l&#39;utilisateur de se voir
                                         accorder tous les droits dont il dispose actuellement dans le projet. Ce rapport
                                         inclut uniquement les utilisateurs dont le compte utilisateur n&#39;a pas
@@ -4090,7 +4094,7 @@
                                     <p class="tableblock"> Projets avec droits non conformes (tous)</p>
                                 </td>
                                 <td class="tableblock halign-left valign-top">
-                                    <p class="tableblock"> Ce rapport répertorie tous les projets qui ont au moins un
+                                    <p class="tableblock">Ce rapport répertorie tous les projets qui ont au moins un
                                         utilisateur affecté à un SAG qui ne permet pas à l&#39;utilisateur de se voir
                                         accorder tous les droits dont il dispose actuellement dans le projet. Ce rapport
                                         inclut tous les utilisateurs, que leur compte d&#39;utilisateur ait expiré ou
@@ -4116,7 +4120,7 @@
                                     </p>
                                 </td>
                                 <td class="tableblock halign-left valign-top">
-                                    <p class="tableblock"> Ce rapport répertorie toutes les combinaisons
+                                    <p class="tableblock">Ce rapport répertorie toutes les combinaisons
                                         d&#39;utilisateurs et de projets dans lesquelles l&#39;utilisateur est affecté à
                                         un SAG qui ne permet pas à l&#39;utilisateur d&#39;obtenir tous les droits dont
                                         il dispose actuellement dans le projet. Ce rapport inclut tous les utilisateurs,
@@ -4128,7 +4132,7 @@
                     <div class="imageblock">
                         <div class="content"><img src="../images/FR/cc_report_example_2.png" alt="exemple de rapport">
                         </div>
-                        <div class="title"> Figure 12. Exemple de rapport</div>
+                        <div class="title">Figure 12. Exemple de rapport</div>
                     </div>
                     <div class="admonitionblock tip">
                         <table>
@@ -4150,10 +4154,9 @@
                     </div>
                     <div class="imageblock">
                         <div class="content"><img src="../images/FR/cc_report_filter_example_2.png"
-                                alt="exemple de filtre de rapport"></div>
-                        <div class="title"> Figure 13. Exemple de filtrage basé sur l&#39;état du projet</div>
+                                alt="exemple de filtre de rapport"> </div>
+                        <div class="title">Figure 13. Exemple de filtrage basé sur l&#39;état du projet</div>
                     </div>
-                    <hr>
                 </div>
             </div>
         </div>
@@ -4175,10 +4178,10 @@
                                 <p> Vert - conforme à leur SAG</p>
                             </li>
                             <li>
-                                <p>Rouge - non conforme à leur SAG</p>
+                                <p> Rouge - non conforme à leur SAG</p>
                             </li>
                             <li>
-                                <p> Gris - expiré dans le projet</p>
+                                <p>Gris - expiré dans le projet</p>
                             </li>
                         </ul>
                     </div>
@@ -4192,7 +4195,7 @@
                                 <td class="icon">
                                     <div class="title"> 💡</div>
                                 </td>
-                                <td class="content"> Si vous souhaitez voir uniquement les utilisateurs qui ont des
+                                <td class="content">Si vous souhaitez voir uniquement les utilisateurs qui ont des
                                     droits particuliers de manière inappropriée, vous pouvez utiliser le champ de
                                     recherche. Par exemple, si vous n&#39;êtes intéressé que par les <strong>droits
                                         d&#39;utilisateur</strong> et/ou les droits <strong>de conception et de
@@ -4212,10 +4215,10 @@
                         <table>
                             <tr>
                                 <td class="icon">
-                                    <div class="title"> 💡</div>
+                                    <div class="title"> 💡 </div>
                                 </td>
-                                <td class="content"> Si des utilisateurs ne respectent pas leur SAG, vous pouvez
-                                    utiliser l&#39;un des boutons <strong>d&#39;action</strong> pour envoyer un e-mail à
+                                <td class="content">Si des utilisateurs ne respectent pas leur SAG, vous pouvez utiliser
+                                    l&#39;un des boutons <strong>d&#39;action</strong> pour envoyer un e-mail à
                                     l&#39;utilisateur, aux titulaires de droits de l&#39;utilisateur ou aux deux. Vous
                                     pouvez également faire expirer l&#39;utilisateur du projet. Une alerte peut
                                     éventuellement être envoyée à l&#39;utilisateur et/ou aux ayants droit de
@@ -4226,10 +4229,10 @@
                     <div class="imageblock">
                         <div class="content"><img src="../images/FR/p_status_alert_user_2.png"
                                 alt="alerter l&#39;utilisateur"></div>
-                        <div class="title"> Figure 15. Alerter l&#39;utilisateur</div>
+                        <div class="title"> Figure 15. Alerter l&#39;utilisateur </div>
                     </div>
                     <div class="imageblock">
-                        <div class="content"> <img src="../images/FR/p_status_alert_user_reminder_2.png"
+                        <div class="content"><img src="../images/FR/p_status_alert_user_reminder_2.png"
                                 alt="rappeler à l&#39;utilisateur"></div>
                         <div class="title"> Figure 16. Rappeler à l&#39;utilisateur </div>
                     </div>
@@ -4260,7 +4263,7 @@
                             l&#39;expiration</div>
                     </div>
                     <div class="sect3">
-                        <h4 id="placeholders"> <a class="link" href="#placeholders">Espaces réservés</a></h4>
+                        <h4 id="placeholders"><a class="link" href="#placeholders">Espaces réservés</a></h4>
                         <div class="paragraph">
                             <p> Les espaces réservés suivants peuvent être utilisés dans les champs d&#39;objet et de
                                 corps de l&#39;e-mail dans les alertes : </p>
@@ -4288,7 +4291,7 @@
                                         </div>
                                     </td>
                                     <td class="tableblock halign-left valign-middle">
-                                        <p class="tableblock"> Utilisateur du projet</p>
+                                        <p class="tableblock">Utilisateur du projet</p>
                                     </td>
                                     <td class="tableblock halign-left valign-top">
                                         <p class="tableblock"> Le nom d&#39;utilisateur de l&#39;utilisateur </p>
@@ -4306,7 +4309,7 @@
                                         <p class="tableblock"> Utilisateur du projet</p>
                                     </td>
                                     <td class="tableblock halign-left valign-top">
-                                        <p class="tableblock"> Le nom complet de l&#39;utilisateur </p>
+                                        <p class="tableblock"> Le nom complet de l&#39;utilisateur</p>
                                     </td>
                                 </tr>
                                 <tr>
@@ -4333,7 +4336,7 @@
                                         </div>
                                     </td>
                                     <td class="tableblock halign-left valign-middle">
-                                        <p class="tableblock"> Utilisateur du projet</p>
+                                        <p class="tableblock">Utilisateur du projet</p>
                                     </td>
                                     <td class="tableblock halign-left valign-top">
                                         <p class="tableblock"> Le groupe d&#39;accès de sécurité actuel de
@@ -4352,8 +4355,8 @@
                                         <p class="tableblock"> Utilisateur du projet</p>
                                     </td>
                                     <td class="tableblock halign-left valign-top">
-                                        <p class="tableblock"> Une liste formatée des droits qui ne sont pas conformes
-                                            au groupe d&#39;accès de sécurité de l&#39;utilisateur. </p>
+                                        <p class="tableblock">Une liste formatée des droits qui ne sont pas conformes au
+                                            groupe d&#39;accès de sécurité de l&#39;utilisateur. </p>
                                     </td>
                                 </tr>
                                 <tr>
@@ -4365,10 +4368,10 @@
                                         </div>
                                     </td>
                                     <td class="tableblock halign-left valign-middle">
-                                        <p class="tableblock"> N&#39;importe quel</p>
+                                        <p class="tableblock"> N&#39;importe lequel</p>
                                     </td>
                                     <td class="tableblock halign-left valign-top">
-                                        <p class="tableblock"> Le titre du projet </p>
+                                        <p class="tableblock"> Le titre du projet</p>
                                     </td>
                                 </tr>
                                 <tr>
@@ -4383,7 +4386,7 @@
                                         <p class="tableblock"> Titulaires des droits d&#39;utilisateur</p>
                                     </td>
                                     <td class="tableblock halign-left valign-top">
-                                        <p class="tableblock">Une liste formatée de noms d&#39;utilisateur </p>
+                                        <p class="tableblock"> Une liste formatée de noms d&#39;utilisateur </p>
                                     </td>
                                 </tr>
                                 <tr>
@@ -4398,8 +4401,7 @@
                                         <p class="tableblock"> Titulaires des droits d&#39;utilisateur</p>
                                     </td>
                                     <td class="tableblock halign-left valign-top">
-                                        <p class="tableblock"> Une liste formatée des noms complets des utilisateurs
-                                        </p>
+                                        <p class="tableblock">Une liste formatée des noms complets des utilisateurs </p>
                                     </td>
                                 </tr>
                                 <tr>
@@ -4414,7 +4416,7 @@
                                         <p class="tableblock"> Titulaires des droits d&#39;utilisateur</p>
                                     </td>
                                     <td class="tableblock halign-left valign-top">
-                                        <p class="tableblock"> Une liste formatée des e-mails des utilisateurs </p>
+                                        <p class="tableblock"> Une liste formatée des e-mails des utilisateurs</p>
                                     </td>
                                 </tr>
                                 <tr>
@@ -4442,7 +4444,7 @@
                                         </div>
                                     </td>
                                     <td class="tableblock halign-left valign-middle">
-                                        <p class="tableblock"> Titulaires des droits d&#39;utilisateur</p>
+                                        <p class="tableblock">Titulaires des droits d&#39;utilisateur</p>
                                     </td>
                                     <td class="tableblock halign-left valign-top">
                                         <p class="tableblock"> Un tableau formaté des noms d&#39;utilisateur, des noms
@@ -4461,7 +4463,7 @@
                                         <p class="tableblock"> Titulaires des droits d&#39;utilisateur</p>
                                     </td>
                                     <td class="tableblock halign-left valign-top">
-                                        <p class="tableblock"> Un tableau formaté des noms d&#39;utilisateur, noms
+                                        <p class="tableblock">Un tableau formaté des noms d&#39;utilisateur, noms
                                             complets, adresses e-mail, SAG et droits non conformes </p>
                                     </td>
                                 </tr>
@@ -4488,7 +4490,7 @@
                             <table>
                                 <tr>
                                     <td class="icon">
-                                        <div class="title"> 💡</div>
+                                        <div class="title">💡</div>
                                     </td>
                                     <td class="content"> Vous pouvez également utiliser n&#39;importe quelle variable
                                         intelligente REDCap, bien que peu d&#39;entre elles soient pertinentes dans ce
@@ -4516,7 +4518,8 @@
                         </table>
                     </div>
                     <div class="imageblock">
-                        <div class="content"><img src="../images/FR/p_alert_log_2.png" alt="journal des alertes"></div>
+                        <div class="content"><img src="../images/FR/p_alert_log_2.png" alt="journal des alertes">
+                        </div>
                         <div class="title"> Figure 22. Onglet Journal des alertes </div>
                     </div>
                     <div class="imageblock">
@@ -4530,7 +4533,7 @@
                                 <td class="icon">
                                     <div class="title"> 💡</div>
                                 </td>
-                                <td class="content"> Utilisez la barre de recherche pour rechercher le texte d&#39;une
+                                <td class="content">Utilisez la barre de recherche pour rechercher le texte d&#39;une
                                     alerte, le nom d&#39;utilisateur de l&#39;utilisateur concerné par l&#39;alerte ou
                                     le nom d&#39;utilisateur de l&#39;utilisateur auquel l&#39;alerte est envoyée, etc.
                                     Voir la section <a href="#searching">Recherche</a> pour plus d&#39;informations.
@@ -4549,10 +4552,10 @@
                     <div class="ulist">
                         <ul>
                             <li>
-                                <p> Lorsqu&#39;un utilisateur est ajouté à un projet avec des droits personnalisés</p>
+                                <p> Lorsqu&#39;un utilisateur est ajouté à un projet avec des droits personnalisés </p>
                             </li>
                             <li>
-                                <p> Lorsqu&#39;un utilisateur est ajouté à un projet dans un rôle d&#39;utilisateur
+                                <p>Lorsqu&#39;un utilisateur est ajouté à un projet dans un rôle d&#39;utilisateur
                                     existant</p>
                             </li>
                             <li>
@@ -4594,19 +4597,204 @@
                         <div class="content"><img src="../images/FR/p_logging_user_2.png"
                                 alt="journal de l&#39;utilisateur"></div>
                         <div class="title"> Figure 24. Exemple de journal des droits d&#39;un utilisateur en cours de
-                            modification </div>
+                            modification</div>
                     </div>
                     <div class="imageblock">
-                        <div class="content"><img src="../images/FR/p_logging_role_2.png" alt="journal des rôles"></div>
+                        <div class="content"> <img src="../images/FR/p_logging_role_2.png" alt="journal des rôles">
+                        </div>
                         <div class="title"> Figure 25. Exemple de journal des droits d&#39;un rôle en cours de
                             modification</div>
                     </div>
-                    <hr>
                 </div>
             </div>
         </div>
         <div class="sect1">
-            <h2 id="miscellaneous"> <a class="link" href="#miscellaneous">Divers</a></h2>
+            <h2 id="translation"> <a class="link" href="#translation">Traduction (i18n / l10n)</a></h2>
+            <div class="sectionbody">
+                <div class="sect2">
+                    <h3 id="_general_information"> <a class="link" href="#_general_information">Informations
+                            générales</a></h3>
+                    <div class="paragraph">
+                        <p> Le module peut être traduit dans des langues autres que l&#39;anglais via la fonction de
+                            sélection de langue de l&#39;infrastructure de module externe. Pour définir la langue du
+                            module à l&#39;échelle du système, accédez à Centre de contrôle &gt; Modules externes &gt;
+                            Gérer les modules externes et cliquez sur le bouton &quot;Configurer&quot; du module.
+                            Sélectionnez ensuite la langue que vous souhaitez utiliser dans la liste déroulante
+                            &quot;Langue&quot; et cliquez sur &quot;Enregistrer&quot;. </p>
+                    </div>
+                    <div class="paragraph">
+                        <p>Vous pouvez remplacer la langue du système au niveau du projet en visitant le gestionnaire de
+                            module de projet et en cliquant sur le bouton &quot;Configurer&quot; pour le module.
+                            Sélectionnez ensuite la langue que vous souhaitez utiliser dans la liste déroulante
+                            &quot;Langue&quot; et cliquez sur &quot;Enregistrer&quot;.</p>
+                    </div>
+                    <div class="admonitionblock important">
+                        <table>
+                            <tr>
+                                <td class="icon">
+                                    <div class="title"> 🚩</div>
+                                </td>
+                                <td class="content">Certaines parties du module ne sont pas traduites par le module
+                                    lui-même, mais reposent plutôt sur le système de traduction de langue intégré de
+                                    REDCap. Ceux-ci incluent les noms des droits d&#39;utilisateur et les descriptions
+                                    associées.</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <div class="sect2">
+                    <h3 id="_available_translations"> <a class="link" href="#_available_translations">Traductions
+                            disponibles</a></h3>
+                    <div class="paragraph">
+                        <p> Ces langues sont actuellement disponibles pour être utilisées dans le module :</p>
+                    </div>
+                    <div class="ulist">
+                        <ul>
+                            <li>
+                                <p> Anglais ( <span class="notranslate">English</span> )</p>
+                            </li>
+                            <li>
+                                <p>Arabe ( <span class="notranslate">عربي</span> )</p>
+                            </li>
+                            <li>
+                                <p> Bangla ( <span class="notranslate">বাংলা</span> )</p>
+                            </li>
+                            <li>
+                                <p> Chinois (<span class="notranslate">中文</span>)</p>
+                            </li>
+                            <li>
+                                <p> Français ( <span class="notranslate">Français</span> )</p>
+                            </li>
+                            <li>
+                                <p> Allemand ( <span class="notranslate">Deutsch</span> )</p>
+                            </li>
+                            <li>
+                                <p> Hindi ( <span class="notranslate">हिंदी</span> )</p>
+                            </li>
+                            <li>
+                                <p> Italien ( <span class="notranslate">Italiana</span> )</p>
+                            </li>
+                            <li>
+                                <p>Portugais ( <span class="notranslate">Português</span> )</p>
+                            </li>
+                            <li>
+                                <p> Espagnol ( <span class="notranslate">Español</span> )</p>
+                            </li>
+                            <li>
+                                <p> Ukrainien ( <span class="notranslate">українська</span> )</p>
+                            </li>
+                            <li>
+                                <p> Ourdou ( <span class="notranslate">اردو</span> )</p>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="sect2">
+                    <h3 id="_limitations"> <a class="link" href="#_limitations">Limites</a></h3>
+                    <div class="sect3">
+                        <h4 id="_right_to_left_languages"> <a class="link" href="#_right_to_left_languages">Langues de
+                                droite à gauche</a></h4>
+                        <div class="paragraph">
+                            <p>Actuellement, la prise en charge des langues RTL est limitée. Le module affichera
+                                correctement les langues RTL, mais la structure/le formatage des éléments de
+                                l&#39;interface utilisateur sera toujours LTR. Il existe des options pour une prise en
+                                charge plus complète de RTL, mais cela ne sera pas prioritaire à moins que nous
+                                n&#39;ayons des nouvelles de groupes qui ont besoin de cette fonctionnalité.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="sect2">
+                    <h3 id="_translating_the_module"> <a class="link" href="#_translating_the_module">Traduire le
+                            module</a></h3>
+                    <div class="paragraph">
+                        <p> Les traductions fournies avec le module ont été créées à l&#39;aide d&#39;un logiciel de
+                            traduction automatique et peuvent ne pas être exactes. Si vous souhaitez corriger une
+                            traduction ou apporter une nouvelle traduction, veuillez suivre les instructions ci-dessous.
+                        </p>
+                    </div>
+                    <div class="sect3">
+                        <h4 id="_creating_a_new_translation"><a class="link"
+                                href="#_creating_a_new_translation">Création d&#39;une nouvelle traduction</a></h4>
+                        <div class="paragraph">
+                            <p> Si vous souhaitez traduire le module dans une nouvelle langue, vous pouvez le faire en
+                                suivant ces étapes :</p>
+                        </div>
+                        <div class="olist arabic">
+                            <ol class="arabic">
+                                <li>
+                                    <p> Trouvez le répertoire <code>lang</code> dans le code source du module.</p>
+                                </li>
+                                <li>
+                                    <p>Copiez le fichier <code>English.ini</code> et modifiez le nom de la copie dans la
+                                        langue vers laquelle vous souhaitez traduire. Nommez le fichier avec le nom
+                                        anglais de la langue (en majuscule) suivi de l&#39;endonyme de la langue (en
+                                        utilisant les glyphes de cette langue) entre parenthèses. Par exemple, si vous
+                                        souhaitez traduire le module en japonais, vous devez nommer le fichier
+                                        <code>Japanese (日本語).ini</code> .
+                                    </p>
+                                </li>
+                                <li>
+                                    <p>Ouvrez le fichier que vous venez de créer dans un éditeur de texte et traduisez
+                                        le texte à droite du signe égal pour chaque ligne. Par exemple, si vous vouliez
+                                        traduire le texte <code>Introduction</code> en japonais, vous remplaceriez la
+                                        ligne <code>status_ui_3 = &quot;Introduction&quot;</code> par
+                                        <code>status_ui_3 = &quot;序章&quot;</code> .
+                                    </p>
+                                </li>
+                                <li>
+                                    <p> Répétez le processus pour chaque ligne.</p>
+                                </li>
+                                <li>
+                                    <p> Enregistrez le fichier et téléchargez-le dans le dossier &quot;lang&quot; du
+                                        code source du module.</p>
+                                </li>
+                                <li>
+                                    <p>Soumettez une demande d&#39;extraction avec vos modifications à la branche
+                                        principale du <a
+                                            href="https://github.com/AndrewPoppe/Security-Access-Groups">référentiel
+                                            Github</a> .</p>
+                                </li>
+                            </ol>
+                        </div>
+                    </div>
+                    <div class="sect3">
+                        <h4 id="_correcting_an_existing_translation"> <a class="link"
+                                href="#_correcting_an_existing_translation">Corriger une traduction existante</a></h4>
+                        <div class="paragraph">
+                            <p> Si vous souhaitez corriger une traduction existante, vous pouvez le faire en suivant ces
+                                étapes :</p>
+                        </div>
+                        <div class="olist arabic">
+                            <ol class="arabic">
+                                <li>
+                                    <p> Trouvez le répertoire <code>lang</code> dans le code source du module.</p>
+                                </li>
+                                <li>
+                                    <p>Ouvrez le fichier correspondant à la langue que vous souhaitez corriger dans un
+                                        éditeur de texte.</p>
+                                </li>
+                                <li>
+                                    <p> Corrigez le texte à droite du signe égal pour chaque ligne que vous souhaitez
+                                        modifier.</p>
+                                </li>
+                                <li>
+                                    <p> Enregistrez le fichier et téléchargez-le dans le dossier &quot;lang&quot; du
+                                        code source du module.</p>
+                                </li>
+                                <li>
+                                    <p> Soumettez une demande d&#39;extraction avec vos modifications à la branche
+                                        principale du <a
+                                            href="https://github.com/AndrewPoppe/Security-Access-Groups">référentiel
+                                            Github</a> .</p>
+                                </li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="sect1">
+            <h2 id="miscellaneous"><a class="link" href="#miscellaneous">Divers</a></h2>
             <div class="sectionbody">
                 <div class="sect2">
                     <h3 id="searching"> <a class="link" href="#searching">Recherche</a></h3>
@@ -4618,10 +4806,12 @@
                                 tableau.</p>
                         </div>
                         <div class="paragraph">
-                            <p> Par exemple, si vous souhaitez rechercher tous les utilisateurs actuellement affectés au
-                                SAG dont l&#39;étiquette contient le mot « Rien », vous pouvez taper « Rien » dans la
-                                zone de recherche et le tableau sera filtré pour afficher uniquement les lignes qui ont
-                                le texte &quot;Rien&quot; dans n&#39;importe quelle colonne. </p>
+                            <p>Par exemple, si vous souhaitez rechercher tous les utilisateurs actuellement affectés au
+                                SAG dont l&#39;étiquette contient le mot <span
+                                    class="notranslate">&#39;Nothing&#39;</span> , vous pouvez taper <span
+                                    class="notranslate">&#39;Nothing&#39;</span> dans la zone de recherche et le tableau
+                                sera filtré pour afficher uniquement les lignes qui ont le texte <span
+                                    class="notranslate">&#39;Nothing&#39;</span> dans n&#39;importe quelle colonne. </p>
                         </div>
                         <div class="imageblock">
                             <div class="content"><img src="../images/FR/searching_example_2.png"
@@ -4630,16 +4820,20 @@
                         </div>
                     </div>
                     <div class="sect3">
-                        <h4 id="_and_searches"><a class="link" href="#_and_searches">Recherches &quot;ET&quot;</a></h4>
+                        <h4 id="_and_searches"> <a class="link" href="#_and_searches">Recherches &quot;ET&quot;</a></h4>
                         <div class="paragraph">
-                            <p> Par défaut, le champ de recherche sera une recherche &quot;ET&quot;, ce qui signifie
+                            <p>Par défaut, le champ de recherche sera une recherche &quot;ET&quot;, ce qui signifie
                                 qu&#39;il divisera votre terme de recherche en mots distincts et n&#39;affichera que les
-                                résultats correspondant à tous ces mots de recherche. Par exemple, si vous tapez « joe
-                                admin » dans la zone de recherche, le tableau sera filtré pour n&#39;afficher que les
-                                lignes contenant à la fois « joe » ET « admin » dans n&#39;importe quelle colonne. Il
-                                <strong>n&#39;affichera pas</strong> les lignes qui ont <em>soit</em> &#39;joe&#39;
-                                <em>ou</em> &#39;admin&#39; mais il <strong>affichera</strong> les lignes qui ont par
-                                exemple, &#39;admin&#39; dans la colonne 1 et &#39;joe&#39; dans la colonne 2.
+                                résultats correspondant à tous ces mots de recherche. Par exemple, si vous tapez <span
+                                    class="notranslate">&#39;joe admin&#39;</span> dans la zone de recherche, le tableau
+                                sera filtré pour n&#39;afficher que les lignes contenant à la fois <span
+                                    class="notranslate">&#39;joe&#39;</span> ET <span
+                                    class="notranslate">&#39;admin&#39;</span> dans n&#39;importe quelle colonne. Il
+                                <strong>n&#39;affichera pas</strong> les lignes qui ont <em>soit</em> <span
+                                    class="notranslate">&#39;joe&#39;</span> <em>ou</em> <span
+                                    class="notranslate">&#39;admin&#39;</span> mais il <strong>affichera</strong> les
+                                lignes qui ont par exemple, <span class="notranslate">&#39;admin&#39;</span> dans la
+                                colonne 1 et <span class="notranslate">&#39;joe&#39;</span> dans la colonne 2.
                             </p>
                         </div>
                         <div class="imageblock">
@@ -4657,10 +4851,14 @@
                         <div class="paragraph">
                             <p>Vous pouvez utiliser le &quot;|&quot; opérateur pour rechercher plusieurs termes comme
                                 celui-ci d&#39;une manière ou/ou. Par exemple, si vous voulez trouver tous les
-                                utilisateurs avec le nom d&#39;utilisateur &quot;alice&quot; ou &quot;bob&quot;, vous
-                                pouvez taper &quot;alice | bob&quot; dans la zone de recherche et le tableau sera filtré
-                                pour n&#39;afficher que les utilisateurs avec &quot;alice&quot; ou &quot;bob &quot; dans
-                                n&#39;importe quelle colonne.</p>
+                                utilisateurs avec le nom d&#39;utilisateur <span
+                                    class="notranslate">&quot;alice&quot;</span> ou <span
+                                    class="notranslate">&quot;bob&quot;</span> , vous pouvez taper <span
+                                    class="notranslate">&quot;alice | bob&quot;</span> dans la zone de recherche et le
+                                tableau sera filtré pour n&#39;afficher que les utilisateurs avec <span
+                                    class="notranslate">&quot;alice&quot;</span> ou <span
+                                    class="notranslate">&quot;bob&quot;</span> . <span
+                                    class="notranslate">&quot;bob&quot;</span> dans n&#39;importe quelle colonne.</p>
                         </div>
                         <div class="admonitionblock tip">
                             <table>
@@ -4668,7 +4866,7 @@
                                     <td class="icon">
                                         <div class="title"> 💡</div>
                                     </td>
-                                    <td class="content"> y compris le &#39;|&#39; a pour effet secondaire de faire de la
+                                    <td class="content">y compris le &#39;|&#39; a pour effet secondaire de faire de la
                                         recherche une recherche d&#39;expression régulière (voir <a
                                             href="#regular_expression_searches">ci-dessous</a> ). </td>
                                 </tr>
@@ -4684,11 +4882,13 @@
                         <h4 id="_exact_phrase_searches"> <a class="link" href="#_exact_phrase_searches">Recherches
                                 d&#39;expressions exactes</a></h4>
                         <div class="paragraph">
-                            <p> Si vous souhaitez filtrer en fonction d&#39;une phrase, vous pouvez placer votre phrase
-                                entre guillemets doubles. Par exemple, si vous souhaitez rechercher toutes les lignes
-                                contenant l&#39;expression exacte « joe admin », vous pouvez taper « joe admin » dans la
-                                zone de recherche et le tableau sera filtré pour n&#39;afficher que les lignes contenant
-                                « joe admin » dans n&#39;importe quelle colonne. . </p>
+                            <p>Si vous souhaitez filtrer en fonction d&#39;une phrase, vous pouvez placer votre phrase
+                                entre guillemets doubles. Par exemple, si vous souhaitez trouver toutes les lignes
+                                contenant l&#39;expression exacte <span class="notranslate">&#39;joe admin&#39;</span>
+                                vous pouvez saisir <span class="notranslate">&#39;&quot;joe admin&quot;&#39;</span> dans
+                                la zone de recherche et le tableau sera filtré pour n&#39;afficher que les lignes
+                                contenant <span class="notranslate">&#39;joe admin&#39;</span> dans n&#39;importe quelle
+                                colonne. </p>
                         </div>
                         <div class="imageblock">
                             <div class="content"><img src="../images/FR/searching_example_exact_phrase_2.png"
@@ -4710,22 +4910,23 @@
                             <div class="content"><img src="../images/FR/searching_example_regular_expression_2.png"
                                     alt="recherche d&#39;exemple de regex"></div>
                             <div class="title"> Figure 30. <strong>Exemple d&#39;expression régulière</strong> -
-                                montrant toutes les lignes où un &quot;d&quot; est suivi d&#39;un nombre quelconque de
-                                lettres, puis d&#39;un &quot;n&quot; - comme dans &quot;admin&quot; et &quot;dan&quot;
-                            </div>
+                                montrant toutes les lignes où un <span class="notranslate">&quot;d&quot;</span> est
+                                suivi d&#39;un nombre quelconque de lettres, puis d&#39;un <span
+                                    class="notranslate">&quot;n&quot;</span> - comme dans <span
+                                    class="notranslate">&quot;admin&quot;</span> et <span
+                                    class="notranslate">&quot;dan&quot;</span></div>
                         </div>
-                        <hr>
                     </div>
                 </div>
             </div>
         </div>
         <div class="sect1">
-            <h2 id="_changelog"> <a class="link" href="#_changelog">Journal des modifications</a></h2>
+            <h2 id="_changelog"><a class="link" href="#_changelog">Journal des modifications</a></h2>
             <div class="sectionbody"></div>
         </div>
     </div>
     <div id="footer">
-        <div id="footer-text"> Dernière mise à jour 2023-08-07 15:45:18 -0400</div>
+        <div id="footer-text"> Dernière mise à jour 2023-08-09 17:04:29 -0400</div>
     </div>
 </body>
 

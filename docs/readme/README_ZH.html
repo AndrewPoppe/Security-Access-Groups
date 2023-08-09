@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-Hans">
+<html lang="zh-x-mtfrom-en">
 
 <head>
     <meta charset="UTF-8">
@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="Asciidoctor 2.0.17">
     <meta name="description" content="这是 REDCap 的外部模块，允许管理员创建和管理安全访问组，以限制可以授予用户的用户权限。">
-    <meta name="author" content="Andrew Poppe">
+    <meta name="author" content="安德鲁·波普" class="notranslate">
     <title>安全访问组</title>
     <link rel="stylesheet"
         href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
@@ -2456,8 +2456,8 @@
 <body class="article">
     <div id="header">
         <h1>安全访问组</h1>
-        <div class="details"><span id="author" class="author">Andrew Poppe</span><br><span id="email" class="email"><a
-                    href="mailto:andrew.poppe@yale.edu">andrew.poppe@yale.edu</a></span><br></div>
+        <div class="details"><span id="author" class="author notranslate">Andrew Poppe</span><br> <span id="email"
+                class="email"><a href="mailto:andrew.poppe@yale.edu">andrew.poppe@yale.edu</a></span><br></div>
     </div>
     <div id="content">
         <div id="preamble">
@@ -2575,6 +2575,14 @@
                                 <li><a href="#logging">记录</a></li>
                             </ul>
                         </li>
+                        <li><a href="#translation">翻译（国际化/本地化）</a>
+                            <ul class="sectlevel2">
+                                <li><a href="#_general_information">一般信息</a></li>
+                                <li><a href="#_available_translations">可用翻译</a></li>
+                                <li><a href="#_limitations">局限性</a></li>
+                                <li><a href="#_translating_the_module">翻译模块</a></li>
+                            </ul>
+                        </li>
                         <li><a href="#miscellaneous">各种各样的</a>
                             <ul class="sectlevel2">
                                 <li><a href="#searching">搜寻中</a></li>
@@ -2604,8 +2612,8 @@
                             <li>
                                 <p><em><strong>什么时候会有用呢？</strong></em></p>
                                 <p>例如，如果您的机构需要用户导出数据的培训文档，您可以创建一个
-                                    SAG，不允许将“数据导出工具”用户权限授予分配给该用户的用户。用户完成培训后，可以将他们转移到允许授予“数据导出工具”用户权限的 SAG。<br>
-                                    <br>换句话说，您可能希望为用户提供不同级别的培训，并且仅向已完成适当培训的用户授予特定的项目级别用户权限。尽管该模块不管理或跟踪培训，但它确实处理其他所有事情。
+                                    SAG，不允许将“数据导出工具”用户权限授予分配给该用户的用户。用户完成培训后，可以将他们转移到允许授予“数据导出工具”用户权限的
+                                    SAG。<br><br>换句话说，您可能希望为用户提供不同级别的培训，并且仅向已完成适当培训的用户授予特定的项目级别用户权限。尽管该模块不管理或跟踪培训，但它确实处理其他所有事情。
                                 </p>
                             </li>
                             <li>
@@ -2620,7 +2628,7 @@
                     <h3 id="_how_do_you_use_the_module"><a class="link" href="#_how_do_you_use_the_module">您如何使用该模块？</a>
                     </h3>
                     <div class="paragraph">
-                        <p>REDCap 管理员首先使用控制中心中的<a href="#security_access_groups_tab">菜单</a>创建 SAG。创建 SAG
+                        <p> REDCap 管理员首先使用控制中心中的<a href="#security_access_groups_tab">菜单</a>创建 SAG。创建 SAG
                             后，可以在同一控制中心菜单的另一个<a href="#users_tab">选项卡</a>中将用户分配给它。当用户被分配到 SAG 时，该用户将只能被授予该 SAG 允许的用户权限。
                         </p>
                     </div>
@@ -2643,7 +2651,7 @@
                                 <p>使用用户权限项目页面上的常用方法</p>
                             </li>
                             <li>
-                                <p>使用用户权限项目页面上的<code>Upload users, role, and assignments</code>功能</p>
+                                <p>使用用户权限项目页面上的<strong>上传用户、角色和分配</strong>功能</p>
                             </li>
                             <li>
                                 <p>使用 REDCap API</p>
@@ -2674,7 +2682,6 @@
                         <div class="content"><img src="../images/ZH/p_blocked_2.png" alt="被阻止"></div>
                         <div class="title">图 1. 阻止用户授予用户权限的示例</div>
                     </div>
-                    <hr>
                 </div>
             </div>
         </div>
@@ -2687,7 +2694,7 @@
                         <p>控制中心模块配置页面允许管理员设置所有警报的默认值，这些警报可以从<a href="#project_status_tab">项目状态页面</a>发送给用户和用户权限持有者。</p>
                     </div>
                     <div class="paragraph">
-                        <p>这是首次启用模块时启动和运行的便捷方法，因为许多用户可能需要收到通知。 </p>
+                        <p>这是首次启用模块时启动和运行的便捷方法，因为许多用户可能需要收到通知。</p>
                     </div>
                     <div class="imageblock">
                         <div class="content"><img src="../images/ZH/cc_config_2.png" alt="配置"></div>
@@ -2714,7 +2721,7 @@
                         <thead>
                             <tr>
                                 <th class="tableblock halign-left valign-top">部分</th>
-                                <th class="tableblock halign-left valign-top">选项</th>
+                                <th class="tableblock halign-left valign-top">选项 </th>
                                 <th class="tableblock halign-left valign-top">类型</th>
                                 <th class="tableblock halign-left valign-top">描述</th>
                             </tr>
@@ -2768,7 +2775,7 @@
                                     <p class="tableblock">富文本</p>
                                 </td>
                                 <td class="tableblock halign-left valign-top">
-                                    <p class="tableblock">发送给用户的提醒电子邮件的默认正文。</p>
+                                    <p class="tableblock">发送给用户的提醒电子邮件的默认正文。 </p>
                                 </td>
                             </tr>
                             <tr>
@@ -2829,7 +2836,7 @@
                                     <p class="tableblock">文本</p>
                                 </td>
                                 <td class="tableblock halign-left valign-top">
-                                    <p class="tableblock">过期后发送给用户的电子邮件的默认主题。</p>
+                                    <p class="tableblock">过期后发送给用户的电子邮件的默认主题。 </p>
                                 </td>
                             </tr>
                             <tr>
@@ -2851,7 +2858,7 @@
                                     <p class="tableblock">文本</p>
                                 </td>
                                 <td class="tableblock halign-left valign-top">
-                                    <p class="tableblock">到期后发送给用户权利持有者的电子邮件的默认主题。</p>
+                                    <p class="tableblock">到期后发送给用户权利持有者的电子邮件的默认主题。 </p>
                                 </td>
                             </tr>
                             <tr>
@@ -2862,12 +2869,11 @@
                                     <p class="tableblock">富文本</p>
                                 </td>
                                 <td class="tableblock halign-left valign-top">
-                                    <p class="tableblock">到期时发送给用户权利持有者的电子邮件的默认正文。 </p>
+                                    <p class="tableblock">到期时发送给用户权利持有者的电子邮件的默认正文。</p>
                                 </td>
                             </tr>
                         </tbody>
                     </table>
-                    <hr>
                 </div>
             </div>
         </div>
@@ -2878,10 +2884,10 @@
                     <h3 id="users_tab"><a class="link" href="#users_tab">用户选项卡</a></h3>
                     <div class="imageblock">
                         <div class="content"><img src="../images/ZH/cc_users_2.png" alt="用户"></div>
-                        <div class="title">图 3. 用户选项卡</div>
+                        <div class="title">图 3. 用户选项卡 </div>
                     </div>
                     <div class="paragraph">
-                        <p>此选项卡允许管理员将用户分配给 SAG。可以使用<code>Import User Assignments</code>功能将用户单独或批量分配给 SAG（请参阅<a
+                        <p>此选项卡允许管理员将用户分配给 SAG。可以使用<strong>导入用户分配</strong>功能将用户单独或批量分配给 SAG（请参阅<a
                                 href="#import_file_format">导入文件格式</a>）。 </p>
                     </div>
                     <div class="imageblock">
@@ -2911,7 +2917,7 @@
                             <tbody>
                                 <tr>
                                     <td class="tableblock halign-left valign-top">
-                                        <p class="tableblock">用户名</p>
+                                        <p class="tableblock"><code>username</code></p>
                                     </td>
                                     <td class="tableblock halign-left valign-top">
                                         <p class="tableblock">用户的 REDCap 用户名</p>
@@ -2919,7 +2925,7 @@
                                 </tr>
                                 <tr>
                                     <td class="tableblock halign-left valign-top">
-                                        <p class="tableblock">sag_id</p>
+                                        <p class="tableblock"><code>sag_id</code></p>
                                     </td>
                                     <td class="tableblock halign-left valign-top">
                                         <p class="tableblock">要将用户分配到的 SAG 的 SAG ID。 SAG ID 可以在模块的<a
@@ -2993,14 +2999,14 @@
                             <thead>
                                 <tr>
                                     <th class="tableblock halign-left valign-top">列标题</th>
-                                    <th class="tableblock halign-left valign-top">描述 / 受限制的用户权利</th>
+                                    <th class="tableblock halign-left valign-top">说明 / 受限制的用户权利</th>
                                     <th class="tableblock halign-left valign-top">可能的值</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
                                     <td class="tableblock halign-left valign-middle">
-                                        <p class="tableblock">下垂名称</p>
+                                        <p class="tableblock"><code>sag_name</code></p>
                                     </td>
                                     <td class="tableblock halign-left valign-middle">
                                         <p class="tableblock">SAG 的显示名称</p>
@@ -3015,7 +3021,7 @@
                                 </tr>
                                 <tr>
                                     <td class="tableblock halign-left valign-middle">
-                                        <p class="tableblock"> sag_id</p>
+                                        <p class="tableblock"> <code>sag_id</code></p>
                                     </td>
                                     <td class="tableblock halign-left valign-middle">
                                         <p class="tableblock">如果您正在编辑现有 SAG，则这是要编辑的 SAG 的 SAG ID。如果您要创建新的 SAG，则此列应留空。
@@ -3031,7 +3037,7 @@
                                 </tr>
                                 <tr>
                                     <td class="tableblock halign-left valign-middle">
-                                        <p class="tableblock">设计</p>
+                                        <p class="tableblock"> <code>design</code></p>
                                     </td>
                                     <td class="tableblock halign-left valign-middle">
                                         <p class="tableblock">项目设计和设置</p>
@@ -3053,7 +3059,7 @@
                                 </tr>
                                 <tr>
                                     <td class="tableblock halign-left valign-middle">
-                                        <p class="tableblock">用户权限</p>
+                                        <p class="tableblock"> <code>user_rights</code></p>
                                     </td>
                                     <td class="tableblock halign-left valign-middle">
                                         <p class="tableblock">用户权利</p>
@@ -3063,7 +3069,7 @@
                                             <div class="ulist">
                                                 <ul>
                                                     <li>
-                                                        <p><code>0</code> - 不允许</p>
+                                                        <p><code>0</code> - 不允许 </p>
                                                     </li>
                                                     <li>
                                                         <p><code>1</code> - 允许</p>
@@ -3075,7 +3081,7 @@
                                 </tr>
                                 <tr>
                                     <td class="tableblock halign-left valign-middle">
-                                        <p class="tableblock">数据访问组</p>
+                                        <p class="tableblock"> <code>data_access_groups</code></p>
                                     </td>
                                     <td class="tableblock halign-left valign-middle">
                                         <p class="tableblock">数据访问组</p>
@@ -3097,7 +3103,7 @@
                                 </tr>
                                 <tr>
                                     <td class="tableblock halign-left valign-middle">
-                                        <p class="tableblock">数据查看</p>
+                                        <p class="tableblock"> <code>dataViewing</code></p>
                                     </td>
                                     <td class="tableblock halign-left valign-middle">
                                         <p class="tableblock">数据查看权</p>
@@ -3126,7 +3132,7 @@
                                 </tr>
                                 <tr>
                                     <td class="tableblock halign-left valign-middle">
-                                        <p class="tableblock">数据导出</p>
+                                        <p class="tableblock"> <code>dataExport</code></p>
                                     </td>
                                     <td class="tableblock halign-left valign-middle">
                                         <p class="tableblock">数据导出权</p>
@@ -3136,7 +3142,7 @@
                                             <div class="ulist">
                                                 <ul>
                                                     <li>
-                                                        <p><code>0</code> - 仅不允许<em>访问</em></p>
+                                                        <p><code>0</code> - 仅不允许<em>访问</em> </p>
                                                     </li>
                                                     <li>
                                                         <p><code>1</code> - 不允许<em>访问</em>和<em>取消识别</em></p>
@@ -3155,7 +3161,7 @@
                                 </tr>
                                 <tr>
                                     <td class="tableblock halign-left valign-middle">
-                                        <p class="tableblock">警报</p>
+                                        <p class="tableblock"> <code>alerts</code></p>
                                     </td>
                                     <td class="tableblock halign-left valign-middle">
                                         <p class="tableblock">警报和通知</p>
@@ -3177,7 +3183,7 @@
                                 </tr>
                                 <tr>
                                     <td class="tableblock halign-left valign-middle">
-                                        <p class="tableblock">报告</p>
+                                        <p class="tableblock"> <code>reports</code></p>
                                     </td>
                                     <td class="tableblock halign-left valign-middle">
                                         <p class="tableblock">报告和报告生成器</p>
@@ -3190,7 +3196,7 @@
                                                         <p><code>0</code> - 不允许</p>
                                                     </li>
                                                     <li>
-                                                        <p><code>1</code> - 允许</p>
+                                                        <p><code>1</code> - 允许 </p>
                                                     </li>
                                                 </ul>
                                             </div>
@@ -3199,7 +3205,7 @@
                                 </tr>
                                 <tr>
                                     <td class="tableblock halign-left valign-middle">
-                                        <p class="tableblock">图形化的</p>
+                                        <p class="tableblock"> <code>graphical</code></p>
                                     </td>
                                     <td class="tableblock halign-left valign-middle">
                                         <p class="tableblock">统计数据和图表</p>
@@ -3221,7 +3227,7 @@
                                 </tr>
                                 <tr>
                                     <td class="tableblock halign-left valign-middle">
-                                        <p class="tableblock">参与者</p>
+                                        <p class="tableblock"> <code>participants</code></p>
                                     </td>
                                     <td class="tableblock halign-left valign-middle">
                                         <p class="tableblock">调查分发工具</p>
@@ -3243,7 +3249,7 @@
                                 </tr>
                                 <tr>
                                     <td class="tableblock halign-left valign-middle">
-                                        <p class="tableblock">日历</p>
+                                        <p class="tableblock"> <code>calendar</code></p>
                                     </td>
                                     <td class="tableblock halign-left valign-middle">
                                         <p class="tableblock">日历和日程安排</p>
@@ -3253,7 +3259,7 @@
                                             <div class="ulist">
                                                 <ul>
                                                     <li>
-                                                        <p><code>0</code> - 不允许</p>
+                                                        <p><code>0</code> - 不允许 </p>
                                                     </li>
                                                     <li>
                                                         <p><code>1</code> - 允许</p>
@@ -3265,7 +3271,7 @@
                                 </tr>
                                 <tr>
                                     <td class="tableblock halign-left valign-middle">
-                                        <p class="tableblock">数据导入工具</p>
+                                        <p class="tableblock"> <code>data_import_tool</code></p>
                                     </td>
                                     <td class="tableblock halign-left valign-middle">
                                         <p class="tableblock">数据导入工具</p>
@@ -3287,7 +3293,7 @@
                                 </tr>
                                 <tr>
                                     <td class="tableblock halign-left valign-middle">
-                                        <p class="tableblock">数据比较工具</p>
+                                        <p class="tableblock"> <code>data_comparison_tool</code></p>
                                     </td>
                                     <td class="tableblock halign-left valign-middle">
                                         <p class="tableblock">数据比较工具</p>
@@ -3309,7 +3315,7 @@
                                 </tr>
                                 <tr>
                                     <td class="tableblock halign-left valign-middle">
-                                        <p class="tableblock">数据记录</p>
+                                        <p class="tableblock"> <code>data_logging</code></p>
                                     </td>
                                     <td class="tableblock halign-left valign-middle">
                                         <p class="tableblock">记录</p>
@@ -3331,7 +3337,7 @@
                                 </tr>
                                 <tr>
                                     <td class="tableblock halign-left valign-middle">
-                                        <p class="tableblock">文件存储库</p>
+                                        <p class="tableblock"> <code>file_repository</code></p>
                                     </td>
                                     <td class="tableblock halign-left valign-middle">
                                         <p class="tableblock">文件存储库</p>
@@ -3353,7 +3359,7 @@
                                 </tr>
                                 <tr>
                                     <td class="tableblock halign-left valign-middle">
-                                        <p class="tableblock">锁_记录_定制</p>
+                                        <p class="tableblock"> <code>lock_record_customize</code></p>
                                     </td>
                                     <td class="tableblock halign-left valign-middle">
                                         <p class="tableblock">记录锁定定制</p>
@@ -3375,10 +3381,10 @@
                                 </tr>
                                 <tr>
                                     <td class="tableblock halign-left valign-middle">
-                                        <p class="tableblock">锁记录</p>
+                                        <p class="tableblock"> <code>lock_record</code></p>
                                     </td>
                                     <td class="tableblock halign-left valign-middle">
-                                        <p class="tableblock">锁定/解锁记录</p>
+                                        <p class="tableblock">锁定/解锁记录 </p>
                                     </td>
                                     <td class="tableblock halign-left valign-middle">
                                         <div class="content">
@@ -3400,7 +3406,7 @@
                                 </tr>
                                 <tr>
                                     <td class="tableblock halign-left valign-middle">
-                                        <p class="tableblock">数据质量设计</p>
+                                        <p class="tableblock"> <code>data_quality_design</code></p>
                                     </td>
                                     <td class="tableblock halign-left valign-middle">
                                         <p class="tableblock">数据质量（创建/编辑规则） </p>
@@ -3413,7 +3419,7 @@
                                                         <p><code>0</code> - 不允许</p>
                                                     </li>
                                                     <li>
-                                                        <p><code>1</code> - 允许</p>
+                                                        <p><code>1</code> - 允许 </p>
                                                     </li>
                                                 </ul>
                                             </div>
@@ -3422,7 +3428,7 @@
                                 </tr>
                                 <tr>
                                     <td class="tableblock halign-left valign-middle">
-                                        <p class="tableblock">数据质量执行</p>
+                                        <p class="tableblock"> <code>data_quality_execute</code></p>
                                     </td>
                                     <td class="tableblock halign-left valign-middle">
                                         <p class="tableblock">数据质量（执行规则） </p>
@@ -3444,10 +3450,10 @@
                                 </tr>
                                 <tr>
                                     <td class="tableblock halign-left valign-middle">
-                                        <p class="tableblock">移动应用</p>
+                                        <p class="tableblock"> <code>mobile_app</code></p>
                                     </td>
                                     <td class="tableblock halign-left valign-middle">
-                                        <p class="tableblock">REDCap 移动应用程序</p>
+                                        <p class="tableblock"> REDCap 移动应用程序</p>
                                     </td>
                                     <td class="tableblock halign-left valign-middle">
                                         <div class="content">
@@ -3466,7 +3472,7 @@
                                 </tr>
                                 <tr>
                                     <td class="tableblock halign-left valign-middle">
-                                        <p class="tableblock">移动应用程序下载数据</p>
+                                        <p class="tableblock"> <code>mobile_app_download_data</code></p>
                                     </td>
                                     <td class="tableblock halign-left valign-middle">
                                         <p class="tableblock">允许用户将所有记录的数据下载到应用程序吗？ </p>
@@ -3488,32 +3494,10 @@
                                 </tr>
                                 <tr>
                                     <td class="tableblock halign-left valign-middle">
-                                        <p class="tableblock">实时网络服务映射</p>
+                                        <p class="tableblock"> <code>realtime_webservice_mapping</code></p>
                                     </td>
                                     <td class="tableblock halign-left valign-middle">
-                                        <p class="tableblock">CDP/DDP 设置/映射</p>
-                                    </td>
-                                    <td class="tableblock halign-left valign-middle">
-                                        <div class="content">
-                                            <div class="ulist">
-                                                <ul>
-                                                    <li>
-                                                        <p><code>0</code> - 不允许</p>
-                                                    </li>
-                                                    <li>
-                                                        <p><code>1</code> - 允许</p>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="tableblock halign-left valign-middle">
-                                        <p class="tableblock">实时网络服务裁决</p>
-                                    </td>
-                                    <td class="tableblock halign-left valign-middle">
-                                        <p class="tableblock">CDP/DDP 裁决数据</p>
+                                        <p class="tableblock"> CDP/DDP 设置/映射</p>
                                     </td>
                                     <td class="tableblock halign-left valign-middle">
                                         <div class="content">
@@ -3532,10 +3516,10 @@
                                 </tr>
                                 <tr>
                                     <td class="tableblock halign-left valign-middle">
-                                        <p class="tableblock">数据传输系统</p>
+                                        <p class="tableblock"> <code>realtime_webservice_adjudicate</code></p>
                                     </td>
                                     <td class="tableblock halign-left valign-middle">
-                                        <p class="tableblock">DTS（数据传输服务） </p>
+                                        <p class="tableblock"> CDP/DDP 裁决数据</p>
                                     </td>
                                     <td class="tableblock halign-left valign-middle">
                                         <div class="content">
@@ -3554,7 +3538,29 @@
                                 </tr>
                                 <tr>
                                     <td class="tableblock halign-left valign-middle">
-                                        <p class="tableblock"> mycap_参与者</p>
+                                        <p class="tableblock"> <code>dts</code></p>
+                                    </td>
+                                    <td class="tableblock halign-left valign-middle">
+                                        <p class="tableblock"> DTS（数据传输服务） </p>
+                                    </td>
+                                    <td class="tableblock halign-left valign-middle">
+                                        <div class="content">
+                                            <div class="ulist">
+                                                <ul>
+                                                    <li>
+                                                        <p><code>0</code> - 不允许</p>
+                                                    </li>
+                                                    <li>
+                                                        <p><code>1</code> - 允许</p>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="tableblock halign-left valign-middle">
+                                        <p class="tableblock"> <code>mycap_participants</code></p>
                                     </td>
                                     <td class="tableblock halign-left valign-middle">
                                         <p class="tableblock">管理 MyCap 参与者</p>
@@ -3576,7 +3582,7 @@
                                 </tr>
                                 <tr>
                                     <td class="tableblock halign-left valign-middle">
-                                        <p class="tableblock">记录创建</p>
+                                        <p class="tableblock"> <code>record_create</code> </p>
                                     </td>
                                     <td class="tableblock halign-left valign-middle">
                                         <p class="tableblock">创建记录</p>
@@ -3598,7 +3604,7 @@
                                 </tr>
                                 <tr>
                                     <td class="tableblock halign-left valign-middle">
-                                        <p class="tableblock">记录重命名</p>
+                                        <p class="tableblock"><code>record_rename</code></p>
                                     </td>
                                     <td class="tableblock halign-left valign-middle">
                                         <p class="tableblock">重命名记录</p>
@@ -3620,7 +3626,7 @@
                                 </tr>
                                 <tr>
                                     <td class="tableblock halign-left valign-middle">
-                                        <p class="tableblock">记录删除</p>
+                                        <p class="tableblock"><code>record_delete</code></p>
                                     </td>
                                     <td class="tableblock halign-left valign-middle">
                                         <p class="tableblock">删除记录</p>
@@ -3642,7 +3648,7 @@
                                 </tr>
                                 <tr>
                                     <td class="tableblock halign-left valign-middle">
-                                        <p class="tableblock">随机设置</p>
+                                        <p class="tableblock"><code>random_setup</code></p>
                                     </td>
                                     <td class="tableblock halign-left valign-middle">
                                         <p class="tableblock">随机化 - 设置</p>
@@ -3664,7 +3670,7 @@
                                 </tr>
                                 <tr>
                                     <td class="tableblock halign-left valign-middle">
-                                        <p class="tableblock">随机仪表板</p>
+                                        <p class="tableblock"> <code>random_dashboard</code></p>
                                     </td>
                                     <td class="tableblock halign-left valign-middle">
                                         <p class="tableblock">随机化 - 仪表板</p>
@@ -3686,7 +3692,7 @@
                                 </tr>
                                 <tr>
                                     <td class="tableblock halign-left valign-middle">
-                                        <p class="tableblock">随机执行</p>
+                                        <p class="tableblock"> <code>random_perform</code></p>
                                     </td>
                                     <td class="tableblock halign-left valign-middle">
                                         <p class="tableblock">随机化 - 随机化</p>
@@ -3699,7 +3705,7 @@
                                                         <p><code>0</code> - 不允许</p>
                                                     </li>
                                                     <li>
-                                                        <p><code>1</code> - 允许</p>
+                                                        <p><code>1</code> - 允许 </p>
                                                     </li>
                                                 </ul>
                                             </div>
@@ -3708,7 +3714,7 @@
                                 </tr>
                                 <tr>
                                     <td class="tableblock halign-left valign-middle">
-                                        <p class="tableblock">数据质量分辨率视图</p>
+                                        <p class="tableblock"> <code>data_quality_resolution_view</code></p>
                                     </td>
                                     <td class="tableblock halign-left valign-middle">
                                         <p class="tableblock">数据质量解析 - 查看查询</p>
@@ -3730,7 +3736,7 @@
                                 </tr>
                                 <tr>
                                     <td class="tableblock halign-left valign-middle">
-                                        <p class="tableblock">数据质量分辨率打开</p>
+                                        <p class="tableblock"> <code>data_quality_resolution_open</code></p>
                                     </td>
                                     <td class="tableblock halign-left valign-middle">
                                         <p class="tableblock">数据质量解析 - 开放查询</p>
@@ -3740,7 +3746,7 @@
                                             <div class="ulist">
                                                 <ul>
                                                     <li>
-                                                        <p><code>0</code> - 不允许</p>
+                                                        <p><code>0</code> - 不允许 </p>
                                                     </li>
                                                     <li>
                                                         <p><code>1</code> - 允许</p>
@@ -3752,7 +3758,7 @@
                                 </tr>
                                 <tr>
                                     <td class="tableblock halign-left valign-middle">
-                                        <p class="tableblock">数据质量分辨率响应</p>
+                                        <p class="tableblock"> <code>data_quality_resolution_respond</code></p>
                                     </td>
                                     <td class="tableblock halign-left valign-middle">
                                         <p class="tableblock">数据质量解析 - 响应查询</p>
@@ -3774,7 +3780,7 @@
                                 </tr>
                                 <tr>
                                     <td class="tableblock halign-left valign-middle">
-                                        <p class="tableblock">数据质量分辨率关闭</p>
+                                        <p class="tableblock"> <code>data_quality_resolution_close</code></p>
                                     </td>
                                     <td class="tableblock halign-left valign-middle">
                                         <p class="tableblock">数据质量解析 - 关闭查询</p>
@@ -3796,7 +3802,7 @@
                                 </tr>
                                 <tr>
                                     <td class="tableblock halign-left valign-middle">
-                                        <p class="tableblock">双数据审阅者</p>
+                                        <p class="tableblock"> <code>double_data_reviewer</code></p>
                                     </td>
                                     <td class="tableblock halign-left valign-middle">
                                         <p class="tableblock">双重数据输入 - 审阅者</p>
@@ -3818,10 +3824,10 @@
                                 </tr>
                                 <tr>
                                     <td class="tableblock halign-left valign-middle">
-                                        <p class="tableblock">双数据人</p>
+                                        <p class="tableblock"> <code>double_data_person</code></p>
                                     </td>
                                     <td class="tableblock halign-left valign-middle">
-                                        <p class="tableblock">双重数据输入 - 人员</p>
+                                        <p class="tableblock">双重数据输入 - 人员 </p>
                                     </td>
                                     <td class="tableblock halign-left valign-middle">
                                         <div class="content">
@@ -3840,7 +3846,7 @@
                                 </tr>
                                 <tr>
                                     <td class="tableblock halign-left valign-middle">
-                                        <p class="tableblock"> api_导出</p>
+                                        <p class="tableblock"> <code>api_export</code> </p>
                                     </td>
                                     <td class="tableblock halign-left valign-middle">
                                         <p class="tableblock">原料药出口</p>
@@ -3862,10 +3868,10 @@
                                 </tr>
                                 <tr>
                                     <td class="tableblock halign-left valign-middle">
-                                        <p class="tableblock"> api_导入</p>
+                                        <p class="tableblock"><code>api_import</code></p>
                                     </td>
                                     <td class="tableblock halign-left valign-middle">
-                                        <p class="tableblock">API导入/更新</p>
+                                        <p class="tableblock"> API导入/更新</p>
                                     </td>
                                     <td class="tableblock halign-left valign-middle">
                                         <div class="content">
@@ -3884,7 +3890,7 @@
                                 </tr>
                                 <tr>
                                     <td class="tableblock halign-left valign-middle">
-                                        <p class="tableblock">锁记录多形式</p>
+                                        <p class="tableblock"><code>lock_record_multiform</code></p>
                                     </td>
                                     <td class="tableblock halign-left valign-middle">
                                         <p class="tableblock">锁定/解锁*整个*记录（记录级别） </p>
@@ -3943,7 +3949,7 @@
                             </tr>
                             <tr>
                                 <td class="tableblock halign-left valign-top">
-                                    <p class="tableblock">具有不合规权限的用户（全部）</p>
+                                    <p class="tableblock">具有不合规权限的用户（全部） </p>
                                 </td>
                                 <td class="tableblock halign-left valign-top">
                                     <p class="tableblock">此报告列出了分配给 SAG 的所有用户，该 SAG
@@ -4007,10 +4013,10 @@
                         </table>
                     </div>
                     <div class="imageblock">
-                        <div class="content"><img src="../images/ZH/cc_report_filter_example_2.png" alt="报告过滤器示例"></div>
+                        <div class="content"><img src="../images/ZH/cc_report_filter_example_2.png" alt="报告过滤器示例">
+                        </div>
                         <div class="title">图 13. 基于项目状态的过滤示例</div>
                     </div>
-                    <hr>
                 </div>
             </div>
         </div>
@@ -4058,7 +4064,7 @@
                         <table>
                             <tr>
                                 <td class="icon">
-                                    <div class="title">💡</div>
+                                    <div class="title">💡 </div>
                                 </td>
                                 <td class="content">如果有任何用户不遵守其
                                     SAG，您可以使用<strong>操作</strong>按钮之一向该用户、该用户的权利所有者或两者发送电子邮件。您还可以使用户在项目中失效。当用户到期时，可以可选地向用户和/或用户的权利持有者发送警报。
@@ -4071,9 +4077,9 @@
                         <div class="title">图 15. 提醒用户</div>
                     </div>
                     <div class="imageblock">
-                        <div class="content"> <img src="../images/ZH/p_status_alert_user_reminder_2.png" alt="提醒用户">
+                        <div class="content"><img src="../images/ZH/p_status_alert_user_reminder_2.png" alt="提醒用户">
                         </div>
-                        <div class="title">图 16. 提醒用户</div>
+                        <div class="title">图 16. 提醒用户 </div>
                     </div>
                     <div class="imageblock">
                         <div class="content"><img src="../images/ZH/p_status_alert_user-rights-holder_2.png"
@@ -4319,7 +4325,7 @@
                             <table>
                                 <tr>
                                     <td class="icon">
-                                        <div class="title"> 💡</div>
+                                        <div class="title">💡</div>
                                     </td>
                                     <td class="content">您还可以使用任何 REDCap 智能变量，尽管很少有与此上下文相关的变量。</td>
                                 </tr>
@@ -4370,7 +4376,7 @@
                     <div class="ulist">
                         <ul>
                             <li>
-                                <p>当用户添加到具有自定义权限的项目时</p>
+                                <p>当用户添加到具有自定义权限的项目时 </p>
                             </li>
                             <li>
                                 <p>当用户以现有用户角色添加到项目时</p>
@@ -4415,10 +4421,158 @@
                         <div class="title">图 24. 用户权限更改的示例日志</div>
                     </div>
                     <div class="imageblock">
-                        <div class="content"><img src="../images/ZH/p_logging_role_2.png" alt="角色日志"></div>
+                        <div class="content"> <img src="../images/ZH/p_logging_role_2.png" alt="角色日志"></div>
                         <div class="title">图 25. 角色权限更改的示例日志</div>
                     </div>
-                    <hr>
+                </div>
+            </div>
+        </div>
+        <div class="sect1">
+            <h2 id="translation"><a class="link" href="#translation">翻译（国际化/本地化）</a></h2>
+            <div class="sectionbody">
+                <div class="sect2">
+                    <h3 id="_general_information"><a class="link" href="#_general_information">一般信息</a></h3>
+                    <div class="paragraph">
+                        <p>该模块能够通过外部模块框架的语言选择功能翻译成英语以外的语言。要在系统范围内设置模块的语言，请转至控制中心 &gt; 外部模块 &gt;
+                            管理外部模块，然后单击该模块的“配置”按钮。然后从“语言”下拉列表中选择您要使用的语言，然后单击“保存”。 </p>
+                    </div>
+                    <div class="paragraph">
+                        <p>您可以通过访问项目模块管理器并单击模块的“配置”按钮来覆盖项目级别的系统范围语言。然后从“语言”下拉列表中选择您要使用的语言，然后单击“保存”。</p>
+                    </div>
+                    <div class="admonitionblock important">
+                        <table>
+                            <tr>
+                                <td class="icon">
+                                    <div class="title"> 🚩</div>
+                                </td>
+                                <td class="content">该模块的某些部分不是由模块本身翻译的，而是依赖于 REDCap 的内置语言翻译系统。其中包括用户权限的名称和相关描述。</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <div class="sect2">
+                    <h3 id="_available_translations"><a class="link" href="#_available_translations">可用翻译</a></h3>
+                    <div class="paragraph">
+                        <p>这些语言目前可在模块中使用：</p>
+                    </div>
+                    <div class="ulist">
+                        <ul>
+                            <li>
+                                <p>英语（ <span class="notranslate">English</span> ）</p>
+                            </li>
+                            <li>
+                                <p>阿拉伯语 ( <span class="notranslate">عربي</span> )</p>
+                            </li>
+                            <li>
+                                <p>孟加拉语 ( <span class="notranslate">বাংলা</span> )</p>
+                            </li>
+                            <li>
+                                <p>中文 (<span class="notranslate">中文</span>)</p>
+                            </li>
+                            <li>
+                                <p>法语（ <span class="notranslate">Français</span> ）</p>
+                            </li>
+                            <li>
+                                <p>德语（ <span class="notranslate">Deutsch</span> ）</p>
+                            </li>
+                            <li>
+                                <p>印地语（ <span class="notranslate">हिंदी</span> ）</p>
+                            </li>
+                            <li>
+                                <p>意大利语（ <span class="notranslate">Italiana</span> ）</p>
+                            </li>
+                            <li>
+                                <p>葡萄牙语 ( <span class="notranslate">Português</span> )</p>
+                            </li>
+                            <li>
+                                <p>西班牙语 ( <span class="notranslate">Español</span> )</p>
+                            </li>
+                            <li>
+                                <p>乌克兰语 ( <span class="notranslate">українська</span> )</p>
+                            </li>
+                            <li>
+                                <p>乌尔都语 ( <span class="notranslate">اردو</span> )</p>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="sect2">
+                    <h3 id="_limitations"><a class="link" href="#_limitations">局限性</a></h3>
+                    <div class="sect3">
+                        <h4 id="_right_to_left_languages"><a class="link" href="#_right_to_left_languages">从右到左的语言</a>
+                        </h4>
+                        <div class="paragraph">
+                            <p>目前对 RTL 语言的支持有限。该模块将正确显示 RTL 语言，但 UI 元素的结构/格式仍为 LTR。有一些选项可以更全面地支持
+                                RTL，但这将是低优先级，除非我们收到需要此功能的团体的消息。</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="sect2">
+                    <h3 id="_translating_the_module"><a class="link" href="#_translating_the_module">翻译模块</a></h3>
+                    <div class="paragraph">
+                        <p>该模块提供的翻译是使用自动翻译软件创建的，可能不准确。如果您想更正翻译或贡献新翻译，请按照以下说明操作。</p>
+                    </div>
+                    <div class="sect3">
+                        <h4 id="_creating_a_new_translation"><a class="link"
+                                href="#_creating_a_new_translation">创建新翻译</a></h4>
+                        <div class="paragraph">
+                            <p>如果您想将模块翻译成新语言，可以按照以下步骤操作：</p>
+                        </div>
+                        <div class="olist arabic">
+                            <ol class="arabic">
+                                <li>
+                                    <p>在模块的源代码中找到<code>lang</code>目录。</p>
+                                </li>
+                                <li>
+                                    <p>复制<code>English.ini</code>文件并将副本名称更改为您要翻译的语言。使用该语言的英文名称（大写）命名该文件，后跟括号中的该语言的本地名称（使用该语言的字形）。例如，如果您想将模块翻译成日语，您可以将文件命名<code>Japanese (日本語).ini</code>
+                                        。</p>
+                                </li>
+                                <li>
+                                    <p>在文本编辑器中打开刚刚创建的文件，并翻译每行等号右侧的文本。例如，如果您想将文本<code>Introduction</code>翻译成日语，则可以将行<code>status_ui_3 = &quot;Introduction&quot;</code>更改为<code>status_ui_3 = &quot;序章&quot;</code>
+                                        。</p>
+                                </li>
+                                <li>
+                                    <p>对每一行重复该过程。</p>
+                                </li>
+                                <li>
+                                    <p>保存文件并将其上传到模块源代码的“lang”文件夹中。</p>
+                                </li>
+                                <li>
+                                    <p>将包含更改的拉取请求提交到<a
+                                            href="https://github.com/AndrewPoppe/Security-Access-Groups">Github 存储库</a>的
+                                        master 分支。</p>
+                                </li>
+                            </ol>
+                        </div>
+                    </div>
+                    <div class="sect3">
+                        <h4 id="_correcting_an_existing_translation"><a class="link"
+                                href="#_correcting_an_existing_translation">更正现有翻译</a></h4>
+                        <div class="paragraph">
+                            <p>如果您想更正现有翻译，可以按照以下步骤操作：</p>
+                        </div>
+                        <div class="olist arabic">
+                            <ol class="arabic">
+                                <li>
+                                    <p>在模块的源代码中找到<code>lang</code>目录。</p>
+                                </li>
+                                <li>
+                                    <p>在文本编辑器中打开要更正的语言的文件。</p>
+                                </li>
+                                <li>
+                                    <p>更正要更改的每一行等号右侧的文本。</p>
+                                </li>
+                                <li>
+                                    <p>保存文件并将其上传到模块源代码的“lang”文件夹中。</p>
+                                </li>
+                                <li>
+                                    <p>将包含更改的拉取请求提交到<a
+                                            href="https://github.com/AndrewPoppe/Security-Access-Groups">Github 存储库</a>的
+                                        master 分支。</p>
+                                </li>
+                            </ol>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -4433,9 +4587,10 @@
                             <p>模块中的许多表格都有一个可用于过滤表格的搜索框。搜索框将搜索表中的所有列。</p>
                         </div>
                         <div class="paragraph">
-                            <p>例如，如果您想要查找当前分配给 SAG
-                                且其标签中包含“Nothing”一词的所有用户，则可以在搜索框中键入“Nothing”，表将被过滤为仅显示具有“Nothing”字样的行。任何列中的文本“Nothing”。
-                            </p>
+                            <p>例如，如果您想要查找当前分配给 SAG 且其标签中包含<span
+                                    class="notranslate">&#39;Nothing&#39;</span>一词的所有用户，则可以在搜索框中键入<span
+                                    class="notranslate">&#39;Nothing&#39;</span> ，表将被过滤为仅显示具有“Nothing”字样的行。任何列中的文本<span
+                                    class="notranslate">&#39;Nothing&#39;</span> 。 </p>
                         </div>
                         <div class="imageblock">
                             <div class="content"><img src="../images/ZH/searching_example_2.png" alt="搜索示例"></div>
@@ -4445,9 +4600,14 @@
                     <div class="sect3">
                         <h4 id="_and_searches"><a class="link" href="#_and_searches">“AND”搜索</a></h4>
                         <div class="paragraph">
-                            <p>默认情况下，搜索框将是“AND”搜索，这意味着它将您的搜索词拆分为单独的单词，并且仅显示与所有这些搜索词匹配的结果。例如，如果您在搜索框中键入“joe
-                                admin”，则表格将被过滤为仅显示任何列中同时包含“joe”和“admin”的行。它<strong>不会</strong>显示<em>具有</em>“joe”<em>或</em>“admin”的行，但<strong>会</strong>显示例如第
-                                1 列中具有“admin”和第 2 列中具有“joe”的行。 </p>
+                            <p>默认情况下，搜索框将是“AND”搜索，这意味着它将您的搜索词拆分为单独的单词，并且仅显示与所有这些搜索词匹配的结果。例如，如果您在搜索框中键入<span
+                                    class="notranslate">&#39;joe admin&#39;</span> ，则表格将被过滤为仅显示任何列中同时包含<span
+                                    class="notranslate">&#39;joe&#39;</span>和<span
+                                    class="notranslate">&#39;admin&#39;</span>行。它<strong>不会</strong>显示<em>具有</em><span
+                                    class="notranslate">&#39;joe&#39;</span><em>或</em><span
+                                    class="notranslate">&#39;admin&#39;</span>的行，但<strong>会</strong>显示例如第 1 列中具有<span
+                                    class="notranslate">&#39;admin&#39;</span>和第 2 列中<span
+                                    class="notranslate">&#39;joe&#39;</span>行。 </p>
                         </div>
                         <div class="imageblock">
                             <div class="content"><img src="../images/ZH/searching_example_AND_2.png" alt="搜索示例 AND">
@@ -4461,8 +4621,13 @@
                             <p>如果要显示与一个值匹配或与另一值匹配的所有行，则必须使用“OR”搜索。</p>
                         </div>
                         <div class="paragraph">
-                            <p>您可以使用“|”运算符以非此即彼的方式搜索多个类似的术语。例如，如果您想查找用户名为“alice”或“bob”的所有用户，您可以在搜索框中输入“alice |
-                                bob”，表格将被过滤为仅显示具有“alice”或“bob”的用户”在任何列中。</p>
+                            <p>您可以使用“|”运算符以非此即彼的方式搜索多个类似的术语。例如，如果您想查找用户名为<span
+                                    class="notranslate">&quot;alice&quot;</span>或<span
+                                    class="notranslate">&quot;bob&quot;</span>的所有用户，您可以在搜索框中输入<span
+                                    class="notranslate">&quot;alice | bob&quot;</span> ，表格将被过滤为仅显示具有<span
+                                    class="notranslate">&quot;alice&quot;</span>或<span
+                                    class="notranslate">&quot;bob&quot;</span>的用户<span
+                                    class="notranslate">&quot;bob&quot;</span>在任何列中。</p>
                         </div>
                         <div class="admonitionblock tip">
                             <table>
@@ -4483,8 +4648,10 @@
                     <div class="sect3">
                         <h4 id="_exact_phrase_searches"><a class="link" href="#_exact_phrase_searches">精确短语搜索</a></h4>
                         <div class="paragraph">
-                            <p>如果您想根据短语进行过滤，可以将短语放在双引号中。例如，如果您想查找包含确切短语“joe admin”的所有行，您可以在搜索框中键入“joe
-                                admin”，表格将被过滤为仅显示任何列中包含“joe admin”的行。 </p>
+                            <p>如果您想根据短语进行过滤，可以将短语放在双引号中。例如，如果您想查找包含确切短语<span class="notranslate">&#39;joe
+                                    admin&#39;</span>的所有行，您可以在搜索框中键入<span class="notranslate">&#39;&quot;joe
+                                    admin&quot;&#39;</span> ，表格将被过滤为仅显示任何列中包含<span class="notranslate">&#39;joe
+                                    admin&#39;</span>的行。 </p>
                         </div>
                         <div class="imageblock">
                             <div class="content"><img src="../images/ZH/searching_example_exact_phrase_2.png"
@@ -4502,10 +4669,12 @@
                         <div class="imageblock">
                             <div class="content"><img src="../images/ZH/searching_example_regular_expression_2.png"
                                     alt="搜索示例正则表达式"></div>
-                            <div class="title">图 30.<strong>正则表达式示例</strong>- 显示“d”后跟任意数量的字母，然后是“n”的所有行 - 如“admin”和“dan”
-                            </div>
+                            <div class="title">图 30.<strong>正则表达式示例</strong>- 显示<span
+                                    class="notranslate">&quot;d&quot;</span>后跟任意数量的字母，然后是<span
+                                    class="notranslate">&quot;n&quot;</span>的所有行 - 如<span
+                                    class="notranslate">&quot;admin&quot;</span>和<span
+                                    class="notranslate">&quot;dan&quot;</span></div>
                         </div>
-                        <hr>
                     </div>
                 </div>
             </div>
@@ -4516,7 +4685,7 @@
         </div>
     </div>
     <div id="footer">
-        <div id="footer-text">最后更新于 2023-08-07 15:45:18 -0400</div>
+        <div id="footer-text">最后更新于 2023-08-09 17:04:29 -0400</div>
     </div>
 </body>
 

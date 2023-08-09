@@ -127,7 +127,7 @@ IMPORTANT: The module must be enabled in a project for it to restrict User Right
 When the module is enabled in a project, it will check which rights are allowable for a user according to their SAG before granting any user rights to that user. The module intercepts all attempts to set user rights in a project, including
 
 * Using the usual methods on the User Rights project page
-* Using the `Upload users, role, and assignments` feature on the User Rights project page
+* Using the *Upload users, role, and assignments* feature on the User Rights project page
 * Using the REDCap API
 
 *All attempts to set user rights will be blocked if the user is not allowed to be granted the rights according to their SAG.* Attempts to circumvent the module are detected and logged.
@@ -232,7 +232,7 @@ endif::[]
 .Users tab
 image::cc_users_2.png[users]
 
-This tab allows admins to assign users to SAGs. Users can be assigned to SAGs individually or in bulk using the `Import User Assignments` feature (see <<import_file_format, Import File Format>>).
+This tab allows admins to assign users to SAGs. Users can be assigned to SAGs individually or in bulk using the *Import User Assignments* feature (see <<import_file_format, Import File Format>>).
 
 .User assignment
 image::cc_users_edit_2.png[users assign]
@@ -249,10 +249,10 @@ The file used to import user assignments must be a CSV file with the following c
 |Column header
 |Description
 
-|username
+|`username`
 |The REDCap username of the user
 
-|sag_id
+|`sag_id`
 |The SAG ID of the SAG to assign the user to. SAG IDs can be found on the <<security_access_groups_tab>> of the module.
 |===
 
@@ -296,36 +296,36 @@ The file used to import SAGs must be a CSV file with the following columns:
 |Description / The User Right that is restricted
 |Possible values
 
-.^|sag_name
+.^|`sag_name`
 .^|The display name of the SAG
 .^a| The text of the SAG name
 
-.^|sag_id
+.^|`sag_id`
 .^|If you are editing an existing SAG, this is the SAG ID of the SAG to edit. If you are creating a new SAG, this column should be left blank.
 .^a| The text of the SAG ID
 
-.^|design
+.^|`design`
 .^|Project Design and Setup
 .^a|
 
 * `0` - Not allowed
 * `1` - Allowed
 
-.^|user_rights
+.^|`user_rights`
 .^|User Rights
 .^a|
 
 * `0` - Not allowed
 * `1` - Allowed
 
-.^|data_access_groups
+.^|`data_access_groups`
 .^|Data Access Groups
 .^a|
 
 * `0` - Not allowed
 * `1` - Allowed
 
-.^|dataViewing
+.^|`dataViewing`
 .^|Data Viewing Rights
 .^a|
 
@@ -334,7 +334,7 @@ The file used to import SAGs must be a CSV file with the following columns:
 * `2` - _No access_, _Read only_, and _View & Edit_ are allowed
 * `3` - All data viewing rights settings are allowed
 
-.^|dataExport
+.^|`dataExport`
 .^|Data Export Rights
 .^a|
 
@@ -343,77 +343,77 @@ The file used to import SAGs must be a CSV file with the following columns:
 * `2` - _No access_, _De-Identified_, and _Remove All Idenitifier Fields_ are allowed
 * `3` - All data export rights settings are allowed
 
-.^|alerts
+.^|`alerts`
 .^|Alerts & Notifications
 .^a|
 
 * `0` - Not allowed
 * `1` - Allowed
 
-.^|reports
+.^|`reports`
 .^|Reports & Report Builder
 .^a|
 
 * `0` - Not allowed
 * `1` - Allowed
 
-.^|graphical
+.^|`graphical`
 .^|Stats & Charts
 .^a|
 
 * `0` - Not allowed
 * `1` - Allowed
 
-.^|participants
+.^|`participants`
 .^|Survey Distribution Tools
 .^a|
 
 * `0` - Not allowed
 * `1` - Allowed
 
-.^|calendar
+.^|`calendar`
 .^|Calendar & Scheduling
 .^a|
 
 * `0` - Not allowed
 * `1` - Allowed
 
-.^|data_import_tool
+.^|`data_import_tool`
 .^|Data Import Tool
 .^a|
 
 * `0` - Not allowed
 * `1` - Allowed
 
-.^|data_comparison_tool
+.^|`data_comparison_tool`
 .^|Data Comparison Tool
 .^a|
 
 * `0` - Not allowed
 * `1` - Allowed
 
-.^|data_logging
+.^|`data_logging`
 .^|Logging
 .^a|
 
 * `0` - Not allowed
 * `1` - Allowed
 
-.^|file_repository
+.^|`file_repository`
 .^|File Repository
 .^a|
 
 * `0` - Not allowed
 * `1` - Allowed
 
-.^|lock_record_customize
+.^|`lock_record_customize`
 .^|Record Locking Customization
 .^a|
 
 * `0` - Not allowed
 * `1` - Allowed
 
-.^|lock_record
+.^|`lock_record`
 .^|Lock/Unlock Records
 .^a|
 
@@ -421,161 +421,161 @@ The file used to import SAGs must be a CSV file with the following columns:
 * `1` - _Disabled_ and _Locking / Unlocking_ are allowed
 * `2` - All record locking settings are allowed
 
-.^|data_quality_design
+.^|`data_quality_design`
 .^|Data Quality (create/edit rules)
 .^a|
 
 * `0` - Not allowed
 * `1` - Allowed
 
-.^|data_quality_execute
+.^|`data_quality_execute`
 .^|Data Quality (execute rules)
 .^a|
 
 * `0` - Not allowed
 * `1` - Allowed
 
-.^|mobile_app
+.^|`mobile_app`
 .^|REDCap Mobile App
 .^a|
 
 * `0` - Not allowed
 * `1` - Allowed
 
-.^|mobile_app_download_data
+.^|`mobile_app_download_data`
 .^|Allow user to download data for all records to the app?
 .^a|
 
 * `0` - Not allowed
 * `1` - Allowed
 
-.^|realtime_webservice_mapping
+.^|`realtime_webservice_mapping`
 .^|CDP/DDP Setup / Mapping
 .^a|
 
 * `0` - Not allowed
 * `1` - Allowed
 
-.^|realtime_webservice_adjudicate
+.^|`realtime_webservice_adjudicate`
 .^|CDP/DDP Adjudicate Data
 .^a|
 
 * `0` - Not allowed
 * `1` - Allowed
 
-.^|dts
+.^|`dts`
 .^|DTS (Data Transfer Services)
 .^a|
 
 * `0` - Not allowed
 * `1` - Allowed
 
-.^|mycap_participants
+.^|`mycap_participants`
 .^|Manage MyCap Participants
 .^a|
 
 * `0` - Not allowed
 * `1` - Allowed
 
-.^|record_create
+.^|`record_create`
 .^|Create Records
 .^a|
 
 * `0` - Not allowed
 * `1` - Allowed
 
-.^|record_rename
+.^|`record_rename`
 .^|Rename Records
 .^a|
 
 * `0` - Not allowed
 * `1` - Allowed
 
-.^|record_delete
+.^|`record_delete`
 .^|Delete Records
 .^a|
 
 * `0` - Not allowed
 * `1` - Allowed
 
-.^|random_setup
+.^|`random_setup`
 .^|Randomization - Setup
 .^a|
 
 * `0` - Not allowed
 * `1` - Allowed
 
-.^|random_dashboard
+.^|`random_dashboard`
 .^|Randomization - Dashboard
 .^a|
 
 * `0` - Not allowed
 * `1` - Allowed
 
-.^|random_perform
+.^|`random_perform`
 .^|Randomization - Randomize
 .^a|
 
 * `0` - Not allowed
 * `1` - Allowed
 
-.^|data_quality_resolution_view
+.^|`data_quality_resolution_view`
 .^|Data Quality Resolution - View Queries
 .^a|
 
 * `0` - Not allowed
 * `1` - Allowed
 
-.^|data_quality_resolution_open
+.^|`data_quality_resolution_open`
 .^|Data Quality Resolution - Open Queries
 .^a|
 
 * `0` - Not allowed
 * `1` - Allowed
 
-.^|data_quality_resolution_respond
+.^|`data_quality_resolution_respond`
 .^|Data Quality Resolution - Respond to Queries
 .^a|
 
 * `0` - Not allowed
 * `1` - Allowed
 
-.^|data_quality_resolution_close
+.^|`data_quality_resolution_close`
 .^|Data Quality Resolution - Close Queries
 .^a|
 
 * `0` - Not allowed
 * `1` - Allowed
 
-.^|double_data_reviewer
+.^|`double_data_reviewer`
 .^|Double Data Entry - Reviewer
 .^a|
 
 * `0` - Not allowed to be a reviewer
 * `1` - Allowed
 
-.^|double_data_person
+.^|`double_data_person`
 .^|Double Data Entry - Person
 .^a|
 
 * `0` - Not allowed to be either Person #1 or Person #2
 * `1` - Allowed
 
-.^|api_export
+.^|`api_export`
 .^|API Export
 .^a|
 
 * `0` - Not allowed
 * `1` - Allowed
 
-.^|api_import
+.^|`api_import`
 .^|API Import/Update
 .^a|
 
 * `0` - Not allowed
 * `1` - Allowed
 
-.^|lock_record_multiform
+.^|`lock_record_multiform`
 .^|Lock/Unlock \*Entire* Records (record level)
 .^a|
 
@@ -798,10 +798,10 @@ endif::[]
 
 === General Information
 
-The module is capable of being translated into other languages via the External Module Framework's language selection 
-feature. To set the language for the module system-wide, go to Control Center > External Modules > Manage External 
-Modules and click the "Configure" button for the module. Then select the language you want to use from the "Language" 
-dropdown and click "Save".
+The module is capable of being translated into languages other than English via the External Module Framework's language
+selection feature. To set the language for the module system-wide, go to Control Center > External Modules > Manage 
+External Modules and click the "Configure" button for the module. Then select the language you want to use from the 
+"Language" dropdown and click "Save".
 
 You can override the system-wide language at the project level by visiting the Project Module Manager and clicking the
 "Configure" button for the module. Then select the language you want to use from the "Language" dropdown and click 
@@ -814,18 +814,18 @@ built-in language translation system. These include the names of the user rights
 
 These languages are currently available to be used in the module:
 
-* English (default)
-* Arabic (عربي)
-* Bangla (বাংলা)
-* Chinese (中文)
-* French (Français)
-* German (Deutsch)
-* Hindi (हिंदी)
-* Italian (Italiana)
-* Portuguese (Português)
-* Spanish (Español)
-* Ukrainian (українська)
-* Urdu (اردو)
+* English ([.notranslate]#default#)
+* Arabic ([.notranslate]#عربي#)
+* Bangla ([.notranslate]#বাংলা#)
+* Chinese ([.notranslate]#中文#)
+* French ([.notranslate]#Français#)
+* German ([.notranslate]#Deutsch#)
+* Hindi ([.notranslate]#हिंदी#)
+* Italian ([.notranslate]#Italiana#)
+* Portuguese ([.notranslate]#Português#)
+* Spanish ([.notranslate]#Español#)
+* Ukrainian ([.notranslate]#українська#)
+* Urdu ([.notranslate]#اردو#)
 
 === Limitations
 
@@ -884,14 +884,14 @@ endif::[]
 
 Many of the tables in the module have a search box that can be used to filter the table. The search box will search all columns in the table. 
 
-For example, if you want to find all users that are currently assigned to the SAG whose label has the word 'Nothing' in it, you can type 'Nothing' in the search box and the table will be filtered to only show rows that have the text 'Nothing' in any column.
+For example, if you want to find all users that are currently assigned to the SAG whose label has the word [.notranslate]#'Nothing'# in it, you can type [.notranslate]#'Nothing'# in the search box and the table will be filtered to only show rows that have the text [.notranslate]#'Nothing'# in any column.
 
 .Searching example
 image::searching_example_2.png[searching example]
 
 ==== "AND" Searches
 
-By default, the search box will be an 'AND' seach, meaning that it will split your search term into separate words and only show results that match all of those search words. For example, if you type 'joe admin' in the search box, the table will be filtered to only show rows with BOTH 'joe' AND 'admin' in any column. It *will not* show rows that have _either_ 'joe' _or_ 'admin' but it *will* show rows that have e.g., 'admin' in column 1 and 'joe' in column 2.
+By default, the search box will be an 'AND' seach, meaning that it will split your search term into separate words and only show results that match all of those search words. For example, if you type [.notranslate]#'joe admin'# in the search box, the table will be filtered to only show rows with BOTH [.notranslate]#'joe'# AND [.notranslate]#'admin'# in any column. It *will not* show rows that have _either_ [.notranslate]#'joe'# _or_ [.notranslate]#'admin'# but it *will* show rows that have e.g., [.notranslate]#'admin'# in column 1 and [.notranslate]#'joe'# in column 2.
 
 .AND example
 image::searching_example_AND_2.png[searching example AND]
@@ -901,7 +901,7 @@ image::searching_example_AND_2.png[searching example AND]
 
 If you want to show all rows that match one value OR match another value, you have to use an "OR" search.
 
-You can use the "|" operator to search for multiple terms like this in an either/or manner. For example, if you want to find all users with the username "alice" or "bob", you can type "alice | bob" in the search box and the table will be filtered to only show users with "alice" or "bob" in any column.
+You can use the "|" operator to search for multiple terms like this in an either/or manner. For example, if you want to find all users with the username [.notranslate]#"alice"# or [.notranslate]#"bob"#, you can type [.notranslate]#"alice | bob"# in the search box and the table will be filtered to only show users with [.notranslate]#"alice"# or [.notranslate]#"bob"# in any column.
 
 TIP: including the '|' symbol has the side effect of making the search a Regular Expression search (see <<regular_expression_searches, below>>).
 
@@ -910,7 +910,7 @@ image::searching_example_OR_2.png[searching example OR]
 
 ==== Exact Phrase Searches
 
-If you want to filter based on a phrase, you can out your phrase in double quotes. For example, if you want to find all rows with the exact phrase 'joe admin,' you can type '"joe admin"' in the search box and the table will be filtered to only show rows with 'joe admin' in any column.
+If you want to filter based on a phrase, you can out your phrase in double quotes. For example, if you want to find all rows with the exact phrase [.notranslate]#'joe admin'# you can type [.notranslate]#'"joe admin"'# in the search box and the table will be filtered to only show rows with [.notranslate]#'joe admin'# in any column.
 
 .Exact phrase example
 image::searching_example_exact_phrase_2.png[searching example exact phrase]
@@ -920,7 +920,7 @@ image::searching_example_exact_phrase_2.png[searching example exact phrase]
 
 By including a '|' character anywhere in your search term, your search turns into a https://en.wikipedia.org/wiki/Regular_expression[Regular Expression^] search. This allows you to compose complex searches that are not possible with the default search.
 
-.*Regular Expression example* - showing all rows where a "d" is followed by any number of letters and then an "n" - as in "admin" and "dan"
+.*Regular Expression example* - showing all rows where a [.notranslate]#"d"# is followed by any number of letters and then an [.notranslate]#"n"# - as in [.notranslate]#"admin"# and [.notranslate]#"dan"#
 image::searching_example_regular_expression_2.png[searching example regex]
 
 ifdef::env-github[]
