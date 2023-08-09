@@ -1145,6 +1145,8 @@ $(document).ready(function () {
             lengthMenu: sag_module.tt('dt_status_length_menu', '_MENU_'),
             loadingRecords: sag_module.tt('dt_status_loading_records'),
             zeroRecords: sag_module.tt('dt_status_zero_records'),
+            decimal: sag_module.tt('dt_status_decimal'),
+            thousands: sag_module.tt('dt_status_thousands'),
             select: {
                 rows: {
                     _: sag_module.tt('dt_status_select_rows_other'),

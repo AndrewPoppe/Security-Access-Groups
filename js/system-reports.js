@@ -361,6 +361,8 @@ sag_module.showProjectTable = function (includeExpired = false) {
             lengthMenu: sag_module.tt('dt_cc_reports_length_menu', '_MENU_'),
             loadingRecords: sag_module.tt('dt_cc_reports_loading_records'),
             zeroRecords: sag_module.tt('dt_cc_reports_zero_records'),
+            decimal: sag_module.tt('dt_cc_reports_decimal'),
+            thousands: sag_module.tt('dt_cc_reports_thousands'),
             select: {
                 rows: {
                     _: sag_module.tt('dt_cc_reports_select_rows_other'),
@@ -655,6 +657,8 @@ sag_module.showUserTable = function (includeExpired = false) {
             lengthMenu: sag_module.tt('dt_cc_reports_length_menu', '_MENU_'),
             loadingRecords: sag_module.tt('dt_cc_reports_loading_records'),
             zeroRecords: sag_module.tt('dt_cc_reports_zero_records'),
+            decimal: sag_module.tt('dt_cc_reports_decimal'),
+            thousands: sag_module.tt('dt_cc_reports_thousands'),
             select: {
                 rows: {
                     _: sag_module.tt('dt_cc_reports_select_rows_other'),
@@ -932,6 +936,8 @@ sag_module.showUserAndProjectTable = function (includeExpired = false) {
             lengthMenu: sag_module.tt('dt_cc_reports_length_menu', '_MENU_'),
             loadingRecords: sag_module.tt('dt_cc_reports_loading_records'),
             zeroRecords: sag_module.tt('dt_cc_reports_zero_records'),
+            decimal: sag_module.tt('dt_cc_reports_decimal'),
+            thousands: sag_module.tt('dt_cc_reports_thousands'),
             select: {
                 rows: {
                     _: sag_module.tt('dt_cc_reports_select_rows_other'),

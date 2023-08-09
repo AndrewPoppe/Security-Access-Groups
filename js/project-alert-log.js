@@ -469,6 +469,8 @@ $(document).ready(function () {
             lengthMenu: sag_module.tt('dt_alerts_length_menu', '_MENU_'),
             loadingRecords: sag_module.tt('dt_alerts_loading_records'),
             zeroRecords: sag_module.tt('dt_alerts_zero_records'),
+            decimal: sag_module.tt('dt_alerts_decimal'),
+            thousands: sag_module.tt('dt_alerts_thousands'),
             select: {
                 rows: {
                     _: sag_module.tt('dt_alerts_select_rows_other'),

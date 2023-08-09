@@ -499,6 +499,8 @@ $(document).ready(function () {
             lengthMenu: sag_module.tt('dt_cc_users_length_menu', '_MENU_'),
             loadingRecords: sag_module.tt('dt_cc_users_loading_records'),
             zeroRecords: sag_module.tt('dt_cc_users_zero_records'),
+            decimal: sag_module.tt('dt_cc_users_decimal'),
+            thousands: sag_module.tt('dt_cc_users_thousands'),
             select: {
                 rows: {
                     _: sag_module.tt('dt_cc_users_select_rows_other'),
