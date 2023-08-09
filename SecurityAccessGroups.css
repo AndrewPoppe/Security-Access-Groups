@@ -475,6 +475,10 @@ div#discrepancy-table_wrapper div.dataTables_scrollHead {
     border-top: none !important;
 }
 
+tr:last-child td.SAG {
+    border-bottom: none !important;
+}
+
 .table.discrepancy-table tr:not(:last-child) td.SAG {
 
     border-bottom: 1px solid #bbb !important;

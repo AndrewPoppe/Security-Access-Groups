@@ -274,16 +274,16 @@ $(document).ready(function () {
                     let result = '';
                     if (row.alertType === 'users') {
                         result =
-                            `<span class="badge-primary text-light badge-pill py-1 px-2 default-cursor">` +
-                            `${sag_module.tt('user')}</span>`;
+                            `<div class="badge-primary text-light badge-pill py-1 px-2 default-cursor">` +
+                            `${sag_module.tt('user')}</div>`;
                     } else if (row.alertType === 'userRightsHolders') {
                         result =
-                            `<span class="badge-warning text-body badge-pill py-1 px-2 default-cursor">` +
-                            `${sag_module.tt('alerts_6')}</span>`;
+                            `<div class="badge-warning text-body badge-pill py-1 px-2 default-cursor">` +
+                            `${sag_module.tt('alerts_6')}</div>`;
                     } else if (row.alertType === 'expiration') {
                         result =
-                            `<span class="badge-danger text-light badge-pill py-1 px-2 default-cursor">` +
-                            `${sag_module.tt('status_ui_62')}</span>`;
+                            `<div class="badge-danger text-light badge-pill py-1 px-2 default-cursor">` +
+                            `${sag_module.tt('status_ui_62')}</div>`;
                     }
 
                     return result;
@@ -297,8 +297,8 @@ $(document).ready(function () {
             data: function (row, type, set, meta) {
                 if (type === 'display') {
                     return row.reminder ?
-                        `<span class="badge badge-pill bg-reminder border font-weight-normal default-cursor text-dark">` +
-                        `${sag_module.tt('status_ui_24')}</span>` :
+                        `<div class="badge badge-pill bg-reminder border font-weight-normal default-cursor text-dark">` +
+                        `${sag_module.tt('status_ui_24')}</div>` :
                         '';
                 } else if (type === 'filter') {
                     return row.reminder ? 'Reminder' : '';
