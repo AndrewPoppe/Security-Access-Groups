@@ -794,7 +794,7 @@ ifdef::env-github[]
 endif::[]
 
 [#translation]
-== Translation (i18n and l10n)
+== Translation (i18n / l10n)
 
 === General Information
 
@@ -806,6 +806,9 @@ dropdown and click "Save".
 You can override the system-wide language at the project level by visiting the Project Module Manager and clicking the
 "Configure" button for the module. Then select the language you want to use from the "Language" dropdown and click 
 "Save".
+
+IMPORTANT: There are parts of the module that are not translated by the module itself, but instead rely on REDCap's
+built-in language translation system. These include the names of the user rights and associated descriptions.
 
 === Available Translations
 
