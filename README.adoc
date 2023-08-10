@@ -842,7 +842,7 @@ you would like to correct a translation or contribute a new translation, please 
 
 ==== Creating a new translation
 
-If you want to translate the module into a new language, you can do so by following these steps:
+If you want to translate the module into a new language, first https://docs.github.com/en/get-started/quickstart/fork-a-repo[fork] the `main` branch of the module's https://github.com/AndrewPoppe/Security-Access-Groups[Github repository]. Next, follow these steps:
 
 1. Find the `lang` directory in the module's source code.
 2. Copy the `English.ini` file and change the name of the copy to the language you want to translate to. Name the file 
@@ -854,7 +854,7 @@ line. For example, if you wanted to translate the text `Introduction` into Japan
 `status_ui_3 = "Introduction"` to `status_ui_3 = "序章"`.
 4. Repeat the process for each line.
 5. Save the file and upload it to the "lang" folder of the module's source code.
-6. Submit a pull request with your changes to the master branch of the 
+6. Submit a pull request with your changes to the `main` branch of the 
 https://github.com/AndrewPoppe/Security-Access-Groups[Github repository].
 
 
@@ -866,7 +866,7 @@ If you want to correct an existing translation, you can do so by following these
 2. Open the file for the language you want to correct in a text editor.
 3. Correct the text on the right side of the equal sign for each line you want to change.
 4. Save the file and upload it to the "lang" folder of the module's source code.
-5. Submit a pull request with your changes to the master branch of the 
+5. Submit a pull request with your changes to the `main` branch of the 
 https://github.com/AndrewPoppe/Security-Access-Groups[Github repository].
 
 
