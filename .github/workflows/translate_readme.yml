@@ -20,7 +20,7 @@ jobs:
       uses: google-github-actions/setup-gcloud@v0.4.0
       with:
         project_id: redcap-364614
-        service_account_key: ${{ secrets.GCS_SA_KEY }}
+        service_account_key: ${{ secrets.GCS_SA_KEY.private_key }}
         export_default_credentials: true
 
     - name: get_token
