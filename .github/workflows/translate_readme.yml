@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       languages:
-        description: 'Languages to translate to (example: ["AR","BN","DE","ES","FR","HI"] or ["ZH","IT","PT","UK","UR"])'
+        description: "Languages to translate to (example: ['AR','BN','DE','ES','FR','HI'] or ['ZH','IT','PT','UK','UR'])"
         required: true
         type: string
 
