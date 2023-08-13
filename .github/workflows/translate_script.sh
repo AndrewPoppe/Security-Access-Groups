@@ -13,12 +13,13 @@ INPUT_FILE="gs://sag_readme/README.html"
 
 
 # Construct the API request JSON
-API_REQUEST='{
-"sourceLanguageCode": "'$SOURCE_LANG'",
-"targetLanguageCodes": '$TARGET_LANGUAGES',
+read -r -d '' API_REQUEST << EOM
+{
+"sourceLanguageCode": "$SOURCE_LANG",
+"targetLanguageCodes": $TARGET_LANGUAGES,
 "inputConfigs": [{
     "gcsSource": {
-    "inputUri": "'$INPUT_FILE'"
+    "inputUri": "$INPUT_FILE"
     },
     "mimeType": "text/html" 
 }],
@@ -27,7 +28,8 @@ API_REQUEST='{
     "outputUriPrefix": "gs://sag_readme_translated/"
     }
 }
-}'
+}
+EOM
 
 # Make the API request
 API_RESPONSE=$(curl -s -X POST \
