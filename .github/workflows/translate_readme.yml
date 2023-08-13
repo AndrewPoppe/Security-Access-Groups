@@ -31,6 +31,7 @@ jobs:
       run: |
         gcloud auth activate-service-account --key-file=$GOOGLE_APPLICATION_CREDENTIALS
         ACCESS_TOKEN=$(gcloud auth print-access-token)
+        echo "::add-mask::$ACCESS_TOKEN"
         echo "ACCESS_TOKEN=$ACCESS_TOKEN" >> $GITHUB_ENV
 
     - name: Upload README.html to sag_readme bucket
@@ -69,9 +70,11 @@ jobs:
         gcloud storage rm gs://sag_readme_translated --recursive
 
     - name: Create Pull Request
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         # Configure the GitHub CLI
-        echo "${{ secrets.GH_TOKEN }}" | gh auth login --with-token
+        # echo "${{ secrets.GH_TOKEN }}" | gh auth login --with-token
 
         # Create a new branch for the translated files
         git checkout -b translated-branch
