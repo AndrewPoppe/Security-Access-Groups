@@ -54,6 +54,9 @@ jobs:
         # Set your Google Cloud Translation API endpoint
         TRANSLATE_API_ENDPOINT="https://translation.googleapis.com/v3/projects/redcap-364614/locations/us-central1:batchTranslateText"
         
+        # Bearer Token
+        GCP_ACCESS_TOKEN="${{ steps.get_token.outputs.ACCESS_TOKEN }}"
+
         # Set the source language and target languages
         SOURCE_LANG="en"
         TARGET_LANGUAGES="${{ inputs.languages }}"
