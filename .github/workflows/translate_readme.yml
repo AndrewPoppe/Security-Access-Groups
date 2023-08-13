@@ -26,19 +26,12 @@ jobs:
       with:
         credentials_json: ${{ secrets.GCS_SA_KEY }}
 
-    - name: Set up Google Cloud SDK
-      uses: google-github-actions/setup-gcloud@v0.4.0
-      with:
-        project_id: redcap-364614
-        service_account_key: ${{ secrets.GCS_SA_KEY }}
-        export_default_credentials: true
-
     - name: get_token
       id: get_token
       run: |
         gcloud auth activate-service-account --key-file=$GOOGLE_APPLICATION_CREDENTIALS
         ACCESS_TOKEN=$(gcloud auth print-access-token)
-        echo "ACCESS_TOKEN=$ACCESS_TOKEN" >> $GITHUB_OUTPUT
+        echo "ACCESS_TOKEN=$ACCESS_TOKEN" >> $GITHUB_ENV
 
     - name: Upload README.html to sag_readme bucket
       run: |
@@ -50,17 +43,17 @@ jobs:
         gcloud storage buckets create gs://sag_readme_translated
 
     - name: Translate using Google's batchTranslateText API
-      run: .github/workflows/translate_script.sh "${{ github.event.inputs.languages }}" "${{ steps.get_token.outputs.ACCESS_TOKEN }}"
+      run: .github/workflows/translate_script.sh "${{ github.event.inputs.languages }}"
       id: translate
 
     - name: Wait for translation to complete
       run: |
-        status=$(curl -s -H "Authorization: Bearer ${{ steps.get_token.outputs.ACCESS_TOKEN }}" \
+        status=$(curl -s -H "Authorization: Bearer ${{ env.ACCESS_TOKEN }}" \
                   "https://translation.googleapis.com/v3/${{ steps.translate.outputs.OPERATION_ID }}")
         until [ "$(echo "$status" | jq -r '.done')" == "true" ]; do
           echo "Translation not yet complete, sleeping for 60 seconds..."
           sleep 60
-          status=$(curl -s -H "Authorization: Bearer ${{ steps.get_token.outputs.ACCESS_TOKEN }}" \
+          status=$(curl -s -H "Authorization: Bearer ${{ env.ACCESS_TOKEN }}" \
                     "https://translation.googleapis.com/v3/${{ steps.translate.outputs.OPERATION_ID }}")
         done
         echo "Translation completed."
