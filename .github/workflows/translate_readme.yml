@@ -50,7 +50,7 @@ jobs:
         gcloud storage buckets create gs://sag_readme_translated
 
     - name: Translate using Google's batchTranslateText API
-      run: .github/workflows/translate_script.sh ${{ github.event.inputs.languages }} ${{ steps.get_token.outputs.ACCESS_TOKEN }}
+      run: .github/workflows/translate_script.sh "${{ github.event.inputs.languages }}" "${{ steps.get_token.outputs.ACCESS_TOKEN }}"
       id: translate
 
     - name: Wait for translation to complete
