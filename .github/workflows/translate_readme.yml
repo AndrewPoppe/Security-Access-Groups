@@ -73,8 +73,8 @@ jobs:
       env:
         GH_TOKEN: ${{ github.token }}
       run: |
-        # Configure the GitHub CLI
-        gh auth login
+        git config --global user.email "AndrewBPoppe@gmail.com"
+        git config --global user.name "Andrew Poppe"
 
         # Create a new branch for the translated files
         git checkout -b translated-branch
