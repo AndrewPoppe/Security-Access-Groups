@@ -12,9 +12,19 @@ jobs:
   translate_and_create_pr:
     runs-on: ubuntu-latest
 
+    permissions:
+      contents: 'read'
+      pull-requests: 'write'
+      id-token: 'write'
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
+
+    - id: 'auth'
+      uses: 'google-github-actions/auth@v1'
+      with:
+        credentials_json: ${{ secrets.GCS_SA_KEY }}
 
     - name: Set up Google Cloud SDK
       uses: google-github-actions/setup-gcloud@v0.4.0
