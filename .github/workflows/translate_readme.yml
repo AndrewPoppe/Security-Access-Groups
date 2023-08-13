@@ -52,7 +52,7 @@ jobs:
     - name: Translate using Google's batchTranslateText API
       run: |
         
-        API_RESPONSE=$(curl -s -X POST -H "Authorization: Bearer ${{ steps.get_token.outputs.ACCESS_TOKEN }} -H "Content-Type: application/json" -H "x-goog-user-project: redcap-364614" --data '{"sourceLanguageCode": "en", "targetLanguageCodes": "${{ inputs.languages }}", "inputConfigs": [{"gcsSource": {"inputUri": "gs://sag_readme/README.html"},"mimeType": "text/html"}],"outputConfig": {"gcsDestination": {"outputUriPrefix": "gs://sag_readme_translated/"}}}" "https://translation.googleapis.com/v3/projects/redcap-364614/locations/us-central1:batchTranslateText")  
+        API_RESPONSE=$(curl -s -X POST -H "Authorization: Bearer ${{ steps.get_token.outputs.ACCESS_TOKEN }} -H "Content-Type: application/json" -H "x-goog-user-project: redcap-364614" --data '\{"sourceLanguageCode": "en", "targetLanguageCodes": "${{ inputs.languages }}", "inputConfigs": \[\{"gcsSource": \{"inputUri": "gs://sag_readme/README.html"\},"mimeType": "text/html"\}\],"outputConfig": \{"gcsDestination": \{"outputUriPrefix": "gs://sag_readme_translated/"\}\}\}" "https://translation.googleapis.com/v3/projects/redcap-364614/locations/us-central1:batchTranslateText")  
 
         # Extract the operation ID from the response
         OPERATION_ID=$(echo "$API_RESPONSE" | jq -r '.name')
