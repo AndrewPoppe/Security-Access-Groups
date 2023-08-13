@@ -1,0 +1,84 @@
+name: Translate README and Create PR
+
+on:
+  workflow_dispatch:
+    inputs:
+      languages:
+        description: 'Languages to translate to (example: ["AR","BN","DE","ES","FR","HI"] or ["ZH","IT","PT","UK","UR"])'
+        required: true
+        type: string
+
+jobs:
+  translate_and_create_pr:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Google Cloud SDK
+      uses: google-github-actions/setup-gcloud@v0.4.0
+      with:
+        project_id: redcap-364614
+        service_account_key: ${{ secrets.GCS_SA_KEY }}
+        export_default_credentials: true
+
+    - name: get_token
+      id: get_token
+      run: |
+        gcloud auth activate-service-account --key-file=$GOOGLE_APPLICATION_CREDENTIALS
+        ACCESS_TOKEN=$(gcloud auth print-access-token)
+        echo "ACCESS_TOKEN=$ACCESS_TOKEN" >> $GITHUB_OUTPUT
+
+    - name: Upload README.html to sag_readme bucket
+      run: |
+        gsutil cp README.html gs://sag_readme/
+
+    - name: Erase contents of sag_readme_translated bucket
+      run: |
+        gsutil -m rm -r gs://sag_readme_translated/**
+
+    - name: Erase contents of sag_readme_translated2 bucket
+      run: |
+        gsutil -m rm -r gs://sag_readme_translated2/**
+
+    - name: Translate using Google's batchTranslateText API
+      run: |
+        ./translate_script.sh ${{ inputs.languages }}
+      id: translate
+
+    - name: Wait for translation to complete
+      run: |
+        status=$(curl -s -H "Authorization: Bearer ${{ steps.get_token.outputs.ACCESS_TOKEN }}" \
+                  "https://translation.googleapis.com/language/translate/v2/operations/${{ steps.translate.outputs.OPERATION_ID }}")
+        until [ "$(echo "$status" | jq -r '.done')" == "true" ]; do
+          echo "Translation not yet complete, sleeping for 60 seconds..."
+          sleep 60
+          status=$(curl -s -H "Authorization: Bearer ${{ steps.get_token.outputs.ACCESS_TOKEN }}" \
+                    "https://translation.googleapis.com/language/translate/v2/operations/${{ steps.translate.outputs.OPERATION_ID }}")
+        done
+        echo "Translation completed."
+
+    - name: Download translated files
+      run: |
+        mkdir translated_files
+        gsutil -m cp gs://sag_readme_translated/* translated_files/
+
+    - name: Create Pull Request
+      run: |
+        # Configure the GitHub CLI
+        echo "${{ secrets.GH_TOKEN }}" | gh auth login --with-token
+
+        # Create a new branch for the translated files
+        git checkout -b translated-branch
+
+        # Copy the translated files to the repository
+        cp -r translated_files/* .
+
+        # Commit and push the changes
+        git add .
+        git commit -m "Add translated files"
+        git push origin translated-branch
+
+        # Create a pull request
+        gh pr create --base main --head translated-branch --title "Translated README"
