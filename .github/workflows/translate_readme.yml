@@ -51,47 +51,9 @@ jobs:
 
     - name: Translate using Google's batchTranslateText API
       run: |
-        # Set your Google Cloud Translation API endpoint
-        TRANSLATE_API_ENDPOINT="https://translation.googleapis.com/v3/projects/redcap-364614/locations/us-central1:batchTranslateText"
         
-        # Bearer Token
-        GCP_ACCESS_TOKEN="${{ steps.get_token.outputs.ACCESS_TOKEN }}"
+        API_RESPONSE=$(curl -s -X POST -H "Authorization: Bearer ${{ steps.get_token.outputs.ACCESS_TOKEN }} -H "Content-Type: application/json" -H "x-goog-user-project: redcap-364614" --data '{"sourceLanguageCode": "en", "targetLanguageCodes": "${{ inputs.languages }}", "inputConfigs": [{"gcsSource": {"inputUri": "gs://sag_readme/README.html"},"mimeType": "text/html"}],"outputConfig": {"gcsDestination": {"outputUriPrefix": "gs://sag_readme_translated/"}}}" "https://translation.googleapis.com/v3/projects/redcap-364614/locations/us-central1:batchTranslateText")  
 
-        # Set the source language and target languages
-        SOURCE_LANG="en"
-        TARGET_LANGUAGES="${{ inputs.languages }}"
-        
-        # Set the path to the input file
-        INPUT_FILE="gs://sag_readme/README.html"
-        
-        
-        # Construct the API request JSON
-        read -r -d API_REQUEST <<- EOM
-        {
-            "sourceLanguageCode": "$SOURCE_LANG",
-            "targetLanguageCodes": $TARGET_LANGUAGES,
-            "inputConfigs": [{
-                "gcsSource": {
-                    "inputUri": "$INPUT_FILE"
-                },
-                "mimeType": "text/html" 
-            }],
-            "outputConfig": {
-                "gcsDestination": {
-                    "outputUriPrefix": "gs://sag_readme_translated/"
-                }
-            }
-        }
-        EOM
-
-        # Make the API request
-        API_RESPONSE=$(curl -s -X POST \
-        -H "Authorization: Bearer $GCP_ACCESS_TOKEN" \
-        -H "Content-Type: application/json" \
-        -H "x-goog-user-project: redcap-364614" \
-        --data "$API_REQUEST" \
-        "$TRANSLATE_API_ENDPOINT")
-        
         # Extract the operation ID from the response
         OPERATION_ID=$(echo "$API_RESPONSE" | jq -r '.name')
 
