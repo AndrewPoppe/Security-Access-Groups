@@ -8,6 +8,9 @@ SOURCE_LANG="en"
 TARGET_LANGUAGES="$1"
 GCP_ACCESS_TOKEN="$2"
 
+echo "$1"
+echo "$2"
+
 # Set the path to the input file
 INPUT_FILE="gs://sag_readme/README.html"
 
@@ -38,6 +41,8 @@ API_RESPONSE=$(curl -s -X POST \
 -H "x-goog-user-project: redcap-364614" \
 --data "$API_REQUEST" \
 "$TRANSLATE_API_ENDPOINT")
+
+echo "$API_RESPONSE"
 
 # Extract the operation ID from the response
 OPERATION_ID=$(echo "$API_RESPONSE" | jq -r '.name')
