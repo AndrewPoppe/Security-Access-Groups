@@ -56,12 +56,12 @@ jobs:
     - name: Wait for translation to complete
       run: |
         status=$(curl -s -H "Authorization: Bearer ${{ steps.get_token.outputs.ACCESS_TOKEN }}" \
-                  "https://translation.googleapis.com/language/translate/v2/operations/${{ steps.translate.outputs.OPERATION_ID }}")
+                  "https://translation.googleapis.com/v3/${{ steps.translate.outputs.OPERATION_ID }}")
         until [ "$(echo "$status" | jq -r '.done')" == "true" ]; do
           echo "Translation not yet complete, sleeping for 60 seconds..."
           sleep 60
           status=$(curl -s -H "Authorization: Bearer ${{ steps.get_token.outputs.ACCESS_TOKEN }}" \
-                    "https://translation.googleapis.com/language/translate/v2/operations/${{ steps.translate.outputs.OPERATION_ID }}")
+                    "https://translation.googleapis.com/v3/${{ steps.translate.outputs.OPERATION_ID }}")
         done
         echo "Translation completed."
 

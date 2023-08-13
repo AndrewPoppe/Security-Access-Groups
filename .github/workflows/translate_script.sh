@@ -43,6 +43,7 @@ API_RESPONSE=$(curl -s -X POST \
 "$TRANSLATE_API_ENDPOINT")
 
 echo "$API_RESPONSE"
+echo "$API_RESPONSE" | jq -r '.name'
 
 # Extract the operation ID from the response
 OPERATION_ID=$(echo "$API_RESPONSE" | jq -r '.name')
