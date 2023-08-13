@@ -42,15 +42,12 @@ jobs:
 
     - name: Upload README.html to sag_readme bucket
       run: |
-        gsutil cp README.html gs://sag_readme/
+        gcloud init
+        gcloud storage cp README.html gs://sag_readme/
 
-    - name: Erase contents of sag_readme_translated bucket
+    - name: Create sag_readme_translated bucket
       run: |
-        gsutil -m rm -r gs://sag_readme_translated/**
-
-    - name: Erase contents of sag_readme_translated2 bucket
-      run: |
-        gsutil -m rm -r gs://sag_readme_translated2/**
+        gcloud storage buckets create gs://sag_readme_translated
 
     - name: Translate using Google's batchTranslateText API
       run: |
@@ -111,7 +108,13 @@ jobs:
     - name: Download translated files
       run: |
         mkdir translated_files
-        gsutil -m cp gs://sag_readme_translated/* translated_files/
+        #gsutil -m cp gs://sag_readme_translated/* translated_files/
+        gcloud storage cp gs://sag_readme_translated2/* translated_files/
+
+    - name: Cleanup bucket
+      if: always()
+      run: |
+        gcloud storage rm gs://sag_readme_translated --recursive
 
     - name: Create Pull Request
       run: |
