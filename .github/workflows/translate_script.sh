@@ -6,6 +6,7 @@ TRANSLATE_API_ENDPOINT="https://translation.googleapis.com/v3/projects/redcap-36
 # Set the source language and target languages
 SOURCE_LANG="en"
 TARGET_LANGUAGES="$1"
+GCP_ACCESS_TOKEN="$2"
 
 # Set the path to the input file
 INPUT_FILE="gs://sag_readme/README.html"

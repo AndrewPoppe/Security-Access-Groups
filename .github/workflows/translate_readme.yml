@@ -50,16 +50,7 @@ jobs:
         gcloud storage buckets create gs://sag_readme_translated
 
     - name: Translate using Google's batchTranslateText API
-      run: |
-        
-        API_RESPONSE=$(curl -s -X POST -H "Authorization: Bearer ${{ steps.get_token.outputs.ACCESS_TOKEN }} -H "Content-Type: application/json" -H "x-goog-user-project: redcap-364614" --data '\{"sourceLanguageCode": "en", "targetLanguageCodes": "${{ inputs.languages }}", "inputConfigs": \[\{"gcsSource": \{"inputUri": "gs://sag_readme/README.html"\},"mimeType": "text/html"\}\],"outputConfig": \{"gcsDestination": \{"outputUriPrefix": "gs://sag_readme_translated/"\}\}\}" "https://translation.googleapis.com/v3/projects/redcap-364614/locations/us-central1:batchTranslateText")  
-
-        # Extract the operation ID from the response
-        OPERATION_ID=$(echo "$API_RESPONSE" | jq -r '.name')
-
-        echo $OPERATION_ID
-        
-        echo "OPERATION_ID=$OPERATION_ID" >> $GITHUB_OUTPUT
+      run: .github/workflows/translate_script.sh ${{ github.event.inputs.languages }} ${{ steps.get_token.outputs.ACCESS_TOKEN }}
       id: translate
 
     - name: Wait for translation to complete
