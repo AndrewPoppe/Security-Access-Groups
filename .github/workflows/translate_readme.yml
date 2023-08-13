@@ -69,7 +69,7 @@ jobs:
       run: |
         mkdir translated_files
         #gsutil -m cp gs://sag_readme_translated/* translated_files/
-        gcloud storage cp gs://sag_readme_translated2/* translated_files/
+        gcloud storage cp gs://sag_readme_translated/* translated_files/
 
     - name: Cleanup bucket
       if: always()
