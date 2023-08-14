@@ -78,6 +78,7 @@ jobs:
 
         # Create a new branch for the translated files
         git checkout -b translated-branch
+        git pull origin translated-branch
 
         # Copy the translated files to the repository
         cp -r translated_files ./docs/readme/
