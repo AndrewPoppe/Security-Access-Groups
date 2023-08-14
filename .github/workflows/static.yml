@@ -37,6 +37,11 @@ jobs:
         uses: actions/upload-pages-artifact@v2
         with:
           path: 'docs/gh_pages'
+      - name: Upload artifact2
+        uses: actions/upload-pages-artifact@v2
+        with:
+          path: 'fonts'
+          destination: 'fonts'
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v2
