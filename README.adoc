@@ -1,7 +1,6 @@
 = Security Access Groups
 Andrew Poppe <andrew.poppe@yale.edu>
 :description: This is an External Module for REDCap that allows admins to create and manage Security Access Groups that restrict which User Rights a user may be granted.
-:imagesdir: docs/images/EN
 :sectlinks: true
 :table-stripes: even
 :toc:
@@ -11,6 +10,14 @@ Andrew Poppe <andrew.poppe@yale.edu>
 :tip-caption: 💡
 :important-caption: 🚩
 :warning-caption: ⚠️
+ifdef::env-github[]
+:imagesdir: docs/images/EN
+:favicon: docs/images/favicon.svg
+endif::[]
+ifndef::env-github[]
+:imagesdir: ../images/EN
+:favicon: ../images/favicon.svg
+endif::[]
 
 ifndef::env-github[]
 ++++
@@ -93,6 +100,27 @@ code {
 endif::[]
 
 image:https://sonarcloud.io/api/project_badges/measure?project=AndrewPoppe_Security-Access-Groups&metric=alert_status[link="https://sonarcloud.io/summary/new_code?id=AndrewPoppe_Security-Access-Groups"]
+
+ifndef::env-github[]
+++++
+<p><label for="lang_selector">Select Language</label>
+    <select id="lang_selector" onchange="window.location.href = this.value;">
+        <option value="README_EN.html" selected>English <span class="notranslate">(English)</span></option>
+        <option value="README_AR.html">Arabic <span class="notranslate">(عربي)</span></option>
+        <option value="README_BN.html">Bangla <span class="notranslate">(বাংলা)</span></option>
+        <option value="README_ZH.html">Chinese <span class="notranslate">(中文)</span></option>
+        <option value="README_FR.html">French <span class="notranslate">(Français)</span></option>
+        <option value="README_DE.html">German <span class="notranslate">(Deutsch)</span></option>
+        <option value="README_HI.html">Hindi <span class="notranslate">(हिंदी)</span></option>
+        <option value="README_IT.html">Italian <span class="notranslate">(Italiana)</span></option>
+        <option value="README_PT.html">Portuguese <span class="notranslate">(Português)</span></option>
+        <option value="README_ES.html">Spanish <span class="notranslate">(Español)</span></option>
+        <option value="README_UK.html">Ukrainian <span class="notranslate">(українська)</span></option>
+        <option value="README_UR.html">Urdu <span class="notranslate">(اردو)</span></option>
+    </select>
+</p>
+++++
+endif::[]
 
 toc::[]
 

@@ -174,7 +174,7 @@
     ],
     "no-auth-pages": [],
     "framework-version": 12,
-    "documentation": "README.html",
+    "documentation": "https://andrewpoppe.github.io/Security-Access-Groups/",
     "tt_documentation": "doc_path",
     "compatibility": {
         "php-version-min": "7.4.00",

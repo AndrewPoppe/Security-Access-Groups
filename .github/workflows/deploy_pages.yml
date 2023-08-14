@@ -29,13 +29,13 @@ jobs:
       - name: Build with Jekyll
         uses: actions/jekyll-build-pages@v1
         with:
-          source: ./docs/gh_pages
+          source: ./docs
           destination: ./_site
       - name: Build with Jekyll2
         uses: actions/jekyll-build-pages@v1
         with:
           source: ./fonts
-          destination: ./_site/fonts
+          destination: ./_site/readme/fonts
       - name: Build with Jekyll3
         uses: actions/jekyll-build-pages@v1
         with:
