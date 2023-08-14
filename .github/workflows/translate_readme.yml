@@ -39,25 +39,25 @@ jobs:
         gcloud init
         gcloud storage cp README.html gs://sag_readme/
 
-    - name: Create sag_readme_translated bucket
-      run: |
-        gcloud storage buckets create gs://sag_readme_translated
+    # - name: Create sag_readme_translated bucket
+    #   run: |
+    #     gcloud storage buckets create gs://sag_readme_translated
 
-    - name: Translate using Google's batchTranslateText API
-      run: .github/workflows/translate_script.sh "${{ github.event.inputs.languages }}"
-      id: translate
+    # - name: Translate using Google's batchTranslateText API
+    #   run: .github/workflows/translate_script.sh "${{ github.event.inputs.languages }}"
+    #   id: translate
 
-    - name: Wait for translation to complete
-      run: |
-        status=$(curl -s -H "Authorization: Bearer ${{ env.ACCESS_TOKEN }}" \
-                  "https://translation.googleapis.com/v3/${{ steps.translate.outputs.OPERATION_ID }}")
-        until [ "$(echo "$status" | jq -r '.done')" == "true" ]; do
-          echo "Translation not yet complete, sleeping for 60 seconds..."
-          sleep 60
-          status=$(curl -s -H "Authorization: Bearer ${{ env.ACCESS_TOKEN }}" \
-                    "https://translation.googleapis.com/v3/${{ steps.translate.outputs.OPERATION_ID }}")
-        done
-        echo "Translation completed."
+    # - name: Wait for translation to complete
+    #   run: |
+    #     status=$(curl -s -H "Authorization: Bearer ${{ env.ACCESS_TOKEN }}" \
+    #               "https://translation.googleapis.com/v3/${{ steps.translate.outputs.OPERATION_ID }}")
+    #     until [ "$(echo "$status" | jq -r '.done')" == "true" ]; do
+    #       echo "Translation not yet complete, sleeping for 60 seconds..."
+    #       sleep 60
+    #       status=$(curl -s -H "Authorization: Bearer ${{ env.ACCESS_TOKEN }}" \
+    #                 "https://translation.googleapis.com/v3/${{ steps.translate.outputs.OPERATION_ID }}")
+    #     done
+    #     echo "Translation completed."
 
     - name: Download translated files
       run: |
