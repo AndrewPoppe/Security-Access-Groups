@@ -29,6 +29,7 @@ jobs:
     - name: get_token
       id: get_token
       run: |
+        gcloud auth login
         gcloud auth activate-service-account --key-file=$GOOGLE_APPLICATION_CREDENTIALS
         ACCESS_TOKEN=$(gcloud auth print-access-token)
         echo "::add-mask::$ACCESS_TOKEN"
