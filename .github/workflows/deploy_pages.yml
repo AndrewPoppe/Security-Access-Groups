@@ -36,6 +36,11 @@ jobs:
         with:
           source: ./fonts
           destination: ./_site/fonts
+      - name: Build with Jekyll3
+        uses: actions/jekyll-build-pages@v1
+        with:
+          source: ./docs/images
+          destination: ./images
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v2
 
