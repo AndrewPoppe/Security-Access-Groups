@@ -92,7 +92,7 @@ jobs:
         # mv -r translated_files ./docs/readme/
 
         # Commit and push the changes
-        git add /docs/readme/translated_files
+        git add ./docs/readme/translated_files
         git commit -m "Add translated files"
         git push origin translated-branch
 
