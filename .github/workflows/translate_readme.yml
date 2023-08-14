@@ -61,8 +61,13 @@ jobs:
 
     - name: Download translated files
       run: |
-        mkdir docs/readme/translated_files
-        gcloud storage cp gs://sag_readme_translated/* docs/readme/translated_files/
+        file_dir="docs/readme/translated_files/"
+        mkdir $file_dir
+        gcloud storage cp gs://sag_readme_translated/* $file_dir
+        for f in $(ls ${file_dir}/*.html); do
+            new_name=$(echo $f | sed 's|sag_readme_||' | sed 's|_translations||'
+            mv $f $new_name    
+        done
 
     # - name: Cleanup bucket
     #   if: always()
@@ -78,7 +83,7 @@ jobs:
 
         # Create a new branch for the translated files
         git checkout -b translated-branch
-        git pull origin translated-branch
+        git pull
 
         # Copy the translated files to the repository
         # mv -r translated_files ./docs/readme/
