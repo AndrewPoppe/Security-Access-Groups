@@ -25,12 +25,10 @@ jobs:
       uses: 'google-github-actions/auth@v1'
       with:
         credentials_json: ${{ secrets.GCS_SA_KEY }}
-        export_default_credentials: true
+        create_credentials_file: true
 
     - name: get_token
       id: get_token
-      env:
-        credentials_json: ${{ secrets.GCS_SA_KEY }}
       run: |
         gcloud auth activate-service-account --key-file=$GOOGLE_APPLICATION_CREDENTIALS
         ACCESS_TOKEN=$(gcloud auth print-access-token)
