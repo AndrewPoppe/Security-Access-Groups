@@ -41,6 +41,11 @@ jobs:
         with:
           source: ./docs/images
           destination: ./_site/images
+      - name: Build with Jekyll4
+        uses: actions/jekyll-build-pages@v1
+        with:
+          source: ./favicon.ico
+          destination: ./_site/favicon.ico
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v2
 
