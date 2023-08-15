@@ -4,6 +4,7 @@ paths-ignore:
   - "docs/**"
   - "lib/**"
   - "fonts/**"
+  - "README*"
 
 # List of query suites to use for analysis
 # You can adjust this based on your analysis requirements
