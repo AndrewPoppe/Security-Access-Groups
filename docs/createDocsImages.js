@@ -19,10 +19,8 @@ const redcapVersion = 'redcap_v13.1.27';
 
     // Login
     await page.goto(`http://localhost:13740/${redcapVersion}/ExternalModules/manager/control_center.php`);
-    const username = await page.locator('#username');
-    const password = await page.locator('#password');
-    await username.fill(creds.admin_username);
-    await password.fill(creds.admin_password);
+    await page.locator('#username').fill(creds.admin_username);
+    await page.locator('#password').fill(creds.admin_password);
 
     await page.click('#login_btn');
     await page.waitForURL('**/ExternalModules/manager/control_center.php');
