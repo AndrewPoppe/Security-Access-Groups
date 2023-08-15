@@ -1,9 +1,9 @@
-queries:
-  # Ignore specific directories
-  ignore:
-    - "docs/**"
-    - "lib/**"
-    - "fonts/**"
+name: "CodeQL Config"
+
+paths-ignore: 
+  - "docs/**"
+  - "lib/**"
+  - "fonts/**"
 
 # List of query suites to use for analysis
 # You can adjust this based on your analysis requirements
