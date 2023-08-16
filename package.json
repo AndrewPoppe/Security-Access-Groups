@@ -1,6 +1,7 @@
 {
-  "dependencies": {
-    "playwright": "^1.37.0",
-    "sharp": "^0.32.4"
-  }
+    "devDependencies": {
+        "mouse-helper": "^1.0.7",
+        "playwright": "^1.37.0",
+        "sharp": "^0.32.5"
+    }
 }

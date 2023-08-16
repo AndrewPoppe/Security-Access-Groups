@@ -1,6 +1,6 @@
 const playwright = require('playwright');
 const sharp = require('sharp');
-const creds = require('../creds.json');
+const fs = require('fs');
 
 const colors = {
     project: '#2F5FD9',
@@ -9,38 +9,165 @@ const colors = {
 }
 const borderThickness = 6;
 const projectId = 16;
+const urlBase = 'http://localhost:13740';
 const redcapVersion = 'redcap_v13.1.27';
+const screenshotsPath = `screenshots`;
+
+const languages = [
+    { selectValue: "", label: "English", code: "EN" },
+    { selectValue: "Arabic (عربي)", label: "Arabic", code: "AR" },
+    { selectValue: "Bangla (বাংলা)", label: "Bangla", code: "BN" },
+    { selectValue: "Chinese (中文)", label: "Chinese", code: "ZH" },
+    { selectValue: "French (Français)", label: "French", code: "FR" },
+    { selectValue: "German (Deutsch)", label: "German", code: "DE" },
+    { selectValue: "Hindi (हिंदी)", label: "Hindi", code: "HI" },
+    { selectValue: "Italian (Italiana)", label: "Italian", code: "IT" },
+    { selectValue: "Portuguese (Português)", label: "Portuguese", code: "PT" },
+    { selectValue: "Spanish (Español)", label: "Spanish", code: "ES" },
+    { selectValue: "Ukrainian (українська)", label: "Ukrainian", code: "UK" },
+    { selectValue: "Urdu (اردو)", label: "Urdu", code: "UR" },
+];
+
+const cc_config_options = {
+    top: borderThickness,
+    bottom: borderThickness,
+    left: borderThickness,
+    right: borderThickness,
+    background: colors.control_center
+};
+
+const project_config_options = {
+    top: borderThickness,
+    bottom: borderThickness,
+    left: borderThickness,
+    right: borderThickness,
+    background: colors.project
+};
+
+const other_config_options = {
+    top: borderThickness,
+    bottom: borderThickness,
+    left: borderThickness,
+    right: borderThickness,
+    background: colors.other
+};
 
 
 (async () => {
-    const browser = await playwright.chromium.launch();
+    const browser = await playwright.chromium.launch({ headless: true });
     const context = await browser.newContext({ viewport: { width: 1865, height: 947 } });
+    await context.addInitScript({
+        path: './node_modules/mouse-helper/dist/mouse-helper.js'
+    });
     const page = await context.newPage();
 
     // Login
-    await page.goto(`http://localhost:13740/${redcapVersion}/ExternalModules/manager/control_center.php`);
-    await page.locator('#username').fill(creds.admin_username);
-    await page.locator('#password').fill(creds.admin_password);
+    await page.goto(urlBase);
+    await page.locator('#username').fill('admin');
+    await page.locator('#password').fill('password');
 
     await page.click('#login_btn');
-    await page.waitForURL('**/ExternalModules/manager/control_center.php');
+
+    for (const language of languages) {
+        console.log(language.label);
+        fs.mkdirSync(`screenshots/${language.code}`, { recursive: true });
+
+        // Visit Control Center EM Manager Page
+        await page.goto(`${urlBase}/${redcapVersion}/ExternalModules/manager/control_center.php`);
+
+        // Open External Modules Configuration Modal
+        await page.locator('tr[data-module="security_access_groups"] button.external-modules-configure-button').click();
+
+        // Select Language
+        await page.locator('select[name="reserved-language-system"]').waitFor('visible');
+        await page.locator('select[name="reserved-language-system"]').selectOption(language.selectValue);
+
+        // Wait for all frames to load and then save changes
+        const frames = page.frames();
+        await Promise.all(frames.map(async frame => { frame.waitForLoadState('load') }));
+        await page.locator('div#external-modules-configure-modal div.modal-footer button.save').click();
 
 
-    await page.locator('tr[data-module="security_access_groups"] button.external-modules-configure-button').click();
-    await page.locator('select[name="reserved-language-system"]').waitFor('visible');
+        // SHOT: cc_config
+        console.log('\tcc_config');
+        await page.locator('tr[data-module="security_access_groups"] button.external-modules-configure-button').click();
+        await page.locator('tr[field="user-email-subject-template"]').scrollIntoViewIfNeeded();
+        const cc_config = await page.locator('#external-modules-configure-modal .modal-dialog').screenshot();
+        await sharp(cc_config).extend(cc_config_options).toFile(`${screenshotsPath}/${language.code}/cc_config.png`);
 
-    const img3 = await page.locator('#external-modules-configure-modal .modal-dialog').screenshot();
-    await sharp(img3)
-        .extend({
-            top: borderThickness,
-            bottom: borderThickness,
-            left: borderThickness,
-            right: borderThickness,
-            background: colors.project
-        })
-        .toFile('screenshot3.png');
+        // SHOT: cc_users
+        console.log('\tcc_users');
+        const dtInitPromise_cc_users = page.waitForFunction(() => { if ($.fn.dataTable.isDataTable('#SAG-System-Table')) return $('#SAG-System-Table').DataTable().data().count() > 0; });
+        await page.goto(`${urlBase}/${redcapVersion}/ExternalModules/?prefix=security_access_groups&page=system-settings-userlist`);
+        await dtInitPromise_cc_users;
+        const cc_window_cc_users = await page.locator('#control_center_window').boundingBox();
+        const box_cc_users = await page.locator('div.SAG_Container').boundingBox();
+        const cc_users = await page.screenshot({ clip: { x: cc_window_cc_users.x - 10, y: cc_window_cc_users.y - 10, width: cc_window_cc_users.width + 20, height: box_cc_users.y + box_cc_users.height + 30 } });
+        await sharp(cc_users).extend(cc_config_options).toFile(`${screenshotsPath}/${language.code}/cc_users.png`);
+
+        // SHOT: cc_users_actions
+        console.log('\tcc_users_actions');
+        await page.evaluate(() => {
+            window['mouse-helper']();
+        });
+        await page.locator('div.SAG_Container button.dropdown-toggle').click();
+        await page.locator('div.SAG_Container li:first-child a.dropdown-item').hover();
+        const dropdown_cc_users_actions = await page.locator('div.SAG_Container li:first-child a.dropdown-item').boundingBox();
+        await page.mouse.move(dropdown_cc_users_actions.x + dropdown_cc_users_actions.width - 10, dropdown_cc_users_actions.y + dropdown_cc_users_actions.height / 2);
+        const cc_users_actions = await page.screenshot({ clip: { x: box_cc_users.x - 20, y: box_cc_users.y - 20, width: box_cc_users.width / 2, height: box_cc_users.height / 2 } });
+        await sharp(cc_users_actions).extend(cc_config_options).toFile(`${screenshotsPath}/${language.code}/cc_users_actions.png`);
+
+        // SHOT: cc_users_edit
+        console.log('\tcc_users_edit');
+        await page.locator('button.editUsersButton').click();
+        await page.locator('tr[data-user="admin"] td:last-child span.select2').click();
+        await page.locator('li[id$="sag_Default"]').hover();
+        const option_cc_users_edit = await page.locator('li[id$="sag_Default"]').boundingBox();
+        await page.mouse.move(option_cc_users_edit.x + option_cc_users_edit.width - 10, option_cc_users_edit.y + option_cc_users_edit.height / 2);
+        const card_cc_users_edit = await page.locator('div.SAG_Container div.card').boundingBox();
+        const cc_users_edit = await page.screenshot({ clip: { x: card_cc_users_edit.x - 20, y: card_cc_users_edit.y - 20, width: card_cc_users_edit.width + 40, height: card_cc_users_edit.height + 40 } });
+        await sharp(cc_users_edit).extend(cc_config_options).toFile(`${screenshotsPath}/${language.code}/cc_users_edit.png`);
+
+        // SHOT: cc_sags
+        console.log('\tcc_sags');
+        const dtInitPromise_cc_sags = page.waitForFunction(() => { if ($.fn.dataTable.isDataTable('table.sagTable')) return new $.fn.dataTable.Api('table.sagTable').data().count() > 0; });
+        await page.goto(`${urlBase}/${redcapVersion}/ExternalModules/?prefix=security_access_groups&page=system-settings-sags`);
+        await dtInitPromise_cc_sags;
+        const cc_window_cc_sags = await page.locator('#control_center_window').boundingBox();
+        const box_cc_sags = await page.locator('div.SAG_Container').boundingBox();
+        const cc_sags = await page.screenshot({ clip: { x: cc_window_cc_sags.x - 10, y: cc_window_cc_sags.y - 10, width: cc_window_cc_sags.width + 20, height: box_cc_sags.y + box_cc_sags.height + 30 } });
+        await sharp(cc_sags).extend(cc_config_options).toFile(`${screenshotsPath}/${language.code}/cc_sags.png`);
+
+        // SHOT: cc_sags_editor
+        console.log('\tcc_sags_editor');
+        await page.locator('a.SagLink', { hasText: "Default SAG" }).click();
+        await page.locator('button#SAG_Delete').waitFor('visible');
+        const box_cc_sags_editor = await page.locator('div#edit_sag_popup div.modal-content').boundingBox();
+        const cc_sags_editor = await page.screenshot({ clip: { x: box_cc_sags_editor.x - 20, y: box_cc_sags_editor.y - 20, width: box_cc_sags_editor.width + 40, height: box_cc_sags_editor.height + 40 } });
+        await sharp(cc_sags_editor).extend(cc_config_options).toFile(`${screenshotsPath}/${language.code}/cc_sags_editor.png`);
+        await page.locator('button#SAG_Cancel').click();
+
+        // SHOT: cc_sags_actions
+        console.log('\tcc_sags_actions');
+        await page.evaluate(() => {
+            window['mouse-helper']();
+        });
+        await page.locator('div.SAG_Container button.btn.btn-primary.btn-xs.dropdown-toggle').click();
+        await page.locator('div.SAG_Container li:first-child a.dropdown-item').hover();
+        const dropdown_cc_sags_actions = await page.locator('div.SAG_Container li:first-child a.dropdown-item').boundingBox();
+        await page.mouse.move(dropdown_cc_sags_actions.x + dropdown_cc_sags_actions.width - 10, dropdown_cc_sags_actions.y + dropdown_cc_sags_actions.height / 2);
+        const box_cc_sags_actions_dropdown = await page.locator('div.SAG_Container div.container ul.dropdown-menu.show').boundingBox();
+        const cc_sags_actions_bounds = {
+            x: box_cc_sags.x - 20,
+            y: box_cc_sags.y - 20,
+            width: (box_cc_sags_actions_dropdown.x + box_cc_sags_actions_dropdown.width + 60) - box_cc_sags.x,
+            height: (box_cc_sags_actions_dropdown.y + box_cc_sags_actions_dropdown.height + 60) - box_cc_sags.y
+        }
+        const cc_sags_actions = await page.screenshot({ clip: cc_sags_actions_bounds });
+        await sharp(cc_sags_actions).extend(cc_config_options).toFile(`${screenshotsPath}/${language.code}/cc_sags_actions.png`);
 
 
+    }
     // Go to Control Center
     // await page.getByText('Control Center').click();
     // await page.waitForURL('**/ControlCenter/index.php');

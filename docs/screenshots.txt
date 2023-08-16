@@ -1,0 +1,36 @@
+        
+CONTROL CENTER
+X       cc_config
+        cc_report_example
+        cc_report_filter_example
+        cc_report_types
+X       cc_sags
+        cc_sags_actions
+X       cc_sags_editor
+        cc_sags_import_confirmation
+        cc_user_import_confirm
+X       cc_users
+X       cc_users_actions
+X       cc_users_edit
+        
+PROJECT
+        p_alert_log
+        p_blocked
+        p_logging_role
+        p_logging_user
+        p_logs_preview
+        p_status
+        p_status_alert_user
+        p_status_alert_user_reminder
+        p_status_alert_user-rights-holder
+        p_status_alert_user-rights-holder_reminder
+        p_status_expiration
+        p_status_expiration_alert_user
+        p_status_expiration_alert_user-rights-holder
+        
+OTHER
+        searching_example
+        searching_example_AND
+        searching_example_exact_phrase
+        searching_example_OR
+        searching_example_regular_expression
