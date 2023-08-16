@@ -128,6 +128,17 @@ const other_config_options = {
         const cc_users_edit = await page.screenshot({ clip: { x: card_cc_users_edit.x - 20, y: card_cc_users_edit.y - 20, width: card_cc_users_edit.width + 40, height: card_cc_users_edit.height + 40 } });
         await sharp(cc_users_edit).extend(cc_config_options).toFile(`${screenshotsPath}/${language.code}/cc_users_edit.png`);
 
+        // SHOT: cc_user_import_confirm
+        console.log('\tcc_user_import_confirm');
+        await page.addScriptTag({ content: `let window.shown = false;` });
+        const waitForModal = page.waitForFunction(() => { $('.modal.fade.show').on('shown.bs.modal', () => window.shown = true); return window.shown; });
+        await page.locator('#importUsersFile').setInputFiles('user_import.csv');
+        await page.locator('div.modal.fade.show div.modal-lg.modal-dialog.modal-dialog-scrollable').waitFor('visible');
+        await waitForModal;
+        const box_cc_user_import_confirm = await page.locator('div.modal-lg.modal-dialog.modal-dialog-scrollable').boundingBox();
+        const cc_user_import_confirm = await page.screenshot({ clip: { x: box_cc_user_import_confirm.x - 30, y: box_cc_user_import_confirm.y - 20, width: box_cc_user_import_confirm.width + 60, height: box_cc_user_import_confirm.height + 40 } });
+        await sharp(cc_user_import_confirm).extend(cc_config_options).toFile(`${screenshotsPath}/${language.code}/cc_user_import_confirm.png`);
+
         // SHOT: cc_sags
         console.log('\tcc_sags');
         const dtInitPromise_cc_sags = page.waitForFunction(() => { if ($.fn.dataTable.isDataTable('table.sagTable')) return new $.fn.dataTable.Api('table.sagTable').data().count() > 0; });
@@ -166,7 +177,34 @@ const other_config_options = {
         const cc_sags_actions = await page.screenshot({ clip: cc_sags_actions_bounds });
         await sharp(cc_sags_actions).extend(cc_config_options).toFile(`${screenshotsPath}/${language.code}/cc_sags_actions.png`);
 
+        // SHOT: cc_sags_import_confirmation
+        console.log('\tcc_sags_import_confirmation');
+        await page.locator('#importSagsFile').setInputFiles('sag_import.csv');
+        await page.locator('div.modal.fade.show div.modal-lg.modal-dialog.modal-dialog-scrollable button.btn-primary').waitFor('visible');
+        const box_cc_sags_import_modal = await page.locator('div.modal-lg.modal-dialog.modal-dialog-scrollable').boundingBox();
+        const cc_sags_import_confirmation = await page.screenshot({ clip: { x: box_cc_sags_import_modal.x - 30, y: box_cc_sags_import_modal.y - 20, width: box_cc_sags_import_modal.width + 60, height: box_cc_sags_import_modal.height + 40 } });
+        await sharp(cc_sags_import_confirmation).extend(cc_config_options).toFile(`${screenshotsPath}/${language.code}/cc_sags_import_confirmation.png`);
 
+        // SHOT: cc_report_types
+        console.log('\tcc_report_types');
+        page.goto(`${urlBase}/${redcapVersion}/ExternalModules/?prefix=security_access_groups&page=system-reports`);
+        await page.locator('div.SAG_Container button.btn.btn-primary.btn-xs.dropdown-toggle').click();
+        await page.locator('div.SAG_Container li:last-child a.dropdown-item').hover();
+        const dropdown_cc_report_types = await page.locator('div.SAG_Container li:last-child a.dropdown-item').boundingBox();
+        await page.evaluate(() => {
+            window['mouse-helper']();
+        });
+        await page.mouse.move(dropdown_cc_report_types.x + dropdown_cc_report_types.width - 10, dropdown_cc_report_types.y + dropdown_cc_report_types.height / 2, { steps: 100 });
+        const cc_window_cc_reports = await page.locator('#control_center_window').boundingBox();
+        const box_cc_report_types_dropdown = await page.locator('div.SAG_Container ul.dropdown-menu.show').boundingBox();
+        const cc_report_types_bounds = {
+            x: cc_window_cc_reports.x - 20,
+            y: cc_window_cc_reports.y - 20,
+            width: cc_window_cc_reports.width,
+            height: (box_cc_report_types_dropdown.y + box_cc_report_types_dropdown.height + 40) - cc_window_cc_reports.y
+        };
+        const cc_report_types = await page.screenshot({ clip: cc_report_types_bounds });
+        await sharp(cc_report_types).extend(cc_config_options).toFile(`${screenshotsPath}/${language.code}/cc_report_types.png`);
     }
     // Go to Control Center
     // await page.getByText('Control Center').click();

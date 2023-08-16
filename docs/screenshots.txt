@@ -3,12 +3,12 @@ CONTROL CENTER
 X       cc_config
         cc_report_example
         cc_report_filter_example
-        cc_report_types
+X       cc_report_types
 X       cc_sags
-        cc_sags_actions
+X       cc_sags_actions
 X       cc_sags_editor
-        cc_sags_import_confirmation
-        cc_user_import_confirm
+X       cc_sags_import_confirmation
+X       cc_user_import_confirm
 X       cc_users
 X       cc_users_actions
 X       cc_users_edit
