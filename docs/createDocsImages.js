@@ -205,6 +205,48 @@ const other_config_options = {
         };
         const cc_report_types = await page.screenshot({ clip: cc_report_types_bounds });
         await sharp(cc_report_types).extend(cc_config_options).toFile(`${screenshotsPath}/${language.code}/cc_report_types.png`);
+        await page.mouse.move(0, 0);
+
+        // SHOT: cc_report_example
+        console.log('\tcc_report_example');
+        await page.reload();
+        await page.locator('div.SAG_Container button.btn.btn-primary.btn-xs.dropdown-toggle').click();
+        await page.locator('div.SAG_Container li:last-child a.dropdown-item').click();
+        await page.locator('div#allTableWrapper').waitFor('visible');
+        await page.evaluate(() => {
+            const el = document.querySelector('div.SAG_Container button.btn.btn-primary.btn-xs.dropdown-toggle');
+            const nav = document.querySelector('nav.navbar.navbar-expand-md.navbar-light.fixed-top');
+            const y = el.getBoundingClientRect().y - nav.getBoundingClientRect().height - 5;
+            window.scrollTo(0, y);
+        });
+        await page.locator('div#allTableWrapper div.dataTables_filter input').click();
+        const box_report_table_wrapper = await page.locator('div#allTableWrapper').boundingBox();
+        const box_cc_report_types_button = await page.locator('div.SAG_Container button.btn.btn-primary.btn-xs.dropdown-toggle').boundingBox();
+        await page.waitForTimeout(500);
+        const cc_report_example = await page.screenshot({
+            clip: {
+                x: box_report_table_wrapper.x - 30,
+                y: box_cc_report_types_button.y - 5,
+                width: box_report_table_wrapper.width + 60,
+                height: 900
+            }
+        });
+        await sharp(cc_report_example).extend(cc_config_options).toFile(`${screenshotsPath}/${language.code}/cc_report_example.png`);
+
+        // SHOT: cc_report_filter_example
+        console.log('\tcc_report_filter_example');
+        await page.locator('div#allTableWrapper div.dataTables_filter input').fill('project_status=Production');
+        const cc_report_filter_example = await page.screenshot({
+            clip: {
+                x: box_report_table_wrapper.x - 30,
+                y: box_cc_report_types_button.y - 5,
+                width: box_report_table_wrapper.width + 60,
+                height: 900
+            }
+        });
+        await sharp(cc_report_filter_example).extend(cc_config_options).toFile(`${screenshotsPath}/${language.code}/cc_report_filter_example.png`);
+
+
     }
     // Go to Control Center
     // await page.getByText('Control Center').click();
