@@ -11,11 +11,11 @@ Andrew Poppe <andrew.poppe@yale.edu>
 :important-caption: 🚩
 :warning-caption: ⚠️
 ifdef::env-github[]
-:imagesdir: docs/images/EN
+:imagesdir: docs/screenshots/EN
 :favicon: docs/images/favicon.svg
 endif::[]
 ifndef::env-github[]
-:imagesdir: ../images/EN
+:imagesdir: ../screenshots/EN
 :favicon: ../images/favicon.svg
 endif::[]
 
@@ -170,7 +170,7 @@ The module provides a convenient way to expire users in a project on the <<proje
 ====
 
 .Example of a user being blocked from being granted a User Right
-image::p_blocked_2.png[blocked]
+image::p_blocked.png[blocked]
 
 ifdef::env-github[]
 ---
@@ -185,7 +185,7 @@ The control center module configuration page allows admins to set the default va
 This is a convenient way to get up and running when you first enable the module, because many users likely will need to be notified.
 
 .EM Framework Config Options
-image::cc_config_2.png[config]
+image::cc_config.png[config]
 
 NOTE: <<placeholders, Placeholders>> may be used in any of these default settings.
 
@@ -260,15 +260,15 @@ endif::[]
 === Users Tab
 
 .Users tab
-image::cc_users_2.png[users]
+image::cc_users.png[users]
 
 This tab allows admins to assign users to SAGs. Users can be assigned to SAGs individually or in bulk using the *Import User Assignments* feature (see <<import_file_format, Import File Format>>).
 
 .User assignment
-image::cc_users_edit_2.png[users assign]
+image::cc_users_edit.png[users assign]
 
 .Users actions
-image::cc_users_actions_2.png[users actions]
+image::cc_users_actions.png[users actions]
 
 [#import_file_format]
 ==== Import File Format
@@ -289,31 +289,31 @@ The file used to import user assignments must be a CSV file with the following c
 You can download a template import file using the dropdown in the menu or use the export file as a guide.
 
 .Confirmation popup of SAG assignment import
-image::cc_user_import_confirm_2.png[user import confirm]
+image::cc_user_import_confirm.png[user import confirm]
 
 [#security_access_groups_tab]
 === Security Access Groups Tab
 
 .Security Access Groups tab
-image::cc_sags_2.png[sags]
+image::cc_sags.png[sags]
 
 This tab shows all SAGs that exist in the system. SAGs can be created, edited, and deleted from this tab. Click a SAG's name to edit it.
 
 TIP: You can also *Copy* and *Delete* the SAG from the editor popup.
 
 .SAG editor
-image::cc_sags_editor_2.png[sags edit]
+image::cc_sags_editor.png[sags edit]
 
 SAGs can also be created or edited in bulk by importing a CSV file using the dropdown options in the menu. See the <<sag_import_file_format, SAG Import File Format>> for more information.
 
 .SAG dropdown options
-image::cc_sags_actions_2.png[sags actions]
+image::cc_sags_actions.png[sags actions]
 
 
 When you import SAG definitions, you will have the opportunity to view and confirm any changes.
 
 .Confirmation popup of SAG import
-image::cc_sags_import_confirmation_2.png[sags import confirm]
+image::cc_sags_import_confirmation.png[sags import confirm]
 
 
 [#sag_import_file_format]
@@ -621,7 +621,7 @@ The file used to import SAGs must be a CSV file with the following columns:
 === Reports Tab
 
 .Reports tab
-image::cc_report_types_2.png[reports]
+image::cc_report_types.png[reports]
 
 This tab provides an easy way to see all users in the system that currently have user rights that do not comply with their current SAG. This can occur when the module is first enabled in a project or when a user is assigned to a new SAG.
 
@@ -653,12 +653,12 @@ The report options are as follows:
 |===
 
 .Report example
-image::cc_report_example_2.png[report example]
+image::cc_report_example.png[report example]
 
 TIP: You can filter based on project status by including "project_status=" and then the status you want to filter on. For example, to only include projects that are in Production, you would use `project_status=Production`. To only include projects that are Completed, you would use `project_status=Completed`. To include both Production and Development projects, you would use `project_status=Production | project_status=Development`. See the <<searching>> section for more information.
 
 .Filtering based on project status example
-image::cc_report_filter_example_2.png[report filter example]
+image::cc_report_filter_example.png[report filter example]
 
 ifdef::env-github[]
 ---
@@ -681,30 +681,30 @@ You can also check the *Noncompliant Rights* column to see which rights the user
 TIP: If you want to see only users who inappropriately have particular rights, you can use the search box. For example, if you are only interested in the **User Rights** and/or *Project Design and Setup* rights, type `"user rights" | "project design"` in the search box. See the <<searching>> section for more information.
 
 .Project status tab
-image::p_status_2.png[project status]
+image::p_status.png[project status]
 
 TIP: If there are any users that are non-compliant with their SAG, you can use one of the *Action* buttons to send an email to the user, the user's rights holders, or both. You can also expire the user from the project. An alert can optionally be sent to the user and/or the user's rights holders when the user is expired.
 
 .Alert user
-image::p_status_alert_user_2.png[alert user]
+image::p_status_alert_user.png[alert user]
 
 .Remind user
-image::p_status_alert_user_reminder_2.png[remind user]
+image::p_status_alert_user_reminder.png[remind user]
 
 .Alert user rights holders
-image::p_status_alert_user-rights-holder_2.png[alert user rights holders]
+image::p_status_alert_user-rights-holder.png[alert user rights holders]
 
 .Remind user rights holders
-image::p_status_alert_user-rights-holder_reminder_2.png[remind user rights holders]
+image::p_status_alert_user-rights-holder_reminder.png[remind user rights holders]
 
 .Expire users
-image::p_status_expiration_2.png[expire users]
+image::p_status_expiration.png[expire users]
 
 .Alert users upon expiration
-image::p_status_expiration_alert_user_2.png[alert users upon expiration]
+image::p_status_expiration_alert_user.png[alert users upon expiration]
 
 .Alert user rights holders upon expiration
-image::p_status_expiration_alert_user-rights-holder_2.png[alert user rights holders upon expiration]
+image::p_status_expiration_alert_user-rights-holder.png[alert user rights holders upon expiration]
 
 [#placeholders]
 ==== Placeholders
@@ -782,11 +782,11 @@ The module provides a table of all alerts sent and scheduled in the project.
 TIP: Scheduled reminders can be canceled from this tab.
 
 .Alert log tab
-image::p_alert_log_2.png[alert log]
+image::p_alert_log.png[alert log]
 
 
 .Alert preview example
-image::p_logs_preview_2.png[alert preview]
+image::p_logs_preview.png[alert preview]
 
 TIP: Use the search bar to search for the text of an alert, the username of the user the alert is about, or the username of the user the alert is being sent to, and more. See the <<searching>> section for more information.
 
@@ -813,10 +813,10 @@ project's own logs for all changes to user rights, including
 * When a user is assigned to a role via the API
 
 .Example log of a user's rights being changed
-image::p_logging_user_2.png[user log]
+image::p_logging_user.png[user log]
 
 .Example log of a role's rights being changed
-image::p_logging_role_2.png[role log]
+image::p_logging_role.png[role log]
 
 
 ifdef::env-github[]
@@ -917,14 +917,14 @@ Many of the tables in the module have a search box that can be used to filter th
 For example, if you want to find all users that are currently assigned to the SAG whose label has the word [.notranslate]#'Nothing'# in it, you can type [.notranslate]#'Nothing'# in the search box and the table will be filtered to only show rows that have the text [.notranslate]#'Nothing'# in any column.
 
 .Searching example
-image::searching_example_2.png[searching example]
+image::searching_example.png[searching example]
 
 ==== "AND" Searches
 
 By default, the search box will be an 'AND' seach, meaning that it will split your search term into separate words and only show results that match all of those search words. For example, if you type [.notranslate]#'joe admin'# in the search box, the table will be filtered to only show rows with BOTH [.notranslate]#'joe'# AND [.notranslate]#'admin'# in any column. It *will not* show rows that have _either_ [.notranslate]#'joe'# _or_ [.notranslate]#'admin'# but it *will* show rows that have e.g., [.notranslate]#'admin'# in column 1 and [.notranslate]#'joe'# in column 2.
 
 .AND example
-image::searching_example_AND_2.png[searching example AND]
+image::searching_example_AND.png[searching example AND]
 
 
 ==== "OR" Searches
@@ -936,14 +936,14 @@ You can use the "|" operator to search for multiple terms like this in an either
 TIP: including the '|' symbol has the side effect of making the search a Regular Expression search (see <<regular_expression_searches, below>>).
 
 .OR example
-image::searching_example_OR_2.png[searching example OR]
+image::searching_example_OR.png[searching example OR]
 
 ==== Exact Phrase Searches
 
 If you want to filter based on a phrase, you can out your phrase in double quotes. For example, if you want to find all rows with the exact phrase [.notranslate]#'joe admin'# you can type [.notranslate]#'"joe admin"'# in the search box and the table will be filtered to only show rows with [.notranslate]#'joe admin'# in any column.
 
 .Exact phrase example
-image::searching_example_exact_phrase_2.png[searching example exact phrase]
+image::searching_example_exact_phrase.png[searching example exact phrase]
 
 [#regular_expression_searches]
 ==== Regular Expression Searches
@@ -951,7 +951,7 @@ image::searching_example_exact_phrase_2.png[searching example exact phrase]
 By including a '|' character anywhere in your search term, your search turns into a https://en.wikipedia.org/wiki/Regular_expression[Regular Expression^] search. This allows you to compose complex searches that are not possible with the default search.
 
 .*Regular Expression example* - showing all rows where a [.notranslate]#"d"# is followed by any number of letters and then an [.notranslate]#"n"# - as in [.notranslate]#"admin"# and [.notranslate]#"dan"#
-image::searching_example_regular_expression_2.png[searching example regex]
+image::searching_example_regular_expression.png[searching example regex]
 
 ifdef::env-github[]
 ---
