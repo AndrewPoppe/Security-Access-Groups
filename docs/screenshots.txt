@@ -19,11 +19,11 @@ PROJECT
         p_logging_role
         p_logging_user
         p_logs_preview
-        p_status
-        p_status_alert_user
-        p_status_alert_user_reminder
-        p_status_alert_user-rights-holder
-        p_status_alert_user-rights-holder_reminder
+X       p_status
+X       p_status_alert_user
+X       p_status_alert_user_reminder
+X       p_status_alert_user-rights-holder
+X       p_status_alert_user-rights-holder_reminder
         p_status_expiration
         p_status_expiration_alert_user
         p_status_expiration_alert_user-rights-holder

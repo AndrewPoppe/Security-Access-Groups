@@ -1,0 +1,5 @@
+sag_name,sag_id,design,user_rights,data_access_groups,dataViewing,dataExport,alerts,reports,graphical,participants,calendar,data_import_tool,data_comparison_tool,data_logging,file_repository,lock_record_customize,lock_record,data_quality_design,data_quality_execute,mobile_app,realtime_webservice_mapping,realtime_webservice_adjudicate,dts,mycap_participants,record_create,record_rename,record_delete,random_setup,random_dashboard,random_perform,data_quality_resolution_view,data_quality_resolution_open,data_quality_resolution_respond,data_quality_resolution_close,double_data_reviewer,double_data_person,api_export,api_import,mobile_app_download_data,lock_record_multiform
+Nothing,sag_5a6656168df7a,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0
+Everything,sag_2ef49bfdfec73,1,0,1,3,3,1,1,1,1,1,1,1,1,1,1,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+Default SAG,sag_Default,0,0,0,3,3,0,1,1,1,1,0,0,0,1,0,0,0,0,0,0,0,0,1,1,0,0,0,0,1,1,0,0,0,1,0,0,0,0,0
+New SAG,,0,0,0,3,3,0,1,1,1,1,0,0,0,1,0,0,0,0,0,0,0,0,1,1,0,0,0,0,1,1,0,0,0,1,0,0,0,0,0
