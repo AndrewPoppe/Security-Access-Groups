@@ -41,8 +41,8 @@ jobs:
       - name: Build with Jekyll3
         uses: actions/jekyll-build-pages@v1
         with:
-          source: ./docs/images
-          destination: ./_site/images
+          source: ./docs/screenshots
+          destination: ./_site/screenshots
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v2
 
