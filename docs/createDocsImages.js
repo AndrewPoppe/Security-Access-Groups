@@ -326,25 +326,25 @@ const other_config_options = {
             await sharp(p_status_alert_user_reminder).extend(project_config_options).toFile(`${screenshotsPath}/${language.code}/p_status_alert_user_reminder.png`);
             await page.locator('div#emailUsersModal button.btn-close').click();
 
-            // SHOT: p_status_alert_user_rights_holder
-            console.log('\tp_status_alert_user_rights_holder');
+            // SHOT: p_status_alert_user-rights-holder
+            console.log('\tp_status_alert_user-rights-holder');
             await page.evaluate(() => { window.shown = false; });
             const waitForModal_p_user_rights_holder = page.waitForFunction(() => { $('#emailUserRightsHoldersModal').on('shown.bs.modal', () => window.shown = true); return window.shown; });
             await page.locator('div#containerCard div.buttonContainer button.btn.btn-warning').click();
             await waitForModal_p_user_rights_holder;
             const box_p_status_alert_user_rights_holder = await page.locator('div#emailUserRightsHoldersModal div.modal-content').boundingBox();
             const p_status_alert_user_rights_holder = await page.screenshot({ clip: { x: box_p_status_alert_user_rights_holder.x - 30, y: box_p_status_alert_user_rights_holder.y - 20, width: box_p_status_alert_user_rights_holder.width + 60, height: box_p_status_alert_user_rights_holder.height + 40 } });
-            await sharp(p_status_alert_user_rights_holder).extend(project_config_options).toFile(`${screenshotsPath}/${language.code}/p_status_alert_user_rights_holder.png`);
+            await sharp(p_status_alert_user_rights_holder).extend(project_config_options).toFile(`${screenshotsPath}/${language.code}/p_status_alert_user-rights-holder.png`);
 
-            // SHOT: p_status_alert_user_rights_holder_reminder
-            console.log('\tp_status_alert_user_rights_holder_reminder');
+            // SHOT: p_status_alert_user-rights-holder_reminder
+            console.log('\tp_status_alert_user-rights-holder_reminder');
             await page.locator('div#emailUserRightsHoldersModal input#sendReminder-UserRightsHolders').check();
             await page.waitForTimeout(500);
             const label_p_status_alert_user_rights_holder_reminder = page.locator('div#emailUserRightsHoldersModal div.reminderEmail-UserRightsHolders label[for="reminderBody-UserRightsHolders"]');
             await label_p_status_alert_user_rights_holder_reminder.waitFor('visible');
             await label_p_status_alert_user_rights_holder_reminder.scrollIntoViewIfNeeded();
             const p_status_alert_user_rights_holder_reminder = await page.screenshot({ clip: { x: box_p_status_alert_user_rights_holder.x - 30, y: box_p_status_alert_user_rights_holder.y - 20, width: box_p_status_alert_user_rights_holder.width + 60, height: box_p_status_alert_user_rights_holder.height + 40 } });
-            await sharp(p_status_alert_user_rights_holder_reminder).extend(project_config_options).toFile(`${screenshotsPath}/${language.code}/p_status_alert_user_rights_holder_reminder.png`);
+            await sharp(p_status_alert_user_rights_holder_reminder).extend(project_config_options).toFile(`${screenshotsPath}/${language.code}/p_status_alert_user-rights-holder_reminder.png`);
             await page.locator('div#emailUserRightsHoldersModal button.btn-close').click();
 
             // SHOT: p_status_expiration
@@ -430,7 +430,7 @@ const other_config_options = {
             const td_log_user = await page.locator('td[ts="20230723182103"]').first().boundingBox();
             const box_log_user = await page.locator('table[logeventtable="redcap_log_event6"]').boundingBox();
             const p_logging_user = await page.screenshot({ clip: { x: box_log_user.x, y: td_log_user.y, width: box_log_user.width, height: td_log_user.height } });
-            await sharp(p_logging_user).extend(project_config_options).toFile(`${screenshotsPath}/EN/p_logging_user.png`);
+            await sharp(p_logging_user).extend(project_config_options).toFile(`${screenshotsPath}/${language.code}/p_logging_user.png`);
 
             // SHOT: p_logging_role
             console.log('\tp_logging_role');
@@ -440,7 +440,7 @@ const other_config_options = {
             const td_log_role = await page.locator('td[ts="20230721164250"]').first().boundingBox();
             const box_log_role = await page.locator('table[logeventtable="redcap_log_event6"]').boundingBox();
             const p_logging_role = await page.screenshot({ clip: { x: box_log_role.x, y: td_log_role.y, width: box_log_role.width, height: td_log_role.height } });
-            await sharp(p_logging_role).extend(project_config_options).toFile(`${screenshotsPath}/EN/p_logging_role.png`);
+            await sharp(p_logging_role).extend(project_config_options).toFile(`${screenshotsPath}/${language.code}/p_logging_role.png`);
         }
 
         ///////////////////
