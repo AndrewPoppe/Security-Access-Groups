@@ -14,23 +14,23 @@ X       cc_users_actions
 X       cc_users_edit
         
 PROJECT
-        p_alert_log
-        p_blocked
-        p_logging_role
-        p_logging_user
-        p_logs_preview
+X       p_alert_log
+X       p_blocked
+X       p_logging_role
+X       p_logging_user
+X       p_logs_preview
 X       p_status
 X       p_status_alert_user
 X       p_status_alert_user_reminder
 X       p_status_alert_user-rights-holder
 X       p_status_alert_user-rights-holder_reminder
-        p_status_expiration
-        p_status_expiration_alert_user
-        p_status_expiration_alert_user-rights-holder
+X       p_status_expiration
+X       p_status_expiration_alert_user
+X       p_status_expiration_alert_user-rights-holder
         
 OTHER
-        searching_example
-        searching_example_AND
-        searching_example_exact_phrase
-        searching_example_OR
-        searching_example_regular_expression
+X       searching_example
+X       searching_example_AND
+X       searching_example_exact_phrase
+X       searching_example_OR
+X       searching_example_regular_expression
