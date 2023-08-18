@@ -54,9 +54,13 @@ class Role
 
     public function getRoleRightsRaw()
     {
-        $sql    = 'SELECT * FROM redcap_user_roles WHERE role_id = ?';
-        $result = $this->module->framework->query($sql, [ $this->roleId ]);
-        return $this->module->framework->escape($result->fetch_assoc());
+        $sql                       = 'SELECT * FROM redcap_user_roles WHERE role_id = ?';
+        $result                    = $this->module->framework->query($sql, [ $this->roleId ]);
+        $row                       = $result->fetch_assoc();
+        $roleName                  = \REDCap::filterHtml($row['role_name']);
+        $safeRoleData              = $this->module->framework->escape($row);
+        $safeRoleData['role_name'] = $roleName;
+        return $safeRoleData;
     }
 
     public function getUsersInRole($projectId)
@@ -91,7 +95,7 @@ class Role
         $sql    = 'SELECT role_name FROM redcap_user_roles WHERE role_id = ?';
         $result = $this->module->framework->query($sql, [ $roleId ]);
         $row    = $result->fetch_assoc();
-        return $this->module->framework->escape($row['role_name']);
+        return \REDCap::filterHtml($row['role_name']);
     }
 
 }

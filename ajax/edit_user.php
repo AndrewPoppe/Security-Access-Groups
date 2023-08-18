@@ -183,7 +183,7 @@ if ( $submitAction === "edit_role" ) {
         ob_end_flush(); // End buffering and clean up
     } else {
         http_response_code(403);
-        echo json_encode([ "error" => true, "bad_rights" => $badRights, "role" => $data["role_name"] ]);
+        echo json_encode([ "error" => true, "bad_rights" => $badRights, "role" => $role->getRoleName() ]);
     }
     exit;
 }
