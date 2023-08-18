@@ -50,18 +50,15 @@ if ( !$module->framework->isSuperUser() ) {
                             <?= $module->framework->tt('status_ui_6') ?>
                         <ul>
                             <li class="my-1" style="line-height: 1.3rem;">
-                                <span
-                                    class="bg-primary text-light p-1 font-weight-bold"><?= $module->framework->tt('status_ui_7') ?></span>:
+                                <span class="bg-primary text-light p-1 font-weight-bold"><?= $module->framework->tt('status_ui_7') ?></span>:
                                 <?= $module->framework->tt('status_ui_10') ?>
                             </li>
                             <li class="my-1" style="line-height: 1.3rem;">
-                                <span
-                                    class="bg-warning text-body p-1 font-weight-bold"><?= $module->framework->tt('status_ui_8') ?></span>:
+                                <span class="bg-warning text-body p-1 font-weight-bold"><?= $module->framework->tt('status_ui_8') ?></span>:
                                 <?= $module->framework->tt('status_ui_11') ?>
                             </li>
                             <li class="my-1" style="line-height: 1.3rem;">
-                                <span
-                                    class="bg-danger text-light p-1 font-weight-bold"><?= $module->framework->tt('status_ui_9') ?></span>:
+                                <span class="bg-danger text-light p-1 font-weight-bold"><?= $module->framework->tt('status_ui_9') ?></span>:
                                 <?= $module->framework->tt('status_ui_12') ?>
                             </li>
                         </ul>

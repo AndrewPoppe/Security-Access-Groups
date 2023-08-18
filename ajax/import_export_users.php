@@ -52,8 +52,13 @@ if ( isset($_POST['csv_content']) && $_POST['csv_content'] != '' ) {
         // We ignore expired users, unless the request unexpires them
         $userExpired         = $sagUser->isUserExpired($project_id);
         $requestedExpiration = $thisUser['expiration'];
-        $requestedUnexpired  = empty($requestedExpiration) || (strtotime($requestedExpiration) >= strtotime('today'));
-        $ignore              = $userExpired && !$requestedUnexpired;
+
+        // This import is requesting the user be expired
+        if ( !empty($requestedExpiration) && strtotime($requestedExpiration) < strtotime('today') ) {
+            $userExpired = true;
+        }
+        $requestedUnexpired = empty($requestedExpiration) || (strtotime($requestedExpiration) >= strtotime('today'));
+        $ignore             = $userExpired && !$requestedUnexpired;
 
         if ( !empty($theseBadRights) && !$ignore ) {
             $badRights[$username] = [
