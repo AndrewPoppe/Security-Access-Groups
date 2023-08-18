@@ -279,6 +279,7 @@ $(function () {
                     $('#tooltipExpirationProgress').hide();
                     $('#userClickExpiration').hide();
                 }, 400);
+                fixLinks();
             });
     }
 
