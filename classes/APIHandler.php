@@ -210,8 +210,14 @@ class APIHandler
                 $theseBadRights   = $rightsChecker->checkRights();
 
                 // We ignore expired users, unless the request unexpires them
-                $userExpired            = $sagUser->isUserExpired($this->projectId);
-                $requestedExpiration    = urldecode($thisUser['expiration']);
+                $userExpired         = $sagUser->isUserExpired($this->projectId);
+                $requestedExpiration = urldecode($thisUser['expiration']);
+
+                // This import is requesting the user be expired
+                if ( !empty($requestedExpiration) && strtotime($requestedExpiration) < strtotime('today') ) {
+                    $userExpired = true;
+                }
+
                 $expirationDateInFuture = strtotime($requestedExpiration) >= strtotime('today');
                 $requestedUnexpired     = empty($requestedExpiration) || $expirationDateInFuture;
                 if ( $userExpired && !$requestedUnexpired ) {
