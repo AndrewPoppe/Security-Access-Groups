@@ -108,7 +108,7 @@ class APIHandler
                 $roleName         = $role->getRoleName();
                 $roleRights       = $role->getRoleRights($this->projectId);
                 $acceptableRights = $sagUser->getAcceptableRights();
-                $rightsChecker    = new RightsChecker($this->module, $roleRights, $acceptableRights, $this->projectId, true);
+                $rightsChecker    = new RightsChecker($this->module, $roleRights, $acceptableRights, $this->projectId);
                 $theseBadRights   = $rightsChecker->checkRights();
                 // We ignore expired users
                 $userExpired = $sagUser->isUserExpired($this->projectId);

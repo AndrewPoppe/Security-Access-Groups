@@ -31,7 +31,7 @@ if ( isset($_POST['csv_content']) && $_POST['csv_content'] != '' ) {
             $roleName         = $role->getRoleName();
             $role_rights      = $role->getRoleRights();
             $acceptableRights = $sagUser->getAcceptableRights();
-            $rightsChecker    = new RightsChecker($module, $role_rights, $acceptableRights, $pid, true);
+            $rightsChecker    = new RightsChecker($module, $role_rights, $acceptableRights, $pid);
             $theseBadRights   = $rightsChecker->checkRights();
             // We ignore expired users
             $userExpired = $sagUser->isUserExpired($pid);
