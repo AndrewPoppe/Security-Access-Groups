@@ -59,7 +59,7 @@ if ( in_array($submitAction, [ 'add_user', 'edit_user' ]) ) {
                 $succeeded = strpos($str, '<div class=\'userSaveMsg') !== false; // is there no better way?
                 if ( $succeeded ) {
                     $action         = $actionInfo['submit_action'] === 'add_user' ? 'Add user' : 'Update user';
-                    $updatedRights  = $actionInfo['sagUser']->getCurrentRights($actionInfo['user'], $actionInfo['project_id']) ?? [];
+                    $updatedRights  = $actionInfo['sagUser']->getCurrentRights($actionInfo['project_id']) ?? [];
                     $previousRights = $actionInfo['currentRights'] ?? [];
                     $changes        = json_encode(array_diff_assoc($updatedRights, $previousRights), JSON_PRETTY_PRINT);
                     $dataValues     = "user = '" . $actionInfo['user'] . "'\nchanges = " . $changes;
