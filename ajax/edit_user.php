@@ -18,12 +18,60 @@ $pid  = $module->getProjectId();
 
 $scriptPath = $module->getSafePath('UserRights/edit_user.php', APP_PATH_DOCROOT);
 
-if ( in_array($submitAction, [ 'delete_user', 'add_role', 'delete_role', 'copy_role' ]) ) {
+if ( in_array($submitAction, [ 'delete_user', 'delete_role' ], true) ) {
     require_once $scriptPath;
     exit;
 }
 
 $rightsUtilities = new RightsUtilities($module);
+
+if ( in_array($submitAction, [ 'add_role', 'copy_role' ], true) ) {
+    ob_start(function ($str) use ($submitAction, $module, $data) {
+        try {
+            $role           = $submitAction == 'add_role' ? new Role($module, $data['user'], null, $data['role_name']) : new Role($module, $data['user']);
+            $action         = $submitAction == 'add_role' ? "Add role" : "Copy role";
+            $rights         = json_encode($role->getRoleRightsRaw() ?? [], JSON_PRETTY_PRINT);
+            $roleId         = $submitAction == 'add_role' ? '0' : $role->getRoleId();
+            $roleName       = $role->getRoleName();
+            $uniqueRoleName = $role->getUniqueRoleName();
+            $dataValues     = "role = '" . $roleName . "'\nunique role name = '" . $uniqueRoleName . "'\nrights = " . $rights;
+
+            $logTable   = $module->framework->getProject()->getLogTable();
+            $projectId  = $module->framework->getProjectId();
+            $sql        = "SELECT log_event_id FROM $logTable WHERE project_id = ? AND user = ? AND page = 'ExternalModules/index.php' AND object_type = 'redcap_user_rights' AND pk = ? AND event = 'INSERT' AND TIMESTAMPDIFF(SECOND,ts,NOW()) <= 10 ORDER BY ts DESC";
+            $params     = [ $projectId, $module->getUser()->getUsername(), $roleId ];
+            $result     = $module->query($sql, $params);
+            $logEventId = intval($result->fetch_assoc()["log_event_id"]);
+            if ( $logEventId != 0 ) {
+                $module->query("UPDATE $logTable SET data_values = ? WHERE log_event_id = ?", [ $dataValues, $logEventId ]);
+            } else {
+                \Logging::logEvent(
+                    '',
+                    "redcap_user_rights",
+                    "insert",
+                    $roleId,
+                    $dataValues,
+                    $action,
+                    "",
+                    "",
+                    "",
+                    true,
+                    null,
+                    null,
+                    false
+                );
+            }
+        } catch ( \Throwable $e ) {
+            $module->log("Error logging role creation or copy", [ "error" => $e->getMessage() ]);
+        }
+        return $str;
+    });
+    require_once $scriptPath;
+    ob_end_flush(); // End buffering and clean up
+    exit;
+}
+
+
 
 if ( in_array($submitAction, [ 'add_user', 'edit_user' ]) ) {
     $sagUser          = new SAGUser($module, $user);

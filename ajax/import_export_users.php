@@ -69,7 +69,7 @@ if ( isset($_POST['csv_content']) && $_POST['csv_content'] != '' ) {
     }
 
     if ( empty($badRights) ) {
-        ob_start(function () use ($allCurrentRights, $module, $sagUser) {
+        ob_start(function () use ($allCurrentRights, $module, $sagUser, $requestedExpiration) {
             try {
                 $imported   = $_SESSION['imported'] === 'users';
                 $errorCount = sizeof($_SESSION['errors']) ?? 0;
@@ -84,7 +84,7 @@ if ( isset($_POST['csv_content']) && $_POST['csv_content'] != '' ) {
                         $updatedRights = $sagUser->getCurrentRights($pid) ?? [];
                         $changes       = json_encode(array_diff_assoc($updatedRights, $currentRights), JSON_PRETTY_PRINT);
                         $changes       = $changes === '[]' ? 'None' : $changes;
-                        $dataValues    = "user = '$username'\nchanges = $changes\n\n";
+                        $dataValues    = "user = '$username'\nchanges = $changes\nexpiration date = '$requestedExpiration'";
 
                         $params     = [ $pid, $redcapUser, $username ];
                         $result     = $module->framework->query($sql, $params);

@@ -9,12 +9,15 @@ class Role
     private $uniqueRoleName;
     private SecurityAccessGroups $module;
 
-    public function __construct(SecurityAccessGroups $module, $roleId = null, $uniqueRoleName = null)
+    public function __construct(SecurityAccessGroups $module, $roleId = null, $uniqueRoleName = null, $roleName = null)
     {
-        if ( empty($roleId) && empty($uniqueRoleName) ) {
+        $this->module = $module;
+        if ( $roleId === "0" && empty($roleName) ) {
+            throw new SAGException('Must provide a role name if this is a newly created role');
+        } elseif ( empty($roleId) && $roleId !== "0" && empty($uniqueRoleName) ) {
             throw new SAGException('Must provide either a role ID or a unique role name');
         }
-        $this->module         = $module;
+        $roleId               = $roleId === "0" ? $this->getNewRoleIdFromRoleName($roleName) : $roleId;
         $this->roleId         = $roleId ?? $this->getRoleIdFromUniqueRoleName($uniqueRoleName);
         $this->uniqueRoleName = $uniqueRoleName ?? $this->getUniqueRoleNameFromRoleId($roleId);
         $this->roleName       = $this->getRoleNameFromRoleId($this->roleId);
@@ -98,4 +101,11 @@ class Role
         return \REDCap::filterHtml($row['role_name']);
     }
 
+    private function getNewRoleIdFromRoleName(string $roleName)
+    {
+        $sql    = 'SELECT max(role_id) as role_id FROM redcap_user_roles WHERE project_id = ? AND role_name = ?';
+        $params = [ $this->module->framework->getProjectId(), $roleName ];
+        $result = $this->module->framework->query($sql, $params);
+        return \REDCap::filterHtml($result->fetch_assoc()['role_id']);
+    }
 }

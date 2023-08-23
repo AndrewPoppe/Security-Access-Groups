@@ -40,7 +40,6 @@ if ( $errors === false ) {
     ];
     ob_start(function ($str) use ($info, $module) {
         try {
-            $module->log('ok', [ 'str' => $str ]);
             $succeeded = true; //strpos($str, 'userSaveMsg darkgreen') !== false; // is there no better way?
             if ( $succeeded ) {
                 $dataValues = "user = '" . $info["username"] . "'\nexpiration date = '" . $info["expiration"] . "'";
