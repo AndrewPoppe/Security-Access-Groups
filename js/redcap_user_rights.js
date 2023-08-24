@@ -46,7 +46,7 @@ $(function () {
             } else if (window.import_type == "roleassignments") {
                 title = sag_module.tt('bad_role_assignment_import_1');
                 text =
-                    `${sag_module.tt('bad_role_assigment_import_2')}:<br><table style="margin-top: 20px; width: 100%; table-layout: fixed;"><thead style="border-bottom: 2px solid #666;"><tr><th>${sag_module.tt('user_role')}</th><th>${sag_module.tt('user')}</th><th>${sag_module.tt('sag')}</th><th COLSPAN=2>${sag_module.tt('permissions_1')}</th></tr></thead><tbody style="border-bottom: 1px solid black;">`;
+                    `${sag_module.tt('bad_role_assignment_import_2')}:<br><table style="margin-top: 20px; width: 100%; table-layout: fixed;"><thead style="border-bottom: 2px solid #666;"><tr><th>${sag_module.tt('user_role')}</th><th>${sag_module.tt('user')}</th><th>${sag_module.tt('sag')}</th><th COLSPAN=2>${sag_module.tt('permissions_1')}</th></tr></thead><tbody style="border-bottom: 1px solid black;">`;
                 const roles = Object.keys(window.import_errors);
                 roles.forEach((role) => {
                     const users = Object.keys(window.import_errors[role]);

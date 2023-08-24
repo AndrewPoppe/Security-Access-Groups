@@ -12,6 +12,7 @@ class Role
     public function __construct(SecurityAccessGroups $module, $roleId = null, $uniqueRoleName = null, $roleName = null)
     {
         $this->module = $module;
+        $uniqueRoleName = trim($uniqueRoleName ?? '');
         if ( $roleId === "0" && empty($roleName) ) {
             throw new SAGException('Must provide a role name if this is a newly created role');
         } elseif ( empty($roleId) && $roleId !== "0" && empty($uniqueRoleName) ) {
@@ -19,7 +20,7 @@ class Role
         }
         $roleId               = $roleId === "0" ? $this->getNewRoleIdFromRoleName($roleName) : $roleId;
         $this->roleId         = $roleId ?? $this->getRoleIdFromUniqueRoleName($uniqueRoleName);
-        $this->uniqueRoleName = $uniqueRoleName ?? $this->getUniqueRoleNameFromRoleId($roleId);
+        $this->uniqueRoleName = $uniqueRoleName ?? $this->getUniqueRoleNameFromRoleId($this->roleId);
         $this->roleName       = $this->getRoleNameFromRoleId($this->roleId);
     }
 

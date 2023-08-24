@@ -105,11 +105,12 @@ if ( isset($_POST['csv_content']) && $_POST['csv_content'] != '' ) {
         $allCurrentRights = [];
         $allRoleIdsOrig   = array_keys(\UserRights::getRoles($pid));
         foreach ( $data as $key => $thisRole ) {
-            if ( empty($thisRole['unique_role_name']) ) {
+            $uniqueRoleName = trim($thisRole['unique_role_name']);
+            if ( empty($uniqueRoleName) ) {
                 continue;
             }
             $roleLabel = $thisRole['role_label'];
-            $role      = new Role($module, null, $thisRole['unique_role_name']);
+            $role      = new Role($module, null, $uniqueRoleName);
             $roleId    = $role->getRoleId();
             if ( isset($roleId) ) {
                 $allCurrentRights[$roleId] = $role->getRoleRightsRaw();
