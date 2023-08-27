@@ -31,15 +31,12 @@ jobs:
         path: www/modules/security_access_groups_v99
     - name: start playwright setup
       run: |
-        cd www/modules/security_access_groups_v99
-        ls -la
-        pwd
-        cd tests
+        cd www/modules/security_access_groups_v99/tests/playwright
     - uses: actions/setup-node@v3
       with:
         node-version: 18
     - name: Install dependencies
-      run: npm ci
+      run: npm install
     - name: Install Playwright Browsers
       run: npx playwright install --with-deps
     - name: Run Playwright tests
