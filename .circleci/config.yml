@@ -1,39 +1,17 @@
 version: 2.0
 
 jobs:
-  run-test:
-    # docker:
-    #   image: mcr.microsoft.com/playwright:v1.37.0-jammy
+  build:
     machine:
       image: ubuntu-2204:2023.02.1
+    parallelism: 8
     steps:
-      - checkout
-      - run: npm install
-      - run: npx playwright install
-      - run: npx playwright install chromium
+      #- checkout
       - run:
           name: Install MySQL Client
           command: |
             sudo apt-get update
             sudo apt-get install mysql-client-core-8.0
-      # - run:
-      #     name: Install docker-compose
-      #     command: |
-      #       apt-get update
-      #       apt-get install ca-certificates curl gnupg
-      #       install -m 0755 -d /etc/apt/keyrings
-      #       curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
-      #       chmod a+r /etc/apt/keyrings/docker.gpg
-      #       echo \
-      #         "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
-      #         "$(. /etc/os-release && echo "$VERSION_CODENAME")" stable" | \
-      #         tee /etc/apt/sources.list.d/docker.list > /dev/null
-      #       apt-get update
-      #       apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
-      # - run:
-      #     name: Start docker daemon
-      #     command: |
-      #       service docker start
       - run:
           name: Build the REDCap Image
           command: |
@@ -46,18 +24,30 @@ jobs:
           name: Start Docker REDCap Container
           command: |
             cd /home/circleci/project/redcap_docker
-            docker compose up -d
+            docker-compose up -d
       - run:
           name: Change eDocs folder permissions
           command: |
-            sudo chmod 777 /var/edocs              
+            sudo chmod 777 /var/edocs
+      - run:
+          name: Install module
+          command: |
+            cd /home/circleci/project/www/modules
+            git clone "$CIRCLE_REPOSITORY_URL" security_access_groups_v99
+      - run:
+          name: Install Playwright
+          command: |
+            cd /home/circleci/project/www/modules/security_access_groups_v99/tests/playwright
+            npx playwright install-deps chromium
       - run:
           name: Run Tests
           command: |
             npx playwright test
+      - store_artifacts:
+          path: /home/circleci/project/www/modules/security_access_groups_v99/tests/playwright/test-results
 workflows:
   version: 2
   workflow:
     jobs:
-    - run-test:
-        context: REDCap Tests
+      - build:
+          context: REDCap Tests
