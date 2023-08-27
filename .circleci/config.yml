@@ -25,6 +25,8 @@ jobs:
       - run:
           name: Start Docker REDCap Container
           command: |
+            pwd
+            ls -la
             cd /home/circleci/project/redcap_docker
             docker-compose up -d
       - run:
