@@ -13,7 +13,7 @@ jobs:
         sudo apt-get install mysql-client-core-8.0
     - name: Build the REDCap Image
       run: git clone --branch v11.1.29 https://github.com/aldefouw/redcap_docker
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v2
       with:
         repository: AndrewPoppe/redcap_source
         ref: v13.1.27
