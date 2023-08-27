@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Install MySQL Client
-      run: 
+      run: |
         sudo apt-get update
         sudo apt-get install mysql-client-core-8.0
     - name: Build the REDCap Image
@@ -16,7 +16,7 @@ jobs:
     - name: Get REDCap Source
       run: git clone --branch v13.1.27 https://github.com/AndrewPoppe/redcap_source www
     - name: Start Docker REDCap Container
-      run:
+      run: |
         cd redcap_docker
         docker-compose up -d
     - name: Change eDocs folder permissions
