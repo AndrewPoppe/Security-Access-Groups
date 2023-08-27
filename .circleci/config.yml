@@ -1,0 +1,43 @@
+version: 2.0
+
+jobs:
+  run-test:
+    docker:
+      image: mcr.microsoft.com/playwright:v1.37.0-jammy
+    steps:
+      - checkout
+      - run: npm install
+      - run: npx playwright install
+      - run: npx playwright install chromium
+      - run:
+          name: Install MySQL Client
+          command: |
+            sudo apt-get update
+            sudo apt-get install mysql-client-core-8.0
+      - run:
+          name: Build the REDCap Image
+          command: |
+            git clone --branch v11.1.29 https://github.com/aldefouw/redcap_docker
+      - run:
+          name: Get REDCap Source
+          command: |
+            git clone --branch v13.1.27 https://github.com/AndrewPoppe/redcap_source www
+      - run:
+          name: Start Docker REDCap Container
+          command: |
+            cd /home/circleci/project/redcap_docker
+            docker-compose up -d
+      - run:
+          name: Change eDocs folder permissions
+          command: |
+            sudo chmod 777 /var/edocs              
+      - run:
+          name: Run Tests
+          command: |
+            npx playwright test
+workflows:
+  version: 2
+  workflow:
+    jobs:
+    - run-test:
+        context: REDCap Tests
