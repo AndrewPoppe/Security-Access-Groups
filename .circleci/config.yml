@@ -31,7 +31,7 @@ jobs:
       - run:
           name: Start docker daemon
           command: |
-            systemctl start docker
+            dockerd &
       - run:
           name: Build the REDCap Image
           command: |
