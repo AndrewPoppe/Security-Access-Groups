@@ -15,7 +15,7 @@ jobs:
       with:
         repository: AndrewPoppe/redcap_source
         ref: v13.1.27
-        token: ${{ github.token }}
+        token: ${{ github.Repos }}
         path: ${GITHUB_WORKSPACE}/www
         persist-credentials: false
     - name: Build the REDCap Image
