@@ -29,6 +29,10 @@ jobs:
             apt-get update
             apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
       - run:
+          name: Start docker daemon
+          command: |
+            systemctl start docker
+      - run:
           name: Build the REDCap Image
           command: |
             git clone --branch v11.1.29 https://github.com/aldefouw/redcap_docker
