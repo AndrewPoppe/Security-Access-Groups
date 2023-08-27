@@ -2,10 +2,8 @@ version: 2.0
 
 jobs:
   run-test:
-    executors:
-      pw-jammy-development:
-        docker:
-          - image: mcr.microsoft.com/playwright:v1.37.0-jammy
+    docker:
+      image: mcr.microsoft.com/playwright:v1.37.0-jammy
     steps:
       - checkout
       - run: npm install
@@ -16,6 +14,20 @@ jobs:
           command: |
             apt-get update
             apt-get install mysql-client-core-8.0
+      - run:
+          name: Install docker-compose
+          command: |
+            apt-get update
+            apt-get install ca-certificates curl gnupg
+            install -m 0755 -d /etc/apt/keyrings
+            curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+            chmod a+r /etc/apt/keyrings/docker.gpg
+            echo \
+              "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+              "$(. /etc/os-release && echo "$VERSION_CODENAME")" stable" | \
+              tee /etc/apt/sources.list.d/docker.list > /dev/null
+            apt-get update
+            apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
       - run:
           name: Build the REDCap Image
           command: |
