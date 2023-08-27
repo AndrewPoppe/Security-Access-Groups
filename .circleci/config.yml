@@ -45,7 +45,9 @@ jobs:
       - run:
           name: Start Docker REDCap Container
           command: |
-            cd /root/project/redcap_docker
+            pwd
+            ls -la
+            sudo cd /root/project/redcap_docker
             docker compose up -d
       - run:
           name: Change eDocs folder permissions
