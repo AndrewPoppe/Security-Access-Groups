@@ -2,8 +2,10 @@ version: 2.0
 
 jobs:
   run-test:
-    docker:
-      image: mcr.microsoft.com/playwright:v1.37.0-jammy
+    executors:
+      pw-jammy-development:
+        docker:
+          - image: mcr.microsoft.com/playwright:v1.37.0-jammy
     steps:
       - checkout
       - run: npm install
