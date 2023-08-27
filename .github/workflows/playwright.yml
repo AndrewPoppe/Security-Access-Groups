@@ -16,7 +16,7 @@ jobs:
         repository: AndrewPoppe/redcap_source
         ref: v13.1.27
         token: ${{ secrets.REPOS_TOKEN }}
-        path: ${GITHUB_WORKSPACE}/www
+        path: www
         persist-credentials: false
     - name: Build the REDCap Image
       run: git clone --branch v11.1.29 https://github.com/aldefouw/redcap_docker
@@ -28,9 +28,13 @@ jobs:
       run: sudo chmod 777 /var/edocs
     - uses: actions/checkout@v3
       with:
-        path: ${GITHUB_WORKSPACE}/www/modules/security_access_groups_v99
+        path: www/modules/security_access_groups_v99
     - name: start playwright setup
-      run: cd ${GITHUB_WORKSPACE}/www/modules/security_access_groups_v99/tests/
+      run: |
+        cd www/modules/security_access_groups_v99
+        ls -la
+        pwd
+        cd tests
     - uses: actions/setup-node@v3
       with:
         node-version: 18
