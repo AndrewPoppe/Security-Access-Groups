@@ -14,8 +14,8 @@ jobs:
       - run:
           name: Install MySQL Client
           command: |
-            apt-get update
-            apt-get install mysql-client-core-8.0
+            sudo apt-get update
+            sudo apt-get install mysql-client-core-8.0
       # - run:
       #     name: Install docker-compose
       #     command: |
@@ -30,10 +30,10 @@ jobs:
       #         tee /etc/apt/sources.list.d/docker.list > /dev/null
       #       apt-get update
       #       apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
-      - run:
-          name: Start docker daemon
-          command: |
-            service docker start
+      # - run:
+      #     name: Start docker daemon
+      #     command: |
+      #       service docker start
       - run:
           name: Build the REDCap Image
           command: |
@@ -50,7 +50,7 @@ jobs:
       - run:
           name: Change eDocs folder permissions
           command: |
-            chmod 777 /var/edocs              
+            sudo chmod 777 /var/edocs              
       - run:
           name: Run Tests
           command: |
