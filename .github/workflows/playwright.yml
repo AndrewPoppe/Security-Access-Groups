@@ -2,24 +2,18 @@ name: Playwright Tests
 on:
   push:
     branches: main
+  workflow_dispatch:
 jobs:
   test:
     timeout-minutes: 60
     runs-on: ubuntu-latest
     steps:
-      # - name: Install MySQL Client
-      #   run: |
-      #     sudo apt-get update
-      #     sudo apt-get install mysql-client-core-8.0
       - uses: actions/checkout@v3
         with:
           repository: AndrewPoppe/redcap_source
           ref: v13.1.27_zip
           token: ${{ secrets.REPOS_TOKEN }}
-          #path: www
           persist-credentials: false
-      # - name: Build the REDCap Image
-      #   run: git clone --branch v11.1.29 https://github.com/aldefouw/redcap_docker
       - name: Build the REDCap Image
         run: |
           git clone https://github.com/123andy/redcap-docker-compose.git
@@ -57,32 +51,6 @@ jobs:
           name: setup
           path: ./security_access_groups/tests/playwright/setup/screenshots
           retention-days: 30
-      # - name: Initialize REDCap
-      #   run: |
-      #     curl --request GET --location 'http://localhost:13740'
-
-      #     curl --location 'http://localhost:13740' \
-      #     --form 'init-table=1' \
-      #     --form 'dl-option=upload' \
-      #     --form 'install-option=upload' \
-      #     --form 'init-table-email=andrew.poppe@yale.edu' \
-      #     --form 'installer-upload=@redcap13.1.27.zip'
-      # - name: Wait for REDCap to start
-      #   run: |
-      #     sleep 300;
-      #     timeout 300 bash -c 'while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' localhost:13740/index.php)" != "200" ]]; do echo "not yet"; sleep 5; done' || false 
-      # - uses: actions/checkout@v3
-      #   with:
-      #     path: www/modules/security_access_groups_v99
-      # - uses: actions/setup-node@v3
-      #   with:
-      #     node-version: 18
-      # - name: Install dependencies
-      #   working-directory: ./www/modules/security_access_groups_v99/tests/playwright
-      #   run: npm install
-      # - name: Install Playwright Browsers
-      #   working-directory: ./www/modules/security_access_groups_v99/tests/playwright
-      #   run: npx playwright install --with-deps
       - name: Move module files
         run: |
           sudo chmod -R 777 ./redcap-docker-compose/www/modules
