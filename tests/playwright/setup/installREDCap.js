@@ -20,7 +20,7 @@ const { config } = require('../fixtures/config');
 
     await page.locator('button.initiate-installation').click();
 
-    await page.locator('div', { hasText: 'Building your REDCap Server' }).waitFor({ state: 'visible' });
+    //await page.locator('div', { hasText: 'Building your REDCap Server' }).waitFor({ state: 'visible' });
 
     await page.locator('div.alert-success', { hasText: 'Created users: admin alice bob carol dan' }).waitFor({ state: 'visible', timeout: 300000 });
 
