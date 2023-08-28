@@ -16,6 +16,7 @@ export class Module {
 
     async logIn() {
         await this.page.goto(`${this.url}`);
+        await this.page.screenshot({ path: 'test-results/login.png' });
         await this.page.locator('input#username').fill(this.settings.username);
         await this.page.locator('input#password').fill(this.settings.password);
         await this.page.locator('button#login_btn').click();
@@ -28,6 +29,25 @@ export class Module {
 
     async visitExternalModuleConfigurationPage() {
         await this.page.goto(`${this.url}/ExternalModules/manager/control_center.php`, { waitUntil: 'domcontentloaded' });
+    }
+
+    async enableModuleSystemWide() {
+        await this.visitExternalModuleConfigurationPage();
+        await this.page.waitForLoadState('domcontentloaded');
+
+        const enabledModuleRow = this.page.locator('table#external-modules-enabled tr[data-module="security_access_groups"]');
+        if (await enabledModuleRow.isVisible()) {
+            return;
+        }
+
+        await this.page.locator('button#external-modules-enable-modules-button').click();
+        await this.page.locator('div.modal-header', { hasText: 'Available Modules' }).waitFor({ state: 'visible' });
+        await this.page.locator('table#external-modules-disabled-table tr[data-module="security_access_groups"] button.enable-button').click();
+
+        const popupEnableButton = this.page.locator('div#external-modules-enable-modal div.modal-footer button.enable');
+        if (await popupEnableButton.isVisible()) {
+            await popupEnableButton.click();
+        }
     }
 
     async setLanguageToEnglish() {
