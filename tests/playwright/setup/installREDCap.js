@@ -1,5 +1,5 @@
 const playwright = require('playwright');
-const config = require('../fixtures/config');
+const { config } = require('../fixtures/config');
 
 (async () => {
     const browser = await playwright.chromium.launch({ headless: true });
