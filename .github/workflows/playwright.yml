@@ -32,47 +32,63 @@ jobs:
           sed 's|\(MAILHOG_PORT\)=.*|\1=13745|' > .env
           #sed -i 's|\(FROM php\):.*|\1:7.4.5-apache-buster|' docker-web/Dockerfile
       - name: Start Docker REDCap Container
-        run: |
-          cd redcap-docker-compose/rdc
-          docker-compose up -d
-      - name: Initialize REDCap
-        run: |
-          curl --request GET --location 'http://localhost:13740'
-
-          curl --location 'http://localhost:13740' \
-          --form 'init-table=1' \
-          --form 'dl-option=upload' \
-          --form 'install-option=upload' \
-          --form 'init-table-email=andrew.poppe@yale.edu' \
-          --form 'installer-upload=@redcap13.1.27.zip'
-      - name: Wait for REDCap to start
-        run: |
-          sleep 300;
-          timeout 300 bash -c 'while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' localhost:13740/index.php)" != "200" ]]; do echo "not yet"; sleep 5; done' || false 
+        working-directory: ./redcap-docker-compose/rdc
+        run: docker-compose up -d
       - uses: actions/checkout@v3
         with:
-          path: www/modules/security_access_groups_v99
+          path: security_access_groups
       - uses: actions/setup-node@v3
         with:
           node-version: 18
       - name: Install dependencies
-        working-directory: ./www/modules/security_access_groups_v99/tests/playwright
+        working-directory: ./security_access_groups/tests/playwright
         run: npm install
       - name: Install Playwright Browsers
-        working-directory: ./www/modules/security_access_groups_v99/tests/playwright
+        working-directory: ./security_access_groups/tests/playwright
         run: npx playwright install --with-deps
+      - name: Initialize REDCap
+        working-directory: ./security_access_groups/tests/playwright/setup
+        run: node installREDCap.js
+      # - name: Initialize REDCap
+      #   run: |
+      #     curl --request GET --location 'http://localhost:13740'
+
+      #     curl --location 'http://localhost:13740' \
+      #     --form 'init-table=1' \
+      #     --form 'dl-option=upload' \
+      #     --form 'install-option=upload' \
+      #     --form 'init-table-email=andrew.poppe@yale.edu' \
+      #     --form 'installer-upload=@redcap13.1.27.zip'
+      # - name: Wait for REDCap to start
+      #   run: |
+      #     sleep 300;
+      #     timeout 300 bash -c 'while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' localhost:13740/index.php)" != "200" ]]; do echo "not yet"; sleep 5; done' || false 
+      # - uses: actions/checkout@v3
+      #   with:
+      #     path: www/modules/security_access_groups_v99
+      # - uses: actions/setup-node@v3
+      #   with:
+      #     node-version: 18
+      # - name: Install dependencies
+      #   working-directory: ./www/modules/security_access_groups_v99/tests/playwright
+      #   run: npm install
+      # - name: Install Playwright Browsers
+      #   working-directory: ./www/modules/security_access_groups_v99/tests/playwright
+      #   run: npx playwright install --with-deps
+      - name: Move module files
+        run: cp -r ./security_access_groups/* ./redcap-docker-compose/www/modules/security_access_groups_v99/
       - name: Run Playwright tests
-        working-directory: ./www/modules/security_access_groups_v99/tests/playwright
+        working-directory: ./redcap-docker-compose/www/modules/security_access_groups_v99/tests/playwright
         run: npx playwright test
       - uses: actions/upload-artifact@v3
         if: always()
         with:
           name: playwright-report
-          path: ./www/modules/security_access_groups_v99/tests/playwright/playwright-report/
+          path: ./redcap-docker-compose/www/modules/security_access_groups_v99/tests/playwright/playwright-report/
           retention-days: 30
       - uses: actions/upload-artifact@v3
         if: always()
         with:
           name: test-results
-          path: ./www/modules/security_access_groups_v99/tests/playwright/test-results/
+          path: ./redcap-docker-compose/www/modules/security_access_groups_v99/tests/playwright/test-results/
           retention-days: 30

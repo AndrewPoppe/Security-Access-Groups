@@ -11,6 +11,7 @@ exports.test = base.extend({
             password: config.users.AdminUser.password,
         });
         await module.logIn();
+        await module.enableModuleSystemWide();
         await module.setLanguageToEnglish();
         await module.visitSAGsPage();
         await module.deleteExistingSAGs();
