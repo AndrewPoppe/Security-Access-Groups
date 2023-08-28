@@ -11,7 +11,7 @@ const { config } = require('../fixtures/config');
     await page.locator('input[name="dl-option"][value="upload"]').check();
 
     await page.locator('input#installer-upload').waitFor({ state: 'visible' });
-    await page.locator('input#installer-upload').setInputFiles('../../../../../../../redcap13.1.27.zip');
+    await page.locator('input#installer-upload').setInputFiles('redcap13.1.27.zip');
 
     await page.locator('input[name="init-table"]').check();
 
