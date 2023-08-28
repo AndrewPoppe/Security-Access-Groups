@@ -37,16 +37,16 @@ jobs:
           docker-compose up -d
       - name: Initialize REDCap
         run: |
-          result1=$(curl --request GET \
-          --url http://localhost:13740)
-
-          result2=$(curl --location 'http://localhost:13740' \
-          --form 'init-table=true' \
+          curl --location 'http://localhost:13740' \
+          --form 'init-table=1' \
+          --form 'dl-option=upload' \
           --form 'install-option=upload' \
           --form 'init-table-email=andrew.poppe@yale.edu' \
-          --form 'installer-upload=@redcap13.1.27.zip')
+          --form 'installer-upload=@redcap13.1.27.zip'
       - name: Wait for REDCap to start
-        run: timeout 300 bash -c 'while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' localhost:13740/index.php)" != "200" ]]; do echo "not yet"; sleep 300; done' || false 
+        run: |
+          sleep 300;
+          timeout 300 bash -c 'while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' localhost:13740/index.php)" != "200" ]]; do echo "not yet"; sleep 5; done' || false 
       - uses: actions/checkout@v3
         with:
           path: www/modules/security_access_groups_v99
