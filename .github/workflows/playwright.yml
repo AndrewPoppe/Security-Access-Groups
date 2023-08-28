@@ -22,7 +22,6 @@ jobs:
       #   run: git clone --branch v11.1.29 https://github.com/aldefouw/redcap_docker
       - name: Build the REDCap Image
         run: |
-          ls -l
           git clone https://github.com/123andy/redcap-docker-compose.git
           cd redcap-docker-compose/rdc
           sed 's|\(DOCKER_PREFIX\)=.*|\1=rc13_php7.4|' .env-example |
@@ -42,7 +41,7 @@ jobs:
           --form 'init-table=true' \
           --form 'install-option=upload' \
           --form 'init-table-email=andrew.poppe@yale.edu' \
-          --form 'installer-upload=@REDCap_v13.1.27.zip'
+          --form 'installer-upload=@redcap13.1.27.zip'
       - name: Wait for REDCap to start
         run: timeout 300 bash -c 'while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' localhost:13740/index.php)" != "200" ]]; do echo "not yet"; sleep 5; done' || false 
       - uses: actions/checkout@v3
