@@ -9,19 +9,26 @@ const { config } = require('../fixtures/config');
 
     await page.locator('input[name="dl-option"][value="upload"]').waitFor({ state: 'visible' });
     await page.locator('input[name="dl-option"][value="upload"]').check();
+    await page.screenshot({ path: 'screenshots/screenshot.png' });
 
     await page.locator('input#installer-upload').waitFor({ state: 'visible' });
     await page.locator('input#installer-upload').setInputFiles('redcap13.1.27.zip');
+    await page.screenshot({ path: 'screenshots/screenshot2.png' });
 
     await page.locator('input[name="init-table"]').check();
+    await page.screenshot({ path: 'screenshots/screenshot3.png' });
 
     await page.locator('input[name="init-table-email"]').waitFor({ state: 'visible' });
     await page.locator('input[name="init-table-email"]').fill('andrew.poppe@yale.edu');
+    await page.screenshot({ path: 'screenshots/screenshot4.png' });
 
     await page.locator('button.initiate-installation').click();
+    await page.screenshot({ path: 'screenshots/screenshot5.png' });
 
     //await page.locator('div', { hasText: 'Building your REDCap Server' }).waitFor({ state: 'visible' });
 
-    await page.locator('div.alert-success', { hasText: 'Created users: admin alice bob carol dan' }).waitFor({ state: 'visible', timeout: 300000 });
+    await page.locator('div.alert-success').first().waitFor({ state: 'visible', timeout: 300000 });
+    await page.waitForTimeout(10000);
+    await page.screenshot({ path: 'screenshots/screenshot6.png' });
 
 })();

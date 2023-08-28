@@ -51,6 +51,12 @@ jobs:
       - name: Initialize REDCap
         working-directory: ./security_access_groups/tests/playwright/setup
         run: node installREDCap.js
+      - uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: setup
+          path: ./security_access_groups/tests/playwright/setup/screenshots
+          retention-days: 30
       # - name: Initialize REDCap
       #   run: |
       #     curl --request GET --location 'http://localhost:13740'
