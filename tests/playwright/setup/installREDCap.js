@@ -3,7 +3,8 @@ const config = require('../fixtures/config');
 
 (async () => {
     const browser = await playwright.chromium.launch({ headless: true });
-    const page = await browser.page();
+    const context = await browser.newContext();
+    const page = await context.newPage();
     await page.goto(config.redcapUrl);
 
     await page.locator('input[name="dl-option"').waitFor({ state: 'visible' });
