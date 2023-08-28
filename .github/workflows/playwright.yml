@@ -30,7 +30,7 @@ jobs:
           sed 's|\(MYSQL_PORT\)=.*|\1=13746|' |
           sed 's|\(PHPMYADMIN_PORT\)=.*|\1=13741|' |
           sed 's|\(MAILHOG_PORT\)=.*|\1=13745|' > .env
-          sed 's|'\(FROM php\):.*|\1:7.4.5-apache-buster|' docker-web/Dockerfile > docker-web/Dockerfile
+          sed 's|\(FROM php\):.*|\1:7.4.5-apache-buster|' docker-web/Dockerfile > docker-web/Dockerfile
       - name: Start Docker REDCap Container
         run: |
           cd redcap-docker-compose/rdc
