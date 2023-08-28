@@ -30,7 +30,7 @@ jobs:
           sed 's|\(MYSQL_PORT\)=.*|\1=13746|' |
           sed 's|\(PHPMYADMIN_PORT\)=.*|\1=13741|' |
           sed 's|\(MAILHOG_PORT\)=.*|\1=13745|' > .env
-          sed -i 's|\(FROM php\):.*|\1:7.4.5-apache-buster|' docker-web/Dockerfile
+          #sed -i 's|\(FROM php\):.*|\1:7.4.5-apache-buster|' docker-web/Dockerfile
       - name: Start Docker REDCap Container
         run: |
           cd redcap-docker-compose/rdc
@@ -42,6 +42,7 @@ jobs:
           --data-urlencode 'init-table=true' \
           --data-urlencode 'install-option=upload' \
           --data-urlencode 'init-table-email=andrew.poppe@yale.edu'
+          --data-urlencode 'installer-upload=redcap_source/REDCap_v13.1.27.zip'
           timeout 300 bash -c 'while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' localhost:13740/index.php)" != "200" ]]; do echo "not yet"; sleep 5; done' || false 
       - uses: actions/checkout@v3
         with:
