@@ -44,7 +44,7 @@ export class Module {
         await this.page.locator('div.modal-header', { hasText: 'Available Modules' }).waitFor({ state: 'visible' });
         await this.page.locator('table#external-modules-disabled-table tr[data-module="security_access_groups"] button.enable-button').click();
 
-        const popupEnableButton = this.page.locator('div#external-modules-enable-modal div.modal-footer button.enable');
+        const popupEnableButton = this.page.locator('div#external-modules-enable-modal div.modal-footer button.enable-button');
         if (await popupEnableButton.isVisible()) {
             await popupEnableButton.click();
         }
