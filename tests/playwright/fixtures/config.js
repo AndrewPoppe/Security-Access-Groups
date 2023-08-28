@@ -1,6 +1,6 @@
 exports.config = {
     redcapVersion: 'redcap_v13.1.27',
-    redcapUrl: 'http://localhost',
+    redcapUrl: 'http://localhost:13740',
     projects: {
         UI_Project: {
             projectName: 'SAG EM - UI Test Project',

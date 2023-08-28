@@ -14,18 +14,35 @@ jobs:
       - uses: actions/checkout@v3
         with:
           repository: AndrewPoppe/redcap_source
-          ref: v13.1.27
+          ref: v13.1.27_zip
           token: ${{ secrets.REPOS_TOKEN }}
-          path: www
+          #path: www
           persist-credentials: false
+      # - name: Build the REDCap Image
+      #   run: git clone --branch v11.1.29 https://github.com/aldefouw/redcap_docker
       - name: Build the REDCap Image
-        run: git clone --branch v11.1.29 https://github.com/aldefouw/redcap_docker
+        run: |
+          git clone https://github.com/123andy/redcap-docker-compose.git
+          cd redcap-docker-compose/rdc
+          sed 's|\(DOCKER_PREFIX\)=.*|\1=rc13_php7.4|' .env-example |
+          sed 's|\(TZ\)=.*|\1=America/New_York|' |
+          sed 's|\(WEB_PORT\)=.*|\1=13740|' |
+          sed 's|\(MYSQL_PORT\)=.*|\1=13746|' |
+          sed 's|\(PHPMYADMIN_PORT\)=.*|\1=13741|' |
+          sed 's|\(MAILHOG_PORT\)=.*|\1=13745|' > .env
+          sed 's|'\(FROM php\):.*|\1:7.4.5-apache-buster|' docker-web/Dockerfile > docker-web/Dockerfile
       - name: Start Docker REDCap Container
         run: |
-          cd redcap_docker
+          cd redcap-docker-compose/rdc
           docker-compose up -d
-      - name: Change eDocs folder permissions
-        run: sudo chmod 777 /var/edocs
+      - name: Initialize REDCap
+        run: |
+          curl --location 'http://localhost:13740' \
+          --header 'Content-Type: application/x-www-form-urlencoded' \
+          --data-urlencode 'init-table=true' \
+          --data-urlencode 'install-option=upload' \
+          --data-urlencode 'init-table-email=andrew.poppe@yale.edu'
+          timeout 300 bash -c 'while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' localhost:13740/index.php)" != "200" ]]; do echo "not yet"; sleep 5; done' || false 
       - uses: actions/checkout@v3
         with:
           path: www/modules/security_access_groups_v99
