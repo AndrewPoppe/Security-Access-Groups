@@ -38,12 +38,10 @@ jobs:
       - name: Initialize REDCap
         run: |
           curl --location 'http://localhost:13740' \
-          --header 'Content-Type: application/x-www-form-urlencoded' \
-          --data-urlencode 'init-table=true' \
-          --data-urlencode 'install-option=upload' \
-          --data-urlencode 'init-table-email=andrew.poppe@yale.edu' \
-          --data-urlencode 'installer-upload=redcap_source/REDCap_v13.1.27.zip' \
-          -F 'installer-upload=@redcap_source/REDCap_v13.1.27.zip'
+          --form 'init-table=true' \
+          --form 'install-option=upload' \
+          --form 'init-table-email=andrew.poppe@yale.edu' \
+          --form 'installer-upload=@redcap_source/REDCap_v13.1.27.zip'
       - name: Wait for REDCap to start
         run: timeout 300 bash -c 'while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' localhost:13740/index.php)" != "200" ]]; do echo "not yet"; sleep 5; done' || false 
       - uses: actions/checkout@v3
