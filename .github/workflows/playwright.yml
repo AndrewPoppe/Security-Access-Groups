@@ -22,6 +22,7 @@ jobs:
       #   run: git clone --branch v11.1.29 https://github.com/aldefouw/redcap_docker
       - name: Build the REDCap Image
         run: |
+          ls -l
           git clone https://github.com/123andy/redcap-docker-compose.git
           cd redcap-docker-compose/rdc
           sed 's|\(DOCKER_PREFIX\)=.*|\1=rc13_php7.4|' .env-example |
