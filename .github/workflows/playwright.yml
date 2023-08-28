@@ -7,10 +7,10 @@ jobs:
     timeout-minutes: 60
     runs-on: ubuntu-latest
     steps:
-      - name: Install MySQL Client
-        run: |
-          sudo apt-get update
-          sudo apt-get install mysql-client-core-8.0
+      # - name: Install MySQL Client
+      #   run: |
+      #     sudo apt-get update
+      #     sudo apt-get install mysql-client-core-8.0
       - uses: actions/checkout@v3
         with:
           repository: AndrewPoppe/redcap_source
@@ -37,6 +37,8 @@ jobs:
           docker-compose up -d
       - name: Initialize REDCap
         run: |
+          curl --request GET --location 'http://localhost:13740'
+
           curl --location 'http://localhost:13740' \
           --form 'init-table=1' \
           --form 'dl-option=upload' \
