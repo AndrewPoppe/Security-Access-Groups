@@ -7,8 +7,8 @@ const { config } = require('../fixtures/config');
     const page = await context.newPage();
     await page.goto(config.redcapUrl);
 
-    await page.locator('input[name="dl-option"]').waitFor({ state: 'visible' });
-    await page.locator('input[name="dl-option"]').check();
+    await page.locator('input[name="dl-option"][value="upload"]').waitFor({ state: 'visible' });
+    await page.locator('input[name="dl-option"][value="upload"]').check();
 
     await page.locator('input#installer-upload').waitFor({ state: 'visible' });
     await page.locator('input#installer-upload').setInputFiles('../../../redcap_v13.1.27.zip');
