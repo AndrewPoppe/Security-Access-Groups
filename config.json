@@ -178,7 +178,7 @@
     "tt_documentation": "doc_path",
     "compatibility": {
         "php-version-min": "7.4.00",
-        "php-version-max": "8.1.99",
+        "php-version-max": "8.2.99",
         "redcap-version-min": "13.1.27",
         "redcap-version-max": ""
     }
