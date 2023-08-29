@@ -28,7 +28,7 @@ jobs:
           command: docker-compose up -d
       - run:
           name: Move REDCap Source File
-          command: mv redcap13.1.27.zip security_access_groups/tests/playwright/setup/
+          command: mv redcap_source/redcap13.1.27.zip security_access_groups/tests/playwright/setup/
       - run:
           name: Install dependencies
           working_directory: ./security_access_groups/tests/playwright
