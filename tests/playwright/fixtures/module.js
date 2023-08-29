@@ -42,13 +42,15 @@ export class Module {
 
         await this.page.locator('button#external-modules-enable-modules-button').click();
         await this.page.waitForTimeout(3000);
-        await this.page.locator('div.modal-header', { hasText: 'Available Modules' }).waitFor({ state: 'visible' });
-        await this.page.locator('table#external-modules-disabled-table tr[data-module="security_access_groups"] button.enable-button').click();
+        //await this.page.locator('div.modal-header', { hasText: 'Available Modules' }).waitFor({ state: 'visible' });
+        const enableButton = this.page.locator('table#external-modules-disabled-table tr[data-module="security_access_groups"] button.enable-button');
+        await enableButton.waitFor({ state: 'visible' });
+        await enableButton.click();
 
         const popupEnableButton = this.page.locator('div#external-modules-enable-modal div.modal-footer button.enable-button');
-        if (await popupEnableButton.isVisible()) {
-            await popupEnableButton.click();
-        }
+        await popupEnableButton.waitFor({ state: 'visible' });
+        await popupEnableButton.click();
+        await this.page.waitForTimeout(3000);
     }
 
     async setLanguageToEnglish() {
