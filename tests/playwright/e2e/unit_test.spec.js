@@ -83,7 +83,7 @@ test.describe('Prevent noncompliant rights from being granted', () => {
         await test.step('Remove rights from user and unexpire', async () => {
             await modulePage.grantNoRightsToUser(config.projects.UI_Project.pid, config.users.NothingUser.username);
             await modulePage.unexpireUser(config.projects.UI_Project.pid, config.users.NothingUser.username);
-            await expect(modulePage.page.locator(`a.userRightsExpired[userid="${config.users.NothingUser.username}"]`)).toBeVisible();
+            await expect(modulePage.page.locator(`a.userRightsExpireN[userid="${config.users.NothingUser.username}"]`)).toBeVisible();
         });
         await test.step('Create role with default rights and attempt to add both users to it', async () => {
             await modulePage.createRole(config.projects.UI_Project.pid, config.roles.Test.name);
