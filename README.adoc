@@ -102,6 +102,7 @@ endif::[]
 image:https://sonarcloud.io/api/project_badges/measure?project=AndrewPoppe_Security-Access-Groups&metric=alert_status[link="https://sonarcloud.io/summary/new_code?id=AndrewPoppe_Security-Access-Groups"]
 image:https://app.codacy.com/project/badge/Grade/bbb20fafcae24d7684eb66cf7eb034e9[link="https://app.codacy.com/gh/AndrewPoppe/Security-Access-Groups/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade"]
 image:https://github.com/AndrewPoppe/Security-Access-Groups/actions/workflows/codeql.yml/badge.svg[link="https://github.com/AndrewPoppe/Security-Access-Groups/actions/workflows/codeql.yml"]
+image:https://github.com/AndrewPoppe/Security-Access-Groups/actions/workflows/playwright.yml/badge.svg[link="https://github.com/AndrewPoppe/Security-Access-Groups/actions/workflows/playwright.yml"]
 
 ifndef::env-github[]
 ++++
