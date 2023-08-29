@@ -4,47 +4,62 @@ jobs:
   build:
     machine:
       image: ubuntu-2204:2023.02.1
-    parallelism: 8
     steps:
-      #- checkout
+      - checkout:
+          path: security_access_groups
       - run:
-          name: Install MySQL Client
+          name: Grab REDCap Source
           command: |
-            sudo apt-get update
-            sudo apt-get install mysql-client-core-8.0
+            git clone --branch v13.1.27_zip https://github.com/AndrewPoppe/redcap_source
       - run:
           name: Build the REDCap Image
           command: |
-            git clone --branch v11.1.29 https://github.com/aldefouw/redcap_docker
-      - run:
-          name: Get REDCap Source
-          command: |
-            git clone --branch v13.1.27 https://github.com/AndrewPoppe/redcap_source www
+            git clone https://github.com/123andy/redcap-docker-compose
+            cd redcap-docker-compose/rdc
+            sed 's|\(DOCKER_PREFIX\)=.*|\1=rc13_php7.4|' .env-example |
+            sed 's|\(TZ\)=.*|\1=America/New_York|' |
+            sed 's|\(WEB_PORT\)=.*|\1=13740|' |
+            sed 's|\(MYSQL_PORT\)=.*|\1=13746|' |
+            sed 's|\(PHPMYADMIN_PORT\)=.*|\1=13741|' |
+            sed 's|\(MAILHOG_PORT\)=.*|\1=13745|' > .env
       - run:
           name: Start Docker REDCap Container
-          command: |
-            cd /home/circleci/project/redcap_docker
-            docker-compose up -d
+          working_directory: ./redcap-docker-compose/rdc
+          command: docker-compose up -d
       - run:
-          name: Change eDocs folder permissions
-          command: |
-            sudo chmod 777 /var/edocs
+          name: Move REDCap Source File
+          command: mv redcap13.1.27.zip security_access_groups/tests/playwright/setup/
       - run:
-          name: Install module
-          command: |
-            cd /home/circleci/project/www/modules
-            git clone "$CIRCLE_REPOSITORY_URL" security_access_groups_v99
+          name: Install dependencies
+          working_directory: ./security_access_groups/tests/playwright
+          command: npm install
       - run:
           name: Install Playwright
-          command: |
-            cd /home/circleci/project/www/modules/security_access_groups_v99/tests/playwright
-            npx playwright install-deps chromium
+          working-directory: ./security_access_groups/tests/playwright
+          command: npx playwright install --with-deps
       - run:
-          name: Run Tests
-          command: |
-            npx playwright test
+          name: Initialize REDCap
+          working_directory: ./security_access_groups/tests/playwright/setup
+          command: node installREDCap.js
       - store_artifacts:
-          path: /home/circleci/project/www/modules/security_access_groups_v99/tests/playwright/test-results
+          path: ./security_access_groups/tests/playwright/setup/screenshots
+          destination: setup
+      - run:
+          name: Move module files
+          command: |
+            chmod -R 777 ./redcap-docker-compose/www/modules
+            mv ./security_access_groups ./redcap-docker-compose/www/modules/security_access_groups_v99
+      - run:
+          name: Run Playwright Tests
+          working_directory: ./redcap-docker-compose/www/modules/security_access_groups_v99/tests/playwright
+          command: npx playwright test
+      - store_artifacts:
+          destination: test-results
+          path: ./redcap-docker-compose/www/modules/security_access_groups_v99/tests/playwright/test-results/
+      - store_artifacts:
+          destination: playwright-report
+          path: ./redcap-docker-compose/www/modules/security_access_groups_v99/tests/playwright/playwright-report/
+          
 workflows:
   version: 2
   workflow:
