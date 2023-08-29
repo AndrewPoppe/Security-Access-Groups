@@ -47,7 +47,7 @@ jobs:
       - run:
           name: Move module files
           command: |
-            chmod -R 777 ./redcap-docker-compose/www/modules
+            sudo chmod -R 777 ./redcap-docker-compose/www/modules
             mv ./security_access_groups ./redcap-docker-compose/www/modules/security_access_groups_v99
       - run:
           name: Run Playwright Tests
