@@ -49,10 +49,11 @@ class RightsChecker
             'group_role',
             'group_id',
             'api_token',
+            'data_access_group',
             'data_access_group_id',
             'unique_role_name',
             'role_label',
-            'notify_email'
+            'notify_email',
         ];
         return in_array($rightName, $safeRights, true);
     }
