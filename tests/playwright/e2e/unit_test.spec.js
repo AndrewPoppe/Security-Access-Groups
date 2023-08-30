@@ -30,21 +30,32 @@ test.afterAll(async () => {
 
 // Start tests
 test.describe('Setup', () => {
-    test('Setup system and projects', async ({ setupPage }, testInfo) => {
+    test('Setup system and projects', async ({ modulePage }, testInfo) => {
         test.setTimeout(300000);
         const outDir = `test-results/${testInfo.project.name}/S0_Setup`;
-        setupPage.page.video().saveAs(`${outDir}/S0_Setup_FRS-VL-SAGEM-001-User_Rights.mp4`);
+        modulePage.page.video().saveAs(`${outDir}/S0_Setup_FRS-VL-SAGEM-001-User_Rights.mp4`);
+        await test.step('Log in and enable module', async () => {
+            await modulePage.enableModuleSystemWide();
+            await modulePage.page.screenshot({ path: `${outDir}/FRS-VL-SAGEM-001-16-enable_module_systemwide.png`, fullPage: false });
+            await modulePage.setLanguageToEnglish();
+            await modulePage.visitSAGsPage();
+            await modulePage.deleteExistingSAGs();
+            modulePage.settings.nothingSagId = await modulePage.createNothingSAG();
+            modulePage.settings.everythingSagId = await modulePage.createEverythingSAG();
+            await modulePage.setUserSAG(config.users.NothingUser.username, modulePage.settings.nothingSagId);
+            await modulePage.setUserSAG(config.users.EverythingUser.username, modulePage.settings.everythingSagId);
+        });
         await test.step('Setup SAGs and assign users', async () => {
-            console.log(setupPage.settings.nothingSagId);
-            console.log(setupPage.settings.everythingSagId);
-            config.sags.nothingSag.id = setupPage.settings.nothingSagId;
-            config.sags.everythingSag.id = setupPage.settings.everythingSagId;
+            console.log(modulePage.settings.nothingSagId);
+            console.log(modulePage.settings.everythingSagId);
+            config.sags.nothingSag.id = modulePage.settings.nothingSagId;
+            config.sags.everythingSag.id = modulePage.settings.everythingSagId;
         });
 
         await test.step('Setup projects', async () => {
-            config.projects.UI_Project.pid = await setupPage.createProject(config.projects.UI_Project.projectName);
-            config.projects.CSV_Project.pid = await setupPage.createProject(config.projects.CSV_Project.projectName);
-            config.projects.API_Project.pid = await setupPage.createProject(config.projects.API_Project.projectName);
+            config.projects.UI_Project.pid = await modulePage.createProject(config.projects.UI_Project.projectName);
+            config.projects.CSV_Project.pid = await modulePage.createProject(config.projects.CSV_Project.projectName);
+            config.projects.API_Project.pid = await modulePage.createProject(config.projects.API_Project.projectName);
         });
     });
 });
@@ -75,6 +86,11 @@ test.describe('Prevent noncompliant rights from being granted', () => {
         });
         await test.step('Attempt to unexpire an expired user with noncompliant rights', async () => {
             await modulePage.expireUser(config.projects.UI_Project.pid, config.users.NothingUser.username);
+            expect(modulePage.page.locator(`a.userRightsExpired[userid="${config.users.NothingUser.username}"]`)).toBeVisible();
+            await modulePage.page.screenshot({ path: `${outDir}/FRS-VL-SAGEM-001-17-expire_user_with_noncompliant_rights.png`, fullPage: false });
+            await modulePage.grantAllRightsToUser(config.projects.UI_Project.pid, config.users.NothingUser.username);
+            expect(modulePage.page.locator('div.userSaveMsg', { hasText: `User "${config.users.NothingUser.username}" was successfully edited` })).toBeVisible();
+            await modulePage.page.screenshot({ path: `${outDir}/FRS-VL-SAGEM-001-18-grant_any_rights_to_expired_user.png`, fullPage: false });
             await modulePage.unexpireUser(config.projects.UI_Project.pid, config.users.NothingUser.username);
             const errorPopup = modulePage.page.locator('h2#swal2-title', { hasText: `You cannot grant those user rights to user "${config.users.NothingUser.username}"` });
             await expect(errorPopup).toBeVisible();
