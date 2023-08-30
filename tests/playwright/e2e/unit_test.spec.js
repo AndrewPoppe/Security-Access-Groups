@@ -89,7 +89,8 @@ test.describe('Prevent noncompliant rights from being granted', () => {
             expect(modulePage.page.locator(`a.userRightsExpired[userid="${config.users.NothingUser.username}"]`)).toBeVisible();
             await modulePage.page.screenshot({ path: `${outDir}/FRS-VL-SAGEM-001-17-expire_user_with_noncompliant_rights.png`, fullPage: false });
             await modulePage.grantAllRightsToUser(config.projects.UI_Project.pid, config.users.NothingUser.username);
-            expect(modulePage.page.locator('div.userSaveMsg', { hasText: `User "${config.users.NothingUser.username}" was successfully edited` })).toBeVisible();
+            const successPopup = modulePage.page.locator('div.userSaveMsg', { hasText: `User "${config.users.NothingUser.username}" was successfully edited` });
+            await expect(successPopup).toBeVisible();
             await modulePage.page.screenshot({ path: `${outDir}/FRS-VL-SAGEM-001-18-grant_any_rights_to_expired_user.png`, fullPage: false });
             await modulePage.unexpireUser(config.projects.UI_Project.pid, config.users.NothingUser.username);
             const errorPopup = modulePage.page.locator('h2#swal2-title', { hasText: `You cannot grant those user rights to user "${config.users.NothingUser.username}"` });
