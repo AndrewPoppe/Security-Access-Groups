@@ -5,3 +5,4 @@ node_modules
 creds.json
 playwright-report
 test-results
+tests/playwright/data_files/*.csv

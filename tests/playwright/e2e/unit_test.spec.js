@@ -45,6 +45,24 @@ test.describe('Setup', () => {
             await modulePage.setUserSAG(config.users.NothingUser.username, modulePage.settings.nothingSagId);
             await modulePage.setUserSAG(config.users.EverythingUser.username, modulePage.settings.everythingSagId);
         });
+
+        await test.step('Check module system configuration', async () => {
+            await modulePage.openModuleSystemConfiguration();
+            const select = modulePage.page.locator('select[name="reserved-language-system"]');
+            for (let language of config.system_em_framework_config.languages) {
+                await expect(await select.locator('option', { hasText: language }).count()).toEqual(1);
+            }
+            await modulePage.page.locator('select[name="reserved-language-system"]').click();
+            await modulePage.page.screenshot({ path: `${outDir}/FRS-VL-SAGEM-001-19-built-in_module_options.png`, fullPage: false });
+            const settingTable = modulePage.page.locator('div#external-modules-configure-modal table');
+            for (let defaultSetting of config.system_em_framework_config.default_options) {
+                await expect(await settingTable.locator('label', { hasText: defaultSetting }).count()).toEqual(1);
+            }
+            for (let customSetting of config.system_em_framework_config.custom_options) {
+                await expect(await settingTable.locator('label', { hasText: customSetting }).count()).toBeGreaterThan(0);
+            }
+        });
+
         await test.step('Setup SAGs and assign users', async () => {
             console.log(modulePage.settings.nothingSagId);
             console.log(modulePage.settings.everythingSagId);
@@ -69,7 +87,11 @@ test.describe('Prevent noncompliant rights from being granted', () => {
             console.log(config);
             await modulePage.addUsersToProject(config.projects.UI_Project.pid, [config.users.NothingUser.username, config.users.EverythingUser.username]);
             await modulePage.enableModule(config.projects.UI_Project.pid);
-            expect(modulePage.page.locator('table#external-modules-enabled tr[data-module="security_access_groups"]', { timeout: 30000 })).toBeVisible();
+            await expect(modulePage.page.locator('table#external-modules-enabled tr[data-module="security_access_groups"]', { timeout: 30000 })).toBeVisible();
+            await expect(modulePage.page.locator('div#external_modules_panel a[data-link-key="security_access_groups-project-status"]')).toBeVisible();
+            await modulePage.page.locator('div#external_modules_panel a[data-link-key="security_access_groups-project-status"]').click();
+            await modulePage.page.waitForLoadState('domcontentloaded');
+            await modulePage.page.screenshot({ path: `${outDir}/FRS-VL-SAGEM-001-26-project_status_page.png`, fullPage: false });
         });
         await test.step('Attempt to give noncompliant rights to user', async () => {
             await modulePage.grantAllRightsToUser(config.projects.UI_Project.pid, config.users.NothingUser.username);
@@ -86,7 +108,7 @@ test.describe('Prevent noncompliant rights from being granted', () => {
         });
         await test.step('Attempt to unexpire an expired user with noncompliant rights', async () => {
             await modulePage.expireUser(config.projects.UI_Project.pid, config.users.NothingUser.username);
-            expect(modulePage.page.locator(`a.userRightsExpired[userid="${config.users.NothingUser.username}"]`)).toBeVisible();
+            await expect(modulePage.page.locator(`a.userRightsExpired[userid="${config.users.NothingUser.username}"]`)).toBeVisible();
             await modulePage.page.screenshot({ path: `${outDir}/FRS-VL-SAGEM-001-17-expire_user_with_noncompliant_rights.png`, fullPage: false });
             await modulePage.grantAllRightsToUser(config.projects.UI_Project.pid, config.users.NothingUser.username);
             const successPopup = modulePage.page.locator('div.userSaveMsg', { hasText: `User "${config.users.NothingUser.username}" was successfully edited` });
@@ -190,12 +212,12 @@ test.describe('Prevent noncompliant rights from being granted', () => {
         await test.step('Enable module', async () => {
             console.log(config);
             await modulePage.enableModule(config.projects.CSV_Project.pid);
-            expect(modulePage.page.locator('table#external-modules-enabled tr[data-module="security_access_groups"]', { timeout: 30000 })).toBeVisible();
+            await expect(modulePage.page.locator('table#external-modules-enabled tr[data-module="security_access_groups"]', { timeout: 30000 })).toBeVisible();
         });
 
         // Users
         await test.step('Import user via CSV - successfully', async () => {
-            const csvData = fs.readFileSync('data_files/S2_IMPORT_UserImport_1_Template.csv');
+            const csvData = fs.readFileSync('data_files/templates/S2_IMPORT_UserImport_1_Template.csv');
             const records = parse(csvData, { columns: true, trim: true });
             const editedRecords = transform(records, (record) => {
                 record.username = config.users.EverythingUser.username.trim();
@@ -208,7 +230,7 @@ test.describe('Prevent noncompliant rights from being granted', () => {
             await expect(modulePage.page.locator('div.ui-dialog div.ui-dialog-titlebar', { hasText: 'SUCCESS!' }, { timeout: 30000 })).toBeVisible();
         });
         await test.step('Import user via CSV - unsuccessfully', async () => {
-            const csvData = fs.readFileSync('data_files/S2_IMPORT_UserImport_2_Template.csv');
+            const csvData = fs.readFileSync('data_files/templates/S2_IMPORT_UserImport_2_Template.csv');
             const records = parse(csvData, { columns: true, trim: true });
             const editedRecords = transform(records, (record) => {
                 record.username = config.users.NothingUser.username.trim();
@@ -223,7 +245,7 @@ test.describe('Prevent noncompliant rights from being granted', () => {
             await modulePage.page.screenshot({ path: `${outDir}/FRS-VL-SAGEM-001-06-Attempt_to_import_user_with_noncompliant_rights.png`, fullPage: false });
         });
         await test.step('Edit user via CSV - successfully', async () => {
-            const csvData = fs.readFileSync('data_files/S2_IMPORT_UserImport_4_Template.csv');
+            const csvData = fs.readFileSync('data_files/templates/S2_IMPORT_UserImport_4_Template.csv');
             const records = parse(csvData, { columns: true, trim: true });
             const editedRecords = transform(records, (record) => {
                 record.username = config.users.EverythingUser.username.trim();
@@ -236,7 +258,7 @@ test.describe('Prevent noncompliant rights from being granted', () => {
             await expect(modulePage.page.locator('div.ui-dialog div.ui-dialog-titlebar', { hasText: 'SUCCESS!' }, { timeout: 30000 })).toBeVisible();
         });
         await test.step('Import user via CSV - successfully (part 2)', async () => {
-            const csvData = fs.readFileSync('data_files/S2_IMPORT_UserImport_3_Template.csv');
+            const csvData = fs.readFileSync('data_files/templates/S2_IMPORT_UserImport_3_Template.csv');
             const records = parse(csvData, { columns: true, trim: true });
             const editedRecords = transform(records, (record) => {
                 record.username = config.users.NothingUser.username.trim();
@@ -257,7 +279,7 @@ test.describe('Prevent noncompliant rights from being granted', () => {
 
         // Roles
         await test.step('Import role via CSV - successfully', async () => {
-            const csvData = fs.readFileSync('data_files/S2_IMPORT_UserRoles_1_Template.csv');
+            const csvData = fs.readFileSync('data_files/templates/S2_IMPORT_UserRoles_1_Template.csv');
             const records = parse(csvData, { columns: true, trim: true });
             const editedRecords = transform(records, (record) => {
                 record.role_label = config.roles.Test.name.trim();
@@ -272,7 +294,7 @@ test.describe('Prevent noncompliant rights from being granted', () => {
             config.roles.Test.uniqueRoleName = await modulePage.getUniqueRoleName(config.projects.CSV_Project.pid, 'Test');
         });
         await test.step('Edit role via CSV - successfully', async () => {
-            const csvData = fs.readFileSync('data_files/S2_IMPORT_UserRoles_2_Template.csv');
+            const csvData = fs.readFileSync('data_files/templates/S2_IMPORT_UserRoles_2_Template.csv');
             const records = parse(csvData, { columns: true, trim: true });
             const editedRecords = transform(records, (record) => {
                 record.unique_role_name = config.roles.Test.uniqueRoleName.trim();
@@ -286,7 +308,7 @@ test.describe('Prevent noncompliant rights from being granted', () => {
             await expect(modulePage.page.locator('div.ui-dialog div.ui-dialog-titlebar', { hasText: 'SUCCESS!' }, { timeout: 30000 })).toBeVisible();
         });
         await test.step('Fail to assign user to role', async () => {
-            const csvData = fs.readFileSync('data_files/S2_IMPORT_UserRoleAssignments_1_Template.csv');
+            const csvData = fs.readFileSync('data_files/templates/S2_IMPORT_UserRoleAssignments_1_Template.csv');
             const records = parse(csvData, { columns: true, trim: true });
             const editedRecords = transform(records, (record) => {
                 record.unique_role_name = config.roles.Test.uniqueRoleName.trim();
@@ -369,7 +391,7 @@ test.describe('Prevent noncompliant rights from being granted', () => {
         modulePage.page.video().saveAs(`${outDir}/S3_API_FRS-VL-SAGEM-001-User_Rights.mp4`);
         await test.step('Enable module', async () => {
             await modulePage.enableModule(config.projects.API_Project.pid);
-            expect(modulePage.page.locator('table#external-modules-enabled tr[data-module="security_access_groups"]', { timeout: 30000 })).toBeVisible();
+            await expect(modulePage.page.locator('table#external-modules-enabled tr[data-module="security_access_groups"]', { timeout: 30000 })).toBeVisible();
         });
         await test.step('Enable API and get token', async () => {
             config.api_token = await modulePage.getApiToken(config.projects.API_Project.pid);
@@ -387,11 +409,11 @@ test.describe('Prevent noncompliant rights from being granted', () => {
                     }])
                 }
             });
-            expect(response.status()).toBe(401);
+            await expect(response.status()).toBe(401);
             console.log(await response.json());
             const expected = {};
             expected[config.users.NothingUser.username] = ['User Rights'];
-            expect(await response.json()).toEqual(expected);
+            await expect(await response.json()).toEqual(expected);
             await modulePage.visitProjectUserRightsPage(config.projects.API_Project.pid);
             await modulePage.page.screenshot({ path: `${outDir}/FRS-VL-SAGEM-001-10-attempt_to_add_user_with_noncompliant_rights.png`, fullPage: false });
         });
@@ -409,7 +431,7 @@ test.describe('Prevent noncompliant rights from being granted', () => {
                     }])
                 }
             });
-            expect(response.ok()).toBeTruthy();
+            await expect(response.ok()).toBeTruthy();
             await modulePage.visitProjectUserRightsPage(config.projects.API_Project.pid);
             await modulePage.page.screenshot({ path: `${outDir}/Add_user_with_noncompliant_rights_and_expire.png`, fullPage: false });
         });
@@ -426,7 +448,7 @@ test.describe('Prevent noncompliant rights from being granted', () => {
                     }])
                 }
             });
-            expect(response.ok()).toBeTruthy();
+            await expect(response.ok()).toBeTruthy();
             await modulePage.visitProjectUserRightsPage(config.projects.API_Project.pid);
             await modulePage.page.screenshot({ path: `${outDir}/Add_role_via_API.png`, fullPage: false });
             config.roles.Test.uniqueRoleName = await modulePage.getUniqueRoleName(config.projects.API_Project.pid, config.roles.Test.name);
@@ -445,7 +467,7 @@ test.describe('Prevent noncompliant rights from being granted', () => {
                     }])
                 }
             });
-            expect(response.ok()).toBeTruthy();
+            await expect(response.ok()).toBeTruthy();
             await modulePage.visitProjectUserRightsPage(config.projects.API_Project.pid);
             await modulePage.page.screenshot({ path: `${outDir}/Edit_user_via_API.png`, fullPage: false });
         });
@@ -462,11 +484,11 @@ test.describe('Prevent noncompliant rights from being granted', () => {
                     }])
                 }
             });
-            expect(response.status()).toBe(401);
+            await expect(response.status()).toBe(401);
             console.log(await response.json());
             const expected = {};
             expected[config.users.NothingUser.username] = ['User Rights'];
-            expect(await response.json()).toEqual(expected);
+            await expect(await response.json()).toEqual(expected);
             await modulePage.visitProjectUserRightsPage(config.projects.API_Project.pid);
             await modulePage.page.screenshot({ path: `${outDir}/FRS-VL-SAGEM-001-11-attempt_to_edit_user_with_noncompliant_rights.png`, fullPage: false });
         });
@@ -483,11 +505,11 @@ test.describe('Prevent noncompliant rights from being granted', () => {
                     }])
                 }
             });
-            expect(response.status()).toBe(401);
+            await expect(response.status()).toBe(401);
             console.log(await response.json());
             const expected = {};
             expected[config.roles.Test.name] = ['User Rights'];
-            expect(await response.json()).toEqual(expected);
+            await expect(await response.json()).toEqual(expected);
             await modulePage.visitProjectUserRightsPage(config.projects.API_Project.pid);
             await modulePage.page.screenshot({ path: `${outDir}/FRS-VL-SAGEM-001-12-attempt_to_add_user_to_role_with_noncompliant_rights.png`, fullPage: false });
         });
@@ -505,7 +527,7 @@ test.describe('Prevent noncompliant rights from being granted', () => {
                     }])
                 }
             });
-            expect(response.ok()).toBeTruthy();
+            await expect(response.ok()).toBeTruthy();
             await modulePage.visitProjectUserRightsPage(config.projects.API_Project.pid);
             await modulePage.page.screenshot({ path: `${outDir}/Edit_role_via_API.png`, fullPage: false });
         });
@@ -522,7 +544,7 @@ test.describe('Prevent noncompliant rights from being granted', () => {
                     }])
                 }
             });
-            expect(response.ok()).toBeTruthy();
+            await expect(response.ok()).toBeTruthy();
             await modulePage.visitProjectUserRightsPage(config.projects.API_Project.pid);
             await modulePage.page.screenshot({ path: `${outDir}/Add_user_to_role_via_API.png`, fullPage: false });
         });
@@ -539,7 +561,7 @@ test.describe('Prevent noncompliant rights from being granted', () => {
                     }])
                 }
             });
-            expect(response.status()).toBe(401);
+            await expect(response.status()).toBe(401);
             await modulePage.visitProjectUserRightsPage(config.projects.API_Project.pid);
             await modulePage.page.screenshot({ path: `${outDir}/FRS-VL-SAGEM-001-13-attempt_to_edit_role_with_noncompliant_rights.png`, fullPage: false });
         });

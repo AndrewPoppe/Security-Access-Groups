@@ -43,5 +43,42 @@ exports.config = {
             username: 'admin',
             password: 'password'
         }
+    },
+    system_em_framework_config: {
+        languages: [
+            'English',
+            'Arabic',
+            'Bangla',
+            'Chinese',
+            'French',
+            'German',
+            'Hindi',
+            'Italian',
+            'Portuguese',
+            'Spanish',
+            'Ukrainian',
+            'Urdu'
+        ],
+        default_options: [
+            "Language file",
+            "Enable module on all projects by default",
+            "Make module discoverable by users",
+            "Allow non-admins to enable this module on projects",
+            "Hide this module from non-admins in the list of enabled modules on each project"
+        ],
+        custom_options: [
+            "User Alert Email Default Subject",
+            "User Alert Email Default Body",
+            "User Reminder Alert Email Default Subject",
+            "User Reminder Email Default Body",
+            "User Rights Holders Alert Email Default Subject",
+            "User Rights Holders Alert Email Default Body",
+            "User Rights Holders Reminder Alert Email Default Subject",
+            "User Rights Holders Reminder Alert Email Default Body",
+            "User Expiration Alert Email Default Subject",
+            "User Expiration Alert Email Default Body",
+            "User Rights Holders Alert Email Default Subject",
+            "User Rights Holders Alert Email Default Body"
+        ]
     }
 }

@@ -29,12 +29,11 @@ export class Module {
 
     async visitExternalModuleConfigurationPage() {
         await this.page.goto(`${this.url}/ExternalModules/manager/control_center.php`, { waitUntil: 'domcontentloaded' });
+
     }
 
     async enableModuleSystemWide() {
         await this.visitExternalModuleConfigurationPage();
-        await this.page.waitForLoadState('domcontentloaded');
-
         const enabledModuleRow = this.page.locator('table#external-modules-enabled tr[data-module="security_access_groups"]');
         if (await enabledModuleRow.isVisible()) {
             return;
@@ -53,10 +52,16 @@ export class Module {
         await this.page.waitForTimeout(3000);
     }
 
-    async setLanguageToEnglish() {
-        await this.visitExternalModuleConfigurationPage();
-        await this.page.waitForLoadState('domcontentloaded');
+    async openModuleSystemConfiguration() {
+        if (this.page.url() !== `${this.url}/ExternalModules/manager/control_center.php`) {
+            await this.visitExternalModuleConfigurationPage();
+        }
         await this.page.locator('tr[data-module="security_access_groups"] button.external-modules-configure-button').click();
+        await this.page.locator('div#external-modules-configure-modal table tr[field="enabled"]').waitFor({ state: 'visible' });
+    }
+
+    async setLanguageToEnglish() {
+        await this.openModuleSystemConfiguration();
 
         // Select Language
         await this.page.locator('select[name="reserved-language-system"]').waitFor({ state: 'visible' });
