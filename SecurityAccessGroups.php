@@ -31,15 +31,6 @@ class SecurityAccessGroups extends AbstractExternalModule
     public string $defaultSagId = 'sag_Default';
     public string $defaultSagName = 'Default SAG';
 
-    public function __construct()
-    {
-        parent::__construct();
-        $sag = new SAG($this, $this->defaultSagId, $this->defaultSagName);
-        if ( !$sag->sagExists() ) {
-            $this->setDefaultSag();
-        }
-    }
-
     // External Module Framework Hooks
 
     /**
@@ -349,10 +340,14 @@ class SecurityAccessGroups extends AbstractExternalModule
      */
     public function getAllSags($idAsKey = false, $parsePermissions = false)
     {
-        $sql    = 'SELECT sag_id, sag_name, permissions WHERE message = \'sag\' AND (project_id IS NULL OR project_id IS NOT NULL)';
-        $result = $this->framework->queryLogs($sql, []);
-        $sags   = [];
+        $sql           = 'SELECT sag_id, sag_name, permissions WHERE message = \'sag\' AND (project_id IS NULL OR project_id IS NOT NULL)';
+        $result        = $this->framework->queryLogs($sql, []);
+        $sags          = [];
+        $defaultExists = false;
         while ( $row = $result->fetch_assoc() ) {
+            if ( $row['sag_id'] === $this->defaultSagId ) {
+                $defaultExists = true;
+            }
             $sag = new SAG($this, $row['sag_id'], $row['sag_name'], $row['permissions']);
             if ( $parsePermissions ) {
                 $sag->parsePermissions();
@@ -362,6 +357,9 @@ class SecurityAccessGroups extends AbstractExternalModule
             } else {
                 $sags[] = $sag;
             }
+        }
+        if ( !$defaultExists ) {
+            $this->setDefaultSag();
         }
         return $sags;
     }
