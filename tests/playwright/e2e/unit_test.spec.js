@@ -93,6 +93,12 @@ test.describe('Prevent noncompliant rights from being granted', () => {
             await modulePage.page.waitForLoadState('domcontentloaded');
             await modulePage.page.screenshot({ path: `${outDir}/FRS-VL-SAGEM-001-26-project_status_page.png`, fullPage: false });
         });
+        await test.step('Test Project Status page', async () => {
+            await modulePage.visitProjectStatusPage(config.projects.UI_Project.pid);
+            const numRows = await modulePage.page.locator('table#discrepancy-table>tbody>tr').count();
+            await expect(numRows).toEqual(3);
+            await modulePage.page.screenshot({ path: `${outDir}/FRS-VL-SAGEM-001-27-project_status_page.png`, fullPage: false });
+        });
         await test.step('Attempt to give noncompliant rights to user', async () => {
             await modulePage.grantAllRightsToUser(config.projects.UI_Project.pid, config.users.NothingUser.username);
             const errorPopup = modulePage.page.locator('h2#swal2-title', { hasText: `You cannot grant those user rights to user "${config.users.NothingUser.username}"` });

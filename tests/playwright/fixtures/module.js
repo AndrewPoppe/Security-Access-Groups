@@ -491,4 +491,8 @@ export class Module {
         await this.page.locator('input#apiTokenId').waitFor({ state: 'visible' });
         return await this.page.locator('input#apiTokenId').inputValue();
     }
+
+    async visitProjectStatusPage(pid) {
+        await this.page.goto(`${this.url}/ExternalModules/?prefix=security_access_groups&page=project-status&pid=${pid}`, { waitUntil: 'domcontentloaded' });
+    }
 }

@@ -3,23 +3,21 @@ Andrew Poppe <andrew.poppe@yale.edu>
 :description: This is an External Module for REDCap that allows admins to create and manage Security Access Groups that restrict which User Rights a user may be granted.
 :sectlinks: true
 :table-stripes: even
-:toc:
-:toc-placement!:
 :caution-caption: 🔥
 :note-caption: ℹ️
 :tip-caption: 💡
 :important-caption: 🚩
 :warning-caption: ⚠️
 ifdef::env-github[]
+:toc: macro
 :imagesdir: docs/screenshots/EN
 :favicon: docs/images/favicon.svg
 endif::[]
 ifndef::env-github[]
+:toc: left
 :imagesdir: ../screenshots/EN
 :favicon: ../images/favicon.svg
-endif::[]
 
-ifndef::env-github[]
 ++++
 <style>
 @font-face {
@@ -126,7 +124,9 @@ ifndef::env-github[]
 ++++
 endif::[]
 
+ifdef::env-github[]
 toc::[]
+endif::[]
 
 == Introduction
 
