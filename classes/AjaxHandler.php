@@ -203,10 +203,7 @@ class AjaxHandler
         }
 
         $sag->throttleDeleteSag();
-        $defaultSag = new SAG($this->module, $this->module->defaultSagId);
-        if ( !$defaultSag->sagExists() ) {
-            $this->module->setDefaultSag();
-        }
+        $this->module->setDefaultSag(true);
         return json_encode([
             'status'  => 'ok',
             'message' => $this->module->framework->tt('misc_2')

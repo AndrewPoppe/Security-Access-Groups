@@ -116,11 +116,8 @@ class SAGUser
         $sagId   = $this->module->framework->getSystemSetting($setting) ?? '';
         $sag     = new SAG($this->module, $sagId);
         if ( empty($sagId) || !$sag->sagExists() ) {
+            $this->module->setDefaultSag(true);
             $sagId = $this->module->defaultSagId;
-            $sag->setSagId($sagId);
-            if ( !$sag->sagExists() ) {
-                $this->module->setDefaultSag();
-            }
             $this->setUserSag($sagId);
         }
         return $sag;

@@ -340,14 +340,11 @@ class SecurityAccessGroups extends AbstractExternalModule
      */
     public function getAllSags($idAsKey = false, $parsePermissions = false)
     {
-        $sql           = 'SELECT sag_id, sag_name, permissions WHERE message = \'sag\' AND (project_id IS NULL OR project_id IS NOT NULL)';
-        $result        = $this->framework->queryLogs($sql, []);
-        $sags          = [];
-        $defaultExists = false;
+        $this->setDefaultSag(true);
+        $sql    = 'SELECT sag_id, sag_name, permissions WHERE message = \'sag\' AND (project_id IS NULL OR project_id IS NOT NULL)';
+        $result = $this->framework->queryLogs($sql, []);
+        $sags   = [];
         while ( $row = $result->fetch_assoc() ) {
-            if ( $row['sag_id'] === $this->defaultSagId ) {
-                $defaultExists = true;
-            }
             $sag = new SAG($this, $row['sag_id'], $row['sag_name'], $row['permissions']);
             if ( $parsePermissions ) {
                 $sag->parsePermissions();
@@ -358,18 +355,24 @@ class SecurityAccessGroups extends AbstractExternalModule
                 $sags[] = $sag;
             }
         }
-        if ( !$defaultExists ) {
-            $this->setDefaultSag();
-        }
         return $sags;
     }
 
     /**
      * Saves a default SAG to the database
+     * 
+     * @param bool $onlyIfNotExists - If true, will only set the default SAG if it doesn't already exist
+     * 
      * @return array
      */
-    public function setDefaultSag()
+    public function setDefaultSag($onlyIfNotExists = false)
     {
+        if ( $onlyIfNotExists ) {
+            $defaultSag = new SAG($this, $this->defaultSagId);
+            if ( $defaultSag->sagExists() ) {
+                return $defaultSag->getSagRights();
+            }
+        }
         $rightsUtilities         = new RightsUtilities($this);
         $rights                  = $rightsUtilities->getDefaultRights();
         $rights['sag_id']        = $this->defaultSagId;
