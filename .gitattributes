@@ -1,4 +1,3 @@
 fonts/** linguist-vendored
 lib/** linguist-vendored
 tests/** linguist-vendored
-tests/playwright/e2e/unit_test.spec.js linguist-vendored
