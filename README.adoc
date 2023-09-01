@@ -9,7 +9,7 @@ Andrew Poppe <andrew.poppe@yale.edu>
 :important-caption: 🚩
 :warning-caption: ⚠️
 ifdef::env-github[]
-:toc: preamble
+:toc: macro
 :imagesdir: docs/screenshots/EN
 :favicon: docs/images/favicon.svg
 endif::[]
