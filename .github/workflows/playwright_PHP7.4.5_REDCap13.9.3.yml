@@ -62,7 +62,9 @@ jobs:
           mv ./security_access_groups ./redcap-docker-compose/www/modules/security_access_groups_v99
       - name: Run Playwright tests
         working-directory: ./redcap-docker-compose/www/modules/security_access_groups_v99/tests/playwright
-        run: npx playwright test
+        run: |
+          sed -i 's|redcapVersion:.*|redcapVersion: \'redcap_v13.9.3\'|' fixtures/config.js
+          npx playwright test
       - uses: actions/upload-artifact@v3
         if: always()
         with:
