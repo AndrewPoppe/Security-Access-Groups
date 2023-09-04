@@ -11,7 +11,7 @@ jobs:
       - uses: actions/checkout@v3
         with:
           repository: AndrewPoppe/redcap_source
-          ref: v13.1.27_zip
+          ref: v13.9.3_zip
           token: ${{ secrets.REPOS_TOKEN }}
           persist-credentials: false
       - name: Build the REDCap Image

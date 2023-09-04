@@ -11,7 +11,7 @@ jobs:
       - uses: actions/checkout@v3
         with:
           repository: AndrewPoppe/redcap_source
-          ref: v13.1.27_zip
+          ref: v13.7.13_zip
           token: ${{ secrets.REPOS_TOKEN }}
           persist-credentials: false
       - name: Build the REDCap Image
@@ -24,10 +24,6 @@ jobs:
           sed 's|\(MYSQL_PORT\)=.*|\1=13746|' |
           sed 's|\(PHPMYADMIN_PORT\)=.*|\1=13741|' |
           sed 's|\(MAILHOG_PORT\)=.*|\1=13745|' > .env
-          sed -i 's|\(FROM php\):.*|\1:7.4.5-apache-buster|' docker-web/Dockerfile
-          sed -i 's|&& pecl install xdebug||' docker-web/Dockerfile
-          sed -i 's|&& echo "zend_extension=$(find.*||' docker-web/Dockerfile
-          sed -i 's|FROM mysql:8.0-oracle|FROM mysql:8.0|' docker-mysql/Dockerfile
       - name: Start Docker REDCap Container
         working-directory: ./redcap-docker-compose/rdc
         run: docker-compose up -d
