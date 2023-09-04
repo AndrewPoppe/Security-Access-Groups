@@ -16,7 +16,7 @@ jobs:
           persist-credentials: false
       - name: Build the REDCap Image
         run: |
-          git clone https://github.com/123andy/redcap-docker-compose.git
+          git clone https://github.com/AndrewPoppe/redcap-docker-compose.git
           cd redcap-docker-compose/rdc
           sed 's|\(DOCKER_PREFIX\)=.*|\1=rc13_php7.4|' .env-example |
           sed 's|\(TZ\)=.*|\1=America/New_York|' |
