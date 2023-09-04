@@ -15,7 +15,7 @@ const { config } = require('../fixtures/config');
     console.log('Checked manual upload.');
 
     await page.locator('input#installer-upload').waitFor({ state: 'visible' });
-    await page.locator('input#installer-upload').setInputFiles('redcap13.1.27.zip');
+    await page.locator('input#installer-upload').setInputFiles('ZIPFILE');
     await page.screenshot({ path: 'screenshots/screenshot2.png' });
     console.log('Added file.');
 

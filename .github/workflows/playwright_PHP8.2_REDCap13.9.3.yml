@@ -1,4 +1,4 @@
-name: Playwright Tests - PHP 8.2 - REDCap 13.9.3
+name: PHP 8.2 - REDCap 13.9.3
 on:
   push:
     branches: main
@@ -43,7 +43,9 @@ jobs:
         run: npx playwright install --with-deps
       - name: Initialize REDCap
         working-directory: ./security_access_groups/tests/playwright/setup
-        run: node installREDCap.js
+        run: |
+          sed -i 's|ZIPFILE|redcap13.9.3.zip|' installREDCap.js
+          node installREDCap.js
       - uses: actions/upload-artifact@v3
         if: always()
         with:

@@ -100,7 +100,6 @@ endif::[]
 image:https://sonarcloud.io/api/project_badges/measure?project=AndrewPoppe_Security-Access-Groups&metric=alert_status[link="https://sonarcloud.io/summary/new_code?id=AndrewPoppe_Security-Access-Groups"]
 image:https://app.codacy.com/project/badge/Grade/bbb20fafcae24d7684eb66cf7eb034e9[link="https://app.codacy.com/gh/AndrewPoppe/Security-Access-Groups/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade"]
 image:https://github.com/AndrewPoppe/Security-Access-Groups/actions/workflows/codeql.yml/badge.svg[link="https://github.com/AndrewPoppe/Security-Access-Groups/actions/workflows/codeql.yml"]
-image:https://github.com/AndrewPoppe/Security-Access-Groups/actions/workflows/playwright.yml/badge.svg[link="https://github.com/AndrewPoppe/Security-Access-Groups/actions/workflows/playwright.yml"]
 image:https://dl.circleci.com/status-badge/img/gh/AndrewPoppe/Security-Access-Groups/tree/main.svg?style=svg["CircleCI", link="https://dl.circleci.com/status-badge/redirect/gh/AndrewPoppe/Security-Access-Groups/tree/main"]
 
 ifndef::env-github[]
@@ -959,6 +958,29 @@ ifdef::env-github[]
 ---
 endif::[]
 
+== PHP and REDCap Version Support
+
+[%header,cols="h,1,1,1"]
+|===
+|
+| REDCap v13.1.27
+| REDCap v13.7.13
+| REDCap v13.9.3
+
+| PHP v7.4.5
+| image:https://github.com/AndrewPoppe/Security-Access-Groups/actions/workflows/playwright_PHP7.4.5_REDCap13.1.27.yml/badge.svg[link="https://github.com/AndrewPoppe/Security-Access-Groups/actions/workflows/playwright_PHP7.4.5_REDCap13.1.27.yml"]
+| image:https://github.com/AndrewPoppe/Security-Access-Groups/actions/workflows/playwright_PHP7.4.5_REDCap13.7.13.yml/badge.svg[link="https://github.com/AndrewPoppe/Security-Access-Groups/actions/workflows/playwright_PHP7.4.5_REDCap13.7.13.yml"]
+| image:https://github.com/AndrewPoppe/Security-Access-Groups/actions/workflows/playwright_PHP7.4.5_REDCap13.9.3.yml/badge.svg[link="https://github.com/AndrewPoppe/Security-Access-Groups/actions/workflows/playwright_PHP7.4.5_REDCap13.9.3.yml"]
+
+| PHP v8.2
+| image:https://github.com/AndrewPoppe/Security-Access-Groups/actions/workflows/playwright_PHP8.2_REDCap13.1.27.yml/badge.svg[link="https://github.com/AndrewPoppe/Security-Access-Groups/actions/workflows/playwright_PHP8.2_REDCap13.1.27.yml"]
+| image:https://github.com/AndrewPoppe/Security-Access-Groups/actions/workflows/playwright_PHP8.2_REDCap13.7.13.yml/badge.svg[link="https://github.com/AndrewPoppe/Security-Access-Groups/actions/workflows/playwright_PHP8.2_REDCap13.7.13.yml"]
+| image:https://github.com/AndrewPoppe/Security-Access-Groups/actions/workflows/playwright_PHP8.2_REDCap13.9.3.yml/badge.svg[link="https://github.com/AndrewPoppe/Security-Access-Groups/actions/workflows/playwright_PHP8.2_REDCap13.9.3.yml"]
+
+|===
+
+
+
 == Changelog
 
 [%header,cols="1,2,4"]
@@ -971,3 +993,4 @@ endif::[]
 |2023-08-30
 |* Initial release
 
+|===

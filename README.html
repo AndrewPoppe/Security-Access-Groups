@@ -2462,6 +2462,51 @@
             <span id="author" class="author">Andrew Poppe</span><br>
             <span id="email" class="email"><a href="mailto:andrew.poppe@yale.edu">andrew.poppe@yale.edu</a></span><br>
         </div>
+        <div id="toc" class="toc2">
+            <div id="toctitle">Table of Contents</div>
+            <ul class="sectlevel1">
+                <li><a href="#_introduction">Introduction</a>
+                    <ul class="sectlevel2">
+                        <li><a href="#_faq">FAQ</a></li>
+                        <li><a href="#_how_do_you_use_the_module">How do you use the module?</a></li>
+                    </ul>
+                </li>
+                <li><a href="#_module_configuration">Module Configuration</a>
+                    <ul class="sectlevel2">
+                        <li><a href="#_default_email_settings">Default Email Settings</a></li>
+                    </ul>
+                </li>
+                <li><a href="#_control_center_page">Control Center Page</a>
+                    <ul class="sectlevel2">
+                        <li><a href="#users_tab">Users Tab</a></li>
+                        <li><a href="#security_access_groups_tab">Security Access Groups Tab</a></li>
+                        <li><a href="#reports_tab">Reports Tab</a></li>
+                    </ul>
+                </li>
+                <li><a href="#project_page">Project Page</a>
+                    <ul class="sectlevel2">
+                        <li><a href="#project_status_tab">Project Status Tab</a></li>
+                        <li><a href="#alert_log_tab">Alert Log Tab</a></li>
+                        <li><a href="#logging">Logging</a></li>
+                    </ul>
+                </li>
+                <li><a href="#translation">Translation (i18n / l10n)</a>
+                    <ul class="sectlevel2">
+                        <li><a href="#_general_information">General Information</a></li>
+                        <li><a href="#_available_translations">Available Translations</a></li>
+                        <li><a href="#_limitations">Limitations</a></li>
+                        <li><a href="#_translating_the_module">Translating the Module</a></li>
+                    </ul>
+                </li>
+                <li><a href="#miscellaneous">Miscellaneous</a>
+                    <ul class="sectlevel2">
+                        <li><a href="#searching">Searching</a></li>
+                    </ul>
+                </li>
+                <li><a href="#_php_and_redcap_version_support">PHP and REDCap Version Support</a></li>
+                <li><a href="#_changelog">Changelog</a></li>
+            </ul>
+        </div>
     </div>
     <div id="content">
         <div id="preamble">
@@ -2559,10 +2604,6 @@
                                     src="https://github.com/AndrewPoppe/Security-Access-Groups/actions/workflows/codeql.yml/badge.svg"
                                     alt="badge"></a></span>
                         <span class="image"><a class="image"
-                                href="https://github.com/AndrewPoppe/Security-Access-Groups/actions/workflows/playwright.yml"><img
-                                    src="https://github.com/AndrewPoppe/Security-Access-Groups/actions/workflows/playwright.yml/badge.svg"
-                                    alt="badge"></a></span>
-                        <span class="image"><a class="image"
                                 href="https://dl.circleci.com/status-badge/redirect/gh/AndrewPoppe/Security-Access-Groups/tree/main"><img
                                     src="https://dl.circleci.com/status-badge/img/gh/AndrewPoppe/Security-Access-Groups/tree/main.svg?style=svg"
                                     alt="CircleCI"></a></span>
@@ -2585,50 +2626,6 @@
                         <option value="README_UR.html">Urdu <span class="notranslate">(اردو)</span></option>
                     </select>
                 </p>
-                <div id="toc" class="toc2">
-                    <div id="toctitle" class="title">Table of Contents</div>
-                    <ul class="sectlevel1">
-                        <li><a href="#_introduction">Introduction</a>
-                            <ul class="sectlevel2">
-                                <li><a href="#_faq">FAQ</a></li>
-                                <li><a href="#_how_do_you_use_the_module">How do you use the module?</a></li>
-                            </ul>
-                        </li>
-                        <li><a href="#_module_configuration">Module Configuration</a>
-                            <ul class="sectlevel2">
-                                <li><a href="#_default_email_settings">Default Email Settings</a></li>
-                            </ul>
-                        </li>
-                        <li><a href="#_control_center_page">Control Center Page</a>
-                            <ul class="sectlevel2">
-                                <li><a href="#users_tab">Users Tab</a></li>
-                                <li><a href="#security_access_groups_tab">Security Access Groups Tab</a></li>
-                                <li><a href="#reports_tab">Reports Tab</a></li>
-                            </ul>
-                        </li>
-                        <li><a href="#project_page">Project Page</a>
-                            <ul class="sectlevel2">
-                                <li><a href="#project_status_tab">Project Status Tab</a></li>
-                                <li><a href="#alert_log_tab">Alert Log Tab</a></li>
-                                <li><a href="#logging">Logging</a></li>
-                            </ul>
-                        </li>
-                        <li><a href="#translation">Translation (i18n / l10n)</a>
-                            <ul class="sectlevel2">
-                                <li><a href="#_general_information">General Information</a></li>
-                                <li><a href="#_available_translations">Available Translations</a></li>
-                                <li><a href="#_limitations">Limitations</a></li>
-                                <li><a href="#_translating_the_module">Translating the Module</a></li>
-                            </ul>
-                        </li>
-                        <li><a href="#miscellaneous">Miscellaneous</a>
-                            <ul class="sectlevel2">
-                                <li><a href="#searching">Searching</a></li>
-                            </ul>
-                        </li>
-                        <li><a href="#_changelog">Changelog</a></li>
-                    </ul>
-                </div>
             </div>
         </div>
         <div class="sect1">
@@ -2641,8 +2638,7 @@
                             <li>
                                 <p><em><strong>What is it?</strong></em></p>
                                 <p>This is an External Module that allows REDCap administrators to create and manage
-                                    <strong>Security Access Groups</strong> in a REDCap system.
-                                </p>
+                                    <strong>Security Access Groups</strong> in a REDCap system.</p>
                             </li>
                             <li>
                                 <p><em><strong>What are Security Access Groups?</strong></em></p>
@@ -3235,8 +3231,7 @@
                                                     </li>
                                                     <li>
                                                         <p><code>2</code> - <em>No access</em>, <em>Read only</em>, and
-                                                            <em>View &amp; Edit</em> are allowed
-                                                        </p>
+                                                            <em>View &amp; Edit</em> are allowed</p>
                                                     </li>
                                                     <li>
                                                         <p><code>3</code> - All data viewing rights settings are allowed
@@ -3263,8 +3258,7 @@
                                                     </li>
                                                     <li>
                                                         <p><code>1</code> - <em>No access</em> and
-                                                            <em>De-Identified</em> are allowed
-                                                        </p>
+                                                            <em>De-Identified</em> are allowed</p>
                                                     </li>
                                                     <li>
                                                         <p><code>2</code> - <em>No access</em>, <em>De-Identified</em>,
@@ -4738,8 +4732,7 @@
                                     href="https://docs.github.com/en/get-started/quickstart/fork-a-repo">fork</a> the
                                 <code>main</code> branch of the module&#8217;s <a
                                     href="https://github.com/AndrewPoppe/Security-Access-Groups">Github repository</a>.
-                                Next, follow these steps:
-                            </p>
+                                Next, follow these steps:</p>
                         </div>
                         <div class="olist arabic">
                             <ol class="arabic">
@@ -4873,8 +4866,7 @@
                                     class="notranslate">"alice"</span> or <span class="notranslate">"bob"</span>, you
                                 can type <span class="notranslate">"alice | bob"</span> in the search box and the table
                                 will be filtered to only show users with <span class="notranslate">"alice"</span> or
-                                <span class="notranslate">"bob"</span> in any column.
-                            </p>
+                                <span class="notranslate">"bob"</span> in any column.</p>
                         </div>
                         <div class="admonitionblock tip">
                             <table>
@@ -4938,6 +4930,76 @@
             </div>
         </div>
         <div class="sect1">
+            <h2 id="_php_and_redcap_version_support"><a class="link" href="#_php_and_redcap_version_support">PHP and
+                    REDCap Version Support</a></h2>
+            <div class="sectionbody">
+                <table class="tableblock frame-all grid-all stripes-even stretch">
+                    <colgroup>
+                        <col style="width: 25%;">
+                        <col style="width: 25%;">
+                        <col style="width: 25%;">
+                        <col style="width: 25%;">
+                    </colgroup>
+                    <thead>
+                        <tr>
+                            <th class="tableblock halign-left valign-top"></th>
+                            <th class="tableblock halign-left valign-top">REDCap v13.1.27</th>
+                            <th class="tableblock halign-left valign-top">REDCap v13.7.13</th>
+                            <th class="tableblock halign-left valign-top">REDCap v13.9.3</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th class="tableblock halign-left valign-top">
+                                <p class="tableblock">PHP v7.4.5</p>
+                            </th>
+                            <td class="tableblock halign-left valign-top">
+                                <p class="tableblock"><span class="image"><a class="image"
+                                            href="https://github.com/AndrewPoppe/Security-Access-Groups/actions/workflows/playwright_PHP7.4.5_REDCap13.1.27.yml"><img
+                                                src="https://github.com/AndrewPoppe/Security-Access-Groups/actions/workflows/playwright_PHP7.4.5_REDCap13.1.27.yml/badge.svg"
+                                                alt="badge"></a></span></p>
+                            </td>
+                            <td class="tableblock halign-left valign-top">
+                                <p class="tableblock"><span class="image"><a class="image"
+                                            href="https://github.com/AndrewPoppe/Security-Access-Groups/actions/workflows/playwright_PHP7.4.5_REDCap13.7.13.yml"><img
+                                                src="https://github.com/AndrewPoppe/Security-Access-Groups/actions/workflows/playwright_PHP7.4.5_REDCap13.7.13.yml/badge.svg"
+                                                alt="badge"></a></span></p>
+                            </td>
+                            <td class="tableblock halign-left valign-top">
+                                <p class="tableblock"><span class="image"><a class="image"
+                                            href="https://github.com/AndrewPoppe/Security-Access-Groups/actions/workflows/playwright_PHP7.4.5_REDCap13.9.3.yml"><img
+                                                src="https://github.com/AndrewPoppe/Security-Access-Groups/actions/workflows/playwright_PHP7.4.5_REDCap13.9.3.yml/badge.svg"
+                                                alt="badge"></a></span></p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th class="tableblock halign-left valign-top">
+                                <p class="tableblock">PHP v8.2</p>
+                            </th>
+                            <td class="tableblock halign-left valign-top">
+                                <p class="tableblock"><span class="image"><a class="image"
+                                            href="https://github.com/AndrewPoppe/Security-Access-Groups/actions/workflows/playwright_PHP8.2_REDCap13.1.27.yml"><img
+                                                src="https://github.com/AndrewPoppe/Security-Access-Groups/actions/workflows/playwright_PHP8.2_REDCap13.1.27.yml/badge.svg"
+                                                alt="badge"></a></span></p>
+                            </td>
+                            <td class="tableblock halign-left valign-top">
+                                <p class="tableblock"><span class="image"><a class="image"
+                                            href="https://github.com/AndrewPoppe/Security-Access-Groups/actions/workflows/playwright_PHP8.2_REDCap13.7.13.yml"><img
+                                                src="https://github.com/AndrewPoppe/Security-Access-Groups/actions/workflows/playwright_PHP8.2_REDCap13.7.13.yml/badge.svg"
+                                                alt="badge"></a></span></p>
+                            </td>
+                            <td class="tableblock halign-left valign-top">
+                                <p class="tableblock"><span class="image"><a class="image"
+                                            href="https://github.com/AndrewPoppe/Security-Access-Groups/actions/workflows/playwright_PHP8.2_REDCap13.9.3.yml"><img
+                                                src="https://github.com/AndrewPoppe/Security-Access-Groups/actions/workflows/playwright_PHP8.2_REDCap13.9.3.yml/badge.svg"
+                                                alt="badge"></a></span></p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="sect1">
             <h2 id="_changelog"><a class="link" href="#_changelog">Changelog</a></h2>
             <div class="sectionbody">
                 <table class="tableblock frame-all grid-all stripes-even stretch">
@@ -4972,7 +5034,7 @@
     </div>
     <div id="footer">
         <div id="footer-text">
-            Last updated 2023-09-01 08:39:33 -0400
+            Last updated 2023-09-04 18:07:29 -0400
         </div>
     </div>
 </body>
