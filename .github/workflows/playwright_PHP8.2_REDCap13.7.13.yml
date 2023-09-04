@@ -31,7 +31,7 @@ jobs:
         with:
           path: security_access_groups
       - name: Move REDCap Source File
-        run: mv redcap.*.zip security_access_groups/tests/playwright/setup/
+        run: mv redcap13.7.13.zip security_access_groups/tests/playwright/setup/
       - uses: actions/setup-node@v3
         with:
           node-version: 18
