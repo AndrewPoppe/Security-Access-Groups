@@ -1,4 +1,4 @@
-name: Playwright Tests - PHP 7.4.5 - REDCap 13.1.27
+name: Playwright Tests - PHP 7.4.5 - REDCap 13.9.3
 on:
   push:
     branches: main
