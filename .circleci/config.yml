@@ -40,7 +40,9 @@ jobs:
       - run:
           name: Initialize REDCap
           working_directory: ./security_access_groups/tests/playwright/setup
-          command: node installREDCap.js
+          command: |
+            sed -i 's|ZIPFILE|redcap13.1.27.zip|' installREDCap.js
+            node installREDCap.js
       - store_artifacts:
           path: ./security_access_groups/tests/playwright/setup/screenshots
           destination: setup
