@@ -8,6 +8,7 @@ Andrew Poppe <andrew.poppe@yale.edu>
 :tip-caption: 💡
 :important-caption: 🚩
 :warning-caption: ⚠️
+:toclevels: 3
 ifdef::env-github[]
 :toc: macro
 :imagesdir: docs/screenshots/EN
