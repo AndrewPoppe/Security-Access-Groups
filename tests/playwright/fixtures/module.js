@@ -243,10 +243,14 @@ export class Module {
     }
 
     async visitProjectUserRightsPage(pid) {
-        await this.visitMyProjectsPage();
-        await this.page.locator('table#table-proj_table tr', { has: this.page.locator('td:nth-child(2)', { hasText: pid }) })
-            .locator('td:first-child a').click();
-        await this.page.locator('div#app_panel a', { hasText: 'User Rights' }).click();
+        if (this.page.url() !== `${this.url}/UserRights/index.php?pid=${pid}`) {
+            await this.visitMyProjectsPage();
+            await this.page.locator('table#table-proj_table tr', { has: this.page.locator('td:nth-child(2)', { hasText: pid }) })
+                .locator('td:first-child a').click();
+            await this.page.locator('div#app_panel a', { hasText: 'User Rights' }).click();
+        } else {
+            await this.page.reload({ waitUntil: 'domcontentloaded' });
+        }
         //await this.page.goto(`${this.url}/UserRights/index.php?pid=${pid}`, { waitUntil: 'domcontentloaded' });
     }
 
@@ -374,6 +378,9 @@ export class Module {
     async expireUser(pid, username) {
         await this.visitProjectUserRightsPage(pid);
         await this.page.locator(`div.expireLinkDiv a[userid="${username}"]`).click();
+        await this.page.locator('input#tooltipExpiration').click();
+        await this.page.waitForTimeout(500);
+        await this.page.keyboard.press('Enter');
         await this.page.locator('input#tooltipExpiration').fill('01/01/1970');
         await this.page.locator('button#tooltipExpirationBtn').click();
         await this.page.locator(`a.userRightsExpired[userid="${username}"]`).waitFor({ state: 'visible' });
@@ -382,6 +389,9 @@ export class Module {
     async unexpireUser(pid, username) {
         await this.visitProjectUserRightsPage(pid);
         await this.page.locator(`div.expireLinkDiv a[userid="${username}"]`).click();
+        await this.page.locator('input#tooltipExpiration').click();
+        await this.page.waitForTimeout(500);
+        await this.page.keyboard.press('Enter');
         await this.page.locator('input#tooltipExpiration').clear();
         await this.page.locator('button#tooltipExpirationBtn').click();
     }
@@ -431,10 +441,14 @@ export class Module {
     }
 
     async visitLoggingPage(pid) {
-        await this.visitMyProjectsPage();
-        await this.page.locator('table#table-proj_table tr', { has: this.page.locator('td:nth-child(2)', { hasText: pid }) })
-            .locator('td:first-child a').click();
-        await this.page.locator('div#app_panel a', { hasText: /^Logging$/ }).click();
+        if (this.page.url() !== `${this.url}/Logging/index.php?pid=${pid}`) {
+            await this.visitMyProjectsPage();
+            await this.page.locator('table#table-proj_table tr', { has: this.page.locator('td:nth-child(2)', { hasText: pid }) })
+                .locator('td:first-child a').click();
+            await this.page.locator('div#app_panel a', { hasText: /^Logging$/ }).click();
+        } else {
+            await this.page.reload({ waitUntil: 'domcontentloaded' });
+        }
     }
 
     async importUserCSV(pid, csv) {
