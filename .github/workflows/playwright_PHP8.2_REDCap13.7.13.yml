@@ -62,13 +62,13 @@ jobs:
           sed -i 's|redcapVersion:.*|redcapVersion: "redcap_v13.7.13",|' fixtures/config.js
           npx playwright test
       - uses: actions/upload-artifact@v3
-        if: always()
+        if: failure()
         with:
           name: playwright-report
           path: ./redcap-docker-compose/www/modules/security_access_groups_v99/tests/playwright/playwright-report/
           retention-days: 30
       - uses: actions/upload-artifact@v3
-        if: always()
+        if: success()
         with:
           name: test-results
           path: ./redcap-docker-compose/www/modules/security_access_groups_v99/tests/playwright/test-results/
