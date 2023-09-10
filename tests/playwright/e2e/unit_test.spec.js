@@ -97,6 +97,16 @@ test.describe('Prevent noncompliant rights from being granted', () => {
             await modulePage.visitProjectStatusPage(config.projects.UI_Project.pid);
             const numRows = await modulePage.page.locator('table#discrepancy-table>tbody>tr').count();
             await expect(numRows).toEqual(3);
+            const displayUsersButton = modulePage.page.locator('button#displayUsersButton');
+            await expect(displayUsersButton).toBeVisible();
+            const emailUsersButton = modulePage.page.locator('div#containerCard button', { hasText: "Email User(s)" });
+            await expect(emailUsersButton).toBeVisible();
+            const emailUserRightsHoldersButton = modulePage.page.locator('div#containerCard button', { hasText: "Email User Rights Holders" });
+            await expect(emailUserRightsHoldersButton).toBeVisible();
+            const expireUsersButton = modulePage.page.locator('div#containerCard button', { hasText: "Expire User(s)" });
+            await expect(expireUsersButton).toBeVisible();
+            const searchUsersInput = modulePage.page.locator('div.dataTables_filter input[type="search"]');
+            await expect(searchUsersInput).toBeVisible();
             await modulePage.page.screenshot({ path: `${outDir}/FRS-VL-SAGEM-001-27-project_status_page.png`, fullPage: false });
         });
         await test.step('Attempt to give noncompliant rights to user', async () => {
