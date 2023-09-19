@@ -22,7 +22,7 @@ jobs:
         language: [ 'javascript' ]
 
     steps:
-    - name: Checkout repository
+    - name: Checkout this repository
       uses: actions/checkout@v3
 
     # Initializes the CodeQL tools for scanning.
