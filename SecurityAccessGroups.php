@@ -49,6 +49,7 @@ class SecurityAccessGroups extends AbstractExternalModule
                 'UserRights/assign_user.php',
                 'UserRights/import_export_users.php',
                 'UserRights/import_export_roles.php',
+                'UserRights/set_user_expiration.php',
                 'api/index.php'
             ], true)
         ) {
@@ -94,6 +95,11 @@ class SecurityAccessGroups extends AbstractExternalModule
         elseif ( PAGE === 'UserRights/assign_user.php' ) {
             $this->log('attempt to assign user role directly', [ 'page' => PAGE, 'data' => json_encode($_POST), 'user' => $username ]);
             $this->exitAfterHook();
+        }
+
+        // Edit User's Expiration Date
+        elseif ( PAGE === 'UserRights/set_user_expiration.php' ) {
+            $this->log('attempt to update user\'s expiration date directly', [ 'page' => PAGE, 'data' => json_encode($_POST), 'user' => $username ]);
         }
 
         // Upload Users via CSV
@@ -445,22 +451,22 @@ class SecurityAccessGroups extends AbstractExternalModule
                         ];
                     }, $users)),
                     'bad_rights'            =>
-                    array_values(
-                        array_unique(
-                            array_merge(
-                                ...array_map(function ($thisUser) {
-                                    return $thisUser['bad'];
-                                }, $users)
+                        array_values(
+                            array_unique(
+                                array_merge(
+                                    ...array_map(function ($thisUser) {
+                                        return $thisUser['bad'];
+                                    }, $users)
+                                )
                             )
-                        )
-                    ),
+                        ),
                     'sags'                  =>
-                    array_values(array_unique(array_map(function ($thisUser) {
-                        return [
-                            'sag'      => $thisUser['sag'],
-                            'sag_name' => $thisUser['sag_name']
-                        ];
-                    }, $users), SORT_REGULAR))
+                        array_values(array_unique(array_map(function ($thisUser) {
+                            return [
+                                'sag'      => $thisUser['sag'],
+                                'sag_name' => $thisUser['sag_name']
+                            ];
+                        }, $users), SORT_REGULAR))
 
 
 
@@ -688,8 +694,8 @@ class SecurityAccessGroups extends AbstractExternalModule
                     "source_lang": "EN",
                     "preserve_formatting": true,
                     "formality": "prefer_more"' .
-                ($htmlOnly ? ', "tag_handling": "html"' : '') .
-                '}',
+                    ($htmlOnly ? ', "tag_handling": "html"' : '') .
+                    '}',
                 CURLOPT_HTTPHEADER     => array(
                     'Authorization: DeepL-Auth-Key %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%',
                     'Content-Type: application/json'
