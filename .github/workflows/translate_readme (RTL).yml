@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       languages:
-        description: "Languages to translate to (example: ['EN','BN','DE','ES','FR','HI'] or ['ZH','IT','PT','UK'])"
+        description: "Languages to translate to (example: ['AR', 'UR'])"
         required: true
         type: string
 
@@ -34,6 +34,14 @@ jobs:
         ACCESS_TOKEN=$(gcloud auth print-access-token)
         echo "::add-mask::$ACCESS_TOKEN"
         echo "ACCESS_TOKEN=$ACCESS_TOKEN" >> $GITHUB_ENV
+
+    - name: Replace styles in README
+      run: |
+        sed -i 's|#toc.toc2 ul ul{margin-left:0;padding-left:1em}|#toc.toc2 ul ul{margin-right:0;padding-right:1em}|' README.html
+        sed -i 's|#toc.toc2 ul ul{padding-left:1.25em}|#toc.toc2 ul ul{padding-right:1.25em}|' README.html
+        sed -i 's|class="article toc2 toc-left"|class="article toc2 toc-right"|' README.html
+        sed -i 's|halign-left|halign-right|' README.html
+        sed -i 's|ul,ol{margin-left:1.5em}|ul,ol{margin-right:1.5em}|' README.html
 
     - name: Upload README.html to sag_readme bucket
       run: |
