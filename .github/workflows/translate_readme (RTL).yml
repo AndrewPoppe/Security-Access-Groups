@@ -78,31 +78,13 @@ jobs:
             mv $f $new_name    
         done
 
+    - name: Store translated files as artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: translated_files
+        path: docs/readme/translated_files
+
     - name: Cleanup bucket
       if: always()
       run: |
         gcloud storage rm gs://sag_readme_translated --recursive
-
-    - name: Create Pull Request
-      env:
-        GH_TOKEN: ${{ github.token }}
-      run: |
-        git config --global user.email "AndrewBPoppe@gmail.com"
-        git config --global user.name "Andrew Poppe"
-
-        # Create a new branch for the translated files
-        git checkout -b translated-branch
-        if [ $(git ls-remote --heads origin refs/heads/translated-branch | wc -l) == 1 ] ; then
-            git pull origin translated-branch
-        fi
-
-        # Copy the translated files to the repository
-        # mv -r translated_files ./docs/readme/
-
-        # Commit and push the changes
-        git add ./docs/readme/translated_files
-        git commit -m "Add translated files"
-        git push origin translated-branch
-
-        # Create a pull request
-        gh pr create --base main --head translated-branch --title "Translated README" --body "This is an automated pull request to add translated README files for these languages: ${{ github.event.inputs.languages }}"
