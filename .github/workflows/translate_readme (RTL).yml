@@ -1,4 +1,4 @@
-name: Translate README and Create PR
+name: Translate README and Create PR (RTL)
 
 on:
   workflow_dispatch:
