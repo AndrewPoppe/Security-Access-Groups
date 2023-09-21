@@ -984,14 +984,21 @@ endif::[]
 
 == Changelog
 
-[%header,cols="1,2,4"]
+[%header,cols="1,1,6"]
 |===
 |Version
 |Release Date
 |Description of changes
 
+|1.0.1
+|2023-09-21
+a| * **Major Bug Fix**: Fixed a bug in which the module failed to prevent a user from un-expiring an expired user with noncompliant rights in a project.
+* **Change**: Updated README files.
+* **Change**: Updated translations.
+* **Change**: Updated automated tests. 
+
 |1.0.0
 |2023-08-30
-|* Initial release
+a| * Initial release
 
 |===
