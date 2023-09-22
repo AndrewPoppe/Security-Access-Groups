@@ -12,6 +12,8 @@ const projectId = 16;
 const urlBase = 'http://localhost:13740';
 const redcapVersion = 'redcap_v13.1.27';
 const screenshotsPath = `screenshots`;
+const compressionLevel = 9;
+const pngQuality = 25;
 
 const shotsToTake = "all"; // "project", "control_center", "other", "all"
 
@@ -101,13 +103,14 @@ const other_config_options = {
         // We had some issues with the templates being erased, so make sure they're set.
         const frames = page.frames();
         await Promise.all(frames.map(async frame => { frame.waitForLoadState('load') }));
-        await page.evaluate(([user, user_reminder, urh, urh_reminder, expiration, expiration_urh]) => {
-            tinymce.get($('textarea[name="user-email-body-template"]').attr('id')).setContent(user);
-            tinymce.get($('textarea[name="user-reminder-email-body-template"]').attr('id')).setContent(user_reminder);
-            tinymce.get($('textarea[name="user-rights-holders-email-body-template"]').attr('id')).setContent(urh);
-            tinymce.get($('textarea[name="user-rights-holders-reminder-email-body-template"]').attr('id')).setContent(urh_reminder);
-            tinymce.get($('textarea[name="user-expiration-email-body-template"]').attr('id')).setContent(expiration);
-            tinymce.get($('textarea[name="user-expiration-user-rights-holders-email-body-template"]').attr('id')).setContent(expiration_urh);
+        await page.waitForTimeout(2000);
+        await page.evaluate(([user_email_body_template, user_reminder_email_body_template, user_rights_holders_email_body_template, user_rights_holders_reminder_email_body_template, expiration_user_email_body_template, expiration_user_rights_holders_email_body_template]) => {
+            tinymce.get($('textarea[name="user-email-body-template"]').attr('id')).setContent(user_email_body_template);
+            tinymce.get($('textarea[name="user-reminder-email-body-template"]').attr('id')).setContent(user_reminder_email_body_template);
+            tinymce.get($('textarea[name="user-rights-holders-email-body-template"]').attr('id')).setContent(user_rights_holders_email_body_template);
+            tinymce.get($('textarea[name="user-rights-holders-reminder-email-body-template"]').attr('id')).setContent(user_rights_holders_reminder_email_body_template);
+            tinymce.get($('textarea[name="user-expiration-email-body-template"]').attr('id')).setContent(expiration_user_email_body_template);
+            tinymce.get($('textarea[name="user-expiration-user-rights-holders-email-body-template"]').attr('id')).setContent(expiration_user_rights_holders_email_body_template);
         }, [user_email_body_template, user_reminder_email_body_template, user_rights_holders_email_body_template, user_rights_holders_reminder_email_body_template, expiration_user_email_body_template, expiration_user_rights_holders_email_body_template]);
 
         // Save and settle
@@ -126,7 +129,7 @@ const other_config_options = {
             await page.locator('tr[data-module="security_access_groups"] button.external-modules-configure-button').click();
             await page.locator('tr[field="user-email-subject-template"]').scrollIntoViewIfNeeded();
             const cc_config = await page.locator('#external-modules-configure-modal .modal-dialog').screenshot();
-            await sharp(cc_config).extend(cc_config_options).toFile(`${screenshotsPath}/${language.code}/cc_config.png`);
+            await sharp(cc_config).extend(cc_config_options).png({ compressionLevel: compressionLevel, quality: pngQuality }).toFile(`${screenshotsPath}/${language.code}/cc_config.png`);
 
             // SHOT: cc_users
             console.log('\tcc_users');
@@ -136,7 +139,7 @@ const other_config_options = {
             const cc_window_cc_users = await page.locator('#control_center_window').boundingBox();
             const box_cc_users = await page.locator('div.SAG_Container').boundingBox();
             const cc_users = await page.screenshot({ clip: { x: cc_window_cc_users.x - 10, y: cc_window_cc_users.y - 10, width: cc_window_cc_users.width + 20, height: box_cc_users.y + box_cc_users.height + 30 } });
-            await sharp(cc_users).extend(cc_config_options).toFile(`${screenshotsPath}/${language.code}/cc_users.png`);
+            await sharp(cc_users).extend(cc_config_options).png({ compressionLevel: compressionLevel, quality: pngQuality }).toFile(`${screenshotsPath}/${language.code}/cc_users.png`);
 
             // SHOT: cc_users_actions
             console.log('\tcc_users_actions');
@@ -148,7 +151,7 @@ const other_config_options = {
             const dropdown_cc_users_actions = await page.locator('div.SAG_Container li:first-child a.dropdown-item').boundingBox();
             await page.mouse.move(dropdown_cc_users_actions.x + dropdown_cc_users_actions.width - 10, dropdown_cc_users_actions.y + dropdown_cc_users_actions.height / 2);
             const cc_users_actions = await page.screenshot({ clip: { x: box_cc_users.x - 20, y: box_cc_users.y - 20, width: box_cc_users.width / 2, height: box_cc_users.height / 2 } });
-            await sharp(cc_users_actions).extend(cc_config_options).toFile(`${screenshotsPath}/${language.code}/cc_users_actions.png`);
+            await sharp(cc_users_actions).extend(cc_config_options).png({ compressionLevel: compressionLevel, quality: pngQuality }).toFile(`${screenshotsPath}/${language.code}/cc_users_actions.png`);
 
             // SHOT: cc_users_edit
             console.log('\tcc_users_edit');
@@ -159,7 +162,7 @@ const other_config_options = {
             await page.mouse.move(option_cc_users_edit.x + option_cc_users_edit.width - 10, option_cc_users_edit.y + option_cc_users_edit.height / 2);
             const card_cc_users_edit = await page.locator('div.SAG_Container div.card').boundingBox();
             const cc_users_edit = await page.screenshot({ clip: { x: card_cc_users_edit.x - 20, y: card_cc_users_edit.y - 20, width: card_cc_users_edit.width + 40, height: card_cc_users_edit.height + 40 } });
-            await sharp(cc_users_edit).extend(cc_config_options).toFile(`${screenshotsPath}/${language.code}/cc_users_edit.png`);
+            await sharp(cc_users_edit).extend(cc_config_options).png({ compressionLevel: compressionLevel, quality: pngQuality }).toFile(`${screenshotsPath}/${language.code}/cc_users_edit.png`);
 
             // SHOT: cc_user_import_confirm
             console.log('\tcc_user_import_confirm');
@@ -170,7 +173,7 @@ const other_config_options = {
             await waitForModal;
             const box_cc_user_import_confirm = await page.locator('div.modal-lg.modal-dialog.modal-dialog-scrollable').boundingBox();
             const cc_user_import_confirm = await page.screenshot({ clip: { x: box_cc_user_import_confirm.x - 30, y: box_cc_user_import_confirm.y - 20, width: box_cc_user_import_confirm.width + 60, height: box_cc_user_import_confirm.height + 40 } });
-            await sharp(cc_user_import_confirm).extend(cc_config_options).toFile(`${screenshotsPath}/${language.code}/cc_user_import_confirm.png`);
+            await sharp(cc_user_import_confirm).extend(cc_config_options).png({ compressionLevel: compressionLevel, quality: pngQuality }).toFile(`${screenshotsPath}/${language.code}/cc_user_import_confirm.png`);
 
             // SHOT: cc_sags
             console.log('\tcc_sags');
@@ -180,7 +183,7 @@ const other_config_options = {
             const cc_window_cc_sags = await page.locator('#control_center_window').boundingBox();
             const box_cc_sags = await page.locator('div.SAG_Container').boundingBox();
             const cc_sags = await page.screenshot({ clip: { x: cc_window_cc_sags.x - 10, y: cc_window_cc_sags.y - 10, width: cc_window_cc_sags.width + 20, height: box_cc_sags.y + box_cc_sags.height + 30 } });
-            await sharp(cc_sags).extend(cc_config_options).toFile(`${screenshotsPath}/${language.code}/cc_sags.png`);
+            await sharp(cc_sags).extend(cc_config_options).png({ compressionLevel: compressionLevel, quality: pngQuality }).toFile(`${screenshotsPath}/${language.code}/cc_sags.png`);
 
             // SHOT: cc_sags_editor
             console.log('\tcc_sags_editor');
@@ -188,7 +191,7 @@ const other_config_options = {
             await page.locator('button#SAG_Delete').waitFor('visible');
             const box_cc_sags_editor = await page.locator('div#edit_sag_popup div.modal-content').boundingBox();
             const cc_sags_editor = await page.screenshot({ clip: { x: box_cc_sags_editor.x - 20, y: box_cc_sags_editor.y - 20, width: box_cc_sags_editor.width + 40, height: box_cc_sags_editor.height + 40 } });
-            await sharp(cc_sags_editor).extend(cc_config_options).toFile(`${screenshotsPath}/${language.code}/cc_sags_editor.png`);
+            await sharp(cc_sags_editor).extend(cc_config_options).png({ compressionLevel: compressionLevel, quality: pngQuality }).toFile(`${screenshotsPath}/${language.code}/cc_sags_editor.png`);
             await page.locator('button#SAG_Cancel').click();
 
             // SHOT: cc_sags_actions
@@ -208,7 +211,7 @@ const other_config_options = {
                 height: (box_cc_sags_actions_dropdown.y + box_cc_sags_actions_dropdown.height + 60) - box_cc_sags.y
             }
             const cc_sags_actions = await page.screenshot({ clip: cc_sags_actions_bounds });
-            await sharp(cc_sags_actions).extend(cc_config_options).toFile(`${screenshotsPath}/${language.code}/cc_sags_actions.png`);
+            await sharp(cc_sags_actions).extend(cc_config_options).png({ compressionLevel: compressionLevel, quality: pngQuality }).toFile(`${screenshotsPath}/${language.code}/cc_sags_actions.png`);
 
             // SHOT: cc_sags_import_confirmation
             console.log('\tcc_sags_import_confirmation');
@@ -216,7 +219,7 @@ const other_config_options = {
             await page.locator('div.modal.fade.show div.modal-lg.modal-dialog.modal-dialog-scrollable button.btn-primary').waitFor('visible');
             const box_cc_sags_import_modal = await page.locator('div.modal-lg.modal-dialog.modal-dialog-scrollable').boundingBox();
             const cc_sags_import_confirmation = await page.screenshot({ clip: { x: box_cc_sags_import_modal.x - 30, y: box_cc_sags_import_modal.y - 20, width: box_cc_sags_import_modal.width + 60, height: box_cc_sags_import_modal.height + 40 } });
-            await sharp(cc_sags_import_confirmation).extend(cc_config_options).toFile(`${screenshotsPath}/${language.code}/cc_sags_import_confirmation.png`);
+            await sharp(cc_sags_import_confirmation).extend(cc_config_options).png({ compressionLevel: compressionLevel, quality: pngQuality }).toFile(`${screenshotsPath}/${language.code}/cc_sags_import_confirmation.png`);
 
             // SHOT: cc_report_types
             console.log('\tcc_report_types');
@@ -237,7 +240,7 @@ const other_config_options = {
                 height: (box_cc_report_types_dropdown.y + box_cc_report_types_dropdown.height + 40) - cc_window_cc_reports.y
             };
             const cc_report_types = await page.screenshot({ clip: cc_report_types_bounds });
-            await sharp(cc_report_types).extend(cc_config_options).toFile(`${screenshotsPath}/${language.code}/cc_report_types.png`);
+            await sharp(cc_report_types).extend(cc_config_options).png({ compressionLevel: compressionLevel, quality: pngQuality }).toFile(`${screenshotsPath}/${language.code}/cc_report_types.png`);
             await page.mouse.move(0, 0);
 
             // SHOT: cc_report_example
@@ -264,7 +267,7 @@ const other_config_options = {
                     height: 900
                 }
             });
-            await sharp(cc_report_example).extend(cc_config_options).toFile(`${screenshotsPath}/${language.code}/cc_report_example.png`);
+            await sharp(cc_report_example).extend(cc_config_options).png({ compressionLevel: compressionLevel, quality: pngQuality }).toFile(`${screenshotsPath}/${language.code}/cc_report_example.png`);
 
             // SHOT: cc_report_filter_example
             console.log('\tcc_report_filter_example');
@@ -277,7 +280,7 @@ const other_config_options = {
                     height: 900
                 }
             });
-            await sharp(cc_report_filter_example).extend(cc_config_options).toFile(`${screenshotsPath}/${language.code}/cc_report_filter_example.png`);
+            await sharp(cc_report_filter_example).extend(cc_config_options).png({ compressionLevel: compressionLevel, quality: pngQuality }).toFile(`${screenshotsPath}/${language.code}/cc_report_filter_example.png`);
         }
 
         /////////////////////
@@ -302,18 +305,18 @@ const other_config_options = {
                     height: box_sag_container.height + 40
                 }
             });
-            await sharp(p_status).extend(project_config_options).toFile(`${screenshotsPath}/${language.code}/p_status.png`);
+            await sharp(p_status).extend(project_config_options).png({ compressionLevel: compressionLevel, quality: pngQuality }).toFile(`${screenshotsPath}/${language.code}/p_status.png`);
 
             // SHOT: p_status_alert_user
             console.log('\tp_status_alert_user');
-            await page.locator('tr[data-user="admin"] td:first-child input').check();
+            await page.locator('table#discrepancy-table tr[data-user="admin"] td:first-child input').check();
             await page.evaluate(() => { window.shown = false; });
             const waitForModal_p_user = page.waitForFunction(() => { $('#emailUsersModal').on('shown.bs.modal', () => window.shown = true); return window.shown; });
             await page.locator('div#containerCard div.buttonContainer button.btn.btn-primary').click();
             await waitForModal_p_user;
             const box_p_status_alert_user = await page.locator('div#emailUsersModal div.modal-content').boundingBox();
             const p_status_alert_user = await page.screenshot({ clip: { x: box_p_status_alert_user.x - 30, y: box_p_status_alert_user.y - 20, width: box_p_status_alert_user.width + 60, height: box_p_status_alert_user.height + 40 } });
-            await sharp(p_status_alert_user).extend(project_config_options).toFile(`${screenshotsPath}/${language.code}/p_status_alert_user.png`);
+            await sharp(p_status_alert_user).extend(project_config_options).png({ compressionLevel: compressionLevel, quality: pngQuality }).toFile(`${screenshotsPath}/${language.code}/p_status_alert_user.png`);
 
             // SHOT: p_status_alert_user_reminder
             console.log('\tp_status_alert_user_reminder');
@@ -323,7 +326,7 @@ const other_config_options = {
             await placeholders.waitFor('visible');
             await placeholders.scrollIntoViewIfNeeded();
             const p_status_alert_user_reminder = await page.screenshot({ clip: { x: box_p_status_alert_user.x - 30, y: box_p_status_alert_user.y - 20, width: box_p_status_alert_user.width + 60, height: box_p_status_alert_user.height + 40 } });
-            await sharp(p_status_alert_user_reminder).extend(project_config_options).toFile(`${screenshotsPath}/${language.code}/p_status_alert_user_reminder.png`);
+            await sharp(p_status_alert_user_reminder).extend(project_config_options).png({ compressionLevel: compressionLevel, quality: pngQuality }).toFile(`${screenshotsPath}/${language.code}/p_status_alert_user_reminder.png`);
             await page.locator('div#emailUsersModal button.btn-close').click();
 
             // SHOT: p_status_alert_user-rights-holder
@@ -334,7 +337,7 @@ const other_config_options = {
             await waitForModal_p_user_rights_holder;
             const box_p_status_alert_user_rights_holder = await page.locator('div#emailUserRightsHoldersModal div.modal-content').boundingBox();
             const p_status_alert_user_rights_holder = await page.screenshot({ clip: { x: box_p_status_alert_user_rights_holder.x - 30, y: box_p_status_alert_user_rights_holder.y - 20, width: box_p_status_alert_user_rights_holder.width + 60, height: box_p_status_alert_user_rights_holder.height + 40 } });
-            await sharp(p_status_alert_user_rights_holder).extend(project_config_options).toFile(`${screenshotsPath}/${language.code}/p_status_alert_user-rights-holder.png`);
+            await sharp(p_status_alert_user_rights_holder).extend(project_config_options).png({ compressionLevel: compressionLevel, quality: pngQuality }).toFile(`${screenshotsPath}/${language.code}/p_status_alert_user-rights-holder.png`);
 
             // SHOT: p_status_alert_user-rights-holder_reminder
             console.log('\tp_status_alert_user-rights-holder_reminder');
@@ -344,7 +347,7 @@ const other_config_options = {
             await label_p_status_alert_user_rights_holder_reminder.waitFor('visible');
             await label_p_status_alert_user_rights_holder_reminder.scrollIntoViewIfNeeded();
             const p_status_alert_user_rights_holder_reminder = await page.screenshot({ clip: { x: box_p_status_alert_user_rights_holder.x - 30, y: box_p_status_alert_user_rights_holder.y - 20, width: box_p_status_alert_user_rights_holder.width + 60, height: box_p_status_alert_user_rights_holder.height + 40 } });
-            await sharp(p_status_alert_user_rights_holder_reminder).extend(project_config_options).toFile(`${screenshotsPath}/${language.code}/p_status_alert_user-rights-holder_reminder.png`);
+            await sharp(p_status_alert_user_rights_holder_reminder).extend(project_config_options).png({ compressionLevel: compressionLevel, quality: pngQuality }).toFile(`${screenshotsPath}/${language.code}/p_status_alert_user-rights-holder_reminder.png`);
             await page.locator('div#emailUserRightsHoldersModal button.btn-close').click();
 
             // SHOT: p_status_expiration
@@ -355,7 +358,7 @@ const other_config_options = {
             await waitForModal_p_expiration;
             const box_p_status_expiration = await page.locator('div#userExpirationModal div.modal-content').boundingBox();
             const p_status_expiration = await page.screenshot({ clip: { x: box_p_status_expiration.x - 30, y: box_p_status_expiration.y - 20, width: box_p_status_expiration.width + 60, height: box_p_status_expiration.height + 40 } });
-            await sharp(p_status_expiration).extend(project_config_options).toFile(`${screenshotsPath}/${language.code}/p_status_expiration.png`);
+            await sharp(p_status_expiration).extend(project_config_options).png({ compressionLevel: compressionLevel, quality: pngQuality }).toFile(`${screenshotsPath}/${language.code}/p_status_expiration.png`);
 
             // SHOT: p_status_expiration_alert_user
             console.log('\tp_status_expiration_alert_user');
@@ -366,7 +369,7 @@ const other_config_options = {
             await button_p_status_expiration_alert_user.waitFor('visible');
             await button_p_status_expiration_alert_user.scrollIntoViewIfNeeded();
             const p_status_expiration_alert_user = await page.screenshot({ clip: { x: box_p_status_expiration.x - 30, y: box_p_status_expiration.y - 20, width: box_p_status_expiration_user.width + 60, height: box_p_status_expiration_user.height + 40 } });
-            await sharp(p_status_expiration_alert_user).extend(project_config_options).toFile(`${screenshotsPath}/${language.code}/p_status_expiration_alert_user.png`);
+            await sharp(p_status_expiration_alert_user).extend(project_config_options).png({ compressionLevel: compressionLevel, quality: pngQuality }).toFile(`${screenshotsPath}/${language.code}/p_status_expiration_alert_user.png`);
 
             // SHOT: p_status_expiration_alert_user-rights-holder
             console.log('\tp_status_expiration_alert_user-rights-holder');
@@ -378,7 +381,7 @@ const other_config_options = {
             await page.evaluate(() => { $('div#userExpirationModal .modal-body')[0].scrollTo(0, $('#expireUsersUserRightsHolderSelection')[0].getBoundingClientRect().top + 200); });
             await page.waitForTimeout(500);
             const p_status_expiration_alert_user_rights_holder = await page.screenshot({ clip: { x: box_p_status_expiration_user_rights_holder.x - 30, y: box_p_status_expiration_user_rights_holder.y - 20, width: box_p_status_expiration_user_rights_holder.width + 60, height: box_p_status_expiration_user_rights_holder.height + 40 } });
-            await sharp(p_status_expiration_alert_user_rights_holder).extend(project_config_options).toFile(`${screenshotsPath}/${language.code}/p_status_expiration_alert_user-rights-holder.png`);
+            await sharp(p_status_expiration_alert_user_rights_holder).extend(project_config_options).png({ compressionLevel: compressionLevel, quality: pngQuality }).toFile(`${screenshotsPath}/${language.code}/p_status_expiration_alert_user-rights-holder.png`);
 
             // SHOT p_alert_log
             console.log('\tp_alert_log');
@@ -396,7 +399,7 @@ const other_config_options = {
                     height: box_p_alert_log.height + 40
                 }
             });
-            await sharp(p_alert_log).extend(project_config_options).toFile(`${screenshotsPath}/${language.code}/p_alert_log.png`);
+            await sharp(p_alert_log).extend(project_config_options).png({ compressionLevel: compressionLevel, quality: pngQuality }).toFile(`${screenshotsPath}/${language.code}/p_alert_log.png`);
 
             // SHOT: p_logs_preview
             console.log('\tp_logs_preview');
@@ -405,7 +408,7 @@ const other_config_options = {
             await page.waitForTimeout(500);
             const box_alert_preview_modal = await page.locator('#alertPreviewModal .modal-content').boundingBox();
             const p_logs_preview = await page.screenshot({ clip: { x: box_alert_preview_modal.x - 30, y: box_alert_preview_modal.y - 20, width: box_alert_preview_modal.width + 60, height: box_alert_preview_modal.height + 40 } });
-            await sharp(p_logs_preview).extend(project_config_options).toFile(`${screenshotsPath}/${language.code}/p_logs_preview.png`);
+            await sharp(p_logs_preview).extend(project_config_options).png({ compressionLevel: compressionLevel, quality: pngQuality }).toFile(`${screenshotsPath}/${language.code}/p_logs_preview.png`);
 
 
             // SHOT: p_blocked
@@ -420,7 +423,7 @@ const other_config_options = {
             await page.waitForTimeout(500);
             const box_p_blocked = await page.locator('div.swal2-popup.swal2-show').boundingBox();
             const p_blocked = await page.screenshot({ clip: { x: box_p_blocked.x - 30, y: box_p_blocked.y - 20, width: box_p_blocked.width + 60, height: box_p_blocked.height + 40 } });
-            await sharp(p_blocked).extend(project_config_options).toFile(`${screenshotsPath}/${language.code}/p_blocked.png`);
+            await sharp(p_blocked).extend(project_config_options).png({ compressionLevel: compressionLevel, quality: pngQuality }).toFile(`${screenshotsPath}/${language.code}/p_blocked.png`);
 
             // SHOT: p_logging_user
             console.log('\tp_logging_user');
@@ -430,7 +433,7 @@ const other_config_options = {
             const td_log_user = await page.locator('td[ts="20230723182103"]').first().boundingBox();
             const box_log_user = await page.locator('table[logeventtable="redcap_log_event6"]').boundingBox();
             const p_logging_user = await page.screenshot({ clip: { x: box_log_user.x, y: td_log_user.y, width: box_log_user.width, height: td_log_user.height } });
-            await sharp(p_logging_user).extend(project_config_options).toFile(`${screenshotsPath}/${language.code}/p_logging_user.png`);
+            await sharp(p_logging_user).extend(project_config_options).png({ compressionLevel: compressionLevel, quality: pngQuality }).toFile(`${screenshotsPath}/${language.code}/p_logging_user.png`);
 
             // SHOT: p_logging_role
             console.log('\tp_logging_role');
@@ -440,7 +443,7 @@ const other_config_options = {
             const td_log_role = await page.locator('td[ts="20230721164250"]').first().boundingBox();
             const box_log_role = await page.locator('table[logeventtable="redcap_log_event6"]').boundingBox();
             const p_logging_role = await page.screenshot({ clip: { x: box_log_role.x, y: td_log_role.y, width: box_log_role.width, height: td_log_role.height } });
-            await sharp(p_logging_role).extend(project_config_options).toFile(`${screenshotsPath}/${language.code}/p_logging_role.png`);
+            await sharp(p_logging_role).extend(project_config_options).png({ compressionLevel: compressionLevel, quality: pngQuality }).toFile(`${screenshotsPath}/${language.code}/p_logging_role.png`);
         }
 
         ///////////////////
@@ -459,7 +462,7 @@ const other_config_options = {
             await page.waitForTimeout(500);
             const box_searching_example = await page.locator('div.SAG_Container div.card').boundingBox();
             const searching_example = await page.screenshot({ clip: { x: box_searching_example.x - 20, y: box_searching_example.y - 20, width: box_searching_example.width + 40, height: box_searching_example.height + 40 } });
-            await sharp(searching_example).extend(other_config_options).toFile(`${screenshotsPath}/${language.code}/searching_example.png`);
+            await sharp(searching_example).extend(other_config_options).png({ compressionLevel: compressionLevel, quality: pngQuality }).toFile(`${screenshotsPath}/${language.code}/searching_example.png`);
 
 
             // SHOT: searching_example_AND
@@ -468,7 +471,7 @@ const other_config_options = {
             await page.waitForTimeout(500);
             const box_searching_example_AND = await page.locator('div.SAG_Container div.card').boundingBox();
             const searching_example_AND = await page.screenshot({ clip: { x: box_searching_example_AND.x - 20, y: box_searching_example_AND.y - 20, width: box_searching_example_AND.width + 40, height: box_searching_example_AND.height + 40 } });
-            await sharp(searching_example_AND).extend(other_config_options).toFile(`${screenshotsPath}/${language.code}/searching_example_AND.png`);
+            await sharp(searching_example_AND).extend(other_config_options).png({ compressionLevel: compressionLevel, quality: pngQuality }).toFile(`${screenshotsPath}/${language.code}/searching_example_AND.png`);
 
             // SHOT: searching_example_exact_phrase
             console.log('\tsearching_example_exact_phrase');
@@ -476,7 +479,7 @@ const other_config_options = {
             await page.waitForTimeout(500);
             const box_searching_example_exact_phrase = await page.locator('div.SAG_Container div.card').boundingBox();
             const searching_example_exact_phrase = await page.screenshot({ clip: { x: box_searching_example_exact_phrase.x - 20, y: box_searching_example_exact_phrase.y - 20, width: box_searching_example_exact_phrase.width + 40, height: box_searching_example_exact_phrase.height + 40 } });
-            await sharp(searching_example_exact_phrase).extend(other_config_options).toFile(`${screenshotsPath}/${language.code}/searching_example_exact_phrase.png`);
+            await sharp(searching_example_exact_phrase).extend(other_config_options).png({ compressionLevel: compressionLevel, quality: pngQuality }).toFile(`${screenshotsPath}/${language.code}/searching_example_exact_phrase.png`);
 
             // SHOT: searching_example_OR
             console.log('\tsearching_example_OR');
@@ -484,7 +487,7 @@ const other_config_options = {
             await page.waitForTimeout(500);
             const box_searching_example_OR = await page.locator('div.SAG_Container div.card').boundingBox();
             const searching_example_OR = await page.screenshot({ clip: { x: box_searching_example_OR.x - 20, y: box_searching_example_OR.y - 20, width: box_searching_example_OR.width + 40, height: box_searching_example_OR.height + 40 } });
-            await sharp(searching_example_OR).extend(other_config_options).toFile(`${screenshotsPath}/${language.code}/searching_example_OR.png`);
+            await sharp(searching_example_OR).extend(other_config_options).png({ compressionLevel: compressionLevel, quality: pngQuality }).toFile(`${screenshotsPath}/${language.code}/searching_example_OR.png`);
 
             // SHOT: searching_example_regular_expression
             console.log('\tsearching_example_regular_expression');
@@ -492,7 +495,7 @@ const other_config_options = {
             await page.waitForTimeout(500);
             const box_searching_example_regular_expression = await page.locator('div.SAG_Container div.card').boundingBox();
             const searching_example_regular_expression = await page.screenshot({ clip: { x: box_searching_example_regular_expression.x - 20, y: box_searching_example_regular_expression.y - 20, width: box_searching_example_regular_expression.width + 40, height: box_searching_example_regular_expression.height + 40 } });
-            await sharp(searching_example_regular_expression).extend(other_config_options).toFile(`${screenshotsPath}/${language.code}/searching_example_regular_expression.png`);
+            await sharp(searching_example_regular_expression).extend(other_config_options).png({ compressionLevel: compressionLevel, quality: pngQuality }).toFile(`${screenshotsPath}/${language.code}/searching_example_regular_expression.png`);
 
         }
     }
