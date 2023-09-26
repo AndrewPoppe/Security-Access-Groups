@@ -177,6 +177,42 @@ export class Module {
         });
     }
 
+    async addRightToSAG(sagId, rightName) {
+        await this.visitSAGsPage();
+        const sagRow = await this.page.locator('tr', {has: this.page.locator('td.sag-id-column', {hasText: sagId})});
+        await sagRow.locator('a.SagLink').click();
+        await this.page.locator(`input[name="${rightName}"]`).check();
+        await this.page.locator('button#SAG_Save').click();
+    }
+
+    async removeRightFromSAG(sagId, rightName) {
+        await this.visitSAGsPage();
+        const sagRow = await this.page.locator('tr', {has: this.page.locator('td.sag-id-column', {hasText: sagId})});
+        await sagRow.locator('a.SagLink').click();
+        await this.page.locator(`input[name="${rightName}"]`).uncheck();
+        await this.page.locator('button#SAG_Save').click();
+    }
+
+    async renameSAG(sagId, newName) {
+        await this.visitSAGsPage();
+        const sagRow = await this.page.locator('tr', {has: this.page.locator('td.sag-id-column', {hasText: sagId})});
+        await sagRow.locator('a.SagLink').click();
+        await this.page.locator('input[name="sag_name_edit"]').fill(newName);
+        await this.page.locator('button#SAG_Save').click();
+    }
+
+    async getSAGRight(sagId, rightName) {
+        await this.visitSAGsPage();
+        const sagRow = await this.page.locator('tr', {has: this.page.locator('td.sag-id-column', {hasText: sagId})});
+        await sagRow.locator('a.SagLink').click();
+
+        const results = {};
+        results.name = await this.page.inputValue('input[name="sag_name_edit"]');
+        results.right = await this.page.isChecked(`input[name="${rightName}"]`);
+        await this.page.locator('button#SAG_Cancel').click();
+        return results;
+    }
+
     /**
      * Assigns a user to an existing SAG
      * @param {string} username The REDCap username of the user to assign 

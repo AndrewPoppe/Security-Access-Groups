@@ -70,6 +70,16 @@ test.describe('Setup', () => {
             config.sags.everythingSag.id = modulePage.settings.everythingSagId;
         });
 
+        await test.step('Make sure Default SAG is editable', async () => {
+            await modulePage.addRightToSAG('sag_Default', 'design');
+            await modulePage.renameSAG('sag_Default', 'TEST');
+            const rights = await modulePage.getSAGRight('sag_Default', 'design');
+            await expect(rights.name).toEqual('TEST');
+            await expect(rights.right).toBeTruthy();
+            await modulePage.removeRightFromSAG('sag_Default', 'design');
+            await modulePage.renameSAG('sag_Default', 'Default SAG');
+        });
+
         await test.step('Setup projects', async () => {
             config.projects.UI_Project.pid = await modulePage.createProject(config.projects.UI_Project.projectName);
             config.projects.CSV_Project.pid = await modulePage.createProject(config.projects.CSV_Project.projectName);
