@@ -35,7 +35,7 @@ jobs:
         with:
           path: security_access_groups
       - name: Move REDCap Source File
-        run: mv redcap13.10.10.zip security_access_groups/tests/playwright/setup/
+        run: mv redcap13.10.0.zip security_access_groups/tests/playwright/setup/
       - uses: actions/setup-node@v3
         with:
           node-version: 18
@@ -48,7 +48,7 @@ jobs:
       - name: Initialize REDCap
         working-directory: ./security_access_groups/tests/playwright/setup
         run: |
-          sed -i 's|ZIPFILE|redcap13.10.10.zip|' installREDCap.js
+          sed -i 's|ZIPFILE|redcap13.10.0.zip|' installREDCap.js
           node installREDCap.js
       - uses: actions/upload-artifact@v3
         if: always()
@@ -63,7 +63,7 @@ jobs:
       - name: Run Playwright tests
         working-directory: ./redcap-docker-compose/www/modules/security_access_groups_v99/tests/playwright
         run: |
-          sed -i 's|redcapVersion:.*|redcapVersion: "redcap_v13.10.10",|' fixtures/config.js
+          sed -i 's|redcapVersion:.*|redcapVersion: "redcap_v13.10.0",|' fixtures/config.js
           npx playwright test
       - uses: actions/upload-artifact@v3
         if: failure()

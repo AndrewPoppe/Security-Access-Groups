@@ -15,12 +15,12 @@ class Role
         $uniqueRoleName = trim($uniqueRoleName ?? '');
         if ( $roleId === "0" && empty($roleName) ) {
             throw new SAGException('Must provide a role name if this is a newly created role');
-        } elseif ( empty($roleId) && $roleId !== "0" && empty($uniqueRoleName) ) {
+        } elseif ( empty($roleId) && $roleId !== "0" && $uniqueRoleName === '' ) {
             throw new SAGException('Must provide either a role ID or a unique role name');
         }
         $roleId               = $roleId === "0" ? $this->getNewRoleIdFromRoleName($roleName) : $roleId;
         $this->roleId         = $roleId ?? $this->getRoleIdFromUniqueRoleName($uniqueRoleName);
-        $this->uniqueRoleName = $uniqueRoleName ?? $this->getUniqueRoleNameFromRoleId($this->roleId);
+        $this->uniqueRoleName = $uniqueRoleName !== '' ? $uniqueRoleName : $this->getUniqueRoleNameFromRoleId($this->roleId);
         $this->roleName       = $this->getRoleNameFromRoleId($this->roleId);
     }
 
