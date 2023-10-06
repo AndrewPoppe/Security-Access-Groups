@@ -209,7 +209,8 @@ if ( $submitAction === "edit_role" ) {
                         \Logging::logEvent(
                             '',
                             "redcap_user_roles",
-                            "update", $actionInfo["role"],
+                            "update",
+                            $actionInfo["role"],
                             $dataValues,
                             $action,
                             "",

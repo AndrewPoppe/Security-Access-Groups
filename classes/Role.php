@@ -11,7 +11,7 @@ class Role
 
     public function __construct(SecurityAccessGroups $module, $roleId = null, $uniqueRoleName = null, $roleName = null)
     {
-        $this->module = $module;
+        $this->module   = $module;
         $uniqueRoleName = trim($uniqueRoleName ?? '');
         if ( $roleId === "0" && empty($roleName) ) {
             throw new SAGException('Must provide a role name if this is a newly created role');
@@ -46,7 +46,9 @@ class Role
         $rightsUtilities = new RightsUtilities($this->module);
         $allRights       = $rightsUtilities->getAllRights();
         $thisRole        = $roles[$this->roleId];
-        return array_filter($thisRole, function ($value, $key) use ($allRights) {
+        $exportRights    = $rightsUtilities->convertExportRightsStringToArray($thisRole['data_export_instruments']);
+        $dataEntryRights = $rightsUtilities->convertDataEntryRightsStringToArray($thisRole['data_entry']);
+        $result          = array_filter($thisRole, function ($value, $key) use ($allRights) {
             $off          = $value === '0';
             $null         = is_null($value);
             $unset        = isset($value) && is_null($value);
@@ -54,6 +56,7 @@ class Role
             $alsoExcluded = !in_array($key, $allRights, true);
             return !$off && !$unset && !$excluded && !$alsoExcluded && !$null;
         }, ARRAY_FILTER_USE_BOTH);
+        return array_merge($result, $exportRights, $dataEntryRights);
     }
 
     public function getRoleRightsRaw()

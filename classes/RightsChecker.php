@@ -21,8 +21,8 @@ class RightsChecker
         $this->module           = $module;
         $this->rightsToCheck    = $rightsToCheck;
         $this->acceptableRights = $acceptableRights;
-        $this->dataViewing      = intval($acceptableRights['dataViewing']);
-        $this->dataExport       = intval($acceptableRights['dataExport']);
+        $this->dataViewing      = (int) $acceptableRights['dataViewing'];
+        $this->dataExport       = (int) $acceptableRights['dataExport'];
         if ( $project ) {
             $this->project   = $project;
             $this->projectId = $project->projectId;
@@ -123,11 +123,11 @@ class RightsChecker
         $this->accountedFor = true;
         $mainRight          = RightsUtilities::getDisplayTextForRight('dataExport');
         // 0: no access, 2: deidentified, 3: remove identifiers, 1: full data set
-        if ( $value === '1' && $this->dataExport < 3 ) {
+        if ( $value == '1' && $this->dataExport < 3 ) {
             $this->badRights[] = $mainRight . ' - ' . RightsUtilities::getDisplayTextForRight('fullDataSet');
-        } elseif ( $value === '3' && $this->dataExport < 2 ) {
+        } elseif ( $value == '3' && $this->dataExport < 2 ) {
             $this->badRights[] = $mainRight . ' - ' . RightsUtilities::getDisplayTextForRight('removeIdentifiers');
-        } elseif ( $value === '2' && $this->dataExport < 1 ) {
+        } elseif ( $value == '2' && $this->dataExport < 1 ) {
             $this->badRights[] = $mainRight . ' - ' . RightsUtilities::getDisplayTextForRight('deidentified');
         }
     }
