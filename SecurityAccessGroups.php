@@ -42,9 +42,11 @@ class SecurityAccessGroups extends AbstractExternalModule
     public function redcap_every_page_before_render() : void
     {
         // Only run on the pages we're interested in
+        $method = $_SERVER['REQUEST_METHOD'] ?? '';
+        $page   = PAGE ?? '';
+
         if (
-            $_SERVER['REQUEST_METHOD'] !== 'POST' ||
-            !in_array(PAGE, [
+            $method !== 'POST' || !in_array($page, [
                 'UserRights/edit_user.php',
                 'UserRights/assign_user.php',
                 'UserRights/import_export_users.php',
@@ -57,7 +59,7 @@ class SecurityAccessGroups extends AbstractExternalModule
         }
 
         // API
-        if ( PAGE === 'api/index.php' ) {
+        if ( $page === 'api/index.php' ) {
             $api = new APIHandler($this, $_POST);
             if ( !$api->shouldProcess() ) {
                 return;
@@ -83,34 +85,34 @@ class SecurityAccessGroups extends AbstractExternalModule
 
         // Edit User or Role
         if (
-            PAGE === 'UserRights/edit_user.php' &&
+            $page === 'UserRights/edit_user.php' &&
             isset($_POST['submit-action']) &&
             in_array($_POST['submit-action'], [ 'edit_role', 'edit_user', 'add_user' ])
         ) {
-            $this->framework->log('attempt to edit user or role directly', [ 'page' => PAGE, 'data' => json_encode($_POST), 'user' => $username ]);
+            $this->framework->log('attempt to edit user or role directly', [ 'page' => $page, 'data' => json_encode($_POST), 'user' => $username ]);
             $this->framework->exitAfterHook();
         }
 
         // Assign User to Role
-        elseif ( PAGE === 'UserRights/assign_user.php' ) {
-            $this->log('attempt to assign user role directly', [ 'page' => PAGE, 'data' => json_encode($_POST), 'user' => $username ]);
+        elseif ( $page === 'UserRights/assign_user.php' ) {
+            $this->log('attempt to assign user role directly', [ 'page' => $page, 'data' => json_encode($_POST), 'user' => $username ]);
             $this->exitAfterHook();
         }
 
         // Edit User's Expiration Date
-        elseif ( PAGE === 'UserRights/set_user_expiration.php' ) {
-            $this->log('attempt to update user\'s expiration date directly', [ 'page' => PAGE, 'data' => json_encode($_POST), 'user' => $username ]);
+        elseif ( $page === 'UserRights/set_user_expiration.php' ) {
+            $this->log('attempt to update user\'s expiration date directly', [ 'page' => $page, 'data' => json_encode($_POST), 'user' => $username ]);
         }
 
         // Upload Users via CSV
-        elseif ( PAGE === 'UserRights/import_export_users.php' ) {
-            $this->log('attempt to upload users directly', [ 'page' => PAGE, 'data' => json_encode($_POST), 'user' => $username ]);
+        elseif ( $page === 'UserRights/import_export_users.php' ) {
+            $this->log('attempt to upload users directly', [ 'page' => $page, 'data' => json_encode($_POST), 'user' => $username ]);
             $this->exitAfterHook();
         }
 
         // Upload Roles or Mappings via CSV
-        elseif ( PAGE === 'UserRights/import_export_roles.php' ) {
-            $this->log('attempt to upload roles or role mappings directly', [ 'page' => PAGE, 'data' => json_encode($_POST), 'user' => $username ]);
+        elseif ( $page === 'UserRights/import_export_roles.php' ) {
+            $this->log('attempt to upload roles or role mappings directly', [ 'page' => $page, 'data' => json_encode($_POST), 'user' => $username ]);
             $this->exitAfterHook();
         }
     }
