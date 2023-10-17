@@ -20,7 +20,7 @@ if ( !$module->framework->isSuperUser() ) {
 <script defer src="<?= $module->framework->getUrl('lib/fontawesome/js/custom-icons.min.js') ?>"></script>
 <script defer src="<?= $module->framework->getUrl('lib/fontawesome/js/fontawesome.min.js') ?>"></script>
 <script defer src="<?= $module->framework->getUrl('lib/SweetAlert/sweetalert2.all.min.js') ?>"></script>
-<link rel='stylesheet' type='text/css' href='<?= $module->framework->getUrl('SecurityAccessGroups.css') ?>' />
+<link rel='stylesheet' type='text/css' href='<?= $module->framework->getUrl('css/SecurityAccessGroups.php') ?>' />
 
 
 <div class="SAG-Container">
@@ -77,11 +77,15 @@ if ( !$module->framework->isSuperUser() ) {
                                     <div class="row pl-4 py-2">
                                         <div class="col">
                                             <button class="btn btn-xs btn-success"
-                                                onclick="sag_module.showPastAlerts()"><?= $module->framework->tt('alerts_4') ?></button>
+                                                onclick="sag_module.showPastAlerts()">
+                                                <?= $module->framework->tt('alerts_4') ?>
+                                            </button>
                                         </div>
                                         <div class="col">
                                             <button class="btn btn-xs btn-primaryrc"
-                                                onclick="sag_module.showFutureAlerts()"><?= $module->framework->tt('alerts_5') ?></button>
+                                                onclick="sag_module.showFutureAlerts()">
+                                                <?= $module->framework->tt('alerts_5') ?>
+                                            </button>
                                         </div>
                                     </div>
                                 </div>

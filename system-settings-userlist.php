@@ -20,7 +20,7 @@ if ( !$module->framework->isSuperUser() ) {
 <script src="<?= $module->framework->getUrl('lib/Select2/select2.min.js') ?>"></script>
 <script src="<?= $module->framework->getUrl('lib/SweetAlert/sweetalert2.all.min.js') ?>"></script>
 
-<link rel='stylesheet' type='text/css' href='<?= $module->framework->getUrl('SecurityAccessGroups.css') ?>' />
+<link rel='stylesheet' type='text/css' href='<?= $module->framework->getUrl('css/SecurityAccessGroups.php') ?>' />
 
 
 <h4 style='color:#900; margin: 0 0 10px;'>

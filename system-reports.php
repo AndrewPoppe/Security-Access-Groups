@@ -26,7 +26,7 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
 <link href="<?= $module->framework->getUrl('lib/Select2/select2.min.css') ?>" rel="stylesheet" />
 <script defer src="<?= $module->framework->getUrl('lib/Select2/select2.min.js') ?>"></script>
 <script defer src="<?= $module->framework->getUrl('lib/SweetAlert/sweetalert2.all.min.js') ?>"></script>
-<link rel='stylesheet' type='text/css' href='<?= $module->framework->getUrl('SecurityAccessGroups.css') ?>' />
+<link rel='stylesheet' type='text/css' href='<?= $module->framework->getUrl('css/SecurityAccessGroups.php') ?>' />
 
 
 <h4 style='color:#900; margin: 0 0 10px;'>
@@ -429,18 +429,18 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
         </table>
     </div>
     <style>
-    div.dt-buttons {
-        float: right;
-    }
+        div.dt-buttons {
+            float: right;
+        }
 
-    .select2-search__field {
-        width: 100% !important;
-    }
+        .select2-search__field {
+            width: 100% !important;
+        }
 
-    div.dataTables_filter {
-        margin-top: 4px;
-        margin-right: 10px;
-    }
+        div.dataTables_filter {
+            margin-top: 4px;
+            margin-right: 10px;
+        }
     </style>
 </div> <!-- End SAG_Container -->
 <?php

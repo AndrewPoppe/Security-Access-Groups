@@ -11,7 +11,7 @@ if ( !$module->framework->isSuperUser() ) {
 ?>
 <script defer src="<?= $module->framework->getUrl('lib/DataTables/datatables.min.js') ?>"></script>
 <link rel="stylesheet" href="<?= $module->framework->getUrl('lib/DataTables/datatables.min.css') ?>">
-<link rel='stylesheet' type='text/css' href='<?= $module->framework->getUrl('SecurityAccessGroups.css') ?>' />
+<link rel='stylesheet' type='text/css' href='<?= $module->framework->getUrl('css/SecurityAccessGroups.php') ?>' />
 
 <script defer src="<?= $module->framework->getUrl('lib/fontawesome/js/regular.min.js') ?>"></script>
 <script defer src="<?= $module->framework->getUrl('lib/fontawesome/js/sharp-regular.min.js') ?>"></script>
@@ -50,15 +50,21 @@ if ( !$module->framework->isSuperUser() ) {
                             <?= $module->framework->tt('status_ui_6') ?>
                         <ul>
                             <li class="my-1" style="line-height: 1.3rem;">
-                                <span class="bg-primary text-light p-1 font-weight-bold"><?= $module->framework->tt('status_ui_7') ?></span>:
+                                <span class="bg-primary text-light p-1 font-weight-bold">
+                                    <?= $module->framework->tt('status_ui_7') ?>
+                                </span>:
                                 <?= $module->framework->tt('status_ui_10') ?>
                             </li>
                             <li class="my-1" style="line-height: 1.3rem;">
-                                <span class="bg-warning text-body p-1 font-weight-bold"><?= $module->framework->tt('status_ui_8') ?></span>:
+                                <span class="bg-warning text-body p-1 font-weight-bold">
+                                    <?= $module->framework->tt('status_ui_8') ?>
+                                </span>:
                                 <?= $module->framework->tt('status_ui_11') ?>
                             </li>
                             <li class="my-1" style="line-height: 1.3rem;">
-                                <span class="bg-danger text-light p-1 font-weight-bold"><?= $module->framework->tt('status_ui_9') ?></span>:
+                                <span class="bg-danger text-light p-1 font-weight-bold">
+                                    <?= $module->framework->tt('status_ui_9') ?>
+                                </span>:
                                 <?= $module->framework->tt('status_ui_12') ?>
                             </li>
                         </ul>

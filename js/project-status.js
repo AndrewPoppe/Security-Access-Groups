@@ -862,7 +862,7 @@ sag_module.initTinyMCE = function () {
         toolbar2: 'bullist numlist | outdent indent | table tableprops tablecellprops | ' +
             'forecolor backcolor | searchreplace code removeformat | fullscreen',
         contextmenu: "copy paste | link inserttable | cell row column deletetable",
-        content_css: sag_module.getUrl('SecurityAccessGroups.css', false),
+        content_css: sag_module.getUrl('css/SecurityAccessGroups.php', false),
         relative_urls: false,
         convert_urls: false,
         convert_fonts_to_spans: true,

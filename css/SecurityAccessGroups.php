@@ -1,33 +1,35 @@
+<?php header("Content-type: text/css; charset: UTF-8"); ?>
 @font-face {
-    font-family: "Atkinson Hyperlegible";
-    src: url("fonts/Atkinson-Hyperlegible/WOFF2/Atkinson-Hyperlegible-Regular-102a.woff2") format("woff2"),
-        url("fonts/Atkinson-Hyperlegible/WOFF/Atkinson-Hyperlegible-Regular-102.woff") format("woff");
-    font-weight: normal;
-    font-style: normal;
+font-family: "Atkinson Hyperlegible";
+src: url("<?= $module->getUrl('fonts/Atkinson-Hyperlegible/WOFF2/Atkinson-Hyperlegible-Regular-102a.woff2') ?>") format("woff2"),
+url("<?= $module->getUrl('fonts/Atkinson-Hyperlegible/WOFF/Atkinson-Hyperlegible-Regular-102.woff') ?>") format("woff");
+font-weight: normal;
+font-style: normal;
 }
 
 @font-face {
-    font-family: "Atkinson Hyperlegible";
-    src: url("fonts/Atkinson-Hyperlegible/WOFF2/Atkinson-Hyperlegible-Bold-102a.woff2") format("woff2"),
-        url("fonts/Atkinson-Hyperlegible/WOFF/Atkinson-Hyperlegible-Bold-102.woff") format("woff");
-    font-weight: bold;
-    font-style: normal;
+font-family: "Atkinson Hyperlegible";
+src: url("<?= $module->getUrl('fonts/Atkinson-Hyperlegible/WOFF2/Atkinson-Hyperlegible-Bold-102a.woff2') ?>") format("woff2"),
+url("<?= $module->getUrl('fonts/Atkinson-Hyperlegible/WOFF/Atkinson-Hyperlegible-Bold-102.woff') ?>") format("woff");
+font-weight: bold;
+font-style: normal;
 }
 
 @font-face {
-    font-family: "Atkinson Hyperlegible";
-    src: url("fonts/Atkinson-Hyperlegible/WOFF2/Atkinson-Hyperlegible-Italic-102a.woff2") format("woff2"),
-        url("fonts/Atkinson-Hyperlegible/WOFF/Atkinson-Hyperlegible-Italic-102.woff") format("woff");
-    font-weight: normal;
-    font-style: italic;
+font-family: "Atkinson Hyperlegible";
+src: url("<?= $module->getUrl('fonts/Atkinson-Hyperlegible/WOFF2/Atkinson-Hyperlegible-Italic-102a.woff2') ?>") format("woff2"),
+url("<?= $module->getUrl('fonts/Atkinson-Hyperlegible/WOFF/Atkinson-Hyperlegible-Italic-102.woff') ?>") format("woff");
+font-weight: normal;
+font-style: italic;
 }
 
 @font-face {
-    font-family: "Atkinson Hyperlegible";
-    src: url("fonts/Atkinson-Hyperlegible/WOFF2/Atkinson-Hyperlegible-BoldItalic-102a.woff2") format("woff2"),
-        url("fonts/Atkinson-Hyperlegible/WOFF/Atkinson-Hyperlegible-BoldItalic-102.woff") format("woff");
-    font-weight: bold;
-    font-style: italic;
+font-family: "Atkinson Hyperlegible";
+src: url("<?= $module->getUrl('fonts/Atkinson-Hyperlegible/WOFF2/Atkinson-Hyperlegible-BoldItalic-102a.woff2') ?>")
+format("woff2"),
+url("<?= $module->getUrl('fonts/Atkinson-Hyperlegible/WOFF/Atkinson-Hyperlegible-BoldItalic-102.woff') ?>") format("woff");
+font-weight: bold;
+font-style: italic;
 }
 
 div#control_center_window,
