@@ -990,6 +990,11 @@ endif::[]
 |Release Date
 |Description of changes
 
+|1.0.3
+|2023-10-19
+a| * **Minor Bug Fix**: Fixed a bug in which the module may throw numerous unnecessary warning messages in the php log under certain conditions
+* **Bug Fix**: Fixed an issue in which font files were being incorrectly loaded
+
 |1.0.2
 |2023-10-06
 a| * **Major Bug Fix**: Fixed a bug in which the module failed to prevent a user from being added to a user role under certain conditions (Bug https://github.com/AndrewPoppe/Security-Access-Groups/issues/51[#51]).
