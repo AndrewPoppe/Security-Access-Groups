@@ -42,6 +42,9 @@ class SecurityAccessGroups extends AbstractExternalModule
     public function redcap_every_page_before_render() : void
     {
         // Only run on the pages we're interested in
+        if (!defined(PAGE) || !isset($_SERVER) {
+            return;
+        }
         $method = $_SERVER['REQUEST_METHOD'] ?? '';
         $page   = PAGE ?? '';
 
