@@ -45,7 +45,7 @@ if ( $errors === false ) {
                 $dataValues = "user = '" . $info["username"] . "'\nexpiration date = '" . $info["expiration"] . "'";
 
                 $logTable   = $module->framework->getProject($info['project_id'])->getLogTable();
-                $sql        = "SELECT log_event_id FROM $logTable WHERE project_id = ? AND user = ? AND page = 'ExternalModules/index.php' AND object_type = 'redcap_user_rights' AND pk = ? AND event IN ('INSERT','UPDATE') AND description = 'Edit user expiration' AND TIMESTAMPDIFF(SECOND,ts,NOW()) <= 10 ORDER BY ts DESC";
+                $sql        = "SELECT log_event_id FROM $logTable WHERE project_id = ? AND user = ? AND page in ('ExternalModules/index.php', 'external_modules/index.php') AND object_type = 'redcap_user_rights' AND pk = ? AND event IN ('INSERT','UPDATE') AND description = 'Edit user expiration' AND TIMESTAMPDIFF(SECOND,ts,NOW()) <= 10 ORDER BY ts DESC";
                 $params     = [ $info['project_id'], $module->framework->getUser()->getUsername(), $info['username'] ];
                 $result     = $module->query($sql, $params);
                 $logEventId = intval($result->fetch_assoc()['log_event_id']);

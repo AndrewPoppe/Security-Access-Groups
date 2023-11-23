@@ -38,7 +38,7 @@ if ( in_array($submitAction, [ 'add_role', 'copy_role' ], true) ) {
 
             $logTable   = $module->framework->getProject()->getLogTable();
             $projectId  = $module->framework->getProjectId();
-            $sql        = "SELECT log_event_id FROM $logTable WHERE project_id = ? AND user = ? AND page = 'ExternalModules/index.php' AND object_type = 'redcap_user_rights' AND pk = ? AND event = 'INSERT' AND TIMESTAMPDIFF(SECOND,ts,NOW()) <= 10 ORDER BY ts DESC";
+            $sql        = "SELECT log_event_id FROM $logTable WHERE project_id = ? AND user = ? AND page in ('ExternalModules/index.php', 'external_modules/index.php') AND object_type = 'redcap_user_rights' AND pk = ? AND event = 'INSERT' AND TIMESTAMPDIFF(SECOND,ts,NOW()) <= 10 ORDER BY ts DESC";
             $params     = [ $projectId, $module->getUser()->getUsername(), $roleId ];
             $result     = $module->query($sql, $params);
             $logEventId = intval($result->fetch_assoc()["log_event_id"]);
@@ -113,7 +113,7 @@ if ( in_array($submitAction, [ 'add_user', 'edit_user' ]) ) {
                     $dataValues     = "user = '" . $actionInfo['user'] . "'\nchanges = " . $changes;
 
                     $logTable   = $module->framework->getProject($actionInfo['project_id'])->getLogTable();
-                    $sql        = "SELECT log_event_id FROM $logTable WHERE project_id = ? AND user = ? AND page = 'ExternalModules/index.php' AND object_type = 'redcap_user_rights' AND pk = ? AND event IN ('INSERT','UPDATE') AND TIMESTAMPDIFF(SECOND,ts,NOW()) <= 10 ORDER BY ts DESC";
+                    $sql        = "SELECT log_event_id FROM $logTable WHERE project_id = ? AND user = ? AND page in ('ExternalModules/index.php', 'external_modules/index.php') AND object_type = 'redcap_user_rights' AND pk = ? AND event IN ('INSERT','UPDATE') AND TIMESTAMPDIFF(SECOND,ts,NOW()) <= 10 ORDER BY ts DESC";
                     $params     = [ $actionInfo['project_id'], $module->getUser()->getUsername(), $actionInfo['user'] ];
                     $result     = $module->query($sql, $params);
                     $logEventId = intval($result->fetch_assoc()['log_event_id']);
@@ -199,7 +199,7 @@ if ( $submitAction === "edit_role" ) {
                     $dataValues     = "role = '" . $roleName . "'\nunique role name = '" . $role->getUniqueRoleName() . "'\nchanges = " . $changes;
 
                     $logTable   = $module->framework->getProject($actionInfo["project_id"])->getLogTable();
-                    $sql        = "SELECT log_event_id FROM $logTable WHERE project_id = ? AND user = ? AND page = 'ExternalModules/index.php' AND object_type = 'redcap_user_rights' AND pk = ? AND event IN ('INSERT','UPDATE') AND TIMESTAMPDIFF(SECOND,ts,NOW()) <= 10 ORDER BY ts DESC";
+                    $sql        = "SELECT log_event_id FROM $logTable WHERE project_id = ? AND user = ? AND page in ('ExternalModules/index.php', 'external_modules/index.php') AND object_type = 'redcap_user_rights' AND pk = ? AND event IN ('INSERT','UPDATE') AND TIMESTAMPDIFF(SECOND,ts,NOW()) <= 10 ORDER BY ts DESC";
                     $params     = [ $actionInfo["project_id"], $module->getUser()->getUsername(), $actionInfo["role"] ];
                     $result     = $module->query($sql, $params);
                     $logEventId = intval($result->fetch_assoc()["log_event_id"]);

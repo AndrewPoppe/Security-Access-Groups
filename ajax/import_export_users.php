@@ -78,7 +78,7 @@ if ( isset($_POST['csv_content']) && $_POST['csv_content'] != '' ) {
                     $dataValues = '';
                     $pid        = $module->framework->getProjectId();
                     $logTable   = $module->framework->getProject($pid)->getLogTable();
-                    $sql        = "SELECT log_event_id FROM $logTable WHERE project_id = ? AND user = ? AND page = 'ExternalModules/index.php' AND object_type = 'redcap_user_rights' AND pk = ? AND event IN ('INSERT','UPDATE') AND TIMESTAMPDIFF(SECOND,ts,NOW()) <= 10 ORDER BY ts DESC";
+                    $sql        = "SELECT log_event_id FROM $logTable WHERE project_id = ? AND user = ? AND page in ('ExternalModules/index.php', 'external_modules/index.php') AND object_type = 'redcap_user_rights' AND pk = ? AND event IN ('INSERT','UPDATE') AND TIMESTAMPDIFF(SECOND,ts,NOW()) <= 10 ORDER BY ts DESC";
                     $redcapUser = $module->getUser()->getUsername();
                     foreach ( $allCurrentRights as $username => $currentRights ) {
                         $updatedRights = $sagUser->getCurrentRights($pid) ?? [];
