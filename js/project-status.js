@@ -840,41 +840,25 @@ sag_module.addTinyMCETranslations = function () {
         "White": sag_module.tt('tiny_mce_ui_304'),
         "Remove color": sag_module.tt('tiny_mce_ui_305'),
         "Color Picker": sag_module.tt('tiny_mce_ui_306'),
+        "Preformatted code block": sag_module.tt('tiny_mce_ui_307'),
+        "Alternative description": sag_module.tt('tiny_mce_ui_308'),
+        "Find whole words only": sag_module.tt('tiny_mce_ui_309'),
+        "Find in selection": sag_module.tt('tiny_mce_ui_310'),
+        "Previous": sag_module.tt('tiny_mce_ui_311'),
     });
 }
 
 sag_module.initTinyMCE = function () {
     sag_module.addTinyMCETranslations();
-    tinymce.init({
-        entity_encoding: "raw",
-        default_link_target: '_blank',
-        selector: ".richtext",
-        height: 350,
-        branding: false,
-        statusbar: true,
-        menubar: true,
-        elementpath: false,
-        plugins: [
-            'paste autolink lists link searchreplace code fullscreen table directionality hr'
-        ],
-        toolbar1: 'formatselect | hr | bold italic underline link | fontsizeselect | ' +
-            'alignleft aligncenter alignright alignjustify | undo redo',
-        toolbar2: 'bullist numlist | outdent indent | table tableprops tablecellprops | ' +
-            'forecolor backcolor | searchreplace code removeformat | fullscreen',
-        contextmenu: "copy paste | link inserttable | cell row column deletetable",
-        content_css: sag_module.getUrl('css/SecurityAccessGroups.php', false),
-        relative_urls: false,
-        convert_urls: false,
-        convert_fonts_to_spans: true,
-        extended_valid_elements: 'i[class]',
-        paste_word_valid_elements: "b,strong,i,em,h1,h2,u,p,ol,ul,li,a[href],span,color," +
-            "font-size,font-color,font-family,mark,table,tr,td",
-        paste_retain_style_properties: "all",
-        paste_postprocess: function (plugin, args) {
-            args.node.innerHTML = cleanHTML(args.node.innerHTML);
-        },
-        remove_linebreaks: true,
-        language: 'en'
+    const rich_text_attachment_embed_enabled_orig = rich_text_attachment_embed_enabled;
+    rich_text_attachment_embed_enabled = 0;
+    initTinyMCEglobal('richtext', false);
+    rich_text_attachment_embed_enabled = rich_text_attachment_embed_enabled_orig;
+    // Prevent Bootstrap dialog from blocking focusin
+    document.addEventListener('focusin', (e) => {
+        if (e.target.closest(".tox-tinymce-aux, .moxman-window, .tam-assetmanager-root") !== null) {
+            e.stopImmediatePropagation();
+        }
     });
 }
 
