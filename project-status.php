@@ -370,26 +370,26 @@ if ( !$module->framework->isSuperUser() ) {
                     <?= $module->framework->tt('status_ui_51') ?>
                 </button>
                 <div class="dropdown-menu" id="userFilter">
-                    <div class="form-check pl-4 mr-2">
+                    <div class="form-check mx-2">
                         <input class="form-check-input" type="checkbox" value="1" id="expiredUsers" checked>
                         <label class="form-check-label" for="expiredUsers">
                             <?= $module->framework->tt('status_ui_52') ?>
                         </label>
                     </div>
-                    <div class="form-check pl-4 mr-2">
+                    <div class="form-check mx-2">
                         <input class="form-check-input" type="checkbox" value="1" id="nonExpiredUsers" checked>
                         <label class="form-check-label" for="nonExpiredUsers">
                             <?= $module->framework->tt('status_ui_53') ?>
                         </label>
                     </div>
                     <div class="dropdown-divider"></div>
-                    <div class="form-check pl-4 mr-2">
+                    <div class="form-check mx-2">
                         <input class="form-check-input" type="checkbox" value="1" id="discrepantUsers" checked>
                         <label class="form-check-label" for="discrepantUsers">
                             <?= $module->framework->tt('status_ui_54') ?>
                         </label>
                     </div>
-                    <div class="form-check pl-4 mr-2">
+                    <div class="form-check mx-2">
                         <input class="form-check-input" type="checkbox" value="1" id="nonDiscrepantUsers" checked>
                         <label class="form-check-label" for="nonDiscrepantUsers">
                             <?= $module->framework->tt('status_ui_55') ?>
