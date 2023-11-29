@@ -961,7 +961,7 @@ endif::[]
 
 == PHP and REDCap Version Support
 
-[%header,cols="h,1,1,1"]
+[%header,cols="h,1,1,1,1"]
 |===
 |
 | REDCap v13.7.23
