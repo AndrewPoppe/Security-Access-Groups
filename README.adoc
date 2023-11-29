@@ -964,19 +964,22 @@ endif::[]
 [%header,cols="h,1,1,1"]
 |===
 |
-| REDCap v13.1.27
-| REDCap v13.7.13
+| REDCap v13.7.23
 | REDCap v13.9.3
+| REDCap v13.10.0
+| REDCap v13.11.4
 
 | PHP v7.4.5
-| image:https://github.com/AndrewPoppe/Security-Access-Groups/actions/workflows/playwright_PHP7.4.5_REDCap13.1.27.yml/badge.svg[link="https://github.com/AndrewPoppe/Security-Access-Groups/actions/workflows/playwright_PHP7.4.5_REDCap13.1.27.yml"]
-| image:https://github.com/AndrewPoppe/Security-Access-Groups/actions/workflows/playwright_PHP7.4.5_REDCap13.7.13.yml/badge.svg[link="https://github.com/AndrewPoppe/Security-Access-Groups/actions/workflows/playwright_PHP7.4.5_REDCap13.7.13.yml"]
+| image:https://github.com/AndrewPoppe/Security-Access-Groups/actions/workflows/playwright_PHP7.4.5_REDCap13.7.23.yml/badge.svg[link="https://github.com/AndrewPoppe/Security-Access-Groups/actions/workflows/playwright_PHP7.4.5_REDCap13.7.23.yml"]
 | image:https://github.com/AndrewPoppe/Security-Access-Groups/actions/workflows/playwright_PHP7.4.5_REDCap13.9.3.yml/badge.svg[link="https://github.com/AndrewPoppe/Security-Access-Groups/actions/workflows/playwright_PHP7.4.5_REDCap13.9.3.yml"]
+| image:https://github.com/AndrewPoppe/Security-Access-Groups/actions/workflows/playwright_PHP7.4.5_REDCap13.10.0.yml/badge.svg[link="https://github.com/AndrewPoppe/Security-Access-Groups/actions/workflows/playwright_PHP7.4.5_REDCap13.10.0.yml"]
+| image:https://github.com/AndrewPoppe/Security-Access-Groups/actions/workflows/playwright_PHP7.4.5_REDCap13.11.4.yml/badge.svg[link="https://github.com/AndrewPoppe/Security-Access-Groups/actions/workflows/playwright_PHP7.4.5_REDCap13.11.4.yml"]
 
 | PHP v8.2
-| image:https://github.com/AndrewPoppe/Security-Access-Groups/actions/workflows/playwright_PHP8.2_REDCap13.1.27.yml/badge.svg[link="https://github.com/AndrewPoppe/Security-Access-Groups/actions/workflows/playwright_PHP8.2_REDCap13.1.27.yml"]
-| image:https://github.com/AndrewPoppe/Security-Access-Groups/actions/workflows/playwright_PHP8.2_REDCap13.7.13.yml/badge.svg[link="https://github.com/AndrewPoppe/Security-Access-Groups/actions/workflows/playwright_PHP8.2_REDCap13.7.13.yml"]
+| image:https://github.com/AndrewPoppe/Security-Access-Groups/actions/workflows/playwright_PHP8.2_REDCap13.7.23.yml/badge.svg[link="https://github.com/AndrewPoppe/Security-Access-Groups/actions/workflows/playwright_PHP8.2_REDCap13.7.23.yml"]
 | image:https://github.com/AndrewPoppe/Security-Access-Groups/actions/workflows/playwright_PHP8.2_REDCap13.9.3.yml/badge.svg[link="https://github.com/AndrewPoppe/Security-Access-Groups/actions/workflows/playwright_PHP8.2_REDCap13.9.3.yml"]
+| image:https://github.com/AndrewPoppe/Security-Access-Groups/actions/workflows/playwright_PHP8.2_REDCap13.10.0.yml/badge.svg[link="https://github.com/AndrewPoppe/Security-Access-Groups/actions/workflows/playwright_PHP8.2_REDCap13.10.0.yml"]
+| image:https://github.com/AndrewPoppe/Security-Access-Groups/actions/workflows/playwright_PHP8.2_REDCap13.11.4.yml/badge.svg[link="https://github.com/AndrewPoppe/Security-Access-Groups/actions/workflows/playwright_PHP8.2_REDCap13.11.4.yml"]
 
 |===
 
@@ -989,6 +992,13 @@ endif::[]
 |Version
 |Release Date
 |Description of changes
+
+|1.0.4
+|2023-11-29
+a| * **Bug Fix**: On newer versions of REDCap that use TinyMCE version 6, the user notification email popups were not loading TinyMCE fully, resulting in reduced functionality. This has been fixed.
+* **Bug Fix**: Fixed a bug in which extra logs were being created due to the module assuming that the External Module framework in use is the one distributed with REDCap. Added support for custom frameworks.
+* **Minor Bug Fix**: Fixed a bug in which errors may be thrown when a PHP Global value is not defined.
+* **Minor Change**: Minor cosmetic UI changes 
 
 |1.0.3
 |2023-10-19
