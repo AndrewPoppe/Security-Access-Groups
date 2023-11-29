@@ -10,7 +10,7 @@ jobs:
       - run:
           name: Grab REDCap Source
           command: |
-            git clone --branch v13.1.27_zip https://github.com/AndrewPoppe/redcap_source
+            git clone --branch v13.7.23_zip https://github.com/AndrewPoppe/redcap_source
       - run:
           name: Build the REDCap Image
           command: |
@@ -28,7 +28,7 @@ jobs:
           command: docker-compose up -d
       - run:
           name: Move REDCap Source File
-          command: mv redcap_source/redcap13.1.27.zip security_access_groups/tests/playwright/setup/
+          command: mv redcap_source/redcap13.7.23.zip security_access_groups/tests/playwright/setup/
       - run:
           name: Install dependencies
           working_directory: ./security_access_groups/tests/playwright
@@ -41,7 +41,7 @@ jobs:
           name: Initialize REDCap
           working_directory: ./security_access_groups/tests/playwright/setup
           command: |
-            sed -i 's|ZIPFILE|redcap13.1.27.zip|' installREDCap.js
+            sed -i 's|ZIPFILE|redcap13.7.23.zip|' installREDCap.js
             node installREDCap.js
       - store_artifacts:
           path: ./security_access_groups/tests/playwright/setup/screenshots
