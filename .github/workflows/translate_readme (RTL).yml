@@ -75,7 +75,12 @@ jobs:
         gcloud storage cp gs://sag_readme_translated/* ${fileDir}/
         for f in $(ls ${fileDir}/*.html); do
             new_name=$(echo $f | sed 's|sag_readme_||' | sed 's|_translations||')
-            mv $f $new_name    
+            mv $f $new_name
+            lang=$(echo $new_name | sed 's|.*/README_||' | sed 's|.html||')
+            sed -i "s|html lang=\"en\"|html lang=\"${lang}\"|g" $new_name
+            sed -i "s|screenshots/EN/|screenshots/${lang}/|g" $new_name    
+            sed -i "s|option value=\"README_EN.html\" selected|option value=\"README_EN.html\"|g" $new_name
+            sed -i "s|option value=\"README_${lang}.html\"|option value=\"README_${lang}.html\" selected|g" $new_name    
         done
 
     - name: Store translated files as artifacts
