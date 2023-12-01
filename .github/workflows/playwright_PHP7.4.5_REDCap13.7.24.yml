@@ -1,4 +1,4 @@
-name: PHP 8.2 - REDCap 13.9.3
+name: PHP7.4 RC13.7.24
 on:
   push:
     branches: main
@@ -11,7 +11,7 @@ jobs:
       - uses: actions/checkout@v3
         with:
           repository: AndrewPoppe/redcap_source
-          ref: v13.9.3_zip
+          ref: v13.7.24_zip
           token: ${{ secrets.REPOS_TOKEN }}
           persist-credentials: false
       - name: Build the REDCap Image
@@ -24,6 +24,10 @@ jobs:
           sed 's|\(MYSQL_PORT\)=.*|\1=13746|' |
           sed 's|\(PHPMYADMIN_PORT\)=.*|\1=13741|' |
           sed 's|\(MAILHOG_PORT\)=.*|\1=13745|' > .env
+          sed -i 's|\(FROM php\):.*|\1:7.4.5-apache-buster|' docker-web/Dockerfile
+          sed -i 's|&& pecl install xdebug||' docker-web/Dockerfile
+          sed -i 's|&& echo "zend_extension=$(find.*||' docker-web/Dockerfile
+          sed -i 's|FROM mysql:8.0-oracle|FROM mysql:8.0|' docker-mysql/Dockerfile
       - name: Start Docker REDCap Container
         working-directory: ./redcap-docker-compose/rdc
         run: docker-compose up -d
@@ -31,7 +35,7 @@ jobs:
         with:
           path: security_access_groups
       - name: Move REDCap Source File
-        run: mv redcap13.9.3.zip security_access_groups/tests/playwright/setup/
+        run: mv redcap13.7.24.zip security_access_groups/tests/playwright/setup/
       - uses: actions/setup-node@v3
         with:
           node-version: 18
@@ -44,7 +48,7 @@ jobs:
       - name: Initialize REDCap
         working-directory: ./security_access_groups/tests/playwright/setup
         run: |
-          sed -i 's|ZIPFILE|redcap13.9.3.zip|' installREDCap.js
+          sed -i 's|ZIPFILE|redcap13.7.24.zip|' installREDCap.js
           node installREDCap.js
       - uses: actions/upload-artifact@v3
         if: always()
@@ -59,7 +63,7 @@ jobs:
       - name: Run Playwright tests
         working-directory: ./redcap-docker-compose/www/modules/security_access_groups_v99/tests/playwright
         run: |
-          sed -i 's|redcapVersion:.*|redcapVersion: "redcap_v13.9.3",|' fixtures/config.js
+          sed -i 's|redcapVersion:.*|redcapVersion: "redcap_v13.7.24",|' fixtures/config.js
           npx playwright test
       - uses: actions/upload-artifact@v3
         if: failure()

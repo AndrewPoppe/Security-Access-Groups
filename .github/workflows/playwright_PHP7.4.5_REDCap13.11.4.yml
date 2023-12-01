@@ -1,4 +1,4 @@
-name: PHP 7.4.5 - REDCap 13.11.4
+name: PHP7.4 RC13.11.4
 on:
   push:
     branches: main

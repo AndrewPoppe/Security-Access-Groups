@@ -1,4 +1,4 @@
-name: PHP 8.2 - REDCap 13.11.4
+name: PHP8.2 RC13.11.4
 on:
   push:
     branches: main
