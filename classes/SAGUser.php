@@ -119,6 +119,7 @@ class SAGUser
             $this->module->setDefaultSag(true);
             $sagId = $this->module->defaultSagId;
             $this->setUserSag($sagId);
+            $sag = new SAG($this->module, $sagId);
         }
         return $sag;
     }
