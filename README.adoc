@@ -983,38 +983,4 @@ endif::[]
 
 == Changelog
 
-[%header,cols="1,1,6"]
-|===
-|Version
-|Release Date
-|Description of changes
-
-|1.0.4
-|2023-11-29
-a| * **Bug Fix**: On newer versions of REDCap that use TinyMCE version 6, the user notification email popups were not loading TinyMCE fully, resulting in reduced functionality. This has been fixed.
-* **Bug Fix**: Fixed a bug in which extra logs were being created due to the module assuming that the External Module framework in use is the one distributed with REDCap. Added support for custom frameworks.
-* **Minor Bug Fix**: Fixed a bug in which errors may be thrown when a PHP Global value is not defined.
-* **Minor Change**: Minor cosmetic UI changes 
-
-|1.0.3
-|2023-10-19
-a| * **Minor Bug Fix**: Fixed a bug in which the module may throw numerous unnecessary warning messages in the php log under certain conditions
-* **Bug Fix**: Fixed an issue in which font files were being incorrectly loaded
-
-|1.0.2
-|2023-10-06
-a| * **Major Bug Fix**: Fixed a bug in which the module failed to prevent a user from being added to a user role under certain conditions (Bug https://github.com/AndrewPoppe/Security-Access-Groups/issues/51[#51]).
-* **Medium Bug Fix**: Fixed a bug in which the module failed to log role information completely under certain conditions (Bug https://github.com/AndrewPoppe/Security-Access-Groups/issues/50[#50]).
-
-|1.0.1
-|2023-09-21
-a| * **Major Bug Fix**: Fixed a bug in which the module failed to prevent a user from un-expiring an expired user with noncompliant rights in a project.
-* **Change**: Updated README files.
-* **Change**: Updated translations.
-* **Change**: Updated automated tests. 
-
-|1.0.0
-|2023-08-30
-a| * Initial release
-
-|===
+See the https://github.com/AndrewPoppe/Security-Access-Groups/releases[releases] page for a full changelog.
