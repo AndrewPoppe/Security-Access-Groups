@@ -157,8 +157,10 @@ class SAGEditForm
     private function getUserRights()
     {
         if ( isset($this->allRights['user_rights']) ) {
-            $label   = $this->lang['app_05'];
-            $checked = $this->rights['user_rights'] == 1 ? 'checked' : '';
+            $label              = $this->lang['app_05'];
+            $noAccessChecked    = $this->rights['user_rights'] == 0 ? 'checked' : '';
+            $readChecked        = $this->rights['user_rights'] == 1 ? 'checked' : '';
+            $viewAndEditChecked = $this->rights['user_rights'] == 2 ? 'checked' : '';
             return <<<"EOT"
             <!-- User Rights -->
             <div class="SAG-form-row row">
@@ -168,6 +170,26 @@ class SAGEditForm
                 <div class="col">
                     <div class='form-check'>
                         <input type='checkbox' class='form-check-input' $checked name='user_rights'>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class='form-check'>
+                        <input class='form-check-input' type='radio' id='user_rights_0'
+                            name='user_rights' $checked1 value='0'>
+                        <label class='form-check-label'
+                            for='user_rights_0'>$label4</label>
+                    </div>
+                    <div class='form-check'>
+                        <input class='form-check-input' type='radio' id='user_rights_1'
+                            name='user_rights' $checked2 value='1'>
+                        <label class='form-check-label'
+                            for='user_rights_1'>$label5</label>
+                    </div>
+                    <div class='form-check'>
+                        <input class='form-check-input' type='radio' id='user_rights_2'
+                            name='user_rights' $checked3 value='2'>
+                        <label class='form-check-label'
+                            for='user_rights_2'>$label6</label>
                     </div>
                 </div>
             </div>
