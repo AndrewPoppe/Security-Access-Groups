@@ -71,7 +71,9 @@ class RightsUtilities
     }
 
     /**
-     * Converts REDCap's User Rights permission into SAG format / Or the other way around - the operation is reversible
+     * Converts the User Rights permission values from the SAG user-facing format to the interal format that is also used by REDCap.
+     * 
+     * This function can be used to convert in either direction.
      * 
      * Prior to REDCap 14.1.0, the user_rights field was:
      * 0: No access
@@ -82,7 +84,7 @@ class RightsUtilities
      * 2: View only
      * 1: View and edit
      *   
-     * We want higher values to always mean more permission, so if REDCap 14.1.0 or later, we need to swap 1 and 2.
+     * For user-facing purposes (e.g., CSV Import), we want higher values to always mean more permission, so if REDCap 14.1.0 or later, we need to swap 1 and 2.
      * This results in:
      * 
      * 0: No access
