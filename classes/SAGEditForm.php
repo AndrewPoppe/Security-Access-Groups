@@ -160,7 +160,7 @@ class SAGEditForm
             return;
         }
         $rightValue    = $this->rights['user_rights'];
-        $redcapVersion = !defined('REDCAP_VERSION') ? REDCAP_VERSION : '99.99.99';
+        $redcapVersion = defined('REDCAP_VERSION') ? REDCAP_VERSION : '99.99.99';
         if ( \REDCap::versionCompare($redcapVersion, '14.1.0') >= 0 ) {
             $label              = $this->lang['app_05']; // User Rights
             $noAccessChecked    = $rightValue == 0 ? 'checked' : '';

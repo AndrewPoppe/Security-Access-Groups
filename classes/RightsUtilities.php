@@ -96,7 +96,7 @@ class RightsUtilities
      */
     public static function convertUserRights($rights)
     {
-        $redcapVersion = !defined('REDCAP_VERSION') ? REDCAP_VERSION : '99.99.99';
+        $redcapVersion = defined('REDCAP_VERSION') ? REDCAP_VERSION : '99.99.99';
         if ( \REDCap::versionCompare($redcapVersion, '14.1.0') >= 0 ) {
             if ( $rights['user_rights'] == 1 ) {
                 $rights['user_rights'] = 2;
