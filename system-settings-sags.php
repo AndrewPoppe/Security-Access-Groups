@@ -76,6 +76,7 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
 
     $js = file_get_contents($module->framework->getSafePath('js/system-settings-sags.js'));
     $js = str_replace('{{USER_RIGHTS_ERROR_MESSAGE}}', $lang['rights_358'], $js);
+    $js = str_replace('{{rights_61}}', $lang['rights_61'], $js); // Read Only
     $js = str_replace('__MODULE__', $module->framework->getJavascriptModuleObjectName(), $js);
 
     echo '<script type="text/javascript">', $js, '</script>';

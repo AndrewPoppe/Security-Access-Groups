@@ -77,11 +77,12 @@ if ( in_array($submitAction, [ 'add_user', 'edit_user' ]) ) {
     $sagUser          = new SAGUser($module, $user);
     $acceptableRights = $sagUser->getAcceptableRights();
     $rightsChecker    = new RightsChecker($module, $data, $acceptableRights, $module->framework->getProjectId());
-    $badRights        = $rightsChecker->checkRights();
-    $currentRights    = $sagUser->getCurrentRights($pid);
-    $requestedRights  = $rightsUtilities->filterPermissions($data);
-    $errors           = !empty($badRights);
-    $sag              = $sagUser->getUserSag();
+    $module->log('Checking rights');
+    $badRights       = $rightsChecker->checkRights();
+    $currentRights   = $sagUser->getCurrentRights($pid);
+    $requestedRights = $rightsUtilities->filterPermissions($data);
+    $errors          = !empty($badRights);
+    $sag             = $sagUser->getUserSag();
 
     // We ignore expired users, unless the request unexpires them
     $userExpired         = $sagUser->isUserExpired($module->getProjectId());
