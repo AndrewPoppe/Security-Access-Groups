@@ -312,11 +312,15 @@ class RightsChecker
         $value              = $value === 'on' ? '1' : $value; // If REDCap version < 14.1.0, value was binary
         $userRights         = (int) $this->acceptableRights['user_rights'];
         $mainRight          = RightsUtilities::getDisplayTextForRight('user_rights');
+        $redcapVersion      = defined('REDCAP_VERSION') ? REDCAP_VERSION : '99.99.99';
+        $newVersion         = \REDCap::versionCompare($redcapVersion, '14.1.0') >= 0;
         // Value -> 0: no access, 2: read only, 1: view and edit
-        if ( $value === '1' && $userRights !== 1 ) {
-            $this->badRights[] = $mainRight . ' - ' . RightsUtilities::getDisplayTextForRight('viewAndEdit');
-        } elseif ( $value === '2' && $userRights !== 2 ) {
-            $this->badRights[] = $mainRight . ' - ' . RightsUtilities::getDisplayTextForRight('readOnly');
+        if ( $value == '1' && $userRights != 1 ) {
+            $rightName         = $mainRight . ($newVersion ? ' - ' . RightsUtilities::getDisplayTextForRight('viewAndEdit') : '');
+            $this->badRights[] = $rightName;
+        } elseif ( $value == '2' && $userRights != 2 ) {
+            $rightName         = $mainRight . ($newVersion ? ' - ' . RightsUtilities::getDisplayTextForRight('readOnly') : '');
+            $this->badRights[] = $rightName;
         }
     }
 
