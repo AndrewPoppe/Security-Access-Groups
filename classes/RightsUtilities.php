@@ -71,7 +71,7 @@ class RightsUtilities
     }
 
     /**
-     * Converts REDCap's User Rights permission into SAG format
+     * Converts REDCap's User Rights permission into SAG format / Or the other way around - the operation is reversible
      * 
      * Prior to REDCap 14.1.0, the user_rights field was:
      * 0: No access
@@ -143,6 +143,7 @@ class RightsUtilities
         $rights = json_decode($permissions, true);
         $rights = self::convertDataQualityResolution($rights);
         $rights = self::convertDoubleData($rights);
+        $rights = self::convertUserRights($rights);
         foreach ( $rights as $key => $value ) {
             if ( $value === 'on' ) {
                 $rights[$key] = 1;

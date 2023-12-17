@@ -302,6 +302,22 @@ class RightsChecker
         $this->checkRight($right);
     }
 
+    private function checkUserRightsRight($right, $value)
+    {
+        if ( !$right !== 'user_rights' ) {
+            return;
+        }
+        $this->accountedFor = true;
+        $userRights         = (int) $this->acceptableRights['user_rights'];
+        $mainRight          = RightsUtilities::getDisplayTextForRight('user_rights');
+        // Value -> 0: no access, 2: read only, 1: view and edit
+        if ( $value === '1' && $userRights !== 1 ) {
+            $this->badRights[] = $mainRight . ' - ' . RightsUtilities::getDisplayTextForRight('viewAndEdit');
+        } elseif ( $value === '2' && $userRights !== 2 ) {
+            $this->badRights[] = $mainRight . ' - ' . RightsUtilities::getDisplayTextForRight('readOnly');
+        }
+    }
+
     public function checkRights()
     {
         foreach ( $this->rightsToCheck as $right => $value ) {
@@ -321,6 +337,7 @@ class RightsChecker
                 continue;
             }
 
+            $this->checkUserRightsRight($right, $value);
             $this->checkCDPandDDP($right);
             $this->checkMyCapRights($right);
             $this->checkRandomizationRights($right);
@@ -359,6 +376,7 @@ class RightsChecker
                 continue;
             }
 
+            $this->checkUserRightsRight($right, $value);
             $this->checkCDPandDDP($right);
             $this->checkMyCapRights($right);
             $this->checkRandomizationRights($right);
