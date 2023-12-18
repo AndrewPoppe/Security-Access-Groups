@@ -345,9 +345,18 @@ The file used to import SAGs must be a CSV file with the following columns:
 .^|`user_rights`
 .^|User Rights
 .^a|
+Prior to REDCap v14.1.0:
 
 * `0` - Not allowed
 * `1` - Allowed
+
+As of REDCap v14.1.0:
+
+* `0` - No access
+* `2` - Read only
+* `1` - View & Edit
+
+_**Note**: The counterintuitive values here break with the general pattern of this module (in which higher values correspond with more permissions) in order to aid in maintaining backwards compatibility and prevent errors with this very important permission._
 
 .^|`data_access_groups`
 .^|Data Access Groups

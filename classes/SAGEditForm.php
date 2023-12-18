@@ -183,16 +183,16 @@ class SAGEditForm
                             for='user_rights_0'>$label2</label>
                     </div>
                     <div class='form-check'>
-                        <input class='form-check-input' type='radio' id='user_rights_1'
-                            name='user_rights' $readChecked value='1'>
+                        <input class='form-check-input' type='radio' id='user_rights_2'
+                            name='user_rights' $readChecked value='2'>
                         <label class='form-check-label'
-                            for='user_rights_1'>$label3</label>
+                            for='user_rights_2'>$label3</label>
                     </div>
                     <div class='form-check'>
-                        <input class='form-check-input' type='radio' id='user_rights_2'
-                            name='user_rights' $viewAndEditChecked value='2'>
+                        <input class='form-check-input' type='radio' id='user_rights_1'
+                            name='user_rights' $viewAndEditChecked value='1'>
                         <label class='form-check-label'
-                            for='user_rights_2'>$label4</label>
+                            for='user_rights_1'>$label4</label>
                     </div>
                 </div>
             </div>

@@ -70,44 +70,6 @@ class RightsUtilities
         return $result;
     }
 
-    /**
-     * Converts the User Rights permission values from the SAG user-facing format to the interal format that is also used by REDCap.
-     * 
-     * This function can be used to convert in either direction.
-     * 
-     * Prior to REDCap 14.1.0, the user_rights field was:
-     * 0: No access
-     * 1: View and edit
-     * 
-     * Starting with REDCap 14.1.0, the user_rights field is:
-     * 0: No access
-     * 2: View only
-     * 1: View and edit
-     *   
-     * For user-facing purposes (e.g., CSV Import), we want higher values to always mean more permission, so if REDCap 14.1.0 or later, we need to swap 1 and 2.
-     * This results in:
-     * 
-     * 0: No access
-     * 1: View only
-     * 2: View and edit
-     * 
-     * @param array $rights
-     * @return array $rights
-     */
-    public static function convertUserRights($rights)
-    {
-        $redcapVersion = defined('REDCAP_VERSION') ? REDCAP_VERSION : '99.99.99';
-        if ( \REDCap::versionCompare($redcapVersion, '14.1.0') >= 0 ) {
-            if ( $rights['user_rights'] == 1 ) {
-                $rights['user_rights'] = 2;
-            } else if ( $rights['user_rights'] == 2 ) {
-                $rights['user_rights'] = 1;
-            }
-        }
-        return $rights;
-    }
-
-
     private static function convertDoubleData($rights)
     {
         // 0: Reviewer
@@ -146,7 +108,6 @@ class RightsUtilities
         $rights = json_decode($permissions, true);
         $rights = self::convertDataQualityResolution($rights);
         $rights = self::convertDoubleData($rights);
-        $rights = self::convertUserRights($rights);
         foreach ( $rights as $key => $value ) {
             if ( $value === 'on' ) {
                 $rights[$key] = 1;

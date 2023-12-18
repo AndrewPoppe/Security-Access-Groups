@@ -989,7 +989,10 @@ You can also <strong>Copy</strong> and <strong>Delete</strong> the SAG from the 
 <tr>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><code>user_rights</code></p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">User Rights</p></td>
-<td class="tableblock halign-left valign-middle"><div class="content"><div class="ulist">
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p>Prior to REDCap v14.1.0:</p>
+</div>
+<div class="ulist">
 <ul>
 <li>
 <p><code>0</code> - Not allowed</p>
@@ -998,6 +1001,25 @@ You can also <strong>Copy</strong> and <strong>Delete</strong> the SAG from the 
 <p><code>1</code> - Allowed</p>
 </li>
 </ul>
+</div>
+<div class="paragraph">
+<p>As of REDCap v14.1.0:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>0</code> - No access</p>
+</li>
+<li>
+<p><code>2</code> - Read only</p>
+</li>
+<li>
+<p><code>1</code> - View &amp; Edit</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><em><strong>Note</strong>: The counterintuitive values here break with the general pattern of this module (in which higher values correspond with more permissions) in order to aid in maintaining backwards compatibility and prevent errors with this very important permission.</em></p>
 </div></div></td>
 </tr>
 <tr>
@@ -2233,7 +2255,7 @@ including the '|' symbol has the side effect of making the search a Regular Expr
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2023-12-12 14:13:31 -0500
+Last updated 2023-12-18 13:55:46 -0500
 </div>
 </div>
 </body>

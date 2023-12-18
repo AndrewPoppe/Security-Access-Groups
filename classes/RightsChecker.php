@@ -318,7 +318,7 @@ class RightsChecker
         if ( $value == '1' && $userRights != 1 ) {
             $rightName         = $mainRight . ($newVersion ? ' - ' . RightsUtilities::getDisplayTextForRight('viewAndEdit') : '');
             $this->badRights[] = $rightName;
-        } elseif ( $value == '2' && $userRights != 2 ) {
+        } elseif ( $value == '2' && $userRights == 0 ) {
             $rightName         = $mainRight . ($newVersion ? ' - ' . RightsUtilities::getDisplayTextForRight('readOnly') : '');
             $this->badRights[] = $rightName;
         }
