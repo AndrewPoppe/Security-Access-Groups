@@ -2,6 +2,8 @@ const sag_module = __MODULE__;
 console.log(performance.now());
 console.time('dt');
 
+lang['rights_61'] = '{{rights_61}}';
+
 sag_module.openSagEditor = function (sag_id = "", sag_name = "", newSag = false) {
     const deleteSagButtonCallback = function () {
         Swal.fire({
@@ -576,7 +578,11 @@ $(document).ready(function () {
             className: 'dt-center',
             data: function (row, type, set, meta) {
                 if (type === 'display') {
-                    return row.permissions.user_rights ? check : x;
+                    const val = row.permissions.user_rights;
+                    if (val == 2) {
+                        return lang['rights_61'];
+                    }
+                    return val ? check : x;
                 } else {
                     return row.permissions.user_rights;
                 }

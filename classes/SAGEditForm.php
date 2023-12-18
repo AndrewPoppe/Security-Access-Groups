@@ -156,9 +156,50 @@ class SAGEditForm
     }
     private function getUserRights()
     {
-        if ( isset($this->allRights['user_rights']) ) {
+        if ( !isset($this->allRights['user_rights']) ) {
+            return;
+        }
+        $rightValue    = $this->rights['user_rights'];
+        $redcapVersion = defined('REDCAP_VERSION') ? REDCAP_VERSION : '99.99.99';
+        if ( \REDCap::versionCompare($redcapVersion, '14.1.0') >= 0 ) {
+            $label              = $this->lang['app_05']; // User Rights
+            $noAccessChecked    = $rightValue == 0 ? 'checked' : '';
+            $readChecked        = $rightValue == 2 ? 'checked' : '';
+            $viewAndEditChecked = $rightValue == 1 ? 'checked' : '';
+            $label2             = $this->lang['rights_47']; // No Access
+            $label3             = $this->lang['rights_61']; // Read Only
+            $label4             = $this->lang['rights_138']; // View & Edit
+            return <<<"EOT"
+            <!-- User Rights -->
+            <div class="SAG-form-row row">
+                <div class="col">
+                    <i class="fa-solid fa-fw fa-user"></i>&nbsp;&nbsp;$label
+                </div>
+                <div class="col">
+                    <div class='form-check'>
+                        <input class='form-check-input' type='radio' id='user_rights_0'
+                            name='user_rights' $noAccessChecked value='0'>
+                        <label class='form-check-label'
+                            for='user_rights_0'>$label2</label>
+                    </div>
+                    <div class='form-check'>
+                        <input class='form-check-input' type='radio' id='user_rights_1'
+                            name='user_rights' $readChecked value='1'>
+                        <label class='form-check-label'
+                            for='user_rights_1'>$label3</label>
+                    </div>
+                    <div class='form-check'>
+                        <input class='form-check-input' type='radio' id='user_rights_2'
+                            name='user_rights' $viewAndEditChecked value='2'>
+                        <label class='form-check-label'
+                            for='user_rights_2'>$label4</label>
+                    </div>
+                </div>
+            </div>
+            EOT;
+        } else {
             $label   = $this->lang['app_05'];
-            $checked = $this->rights['user_rights'] == 1 ? 'checked' : '';
+            $checked = $rightValue == 1 ? 'checked' : '';
             return <<<"EOT"
             <!-- User Rights -->
             <div class="SAG-form-row row">
@@ -173,6 +214,7 @@ class SAGEditForm
             </div>
             EOT;
         }
+
     }
     private function getDataAccessGroups()
     {

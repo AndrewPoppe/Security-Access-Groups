@@ -302,6 +302,28 @@ class RightsChecker
         $this->checkRight($right);
     }
 
+    private function checkUserRightsRight($right, $value)
+    {
+        $isUserRightsRight = $right === 'user_rights';
+        if ( !$isUserRightsRight ) {
+            return;
+        }
+        $this->accountedFor = true;
+        $value              = $value === 'on' ? '1' : $value; // If REDCap version < 14.1.0, value was binary
+        $userRights         = (int) $this->acceptableRights['user_rights'];
+        $mainRight          = RightsUtilities::getDisplayTextForRight('user_rights');
+        $redcapVersion      = defined('REDCAP_VERSION') ? REDCAP_VERSION : '99.99.99';
+        $newVersion         = \REDCap::versionCompare($redcapVersion, '14.1.0') >= 0;
+        // Value -> 0: no access, 2: read only, 1: view and edit
+        if ( $value == '1' && $userRights != 1 ) {
+            $rightName         = $mainRight . ($newVersion ? ' - ' . RightsUtilities::getDisplayTextForRight('viewAndEdit') : '');
+            $this->badRights[] = $rightName;
+        } elseif ( $value == '2' && $userRights != 2 ) {
+            $rightName         = $mainRight . ($newVersion ? ' - ' . RightsUtilities::getDisplayTextForRight('readOnly') : '');
+            $this->badRights[] = $rightName;
+        }
+    }
+
     public function checkRights()
     {
         foreach ( $this->rightsToCheck as $right => $value ) {
@@ -321,6 +343,7 @@ class RightsChecker
                 continue;
             }
 
+            $this->checkUserRightsRight($right, $value);
             $this->checkCDPandDDP($right);
             $this->checkMyCapRights($right);
             $this->checkRandomizationRights($right);
@@ -359,6 +382,7 @@ class RightsChecker
                 continue;
             }
 
+            $this->checkUserRightsRight($right, $value);
             $this->checkCDPandDDP($right);
             $this->checkMyCapRights($right);
             $this->checkRandomizationRights($right);
