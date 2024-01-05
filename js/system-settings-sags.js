@@ -178,7 +178,8 @@ sag_module.openSagEditor = function (sag_id = "", sag_name = "", newSag = false)
                 if ($('#SAG_Copy')) $('#SAG_Copy').click(copySagButtonCallback);
                 if ($('#SAG_Delete')) $('#SAG_Delete').click(deleteSagButtonCallback);
             })
-            $("#edit_sag_popup").modal('show');
+            const edit_sag_popup = new bootstrap.Modal("#edit_sag_popup", { focus: false });
+            edit_sag_popup.show();
         })
         .catch(function (error) {
             console.error(error);
