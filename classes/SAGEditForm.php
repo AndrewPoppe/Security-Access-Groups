@@ -13,7 +13,9 @@ class SAGEditForm
     private $allRights;
     private $contextMessage;
     public function __construct(
-        SecurityAccessGroups $module, array $rights, bool $newSag,
+        SecurityAccessGroups $module,
+        array $rights,
+        bool $newSag,
         $sagName = '',
         $sagId = ''
     ) {
@@ -168,7 +170,7 @@ class SAGEditForm
             $viewAndEditChecked = $rightValue == 1 ? 'checked' : '';
             $label2             = $this->lang['rights_47']; // No Access
             $label3             = $this->lang['rights_61']; // Read Only
-            $label4             = $this->lang['rights_138']; // View & Edit
+            $label4             = $this->lang['rights_440']; // Full Access
             return <<<"EOT"
             <!-- User Rights -->
             <div class="SAG-form-row row">

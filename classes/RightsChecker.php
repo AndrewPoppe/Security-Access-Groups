@@ -316,7 +316,7 @@ class RightsChecker
         $newVersion         = \REDCap::versionCompare($redcapVersion, '14.1.0') >= 0;
         // Value -> 0: no access, 2: read only, 1: view and edit
         if ( $value == '1' && $userRights != 1 ) {
-            $rightName         = $mainRight . ($newVersion ? ' - ' . RightsUtilities::getDisplayTextForRight('viewAndEdit') : '');
+            $rightName         = $mainRight . ($newVersion ? ' - ' . RightsUtilities::getDisplayTextForRight('fullAccess') : '');
             $this->badRights[] = $rightName;
         } elseif ( $value == '2' && $userRights == 0 ) {
             $rightName         = $mainRight . ($newVersion ? ' - ' . RightsUtilities::getDisplayTextForRight('readOnly') : '');

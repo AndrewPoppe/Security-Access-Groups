@@ -173,6 +173,7 @@ class RightsUtilities
             $rights['lock_record_esignature'] = $lang['rights_116'];
             $rights['editSurveyResponses']    = $lang['rights_137'];
             $rights['viewAndEdit']            = $lang['rights_138'];
+            $rights['fullAccess']             = $lang['rights_440'];
             $rights['readOnly']               = $lang['rights_61'];
             $rights['fullDataSet']            = $lang['rights_49'];
             $rights['removeIdentifiers']      = $lang['data_export_tool_290'];
