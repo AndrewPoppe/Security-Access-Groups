@@ -2,7 +2,10 @@ const sag_module = __MODULE__;
 console.log(performance.now());
 console.time('dt');
 
-lang['rights_61'] = '{{rights_61}}';
+lang['rights_61'] = '{{rights_61}}'; // Read Only
+lang['rights_440'] = '{{rights_440}}'; // Full Access
+lang['rights_47'] = '{{rights_47}}'; // No Access
+lang['rights_116'] = '{{rights_116}}'; // Locking / Unlocking with E-Signature authority
 
 sag_module.openSagEditor = function (sag_id = "", sag_name = "", newSag = false) {
     const deleteSagButtonCallback = function () {
@@ -457,9 +460,10 @@ $(document).ready(function () {
     const importFileElement = document.getElementById("importSagsFile");
     importFileElement.addEventListener("change", sag_module.handleFiles);
 
-    const shieldcheck = '<i class="fa-solid fa-shield-check fa-xl" style="color: green;"></i>';
-    const check = '<i class="fa-solid fa-check fa-xl" style="color: green;"></i>';
-    const x = '<i class="fa-regular fa-xmark" style="color: #D00000;"></i>';
+    const shieldcheck = `<i class="fa-solid fa-shield-check fs18 text-success" title="${lang['rights_116']}"></i>`;
+    const check = `<i class="fa-solid fa-check text-success fs18" title="${lang['rights_440']}"></i>`;
+    const x = `<i class="fa-solid fa-xmark text-danger fs18" title="${lang['rights_47']}"></i>`;
+    const eye = `<i class="fa-solid fa-eye text-secondary fs15" title="${lang['rights_61']}"></i>`;
     sag_module.dt = $('#sagTable').DataTable({
         ajax: function (data, callback, settings) {
             sag_module.ajax('getSags')
@@ -581,7 +585,7 @@ $(document).ready(function () {
                 if (type === 'display') {
                     const val = row.permissions.user_rights;
                     if (val == 2) {
-                        return lang['rights_61'];
+                        return eye;//lang['rights_61'];
                     }
                     return val ? check : x;
                 } else {
