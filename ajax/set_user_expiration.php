@@ -9,7 +9,9 @@ if ( $_SERVER["REQUEST_METHOD"] !== "POST" ) {
     exit;
 }
 
-if ( !$module->isSuperUser() ) {
+$user       = $module->framework->getUser();
+$userRights = $user->getRights();
+if ( (int) $userRights['user_rights'] !== 1 ) {
     http_response_code(401);
     exit;
 }
