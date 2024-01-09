@@ -20,6 +20,7 @@ $scriptPath = $module->getSafePath('UserRights/set_user_expiration.php', APP_PAT
 
 $username   = filter_input(INPUT_POST, 'username', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 $expiration = filter_input(INPUT_POST, 'expiration', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+$expiration = \DateTimeRC::format_ts_to_ymd($expiration);
 
 if ( !empty($expiration) && strtotime($expiration) < strtotime('today') ) {
     $errors = false;

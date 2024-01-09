@@ -212,6 +212,7 @@ class APIHandler
                 // We ignore expired users, unless the request unexpires them
                 $userExpired         = $sagUser->isUserExpired($this->projectId);
                 $requestedExpiration = urldecode($thisUser['expiration']);
+                $requestedExpiration = \DateTimeRC::format_ts_to_ymd($requestedExpiration);
 
                 // This import is requesting the user be expired
                 if ( !empty($requestedExpiration) && strtotime($requestedExpiration) < strtotime('today') ) {

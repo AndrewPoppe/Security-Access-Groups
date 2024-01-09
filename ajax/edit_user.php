@@ -86,6 +86,7 @@ if ( in_array($submitAction, [ 'add_user', 'edit_user' ]) ) {
     // We ignore expired users, unless the request unexpires them
     $userExpired         = $sagUser->isUserExpired($module->getProjectId());
     $requestedExpiration = urldecode($data['expiration']);
+    $requestedExpiration = \DateTimeRC::format_ts_to_ymd($requestedExpiration);
     $requestedUnexpired  = empty($requestedExpiration) || (strtotime($requestedExpiration) >= strtotime('today'));
     if ( $userExpired && !$requestedUnexpired ) {
         $ignore = true;
