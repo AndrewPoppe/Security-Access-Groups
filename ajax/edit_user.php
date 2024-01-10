@@ -88,6 +88,12 @@ if ( in_array($submitAction, [ 'add_user', 'edit_user' ]) ) {
     $requestedExpiration = urldecode($data['expiration']);
     $requestedExpiration = \DateTimeRC::format_ts_to_ymd($requestedExpiration);
     $requestedUnexpired  = empty($requestedExpiration) || (strtotime($requestedExpiration) >= strtotime('today'));
+
+    // This import is requesting the user be expired
+    if ( !empty($requestedExpiration) && strtotime($requestedExpiration) < strtotime('today') ) {
+        $userExpired = true;
+    }
+
     if ( $userExpired && !$requestedUnexpired ) {
         $ignore = true;
     }
