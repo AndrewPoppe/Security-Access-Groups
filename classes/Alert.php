@@ -227,13 +227,21 @@ class Alert
 
     private function sendUserExpirationAlertsAndScheduleReminders()
     {
+        $errorMessage = false;
         if ( $this->getSendUserNotification() ) {
-            return $this->sendUserExpirationUserAlertsAndScheduleReminders();
+            $errorMessage = $this->sendUserExpirationUserAlertsAndScheduleReminders();
         }
 
         if ( $this->getSendNotificationUserExpirationUserRightsHolders() ) {
-            return $this->sendUserExpirationUserRightsHoldersAlertsAndScheduleReminders();
+            $userRightsHolderError = $this->sendUserExpirationUserRightsHoldersAlertsAndScheduleReminders();
+            if ( $errorMessage && $userRightsHolderError ) {
+                $errorMessage .= '; ' . $userRightsHolderError;
+            } elseif ( $userRightsHolderError ) {
+                $errorMessage = $userRightsHolderError;
+            }
         }
+
+        return $errorMessage;
     }
 
     private function sendUserExpirationUserAlertsAndScheduleReminders()
