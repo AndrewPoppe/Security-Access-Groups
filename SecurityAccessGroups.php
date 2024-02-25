@@ -71,7 +71,7 @@ class SecurityAccessGroups extends AbstractExternalModule
             $api->handleRequest();
             if ( !$api->shouldAllowImport() ) {
                 $badRights = $api->getBadRights();
-                http_response_code(401);
+                http_response_code(403);
                 echo json_encode($badRights);
                 $this->exitAfterHook();
             } else {

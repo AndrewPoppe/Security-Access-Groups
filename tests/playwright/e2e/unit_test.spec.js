@@ -435,7 +435,7 @@ test.describe('Prevent noncompliant rights from being granted', () => {
                     }])
                 }
             });
-            await expect(response.status()).toBe(401);
+            await expect(response.status()).toBe(403);
             console.log(await response.json());
             const expected = {};
             expected[config.users.NothingUser.username] = ['User Rights'];
@@ -510,7 +510,7 @@ test.describe('Prevent noncompliant rights from being granted', () => {
                     }])
                 }
             });
-            await expect(response.status()).toBe(401);
+            await expect(response.status()).toBe(403);
             console.log(await response.json());
             const expected = {};
             expected[config.users.NothingUser.username] = ['User Rights'];
@@ -531,7 +531,7 @@ test.describe('Prevent noncompliant rights from being granted', () => {
                     }])
                 }
             });
-            await expect(response.status()).toBe(401);
+            await expect(response.status()).toBe(403);
             console.log(await response.json());
             const expected = {};
             expected[config.roles.Test.name] = ['User Rights'];
@@ -587,7 +587,7 @@ test.describe('Prevent noncompliant rights from being granted', () => {
                     }])
                 }
             });
-            await expect(response.status()).toBe(401);
+            await expect(response.status()).toBe(403);
             await modulePage.visitProjectUserRightsPage(config.projects.API_Project.pid);
             await modulePage.page.screenshot({ path: `${outDir}/FRS-VL-SAGEM-001-13-attempt_to_edit_role_with_noncompliant_rights.png`, fullPage: false });
         });
