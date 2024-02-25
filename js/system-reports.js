@@ -241,7 +241,9 @@ sag_module.showProjectTable = function (includeExpired = false) {
         }],
         dom: 'lBftip',
 
-        columns: [{
+        columns: [
+        // 0: Project (Display)    
+        {
             title: sag_module.tt('cc_reports_17'),
             data: function (row, type, set, meta) {
                 const pid = row.project_id;
@@ -252,6 +254,7 @@ sag_module.showProjectTable = function (includeExpired = false) {
             },
             width: '20%'
         },
+        // 1: Count of Users (Display)
         {
             title: sag_module.tt('cc_reports_32'),
             data: function (row, type, set, meta) {
@@ -262,6 +265,7 @@ sag_module.showProjectTable = function (includeExpired = false) {
             },
             width: '5%'
         },
+        // 2: Users (Display)
         {
             title: sag_module.tt('cc_reports_19'),
             data: function (row, type, set, meta) {
@@ -275,6 +279,7 @@ sag_module.showProjectTable = function (includeExpired = false) {
             },
             width: '20%'
         },
+        // 3: SAG (Display)
         {
             title: sag_module.tt('cc_reports_20'),
             data: function (row, type, set, meta) {
@@ -285,6 +290,7 @@ sag_module.showProjectTable = function (includeExpired = false) {
             },
             width: '20%'
         },
+        // 4: Bad Rights (Display)
         {
             title: sag_module.tt('cc_reports_21'),
             data: function (row, type, set, meta) {
@@ -295,16 +301,19 @@ sag_module.showProjectTable = function (includeExpired = false) {
             },
             width: '35%'
         },
+        // 5: project_id
         {
             title: sag_module.tt('cc_reports_33'),
             data: "project_id",
             visible: false
         },
+        // 6: project title
         {
             title: sag_module.tt('cc_reports_34'),
             data: "project_title",
             visible: false
         },
+        // 7: project status
         {
             title: sag_module.tt('status_ui_2'),
             data: function (row, type, set, meta) {
@@ -315,6 +324,7 @@ sag_module.showProjectTable = function (includeExpired = false) {
             },
             visible: false
         },
+        // 8: users
         {
             title: sag_module.tt('cc_reports_19'),
             data: function (row, type, set, meta) {
@@ -323,6 +333,7 @@ sag_module.showProjectTable = function (includeExpired = false) {
             },
             visible: false
         },
+        // 9: sags
         {
             title: sag_module.tt('cc_reports_35'),
             data: function (row, type, set, meta) {
@@ -331,6 +342,7 @@ sag_module.showProjectTable = function (includeExpired = false) {
             },
             visible: false
         },
+        // 10: sag names
         {
             title: sag_module.tt('cc_reports_36'),
             data: function (row, type, set, meta) {
@@ -339,6 +351,7 @@ sag_module.showProjectTable = function (includeExpired = false) {
             },
             visible: false
         },
+        // 11: bad rights
         {
             title: sag_module.tt('cc_reports_21'),
             data: function (row, type, set, meta) {
@@ -520,7 +533,9 @@ sag_module.showUserTable = function (includeExpired = false) {
                 moment().format('YYYY-MM-DD_HHmmss'),
         }],
         dom: 'lBfrtip',
-        columns: [{
+        columns: [
+        // 0: User (Display)    
+        {
             title: sag_module.tt('user'),
             data: function (row, type, set, meta) {
                 if (type === 'display') {
@@ -534,11 +549,13 @@ sag_module.showUserTable = function (includeExpired = false) {
             },
             width: '15%'
         },
+        // 1: name
         {
             title: sag_module.tt('status_ui_60'),
             data: "name",
             visible: false
         },
+        // 2: email
         {
             title: sag_module.tt('status_ui_61'),
             data: function (row, type, set, meta) {
@@ -550,6 +567,7 @@ sag_module.showUserTable = function (includeExpired = false) {
             },
             visible: false
         },
+        // 3: SAG (Display)
         {
             title: sag_module.tt('status_ui_63'),
             data: function (row, type, set, meta) {
@@ -557,6 +575,7 @@ sag_module.showUserTable = function (includeExpired = false) {
             },
             width: '20%'
         },
+        // 4: Project (Display)
         {
             title: sag_module.tt('cc_reports_22'),
             data: function (row, type, set, meta) {
@@ -568,6 +587,7 @@ sag_module.showUserTable = function (includeExpired = false) {
             },
             width: '5%'
         },
+        // 5: Projects (Display)
         {
             title: sag_module.tt('cc_reports_39'),
             data: function (row, type, set, meta) {
@@ -584,6 +604,7 @@ sag_module.showUserTable = function (includeExpired = false) {
             },
             width: '25%'
         },
+        // 6: bad rights (Display)
         {
             title: sag_module.tt('cc_reports_21'),
             data: function (row, type, set, meta) {
@@ -594,11 +615,13 @@ sag_module.showUserTable = function (includeExpired = false) {
             },
             width: '35%'
         },
+        // 7: username
         {
             title: sag_module.tt('status_ui_59'),
             data: 'username',
             visible: false
         },
+        // 8: project ids
         {
             title: sag_module.tt('cc_reports_39'),
             data: function (row, type, set, meta) {
@@ -607,6 +630,7 @@ sag_module.showUserTable = function (includeExpired = false) {
             },
             visible: false
         },
+        // 9: project titles
         {
             title: sag_module.tt('cc_reports_40'),
             data: function (row, type, set, meta) {
@@ -615,6 +639,7 @@ sag_module.showUserTable = function (includeExpired = false) {
             },
             visible: false
         },
+        // 10: project statuses
         {
             title: sag_module.tt('status_ui_2'),
             data: function (row, type, set, meta) {
@@ -624,6 +649,7 @@ sag_module.showUserTable = function (includeExpired = false) {
             },
             visible: false
         },
+        // 11: bad rights
         {
             title: sag_module.tt('cc_reports_21'),
             data: function (row, type, set, meta) {
@@ -631,11 +657,13 @@ sag_module.showUserTable = function (includeExpired = false) {
             },
             visible: false
         },
+        // 12: sag id
         {
             title: sag_module.tt('sag'),
             data: 'sag',
             visible: false
         },
+        // 13: sag name
         {
             title: sag_module.tt('cc_user_11'),
             data: 'sag_name',
@@ -821,7 +849,9 @@ sag_module.showUserAndProjectTable = function (includeExpired = false) {
                 moment().format('YYYY-MM-DD_HHmmss'),
         }],
         dom: 'lBfrtip',
-        columns: [{
+        columns: [
+        // 0: User (Display)
+        {
             title: sag_module.tt('user'),
             data: function (row, type, set, meta) {
                 if (type === 'display') {
@@ -835,11 +865,13 @@ sag_module.showUserAndProjectTable = function (includeExpired = false) {
             },
             width: '20%'
         },
+        // 1: name
         {
             title: sag_module.tt('status_ui_60'),
             data: "name",
             visible: false
         },
+        // 2: email
         {
             title: sag_module.tt('status_ui_61'),
             data: function (row, type, set, meta) {
@@ -851,6 +883,7 @@ sag_module.showUserAndProjectTable = function (includeExpired = false) {
             },
             visible: false
         },
+        // 3: SAG (Display)
         {
             title: sag_module.tt('status_ui_63'),
             data: function (row, type, set, meta) {
@@ -858,6 +891,7 @@ sag_module.showUserAndProjectTable = function (includeExpired = false) {
             },
             width: '20%'
         },
+        // 4: Project (Display)
         {
             title: sag_module.tt('cc_reports_41'),
             data: function (row, type, set, meta) {
@@ -869,6 +903,7 @@ sag_module.showUserAndProjectTable = function (includeExpired = false) {
             },
             width: '20%'
         },
+        // 5: bad rights (Display)
         {
             title: sag_module.tt('cc_reports_21'),
             data: function (row, type, set, meta) {
@@ -879,21 +914,25 @@ sag_module.showUserAndProjectTable = function (includeExpired = false) {
             },
             width: '40%'
         },
+        // 6: username
         {
             title: sag_module.tt('status_ui_59'),
             data: 'username',
             visible: false
         },
+        // 7: project_id
         {
             title: sag_module.tt('cc_reports_33'),
             data: 'project_id',
             visible: false
         },
+        // 8: project_title
         {
             title: sag_module.tt('cc_reports_34'),
             data: 'project_title',
             visible: false
         },
+        // 9: project_status
         {
             title: sag_module.tt('status_ui_2'),
             data: function (row, type, set, meta) {
@@ -904,6 +943,7 @@ sag_module.showUserAndProjectTable = function (includeExpired = false) {
             },
             visible: false
         },
+        // 10: bad_rights
         {
             title: sag_module.tt('cc_reports_21'),
             data: function (row, type, set, meta) {
@@ -911,11 +951,13 @@ sag_module.showUserAndProjectTable = function (includeExpired = false) {
             },
             visible: false
         },
+        // 11: sag id
         {
             title: sag_module.tt('sag'),
             data: 'sag',
             visible: false
         },
+        // 12: sag name
         {
             title: sag_module.tt('cc_user_11'),
             data: 'sag_name',
@@ -969,7 +1011,7 @@ $(document).ready(function () {
         if (users.length === 0) {
             return true;
         }
-        const usersList = data[7].split(',').map(str => trim(str));
+        const usersList = data[8].split(',').map(str => trim(str));
         return users.some(user => usersList.includes(user));
     });
 
@@ -982,7 +1024,7 @@ $(document).ready(function () {
         if (sags.length === 0) {
             return true;
         }
-        const sagsList = data[8].split(',').map(str => trim(str));
+        const sagsList = data[9].split(',').map(str => trim(str));
         return sags.some(sag => sagsList.includes(sag));
     });
 
@@ -1034,7 +1076,7 @@ $(document).ready(function () {
         if (sags.length === 0) {
             return true;
         }
-        const sag = data[11];
+        const sag = data[12];
         return sags.includes(sag);
     });
 
@@ -1086,7 +1128,7 @@ $(document).ready(function () {
         if (sags.length === 0) {
             return true;
         }
-        const sag = data[10];
+        const sag = data[11];
         return sags.includes(sag);
     });
 
