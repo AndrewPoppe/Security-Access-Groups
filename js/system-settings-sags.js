@@ -315,12 +315,13 @@ sag_module.exportCsv = function () {
                 } else if (col === 2) {
                     return html;
                 } else {
-                    let result = $(node).text();
+                    console.log({row, col, html, node, value: $(html).data('value') ?? html});
+                    let result = $(html).data('value') ?? html ?? $(node).text() ?? $(node).data('value') ?? 0;
                     if (result == '') {
                         const value = $(node).data('value');
                         result = value == '' ? 0 : value;
                     } else {
-                        result = String(html).replace(/<br>|<br\/>/g, '\n').replace(/&amp;/g, '&');
+                        //result = String(html).replace(/<br>|<br\/>/g, '\n').replace(/&amp;/g, '&');
                     }
                     return result;
                 }
@@ -460,10 +461,10 @@ $(document).ready(function () {
     const importFileElement = document.getElementById("importSagsFile");
     importFileElement.addEventListener("change", sag_module.handleFiles);
 
-    const shieldcheck = `<i class="fa-solid fa-shield-check fs18 text-success" title="${lang['rights_116']}"></i>`;
-    const check = `<i class="fa-solid fa-check text-success fs18" title="${lang['rights_440']}"></i>`;
-    const x = `<i class="fa-solid fa-xmark text-danger fs18" title="${lang['rights_47']}"></i>`;
-    const eye = `<i class="fa-solid fa-eye text-secondary fs15" title="${lang['rights_61']}"></i>`;
+    const shieldcheck = `<i class="fa-solid fa-shield-check fs18 text-success" data-value="${lang['rights_116']}" title="${lang['rights_116']}"></i>`;
+    const check = `<i class="fa-solid fa-check text-success fs18" data-value="${lang['rights_440']}" title="${lang['rights_440']}"></i>`;
+    const x = `<i class="fa-solid fa-xmark text-danger fs18" data-value="${lang['rights_47']}" title="${lang['rights_47']}"></i>`;
+    const eye = `<i class="fa-solid fa-eye text-secondary fs15" data-value="${lang['rights_61']}" title="${lang['rights_61']}"></i>`;
     sag_module.dt = $('#sagTable').DataTable({
         ajax: function (data, callback, settings) {
             sag_module.ajax('getSags')
