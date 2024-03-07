@@ -257,8 +257,10 @@ class SAGProject
             FROM redcap_user_rights rights
             LEFT JOIN redcap_user_information info
             ON rights.username = info.username
-            WHERE project_id = ?
-            AND user_rights = 1';
+            LEFT JOIN redcap_user_roles roles
+            ON rights.role_id = roles.role_id
+            WHERE rights.project_id = ?
+            AND coalesce(roles.user_rights, rights.user_rights) = 1';
             $result = $this->module->framework->query($sql, [ $this->projectId ]);
             $users  = [];
             while ( $row = $result->fetch_assoc() ) {
