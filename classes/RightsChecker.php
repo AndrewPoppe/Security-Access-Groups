@@ -55,6 +55,13 @@ class RightsChecker
             'role_label',
             'notify_email',
         ];
+
+        // There was no separate email logging right prior to REDCap 14.4.0
+        $redcapVersion      = defined('REDCAP_VERSION') ? REDCAP_VERSION : '99.99.99';
+        if (\REDCap::versionCompare($redcapVersion, '14.4.0') >= 0) {
+            $safeRights[] = 'email_logging';
+        }
+
         return in_array($rightName, $safeRights, true);
     }
 
