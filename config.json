@@ -173,13 +173,13 @@
         "sendAlerts"
     ],
     "no-auth-pages": [],
-    "framework-version": 14,
+    "framework-version": 15,
     "documentation": "https://andrewpoppe.github.io/Security-Access-Groups/",
     "tt_documentation": "doc_path",
     "compatibility": {
         "php-version-min": "7.4.00",
         "php-version-max": "8.2.99",
-        "redcap-version-min": "13.7.0",
+        "redcap-version-min": "14.4.0",
         "redcap-version-max": ""
     }
 }

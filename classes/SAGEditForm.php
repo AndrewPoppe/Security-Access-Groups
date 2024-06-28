@@ -55,6 +55,7 @@ class SAGEditForm
         $formContents .= $this->getDataImportTool();
         $formContents .= $this->getDataComparisonTool();
         $formContents .= $this->getLogging();
+        $formContents .= $this->getEmailLogging();
         $formContents .= $this->getFileRepository();
         $formContents .= $this->getRandomization();
         $formContents .= $this->getDataQuality();
@@ -463,6 +464,25 @@ class SAGEditForm
                 <div class="col">
                     <div class='form-check'>
                         <input type='checkbox' class='form-check-input' $checked name='data_logging'>
+                    </div>
+                </div>
+            </div>
+            EOT;
+        }
+    }
+    private function getEmailLogging()
+    {
+        if ( isset($this->allRights['email_logging']) ) {
+            $label = $this->lang['email_users_53'];
+            $checked = $this->rights['email_logging'] == 1 ? 'checked' : '';
+            return <<<"EOT"
+            <div class="SAG-form-row row">
+                <div class="col">
+                    <i class="fa-solid fa-fw fa-mail-bulk"></i>&nbsp;&nbsp;$label
+                </div>
+                <div class="col">
+                    <div class='form-check'>
+                        <input type='checkbox' class='form-check-input' $checked name='email_logging'>
                     </div>
                 </div>
             </div>

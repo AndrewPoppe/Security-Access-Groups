@@ -134,6 +134,7 @@ class RightsUtilities
             'data_import_tool'               => $lang['app_01'],
             'data_comparison_tool'           => $lang['app_02'],
             'data_logging'                   => $lang['app_07'],
+            'email_logging'                  => $lang['email_users_53'],
             'file_repository'                => $lang['app_04'],
             'double_data'                    => $lang['rights_50'],
             'lock_record_customize'          => $lang['app_11'],
@@ -242,6 +243,9 @@ class RightsUtilities
         }
         if ( isset($allRights['data_logging']) ) {
             $allRights['data_logging'] = 0;
+        }
+        if (isset($allRights['email_logging'])) {
+            $allRights['email_logging'] = 0;
         }
         if ( isset($allRights['file_repository']) ) {
             $allRights['file_repository'] = 1;

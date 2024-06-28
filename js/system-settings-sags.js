@@ -315,7 +315,7 @@ sag_module.exportCsv = function () {
                 } else if (col === 2) {
                     return html;
                 } else {
-                    console.log({row, col, html, node, value: $(html).data('value') ?? html});
+                    console.log({ row, col, html, node, value: $(html).data('value') ?? html });
                     let result = $(html).data('value') ?? html ?? $(node).text() ?? $(node).data('value') ?? 0;
                     if (result == '') {
                         const value = $(node).data('value');
@@ -719,6 +719,16 @@ $(document).ready(function () {
                     return row.permissions.data_logging ? check : x;
                 } else {
                     return row.permissions.data_logging;
+                }
+            }
+        },
+        {
+            className: 'dt-center',
+            data: function (row, type, set, meta) {
+                if (type === 'display') {
+                    return row.permissions.email_logging ? check : x;
+                } else {
+                    return row.permissions.email_logging;
                 }
             }
         },
