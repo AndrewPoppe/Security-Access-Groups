@@ -134,7 +134,6 @@ class RightsUtilities
             'data_import_tool'               => $lang['app_01'],
             'data_comparison_tool'           => $lang['app_02'],
             'data_logging'                   => $lang['app_07'],
-            'email_logging'                  => $lang['email_users_53'],
             'file_repository'                => $lang['app_04'],
             'double_data'                    => $lang['rights_50'],
             'lock_record_customize'          => $lang['app_11'],
@@ -154,6 +153,13 @@ class RightsUtilities
             'record_delete'                  => $lang['rights_101']
 
         ];
+
+        // There was no separate email logging right prior to REDCap 14.4.0
+        $redcapVersion      = defined('REDCAP_VERSION') ? REDCAP_VERSION : '99.99.99';
+        if (\REDCap::versionCompare($redcapVersion, '14.4.0') >= 0) {
+            $rights['email_logging'] = $lang['email_users_53'];
+        }
+
         if ( $allRights ) {
             $rights['random_setup']                    = $lang['app_21'] . ' - ' . $lang['rights_142'];
             $rights['random_dashboard']                = $lang['app_21'] . ' - ' . $lang['rights_143'];
