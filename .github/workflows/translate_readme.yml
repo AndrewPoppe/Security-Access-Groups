@@ -19,10 +19,10 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - id: 'auth'
-      uses: 'google-github-actions/auth@v1'
+      uses: 'google-github-actions/auth@v2'
       with:
         credentials_json: ${{ secrets.GCS_SA_KEY }}
         create_credentials_file: true
