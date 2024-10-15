@@ -30,7 +30,7 @@ jobs:
           sed -i 's|FROM mysql:8.0-oracle|FROM mysql:8.0|' docker-mysql/Dockerfile
       - name: Start Docker REDCap Container
         working-directory: ./redcap-docker-compose/rdc
-        run: docker-compose up -d
+        run: docker compose up -d
       - uses: actions/checkout@v4
         with:
           path: security_access_groups
