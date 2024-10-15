@@ -167,7 +167,7 @@ test.describe('Prevent noncompliant rights from being granted', () => {
             await expect(successPopup).toBeVisible();
         });
         await test.step('Attempt to grant User Rights right to role', async () => {
-            await modulePage.grantUserRightsToRole(config.projects.UI_Project.pid, config.roles.Test.name, 'user_rights');
+            await modulePage.grantUserRightsToRole(config.projects.UI_Project.pid, config.roles.Test.name, 'design');
             const errorPopup = modulePage.page.locator('h2#swal2-title', { hasText: `You cannot grant those rights to the role` });
             await expect(errorPopup).toBeVisible();
             await modulePage.page.screenshot({ path: `${outDir}/FRS-VL-SAGEM-001-05-attempt_to_add_noncompliant_rights_to_a_role.png`, fullPage: false });
@@ -186,7 +186,7 @@ test.describe('Prevent noncompliant rights from being granted', () => {
             await modulePage.removeUserFromProject(config.projects.UI_Project.pid, config.users.NothingUser.username);
         });
         await test.step('Attempt to add user to project in a role with noncompliant rights', async () => {
-            await modulePage.grantUserRightsToRole(config.projects.UI_Project.pid, config.roles.Test.name, 'user_rights');
+            await modulePage.grantUserRightsToRole(config.projects.UI_Project.pid, config.roles.Test.name, 'design');
             await modulePage.addUsersToProjectInRole(config.projects.UI_Project.pid, [config.users.NothingUser.username], config.roles.Test.name);
             const errorPopup = modulePage.page.locator('h2#swal2-title', { hasText: `You cannot assign user "${config.users.NothingUser.username}" to user role "${config.roles.Test.name}"` });
             await expect(errorPopup).toBeVisible();
