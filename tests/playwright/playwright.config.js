@@ -13,8 +13,8 @@ module.exports = defineConfig({
     reporter: 'html',
     use: {
         viewport: {
-            width: 1280,
-            height: 720
+            width: 1920,
+            height: 1080
         },
         trace: {
             mode: 'on',
@@ -26,8 +26,8 @@ module.exports = defineConfig({
         video: {
             mode: 'on',
             size: {
-                width: 1280,
-                height: 720
+                width: 1920,
+                height: 1080
             }
         },
         launchOptions: {
@@ -40,8 +40,8 @@ module.exports = defineConfig({
             use: {
                 ...devices['Desktop Chrome'],
                 viewport: {
-                    width: 1280,
-                    height: 720
+                    width: 1920,
+                    height: 1080
                 }
             },
         },
