@@ -151,6 +151,9 @@ export class Module {
         await this.page.locator('input#newSagName').fill('Everything');
         await this.page.locator('button#addSagButton').click();
         await this.page.locator('div#edit_sag_popup').waitFor({ state: 'visible' });
+        if (await this.page.locator('#user_rights_1').isVisible()) {
+            this.page.locator('#user_rights_1').check();
+        }
         const checkboxes = this.page.locator('div#edit_sag_popup input[type="checkbox"]:not(#double_data_reviewer)');
         const checkboxes_count = await checkboxes.count();
         for (let checkbox_index = 0; checkbox_index < checkboxes_count; checkbox_index++) {
