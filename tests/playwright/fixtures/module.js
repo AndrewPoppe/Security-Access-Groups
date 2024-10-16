@@ -179,7 +179,7 @@ export class Module {
 
     async addRightToSAG(sagId, rightName) {
         await this.visitSAGsPage();
-        const sagRow = await this.page.locator('tr', {has: this.page.locator('td.sag-id-column', {hasText: sagId})});
+        const sagRow = await this.page.locator('tr', { has: this.page.locator('td.sag-id-column', { hasText: sagId }) });
         await sagRow.locator('a.SagLink').click();
         await this.page.locator(`input[name="${rightName}"]`).check();
         await this.page.locator('button#SAG_Save').click();
@@ -187,7 +187,7 @@ export class Module {
 
     async removeRightFromSAG(sagId, rightName) {
         await this.visitSAGsPage();
-        const sagRow = await this.page.locator('tr', {has: this.page.locator('td.sag-id-column', {hasText: sagId})});
+        const sagRow = await this.page.locator('tr', { has: this.page.locator('td.sag-id-column', { hasText: sagId }) });
         await sagRow.locator('a.SagLink').click();
         await this.page.locator(`input[name="${rightName}"]`).uncheck();
         await this.page.locator('button#SAG_Save').click();
@@ -195,7 +195,7 @@ export class Module {
 
     async renameSAG(sagId, newName) {
         await this.visitSAGsPage();
-        const sagRow = await this.page.locator('tr', {has: this.page.locator('td.sag-id-column', {hasText: sagId})});
+        const sagRow = await this.page.locator('tr', { has: this.page.locator('td.sag-id-column', { hasText: sagId }) });
         await sagRow.locator('a.SagLink').click();
         await this.page.locator('input[name="sag_name_edit"]').fill(newName);
         await this.page.locator('button#SAG_Save').click();
@@ -203,7 +203,7 @@ export class Module {
 
     async getSAGRight(sagId, rightName) {
         await this.visitSAGsPage();
-        const sagRow = await this.page.locator('tr', {has: this.page.locator('td.sag-id-column', {hasText: sagId})});
+        const sagRow = await this.page.locator('tr', { has: this.page.locator('td.sag-id-column', { hasText: sagId }) });
         await sagRow.locator('a.SagLink').click();
 
         const results = {};
@@ -494,7 +494,7 @@ export class Module {
         await this.page.locator('form#importUserForm').waitFor({ state: 'visible' });
         await this.page.locator('form#importUserForm input[type="file"]').setInputFiles(csv);
         await this.page.locator('div.ui-dialog', { has: this.page.locator('div#importUsersDialog') }).locator('button', { hasText: 'Upload' }).click();
-        await this.page.locator('div.ui-dialog', { has: this.page.locator('div#importUsersDialog2[title="Upload users (CSV) - Confirm"]') }).locator('button', { hasText: 'Upload' }).click();
+        await this.page.locator('div.ui-dialog', { has: this.page.locator('div#importUsersDialog2') }).locator('button', { hasText: 'Upload' }).click();
     }
 
     async importRoleCSV(pid, csv) {
@@ -504,7 +504,7 @@ export class Module {
         await this.page.locator('form#importRoleForm').waitFor({ state: 'visible' });
         await this.page.locator('form#importRoleForm input[type="file"]').setInputFiles(csv);
         await this.page.locator('div.ui-dialog', { has: this.page.locator('div#importRolesDialog') }).locator('button', { hasText: 'Upload' }).click();
-        await this.page.locator('div.ui-dialog', { has: this.page.locator('div#importRolesDialog2[title="Upload user roles (CSV) - Confirm"]') }).locator('button', { hasText: 'Upload' }).click();
+        await this.page.locator('div.ui-dialog', { has: this.page.locator('div#importRolesDialog2') }).locator('button', { hasText: 'Upload' }).click();
     }
 
     async getUniqueRoleName(pid, roleLabel) {
@@ -521,7 +521,7 @@ export class Module {
         await this.page.locator('form#importUserRoleForm').waitFor({ state: 'visible' });
         await this.page.locator('form#importUserRoleForm input[type="file"]').setInputFiles(csv);
         await this.page.locator('div.ui-dialog', { has: this.page.locator('div#importUserRoleDialog') }).locator('button', { hasText: 'Upload' }).click();
-        await this.page.locator('div.ui-dialog', { has: this.page.locator('div#importUserRoleDialog2[title="Upload user role assignments (CSV) - Confirm"]') }).locator('button', { hasText: 'Upload' }).click();
+        await this.page.locator('div.ui-dialog', { has: this.page.locator('div#importUserRoleDialog2') }).locator('button', { hasText: 'Upload' }).click();
     }
 
     async visitApiPage(pid) {
