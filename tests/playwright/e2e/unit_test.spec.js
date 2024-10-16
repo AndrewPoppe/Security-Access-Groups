@@ -431,14 +431,14 @@ test.describe('Prevent noncompliant rights from being granted', () => {
                     returnFormat: 'json',
                     data: JSON.stringify([{
                         username: config.users.NothingUser.username,
-                        user_rights: '1'
+                        design: '1'
                     }])
                 }
             });
             await expect(response.status()).toBe(403);
             console.log(await response.json());
             const expected = {};
-            expected[config.users.NothingUser.username] = ['User Rights'];
+            expected[config.users.NothingUser.username] = ['Project Design and Setup'];
             await expect(await response.json()).toEqual(expected);
             await modulePage.visitProjectUserRightsPage(config.projects.API_Project.pid);
             await modulePage.page.screenshot({ path: `${outDir}/FRS-VL-SAGEM-001-10-attempt_to_add_user_with_noncompliant_rights.png`, fullPage: false });
@@ -452,7 +452,7 @@ test.describe('Prevent noncompliant rights from being granted', () => {
                     returnFormat: 'json',
                     data: JSON.stringify([{
                         username: config.users.NothingUser.username,
-                        user_rights: '1',
+                        design: '1',
                         expiration: '1970-01-01'
                     }])
                 }
@@ -470,7 +470,7 @@ test.describe('Prevent noncompliant rights from being granted', () => {
                     returnFormat: 'json',
                     data: JSON.stringify([{
                         role_label: config.roles.Test.name,
-                        user_rights: '1'
+                        design: '1'
                     }])
                 }
             });
@@ -488,7 +488,7 @@ test.describe('Prevent noncompliant rights from being granted', () => {
                     returnFormat: 'json',
                     data: JSON.stringify([{
                         username: config.users.NothingUser.username,
-                        user_rights: '0',
+                        design: '0',
                         expiration: ''
                     }])
                 }
@@ -506,14 +506,14 @@ test.describe('Prevent noncompliant rights from being granted', () => {
                     returnFormat: 'json',
                     data: JSON.stringify([{
                         username: config.users.NothingUser.username,
-                        user_rights: '1'
+                        design: '1'
                     }])
                 }
             });
             await expect(response.status()).toBe(403);
             console.log(await response.json());
             const expected = {};
-            expected[config.users.NothingUser.username] = ['User Rights'];
+            expected[config.users.NothingUser.username] = ['Project Design and Setup'];
             await expect(await response.json()).toEqual(expected);
             await modulePage.visitProjectUserRightsPage(config.projects.API_Project.pid);
             await modulePage.page.screenshot({ path: `${outDir}/FRS-VL-SAGEM-001-11-attempt_to_edit_user_with_noncompliant_rights.png`, fullPage: false });
@@ -534,7 +534,7 @@ test.describe('Prevent noncompliant rights from being granted', () => {
             await expect(response.status()).toBe(403);
             console.log(await response.json());
             const expected = {};
-            expected[config.roles.Test.name] = ['User Rights'];
+            expected[config.roles.Test.name] = ['Project Design and Setup'];
             await expect(await response.json()).toEqual(expected);
             await modulePage.visitProjectUserRightsPage(config.projects.API_Project.pid);
             await modulePage.page.screenshot({ path: `${outDir}/FRS-VL-SAGEM-001-12-attempt_to_add_user_to_role_with_noncompliant_rights.png`, fullPage: false });
@@ -549,7 +549,7 @@ test.describe('Prevent noncompliant rights from being granted', () => {
                     data: JSON.stringify([{
                         role_label: config.roles.Test.name,
                         unique_role_name: config.roles.Test.uniqueRoleName,
-                        user_rights: '0'
+                        design: '0'
                     }])
                 }
             });
@@ -583,7 +583,7 @@ test.describe('Prevent noncompliant rights from being granted', () => {
                     returnFormat: 'json',
                     data: JSON.stringify([{
                         unique_role_name: config.roles.Test.uniqueRoleName,
-                        user_rights: '1'
+                        design: '1'
                     }])
                 }
             });
