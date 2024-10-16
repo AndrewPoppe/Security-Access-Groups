@@ -1,4 +1,4 @@
-name: PHP7.4 RC14.7.0
+name: PHP7.4 RC14.7.0 New
 on:
   push:
     branches: main
