@@ -36,17 +36,6 @@ jobs:
       - name: Install Playwright Browsers
         working-directory: ./security_access_groups/tests/playwright
         run: npx playwright install --with-deps
-      - name: Initialize REDCap
-        working-directory: ./security_access_groups/tests/playwright/setup
-        run: |
-          sed -i 's|ZIPFILE|redcap14.7.0.zip|' installREDCap.js
-          node installREDCap.js
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: setup
-          path: ./security_access_groups/tests/playwright/setup/screenshots
-          retention-days: 30
       - name: Move module files
         run: |
           sudo chmod -R 777 ./redcap-docker/testing_container/data/redcap/modules
