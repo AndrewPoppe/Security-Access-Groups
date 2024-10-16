@@ -153,6 +153,7 @@
         }
     ],
     "enable-every-page-hooks-on-system-pages": true,
+    "enable-every-page-hooks-on-login-form": true,
     "auth-ajax-actions": [
         "assignSag",
         "deleteAlert",
@@ -179,7 +180,7 @@
     "compatibility": {
         "php-version-min": "7.4.00",
         "php-version-max": "8.3.99",
-        "redcap-version-min": "13.7.0",
+        "redcap-version-min": "14.0.0",
         "redcap-version-max": ""
     }
 }
