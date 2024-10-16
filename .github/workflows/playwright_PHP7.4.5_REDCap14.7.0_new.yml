@@ -23,7 +23,9 @@ jobs:
           unzip redcap14.7.0.zip
       - name: Start Docker REDCap Container
         working-directory: ./redcap-docker/testing_container
-        run: docker compose up -d
+        run: |
+          docker compose pull
+          docker compose up -d --wait
       - uses: actions/checkout@v4
         with:
           path: security_access_groups
