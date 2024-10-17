@@ -105,6 +105,7 @@ class SecurityAccessGroups extends AbstractExternalModule
         // Edit User's Expiration Date
         elseif ( $page === 'UserRights/set_user_expiration.php' ) {
             $this->log('attempt to update user\'s expiration date directly', [ 'page' => $page, 'data' => json_encode($_POST), 'user' => $username ]);
+            $this->exitAfterHook();
         }
 
         // Upload Users via CSV
