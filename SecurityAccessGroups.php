@@ -121,6 +121,26 @@ class SecurityAccessGroups extends AbstractExternalModule
         }
     }
 
+    // // When minimum supported version is >= 14.1.5
+    // public function redcap_module_api_before($project_id, $post) : void 
+    // {
+    //     $api = new APIHandler($this, $post);
+    //     if ( !$api->shouldProcess() ) {
+    //         return;
+    //     }
+
+    //     $api->handleRequest();
+    //     if ( !$api->shouldAllowImport() ) {
+    //         $badRights = $api->getBadRights();
+    //         http_response_code(403);
+    //         echo json_encode($badRights);
+    //         $this->exitAfterHook();
+    //     } else {
+    //         $api->logApi();
+    //     }
+    //     return;
+    // }
+
     /**
      * REDCap Hook: Replace links in the User Rights page to point to this module instead
      * @param mixed $projectId The project ID
