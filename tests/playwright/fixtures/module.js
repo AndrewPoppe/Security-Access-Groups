@@ -85,6 +85,7 @@ export class Module {
 
     async visitSAGsPage() {
         await this.page.goto(`${this.url}/ExternalModules/?prefix=security_access_groups&page=system-settings-sags`, { waitUntil: 'domcontentloaded' });
+        await this.page.waitForTimeout(1000);
         await this.page.locator('div#sagTableWrapper a.SagLink').first().waitFor({ state: 'visible' });
     }
 
