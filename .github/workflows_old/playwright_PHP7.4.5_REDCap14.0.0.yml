@@ -1,0 +1,79 @@
+name: PHP7.4 RC14.0.0
+on:
+  push:
+    branches: main
+  workflow_dispatch:
+jobs:
+  test:
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: AndrewPoppe/redcap_source
+          ref: v14.0.0_zip
+          token: ${{ secrets.REPOS_TOKEN }}
+          persist-credentials: false
+      - name: Build the REDCap Image
+        run: |
+          git clone https://github.com/AndrewPoppe/redcap-docker-compose.git
+          cd redcap-docker-compose/rdc
+          sed 's|\(DOCKER_PREFIX\)=.*|\1=rc13_php7.4|' .env-example |
+          sed 's|\(TZ\)=.*|\1=America/New_York|' |
+          sed 's|\(WEB_PORT\)=.*|\1=13740|' |
+          sed 's|\(MYSQL_PORT\)=.*|\1=13746|' |
+          sed 's|\(PHPMYADMIN_PORT\)=.*|\1=13741|' |
+          sed 's|\(MAILHOG_PORT\)=.*|\1=13745|' > .env
+          sed -i 's|\(FROM php\):.*|\1:7.4.5-apache-buster|' docker-web/Dockerfile
+          sed -i 's|&& pecl install xdebug||' docker-web/Dockerfile
+          sed -i 's|&& echo "zend_extension=$(find.*||' docker-web/Dockerfile
+          sed -i 's|FROM mysql:8.0-oracle|FROM mysql:8.0|' docker-mysql/Dockerfile
+      - name: Start Docker REDCap Container
+        working-directory: ./redcap-docker-compose/rdc
+        run: docker compose up -d
+      - uses: actions/checkout@v4
+        with:
+          path: security_access_groups
+      - name: Move REDCap Source File
+        run: mv redcap14.0.0.zip security_access_groups/tests/playwright/setup/
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 21
+      - name: Install dependencies
+        working-directory: ./security_access_groups/tests/playwright
+        run: npm install
+      - name: Install Playwright Browsers
+        working-directory: ./security_access_groups/tests/playwright
+        run: npx playwright install --with-deps
+      - name: Initialize REDCap
+        working-directory: ./security_access_groups/tests/playwright/setup
+        run: |
+          sed -i 's|ZIPFILE|redcap14.0.0.zip|' installREDCap.js
+          node installREDCap.js
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: setup
+          path: ./security_access_groups/tests/playwright/setup/screenshots
+          retention-days: 30
+      - name: Move module files
+        run: |
+          sudo chmod -R 777 ./redcap-docker-compose/www/modules
+          mv ./security_access_groups ./redcap-docker-compose/www/modules/security_access_groups_v99
+      - name: Run Playwright tests
+        working-directory: ./redcap-docker-compose/www/modules/security_access_groups_v99/tests/playwright
+        run: |
+          sed -i 's|redcapVersion:.*|redcapVersion: "redcap_v14.0.0",|' fixtures/config.js
+          npx playwright test
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-report
+          path: ./redcap-docker-compose/www/modules/security_access_groups_v99/tests/playwright/playwright-report/
+          retention-days: 30
+      - uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: test-results
+          path: ./redcap-docker-compose/www/modules/security_access_groups_v99/tests/playwright/test-results/
+          retention-days: 30
