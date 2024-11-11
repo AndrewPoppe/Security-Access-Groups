@@ -360,6 +360,14 @@ class SAGProject
     }
 
     /**
+     * 
+     */
+    public function isEmailLoggingEnabled() : bool
+    {
+        return $this->systemConfig['email_logging_enable_global'] == 1;
+    }
+
+    /**
      * Summary of isMyCapEnabled
      * @return bool
      */

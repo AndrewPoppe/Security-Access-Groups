@@ -331,6 +331,19 @@ class RightsChecker
         }
     }
 
+    private function checkEmailLoggingRight($right) {
+        $isEmailLoggingRight = $right === 'email_logging';
+        if ( !$isEmailLoggingRight ) {
+            return;
+        }
+        $this->accountedFor = true;
+        if ( !$this->project->isEmailLoggingEnabled() && !$this->checkAllRights ) {
+            return;
+        }
+
+        $this->checkRight($right);
+    }
+
     public function checkRights()
     {
         foreach ( $this->rightsToCheck as $right => $value ) {
@@ -356,6 +369,7 @@ class RightsChecker
             $this->checkRandomizationRights($right);
             $this->checkStatsAndCharts($right);
             $this->checkSurveyRights($right);
+            $this->checkEmailLoggingRight($right);
 
             $this->checkSurveyEditRights($right, $value);
             $this->checkDataViewingRights($right, $value);
@@ -395,6 +409,7 @@ class RightsChecker
             $this->checkRandomizationRights($right);
             $this->checkStatsAndCharts($right);
             $this->checkSurveyRights($right);
+            $this->checkEmailLoggingRight($right);
 
             $this->checkDataViewingRights2($right);
             $this->checkDataExportRights2($right);
