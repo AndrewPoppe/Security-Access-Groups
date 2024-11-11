@@ -982,19 +982,19 @@ endif::[]
 [%header,cols="h,1,1,1,1"]
 |===
 |
-| REDCap v14.4.0
+| REDCap v14.0.44
 | REDCap v14.4.0
 | REDCap v14.5.18
 | REDCap v14.7.0
 
 | PHP v7.4.5
-| image:https://github.com/AndrewPoppe/Security-Access-Groups/actions/workflows/playwright_PHP7.4.5_REDCap14.0.0.yml/badge.svg[link="https://github.com/AndrewPoppe/Security-Access-Groups/actions/workflows/playwright_PHP7.4.5_REDCap14.0.0.yml"]
+| image:https://github.com/AndrewPoppe/Security-Access-Groups/actions/workflows/playwright_PHP7.4.5_REDCap14.0.44.yml/badge.svg[link="https://github.com/AndrewPoppe/Security-Access-Groups/actions/workflows/playwright_PHP7.4.5_REDCap14.0.44.yml"]
 | image:https://github.com/AndrewPoppe/Security-Access-Groups/actions/workflows/playwright_PHP7.4.5_REDCap14.4.0.yml/badge.svg[link="https://github.com/AndrewPoppe/Security-Access-Groups/actions/workflows/playwright_PHP7.4.5_REDCap14.4.0.yml"]
 | image:https://github.com/AndrewPoppe/Security-Access-Groups/actions/workflows/playwright_PHP7.4.5_REDCap14.5.18.yml/badge.svg[link="https://github.com/AndrewPoppe/Security-Access-Groups/actions/workflows/playwright_PHP7.4.5_REDCap14.5.18.yml"]
 | image:https://github.com/AndrewPoppe/Security-Access-Groups/actions/workflows/playwright_PHP7.4.5_REDCap14.7.0.yml/badge.svg[link="https://github.com/AndrewPoppe/Security-Access-Groups/actions/workflows/playwright_PHP7.4.5_REDCap14.7.0.yml"]
 
 | PHP v8.2
-| image:https://github.com/AndrewPoppe/Security-Access-Groups/actions/workflows/playwright_PHP8.2_REDCap14.0.0.yml/badge.svg[link="https://github.com/AndrewPoppe/Security-Access-Groups/actions/workflows/playwright_PHP8.2_REDCap14.0.0.yml"]
+| image:https://github.com/AndrewPoppe/Security-Access-Groups/actions/workflows/playwright_PHP8.2_REDCap14.0.44.yml/badge.svg[link="https://github.com/AndrewPoppe/Security-Access-Groups/actions/workflows/playwright_PHP8.2_REDCap14.0.44.yml"]
 | image:https://github.com/AndrewPoppe/Security-Access-Groups/actions/workflows/playwright_PHP8.2_REDCap14.4.0.yml/badge.svg[link="https://github.com/AndrewPoppe/Security-Access-Groups/actions/workflows/playwright_PHP8.2_REDCap14.4.0.yml"]
 | image:https://github.com/AndrewPoppe/Security-Access-Groups/actions/workflows/playwright_PHP8.2_REDCap14.5.18.yml/badge.svg[link="https://github.com/AndrewPoppe/Security-Access-Groups/actions/workflows/playwright_PHP8.2_REDCap14.5.18.yml"]
 | image:https://github.com/AndrewPoppe/Security-Access-Groups/actions/workflows/playwright_PHP8.2_REDCap14.7.0.yml/badge.svg[link="https://github.com/AndrewPoppe/Security-Access-Groups/actions/workflows/playwright_PHP8.2_REDCap14.7.0.yml"]
