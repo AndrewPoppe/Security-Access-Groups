@@ -1,4 +1,4 @@
-= Security Access Groups
+= Security Access Groups 
 Andrew Poppe <andrew.poppe@yale.edu>
 :description: This is an External Module for REDCap that allows admins to create and manage Security Access Groups that restrict which User Rights a user may be granted.
 :sectlinks: true
