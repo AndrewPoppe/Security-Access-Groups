@@ -248,17 +248,7 @@ class SecurityAccessGroups extends AbstractExternalModule
     {
         try {
             $alerts            = new Alerts($this);
-            $enabledSystemwide = $this->framework->getSystemSetting('enabled');
-            $prefix            = $this->getModuleDirectoryPrefix();
-
-            if ( $enabledSystemwide ) {
-                $allProjectIds = $this->getAllProjectIds();
-                $projectIds    = array_filter($allProjectIds, function ($projectId) use ($prefix) {
-                    return $this->framework->isModuleEnabled($prefix, $projectId);
-                });
-            } else {
-                $projectIds = $this->framework->getProjectsWithModuleEnabled();
-            }
+            $projectIds = $this->framework->getProjectsWithModuleEnabled();
 
             foreach ( $projectIds as $localProjectId ) {
                 // Specifying project id just to prevent reminders being sent
@@ -443,18 +433,7 @@ class SecurityAccessGroups extends AbstractExternalModule
      */
     public function getProjectsWithNoncompliantUsers(bool $includeExpired = false)
     {
-        $enabledSystemwide = $this->framework->getSystemSetting('enabled');
-        $prefix            = $this->getModuleDirectoryPrefix();
-
-        if ( $enabledSystemwide ) {
-            $allProjectIds = $this->getAllProjectIds();
-            $projectIds    = array_filter($allProjectIds, function ($projectId) use ($prefix) {
-                return $this->isModuleEnabled($prefix, $projectId);
-            });
-        } else {
-            $projectIds = $this->framework->getProjectsWithModuleEnabled();
-        }
-
+        $projectIds = $this->framework->getProjectsWithModuleEnabled();
         $projects = [];
         foreach ( $projectIds as $projectId ) {
             $sagProject       = new SAGProject($this, $projectId);
@@ -509,18 +488,7 @@ class SecurityAccessGroups extends AbstractExternalModule
      */
     public function getAllUsersWithNoncompliantRights(bool $includeExpired = false)
     {
-        $enabledSystemwide = $this->framework->getSystemSetting('enabled');
-        $prefix            = $this->getModuleDirectoryPrefix();
-
-        if ( $enabledSystemwide ) {
-            $allProjectIds = $this->getAllProjectIds();
-            $projectIds    = array_filter($allProjectIds, function ($projectId) use ($prefix) {
-                return $this->isModuleEnabled($prefix, $projectId);
-            });
-        } else {
-            $projectIds = $this->framework->getProjectsWithModuleEnabled();
-        }
-
+        $projectIds = $this->framework->getProjectsWithModuleEnabled();
         $users = [];
         foreach ( $projectIds as $projectId ) {
             $sagProject       = new SAGProject($this, $projectId);
@@ -556,18 +524,7 @@ class SecurityAccessGroups extends AbstractExternalModule
 
     public function getAllUsersAndProjectsWithNoncompliantRights(bool $includeExpired = false)
     {
-        $enabledSystemwide = $this->framework->getSystemSetting('enabled');
-        $prefix            = $this->getModuleDirectoryPrefix();
-
-        if ( $enabledSystemwide ) {
-            $allProjectIds = $this->getAllProjectIds();
-            $projectIds    = array_filter($allProjectIds, function ($projectId) use ($prefix) {
-                return $this->isModuleEnabled($prefix, $projectId);
-            });
-        } else {
-            $projectIds = $this->framework->getProjectsWithModuleEnabled();
-        }
-
+        $projectIds = $this->framework->getProjectsWithModuleEnabled();
         $allResults = [];
         foreach ( $projectIds as $projectId ) {
             $sagProject       = new SAGProject($this, $projectId);
