@@ -225,7 +225,7 @@ $(document).ready(function () {
                     let icon = "";
                     let deleteButton = "";
 
-                    if (row.reminder && moment.now() > (row.sendTime * 1000)) {
+                    if (row.reminder && Date.now() > (row.sendTime * 1000)) {
                         const status = row.status ?? "error";
                         color = status === "error" ? "text-danger" : "text-success";
                         icon = status === "error" ?
@@ -238,7 +238,7 @@ $(document).ready(function () {
                             `<i class='fa-sharp fa-solid fa-check-circle fa-stack-1x' ` +
                             `title="${sag_module.tt('alerts_28')}"></i></span>`;
                     } else {
-                        const sent = moment.now() > (row.sendTime * 1000);
+                        const sent = Date.now() > (row.sendTime * 1000);
                         color = sent ? "text-success" : "text-secondary";
                         const style = '--fa-primary-color: #000000;' +
                             '--fa-secondary-color: #000000;' +
@@ -259,8 +259,14 @@ $(document).ready(function () {
                             `onclick='sag_module.deleteAlert(${row.id});'>` +
                             `<i class='fa-solid fa-xmark text-danger' title="${sag_module.tt('alerts_31')}"></i></a>`;
                     }
-                    const formattedDate = moment(row.sendTime * 1000).format(
-                        'MM/DD/YYYY hh:mm A');
+                    const formattedDate = new Date(row.sendTime * 1000)
+                        .toLocaleString(undefined, {
+                            year: "numeric",
+                            month: "2-digit",
+                            day: "2-digit",
+                            hour: "2-digit",
+                            minute: "2-digit"
+                        });
                     return `<span class="${color} default-cursor">${icon} ${formattedDate} ${deleteButton}</span>`;
                 } else {
                     return row.sendTime;

@@ -2,6 +2,15 @@ const sag_module = __MODULE__;
 console.log(performance.now());
 console.time('dt');
 
+// Get current timestamp as YYYY-MM-DD_HHmmss
+function getNowFormatted() {
+    const dt = new Date();
+    return `${dt.getFullYear()}-${pad(dt.getMonth()+1)}-${pad(dt.getDate())}_${pad(dt.getHours())}${pad(dt.getMinutes())}${pad(dt.getSeconds())}`;
+}
+function pad(n) {
+    return String(n).padStart(2,0);
+}
+
 sag_module.hover = function () {
     const thisNode = $(this);
     const rowIdx = thisNode.attr('data-dt-row');
@@ -236,8 +245,7 @@ sag_module.showProjectTable = function (includeExpired = false) {
                 columns: [5, 6, 7, 1, 8, 9, 10, 11]
             },
             className: 'btn btn-sm btn-success border mb-1',
-            title: 'ProjectsWithNoncompliantRights' + (includeExpired ? '_all_' : '_nonexpired_') +
-                moment().format('YYYY-MM-DD_HHmmss'),
+            title: 'ProjectsWithNoncompliantRights' + (includeExpired ? '_all_' : '_nonexpired_') + getNowFormatted(),
         }],
         dom: 'lBftip',
 
@@ -529,8 +537,7 @@ sag_module.showUserTable = function (includeExpired = false) {
             },
             className: 'btn btn-sm btn-success border mb-1',
             title: 'UsersWithNoncompliantRights' + (includeExpired ? '_all_' :
-                '_nonexpired_') +
-                moment().format('YYYY-MM-DD_HHmmss'),
+                '_nonexpired_') + getNowFormatted(),
         }],
         dom: 'lBfrtip',
         columns: [
@@ -845,8 +852,7 @@ sag_module.showUserAndProjectTable = function (includeExpired = false) {
             className: 'btn btn-sm btn-success border mb-1',
             title: 'UsersAndProjectsWithNoncompliantRights' + (includeExpired ?
                 '_all_' :
-                '_nonexpired_') +
-                moment().format('YYYY-MM-DD_HHmmss'),
+                '_nonexpired_') + getNowFormatted(),
         }],
         dom: 'lBfrtip',
         columns: [
