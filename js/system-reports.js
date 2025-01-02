@@ -5,10 +5,10 @@ console.time('dt');
 // Get current timestamp as YYYY-MM-DD_HHmmss
 function getNowFormatted() {
     const dt = new Date();
-    return `${dt.getFullYear()}-${pad(dt.getMonth()+1)}-${pad(dt.getDate())}_${pad(dt.getHours())}${pad(dt.getMinutes())}${pad(dt.getSeconds())}`;
+    return `${dt.getFullYear()}-${pad(dt.getMonth() + 1)}-${pad(dt.getDate())}_${pad(dt.getHours())}${pad(dt.getMinutes())}${pad(dt.getSeconds())}`;
 }
 function pad(n) {
-    return String(n).padStart(2,0);
+    return String(n).padStart(2, 0);
 }
 
 sag_module.hover = function () {
@@ -250,123 +250,123 @@ sag_module.showProjectTable = function (includeExpired = false) {
         dom: 'lBftip',
 
         columns: [
-        // 0: Project (Display)    
-        {
-            title: sag_module.tt('cc_reports_17'),
-            data: function (row, type, set, meta) {
-                const pid = row.project_id;
-                const projectUrl =
-                    `${app_path_webroot_full}redcap_v${redcap_version}/ExternalModules/?prefix={{MODULE_DIRECTORY_PREFIX}}&page=project-status&pid=${pid}`;
-                const projectTitle = row.project_title.replaceAll('"', '');
-                return `<strong><a target="_blank" rel="noreferrer noopener" href="${projectUrl}">PID: ${pid}</a></strong><br>${projectTitle}<br>${sag_module.getProjectStatusFormatted(row.project_status)}`;
+            // 0: Project (Display)    
+            {
+                title: sag_module.tt('cc_reports_17'),
+                data: function (row, type, set, meta) {
+                    const pid = row.project_id;
+                    const projectUrl =
+                        `${app_path_webroot_full}redcap_v${redcap_version}/ExternalModules/?prefix={{MODULE_DIRECTORY_PREFIX}}&page=project-status&pid=${pid}`;
+                    const projectTitle = row.project_title.replaceAll('"', '');
+                    return `<strong><a target="_blank" rel="noreferrer noopener" href="${projectUrl}">PID: ${pid}</a></strong><br>${projectTitle}<br>${sag_module.getProjectStatusFormatted(row.project_status)}`;
+                },
+                width: '20%'
             },
-            width: '20%'
-        },
-        // 1: Count of Users (Display)
-        {
-            title: sag_module.tt('cc_reports_32'),
-            data: function (row, type, set, meta) {
-                const users = row.users_with_bad_rights;
-                const usersString = JSON.stringify(users);
-                return '<a href="javascript:void(0)" onclick=\'sag_module.makeUserTable(`' +
-                    usersString + '`);\'>' + users.length + '</a>';
+            // 1: Count of Users (Display)
+            {
+                title: sag_module.tt('cc_reports_32'),
+                data: function (row, type, set, meta) {
+                    const users = row.users_with_bad_rights;
+                    const usersString = JSON.stringify(users);
+                    return '<a href="javascript:void(0)" onclick=\'sag_module.makeUserTable(`' +
+                        usersString + '`);\'>' + users.length + '</a>';
+                },
+                width: '5%'
             },
-            width: '5%'
-        },
-        // 2: Users (Display)
-        {
-            title: sag_module.tt('cc_reports_19'),
-            data: function (row, type, set, meta) {
-                const users = row.users_with_bad_rights ?? [];
-                return users.map(user => {
-                    const url =
-                        `${app_path_webroot_full}redcap_v${redcap_version}/ControlCenter/view_users.php?username=${user.username}`;
-                    return `<strong><a target="_blank" rel="noreferrer noopener" href="${url}">${user.username}</a></strong>` +
-                        ` (${user.name})`;
-                }).join('<br>');
+            // 2: Users (Display)
+            {
+                title: sag_module.tt('cc_reports_19'),
+                data: function (row, type, set, meta) {
+                    const users = row.users_with_bad_rights ?? [];
+                    return users.map(user => {
+                        const url =
+                            `${app_path_webroot_full}redcap_v${redcap_version}/ControlCenter/view_users.php?username=${user.username}`;
+                        return `<strong><a target="_blank" rel="noreferrer noopener" href="${url}">${user.username}</a></strong>` +
+                            ` (${user.name})`;
+                    }).join('<br>');
+                },
+                width: '20%'
             },
-            width: '20%'
-        },
-        // 3: SAG (Display)
-        {
-            title: sag_module.tt('cc_reports_20'),
-            data: function (row, type, set, meta) {
-                const sags = row.sags ?? [];
-                return sags.map(sag => {
-                    return `<strong>${sag.sag_name}</strong> <small>${sag.sag}</small>`;
-                }).join('<br>');
+            // 3: SAG (Display)
+            {
+                title: sag_module.tt('cc_reports_20'),
+                data: function (row, type, set, meta) {
+                    const sags = row.sags ?? [];
+                    return sags.map(sag => {
+                        return `<strong>${sag.sag_name}</strong> <small>${sag.sag}</small>`;
+                    }).join('<br>');
+                },
+                width: '20%'
             },
-            width: '20%'
-        },
-        // 4: Bad Rights (Display)
-        {
-            title: sag_module.tt('cc_reports_21'),
-            data: function (row, type, set, meta) {
-                if (type === 'display') {
-                    return row.bad_rights.join('<br>');
-                }
-                return row.bad_rights.join('&&&&&');
+            // 4: Bad Rights (Display)
+            {
+                title: sag_module.tt('cc_reports_21'),
+                data: function (row, type, set, meta) {
+                    if (type === 'display') {
+                        return row.bad_rights.join('<br>');
+                    }
+                    return row.bad_rights.join('&&&&&');
+                },
+                width: '35%'
             },
-            width: '35%'
-        },
-        // 5: project_id
-        {
-            title: sag_module.tt('cc_reports_33'),
-            data: "project_id",
-            visible: false
-        },
-        // 6: project title
-        {
-            title: sag_module.tt('cc_reports_34'),
-            data: "project_title",
-            visible: false
-        },
-        // 7: project status
-        {
-            title: sag_module.tt('status_ui_2'),
-            data: function (row, type, set, meta) {
-                if (type === 'filter') {
-                    return 'project_status=' + row.project_status.label;
-                }
-                return row.project_status.label;
+            // 5: project_id
+            {
+                title: sag_module.tt('cc_reports_33'),
+                data: "project_id",
+                visible: false
             },
-            visible: false
-        },
-        // 8: users
-        {
-            title: sag_module.tt('cc_reports_19'),
-            data: function (row, type, set, meta) {
-                const users = row.users_with_bad_rights ?? [];
-                return users.map(user => user.username).join(", ");
+            // 6: project title
+            {
+                title: sag_module.tt('cc_reports_34'),
+                data: "project_title",
+                visible: false
             },
-            visible: false
-        },
-        // 9: sags
-        {
-            title: sag_module.tt('cc_reports_35'),
-            data: function (row, type, set, meta) {
-                const sags = row.sags ?? [];
-                return sags.map(sag => sag.sag).join(", ");
+            // 7: project status
+            {
+                title: sag_module.tt('status_ui_2'),
+                data: function (row, type, set, meta) {
+                    if (type === 'filter') {
+                        return 'project_status=' + row.project_status.label;
+                    }
+                    return row.project_status.label;
+                },
+                visible: false
             },
-            visible: false
-        },
-        // 10: sag names
-        {
-            title: sag_module.tt('cc_reports_36'),
-            data: function (row, type, set, meta) {
-                const sags = row.sags ?? [];
-                return sags.map(sag => sag.sag_name).join(", ");
+            // 8: users
+            {
+                title: sag_module.tt('cc_reports_19'),
+                data: function (row, type, set, meta) {
+                    const users = row.users_with_bad_rights ?? [];
+                    return users.map(user => user.username).join(", ");
+                },
+                visible: false
             },
-            visible: false
-        },
-        // 11: bad rights
-        {
-            title: sag_module.tt('cc_reports_21'),
-            data: function (row, type, set, meta) {
-                return row.bad_rights.join(', ');
+            // 9: sags
+            {
+                title: sag_module.tt('cc_reports_35'),
+                data: function (row, type, set, meta) {
+                    const sags = row.sags ?? [];
+                    return sags.map(sag => sag.sag).join(", ");
+                },
+                visible: false
             },
-            visible: false
-        }
+            // 10: sag names
+            {
+                title: sag_module.tt('cc_reports_36'),
+                data: function (row, type, set, meta) {
+                    const sags = row.sags ?? [];
+                    return sags.map(sag => sag.sag_name).join(", ");
+                },
+                visible: false
+            },
+            // 11: bad rights
+            {
+                title: sag_module.tt('cc_reports_21'),
+                data: function (row, type, set, meta) {
+                    return row.bad_rights.join(', ');
+                },
+                visible: false
+            }
         ],
         columnDefs: [{
             "className": "dt-center dt-head-center SAG",
@@ -541,141 +541,141 @@ sag_module.showUserTable = function (includeExpired = false) {
         }],
         dom: 'lBfrtip',
         columns: [
-        // 0: User (Display)    
-        {
-            title: sag_module.tt('user'),
-            data: function (row, type, set, meta) {
-                if (type === 'display') {
-                    const url =
-                        `${app_path_webroot_full}redcap_v${redcap_version}/ControlCenter/view_users.php?username=${row.username}`;
-                    return `<strong><a target="_blank" rel="noreferrer noopener" href="${url}">${row.username}</a></strong>` +
-                        `<br><small>${row.name}</small>` +
-                        `<br><small><a href="mailto:${row.email}">${row.email}</a></small>`;
-                }
-                return row.username;
+            // 0: User (Display)    
+            {
+                title: sag_module.tt('user'),
+                data: function (row, type, set, meta) {
+                    if (type === 'display') {
+                        const url =
+                            `${app_path_webroot_full}redcap_v${redcap_version}/ControlCenter/view_users.php?username=${row.username}`;
+                        return `<strong><a target="_blank" rel="noreferrer noopener" href="${url}">${row.username}</a></strong>` +
+                            `<br><small>${row.name}</small>` +
+                            `<br><small><a href="mailto:${row.email}">${row.email}</a></small>`;
+                    }
+                    return row.username;
+                },
+                width: '15%'
             },
-            width: '15%'
-        },
-        // 1: name
-        {
-            title: sag_module.tt('status_ui_60'),
-            data: "name",
-            visible: false
-        },
-        // 2: email
-        {
-            title: sag_module.tt('status_ui_61'),
-            data: function (row, type, set, meta) {
-                if (type === 'display') {
-                    return '<a href="mailto:' + row.email + '">' + row.email +
-                        '</a>';
-                }
-                return row.email;
+            // 1: name
+            {
+                title: sag_module.tt('status_ui_60'),
+                data: "name",
+                visible: false
             },
-            visible: false
-        },
-        // 3: SAG (Display)
-        {
-            title: sag_module.tt('status_ui_63'),
-            data: function (row, type, set, meta) {
-                return `<strong>${row.sag_name}</strong><br><small>${row.sag}</small>`;
+            // 2: email
+            {
+                title: sag_module.tt('status_ui_61'),
+                data: function (row, type, set, meta) {
+                    if (type === 'display') {
+                        return '<a href="mailto:' + row.email + '">' + row.email +
+                            '</a>';
+                    }
+                    return row.email;
+                },
+                visible: false
             },
-            width: '20%'
-        },
-        // 4: Project (Display)
-        {
-            title: sag_module.tt('cc_reports_22'),
-            data: function (row, type, set, meta) {
-                if (type === 'display') {
-                    return row.projects.length;
-                } else {
-                    return row.projects;
-                }
+            // 3: SAG (Display)
+            {
+                title: sag_module.tt('status_ui_63'),
+                data: function (row, type, set, meta) {
+                    return `<strong>${row.sag_name}</strong><br><small>${row.sag}</small>`;
+                },
+                width: '20%'
             },
-            width: '5%'
-        },
-        // 5: Projects (Display)
-        {
-            title: sag_module.tt('cc_reports_39'),
-            data: function (row, type, set, meta) {
-                const projects = row.projects ?? [];
-                return projects.map(project => {
-                    const pid = project.project_id;
-                    const projectUrl =
-                        `${app_path_webroot_full}redcap_v${redcap_version}/ExternalModules/?prefix={{MODULE_DIRECTORY_PREFIX}}&page=project-status&pid=${pid}`;
-                    const projectTitle = project.project_title.replaceAll(
-                        '"',
-                        '');
-                    return `${sag_module.getProjectStatusIcon(project.project_status)} <strong><a target="_blank" rel="noreferrer noopener" href="${projectUrl}">PID: ${pid}</a></strong> ${projectTitle}`;
-                }).join("<br>");
+            // 4: Project (Display)
+            {
+                title: sag_module.tt('cc_reports_22'),
+                data: function (row, type, set, meta) {
+                    if (type === 'display') {
+                        return row.projects.length;
+                    } else {
+                        return row.projects;
+                    }
+                },
+                width: '5%'
             },
-            width: '25%'
-        },
-        // 6: bad rights (Display)
-        {
-            title: sag_module.tt('cc_reports_21'),
-            data: function (row, type, set, meta) {
-                if (type === "display") {
-                    return row.bad_rights.join('<br>');
-                }
-                return row.bad_rights.join('&&&&&');
+            // 5: Projects (Display)
+            {
+                title: sag_module.tt('cc_reports_39'),
+                data: function (row, type, set, meta) {
+                    const projects = row.projects ?? [];
+                    return projects.map(project => {
+                        const pid = project.project_id;
+                        const projectUrl =
+                            `${app_path_webroot_full}redcap_v${redcap_version}/ExternalModules/?prefix={{MODULE_DIRECTORY_PREFIX}}&page=project-status&pid=${pid}`;
+                        const projectTitle = project.project_title.replaceAll(
+                            '"',
+                            '');
+                        return `${sag_module.getProjectStatusIcon(project.project_status)} <strong><a target="_blank" rel="noreferrer noopener" href="${projectUrl}">PID: ${pid}</a></strong> ${projectTitle}`;
+                    }).join("<br>");
+                },
+                width: '25%'
             },
-            width: '35%'
-        },
-        // 7: username
-        {
-            title: sag_module.tt('status_ui_59'),
-            data: 'username',
-            visible: false
-        },
-        // 8: project ids
-        {
-            title: sag_module.tt('cc_reports_39'),
-            data: function (row, type, set, meta) {
-                const projects = row.projects ?? [];
-                return projects.map(project => project.project_id).join(", ");
+            // 6: bad rights (Display)
+            {
+                title: sag_module.tt('cc_reports_21'),
+                data: function (row, type, set, meta) {
+                    if (type === "display") {
+                        return row.bad_rights.join('<br>');
+                    }
+                    return row.bad_rights.join('&&&&&');
+                },
+                width: '35%'
             },
-            visible: false
-        },
-        // 9: project titles
-        {
-            title: sag_module.tt('cc_reports_40'),
-            data: function (row, type, set, meta) {
-                const projects = row.projects ?? [];
-                return projects.map(project => project.project_title).join(", ");
+            // 7: username
+            {
+                title: sag_module.tt('status_ui_59'),
+                data: 'username',
+                visible: false
             },
-            visible: false
-        },
-        // 10: project statuses
-        {
-            title: sag_module.tt('status_ui_2'),
-            data: function (row, type, set, meta) {
-                const projects = row.projects ?? [];
-                const prefix = type === 'filter' ? 'project_status=' : '';
-                return [...new Set(projects.map(project => prefix + project.project_status.label))].join(", ");
+            // 8: project ids
+            {
+                title: sag_module.tt('cc_reports_39'),
+                data: function (row, type, set, meta) {
+                    const projects = row.projects ?? [];
+                    return projects.map(project => project.project_id).join(", ");
+                },
+                visible: false
             },
-            visible: false
-        },
-        // 11: bad rights
-        {
-            title: sag_module.tt('cc_reports_21'),
-            data: function (row, type, set, meta) {
-                return row.bad_rights.join(', ');
+            // 9: project titles
+            {
+                title: sag_module.tt('cc_reports_40'),
+                data: function (row, type, set, meta) {
+                    const projects = row.projects ?? [];
+                    return projects.map(project => project.project_title).join(", ");
+                },
+                visible: false
             },
-            visible: false
-        },
-        // 12: sag id
-        {
-            title: sag_module.tt('sag'),
-            data: 'sag',
-            visible: false
-        },
-        // 13: sag name
-        {
-            title: sag_module.tt('cc_user_11'),
-            data: 'sag_name',
-            visible: false
-        }
+            // 10: project statuses
+            {
+                title: sag_module.tt('status_ui_2'),
+                data: function (row, type, set, meta) {
+                    const projects = row.projects ?? [];
+                    const prefix = type === 'filter' ? 'project_status=' : '';
+                    return [...new Set(projects.map(project => prefix + project.project_status.label))].join(", ");
+                },
+                visible: false
+            },
+            // 11: bad rights
+            {
+                title: sag_module.tt('cc_reports_21'),
+                data: function (row, type, set, meta) {
+                    return row.bad_rights.join(', ');
+                },
+                visible: false
+            },
+            // 12: sag id
+            {
+                title: sag_module.tt('sag'),
+                data: 'sag',
+                visible: false
+            },
+            // 13: sag name
+            {
+                title: sag_module.tt('cc_user_11'),
+                data: 'sag_name',
+                visible: false
+            }
 
         ],
         columnDefs: [{
@@ -856,119 +856,119 @@ sag_module.showUserAndProjectTable = function (includeExpired = false) {
         }],
         dom: 'lBfrtip',
         columns: [
-        // 0: User (Display)
-        {
-            title: sag_module.tt('user'),
-            data: function (row, type, set, meta) {
-                if (type === 'display') {
-                    const url =
-                        `${app_path_webroot_full}redcap_v${redcap_version}/ControlCenter/view_users.php?username=${row.username}`;
-                    return `<strong><a target="_blank" rel="noreferrer noopener" href="${url}">${row.username}</a></strong>` +
-                        `<br><small>${row.name}</small>` +
-                        `<br><small><a href="mailto:${row.email}">${row.email}</a></small>`;
-                }
-                return row.username;
+            // 0: User (Display)
+            {
+                title: sag_module.tt('user'),
+                data: function (row, type, set, meta) {
+                    if (type === 'display') {
+                        const url =
+                            `${app_path_webroot_full}redcap_v${redcap_version}/ControlCenter/view_users.php?username=${row.username}`;
+                        return `<strong><a target="_blank" rel="noreferrer noopener" href="${url}">${row.username}</a></strong>` +
+                            `<br><small>${row.name}</small>` +
+                            `<br><small><a href="mailto:${row.email}">${row.email}</a></small>`;
+                    }
+                    return row.username;
+                },
+                width: '20%'
             },
-            width: '20%'
-        },
-        // 1: name
-        {
-            title: sag_module.tt('status_ui_60'),
-            data: "name",
-            visible: false
-        },
-        // 2: email
-        {
-            title: sag_module.tt('status_ui_61'),
-            data: function (row, type, set, meta) {
-                if (type === 'display') {
-                    return '<a href="mailto:' + row.email + '">' + row.email +
-                        '</a>';
-                }
-                return row.email;
+            // 1: name
+            {
+                title: sag_module.tt('status_ui_60'),
+                data: "name",
+                visible: false
             },
-            visible: false
-        },
-        // 3: SAG (Display)
-        {
-            title: sag_module.tt('status_ui_63'),
-            data: function (row, type, set, meta) {
-                return `<strong>${row.sag_name}</strong><br><small>${row.sag}</small>`;
+            // 2: email
+            {
+                title: sag_module.tt('status_ui_61'),
+                data: function (row, type, set, meta) {
+                    if (type === 'display') {
+                        return '<a href="mailto:' + row.email + '">' + row.email +
+                            '</a>';
+                    }
+                    return row.email;
+                },
+                visible: false
             },
-            width: '20%'
-        },
-        // 4: Project (Display)
-        {
-            title: sag_module.tt('cc_reports_41'),
-            data: function (row, type, set, meta) {
-                const pid = row.project_id;
-                const projectUrl =
-                    `${app_path_webroot_full}redcap_v${redcap_version}/ExternalModules/?prefix={{MODULE_DIRECTORY_PREFIX}}&page=project-status&pid=${pid}`;
-                const projectTitle = row.project_title.replaceAll('"', '');
-                return `<strong><a target="_blank" rel="noreferrer noopener" href="${projectUrl}">PID: ${pid}</a></strong> ${projectTitle}<br>${sag_module.getProjectStatusFormatted(row.project_status)}`;
+            // 3: SAG (Display)
+            {
+                title: sag_module.tt('status_ui_63'),
+                data: function (row, type, set, meta) {
+                    return `<strong>${row.sag_name}</strong><br><small>${row.sag}</small>`;
+                },
+                width: '20%'
             },
-            width: '20%'
-        },
-        // 5: bad rights (Display)
-        {
-            title: sag_module.tt('cc_reports_21'),
-            data: function (row, type, set, meta) {
-                if (type === "display") {
-                    return row.bad_rights.join('<br>');
-                }
-                return row.bad_rights.join('&&&&&');
+            // 4: Project (Display)
+            {
+                title: sag_module.tt('cc_reports_41'),
+                data: function (row, type, set, meta) {
+                    const pid = row.project_id;
+                    const projectUrl =
+                        `${app_path_webroot_full}redcap_v${redcap_version}/ExternalModules/?prefix={{MODULE_DIRECTORY_PREFIX}}&page=project-status&pid=${pid}`;
+                    const projectTitle = row.project_title.replaceAll('"', '');
+                    return `<strong><a target="_blank" rel="noreferrer noopener" href="${projectUrl}">PID: ${pid}</a></strong> ${projectTitle}<br>${sag_module.getProjectStatusFormatted(row.project_status)}`;
+                },
+                width: '20%'
             },
-            width: '40%'
-        },
-        // 6: username
-        {
-            title: sag_module.tt('status_ui_59'),
-            data: 'username',
-            visible: false
-        },
-        // 7: project_id
-        {
-            title: sag_module.tt('cc_reports_33'),
-            data: 'project_id',
-            visible: false
-        },
-        // 8: project_title
-        {
-            title: sag_module.tt('cc_reports_34'),
-            data: 'project_title',
-            visible: false
-        },
-        // 9: project_status
-        {
-            title: sag_module.tt('status_ui_2'),
-            data: function (row, type, set, meta) {
-                if (type === 'filter') {
-                    return 'project_status=' + row.project_status.label;
-                }
-                return row.project_status.label;
+            // 5: bad rights (Display)
+            {
+                title: sag_module.tt('cc_reports_21'),
+                data: function (row, type, set, meta) {
+                    if (type === "display") {
+                        return row.bad_rights.join('<br>');
+                    }
+                    return row.bad_rights.join('&&&&&');
+                },
+                width: '40%'
             },
-            visible: false
-        },
-        // 10: bad_rights
-        {
-            title: sag_module.tt('cc_reports_21'),
-            data: function (row, type, set, meta) {
-                return row.bad_rights.join(', ');
+            // 6: username
+            {
+                title: sag_module.tt('status_ui_59'),
+                data: 'username',
+                visible: false
             },
-            visible: false
-        },
-        // 11: sag id
-        {
-            title: sag_module.tt('sag'),
-            data: 'sag',
-            visible: false
-        },
-        // 12: sag name
-        {
-            title: sag_module.tt('cc_user_11'),
-            data: 'sag_name',
-            visible: false
-        }
+            // 7: project_id
+            {
+                title: sag_module.tt('cc_reports_33'),
+                data: 'project_id',
+                visible: false
+            },
+            // 8: project_title
+            {
+                title: sag_module.tt('cc_reports_34'),
+                data: 'project_title',
+                visible: false
+            },
+            // 9: project_status
+            {
+                title: sag_module.tt('status_ui_2'),
+                data: function (row, type, set, meta) {
+                    if (type === 'filter') {
+                        return 'project_status=' + row.project_status.label;
+                    }
+                    return row.project_status.label;
+                },
+                visible: false
+            },
+            // 10: bad_rights
+            {
+                title: sag_module.tt('cc_reports_21'),
+                data: function (row, type, set, meta) {
+                    return row.bad_rights.join(', ');
+                },
+                visible: false
+            },
+            // 11: sag id
+            {
+                title: sag_module.tt('sag'),
+                data: 'sag',
+                visible: false
+            },
+            // 12: sag name
+            {
+                title: sag_module.tt('cc_user_11'),
+                data: 'sag_name',
+                visible: false
+            }
         ],
         columnDefs: [{
             "className": "dt-center dt-head-center SAG",
