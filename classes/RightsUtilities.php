@@ -127,7 +127,7 @@ class RightsUtilities
             'dataViewing'                    => $lang['rights_373'],
             'dataExport'                     => $lang['rights_428'],
             'alerts'                         => $lang['global_154'],
-            'reports'                        => $lang['rights_96'],
+            'reports'                        => $lang['rights_448'],
             'graphical'                      => $lang['report_builder_78'],
             'participants'                   => $lang['app_24'],
             'calendar'                       => $lang['app_08'] . ' ' . $lang['rights_357'],
