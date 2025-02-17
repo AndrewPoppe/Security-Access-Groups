@@ -260,7 +260,7 @@ export class Module {
     /**
      * 
      * @param {String} projectName 
-     * @returns {Promise<number>} A promise resolving to the project ID of the newly created project
+     * @returns {Promise} A promise resolving to the project ID of the newly created project
      */
     async createProject(projectName) {
         await this.visitMyProjectsPage();
@@ -278,9 +278,8 @@ export class Module {
         await this.page.locator('button', { hasText: "Create Project" }).click();
         await this.page.waitForTimeout(1000);
 
-        return await this.page.evaluate(() => {
-            return pid;
-        });
+        return this.getPID();
+
     }
 
     async visitProjectUserRightsPage(pid) {
@@ -293,6 +292,10 @@ export class Module {
             await this.page.reload({ waitUntil: 'domcontentloaded' });
         }
         //await this.page.goto(`${this.url}/UserRights/index.php?pid=${pid}`, { waitUntil: 'domcontentloaded' });
+    }
+
+    async getPID() {
+        return await this.page.url().match(/pid=[0-9]+/)?.[0].replace('pid=', '');
     }
 
     /**
