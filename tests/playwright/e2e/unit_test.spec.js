@@ -100,7 +100,7 @@ test.describe('Prevent noncompliant rights from being granted', () => {
             await expect(modulePage.page.locator('table#external-modules-enabled tr[data-module="security_access_groups"]', { timeout: 30000 })).toBeVisible();
             await expect(modulePage.page.locator('div#external_modules_panel a[data-link-key="security_access_groups-project-status"]')).toBeVisible();
             await modulePage.page.locator('div#external_modules_panel a[data-link-key="security_access_groups-project-status"]').click();
-            await modulePage.page.waitForLoadState('domcontentloaded');
+            //await modulePage.page.waitForLoadState('domcontentloaded');
             await modulePage.page.screenshot({ path: `${outDir}/FRS-VL-SAGEM-001-26-project_status_page.png`, fullPage: false });
         });
         await test.step('Test Project Status page', async () => {

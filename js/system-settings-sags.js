@@ -574,7 +574,7 @@ $(document).ready(function () {
             className: 'dt-center',
             data: function (row, type, set, meta) {
                 if (type === 'display') {
-                    return row.permissions.design ? check : x;
+                    return row.permissions.design == 1 ? check : x;
                 } else {
                     return row.permissions.design;
                 }
@@ -588,7 +588,7 @@ $(document).ready(function () {
                     if (val == 2) {
                         return eye;//lang['rights_61'];
                     }
-                    return val ? check : x;
+                    return val == 1 ? check : x;
                 } else {
                     return row.permissions.user_rights;
                 }
@@ -598,7 +598,7 @@ $(document).ready(function () {
             className: 'dt-center',
             data: function (row, type, set, meta) {
                 if (type === 'display') {
-                    return row.permissions.data_access_groups ? check : x;
+                    return row.permissions.data_access_groups == 1 ? check : x;
                 } else {
                     return row.permissions.data_access_groups;
                 }
@@ -646,7 +646,7 @@ $(document).ready(function () {
             className: 'dt-center',
             data: function (row, type, set, meta) {
                 if (type === 'display') {
-                    return row.permissions.alerts ? check : x;
+                    return row.permissions.alerts == 1 ? check : x;
                 } else {
                     return row.permissions.alerts;
                 }
@@ -656,7 +656,7 @@ $(document).ready(function () {
             className: 'dt-center',
             data: function (row, type, set, meta) {
                 if (type === 'display') {
-                    return row.permissions.reports ? check : x;
+                    return row.permissions.reports == 1 ? check : x;
                 } else {
                     return row.permissions.reports;
                 }
@@ -666,7 +666,7 @@ $(document).ready(function () {
             className: 'dt-center',
             data: function (row, type, set, meta) {
                 if (type === 'display') {
-                    return row.permissions.graphical ? check : x;
+                    return row.permissions.graphical == 1 ? check : x;
                 } else {
                     return row.permissions.graphical;
                 }
@@ -676,7 +676,7 @@ $(document).ready(function () {
             className: 'dt-center',
             data: function (row, type, set, meta) {
                 if (type === 'display') {
-                    return row.permissions.participants ? check : x;
+                    return row.permissions.participants == 1 ? check : x;
                 } else {
                     return row.permissions.participants;
                 }
@@ -686,7 +686,7 @@ $(document).ready(function () {
             className: 'dt-center',
             data: function (row, type, set, meta) {
                 if (type === 'display') {
-                    return row.permissions.calendar ? check : x;
+                    return row.permissions.calendar == 1 ? check : x;
                 } else {
                     return row.permissions.calendar;
                 }
@@ -696,7 +696,7 @@ $(document).ready(function () {
             className: 'dt-center',
             data: function (row, type, set, meta) {
                 if (type === 'display') {
-                    return row.permissions.data_import_tool ? check : x;
+                    return row.permissions.data_import_tool == 1 ? check : x;
                 } else {
                     return row.permissions.data_import_tool;
                 }
@@ -706,7 +706,7 @@ $(document).ready(function () {
             className: 'dt-center',
             data: function (row, type, set, meta) {
                 if (type === 'display') {
-                    return row.permissions.data_comparison_tool ? check : x;
+                    return row.permissions.data_comparison_tool == 1 ? check : x;
                 } else {
                     return row.permissions.data_comparison_tool;
                 }
@@ -716,7 +716,7 @@ $(document).ready(function () {
             className: 'dt-center',
             data: function (row, type, set, meta) {
                 if (type === 'display') {
-                    return row.permissions.data_logging ? check : x;
+                    return row.permissions.data_logging == 1 ? check : x;
                 } else {
                     return row.permissions.data_logging;
                 }
@@ -726,7 +726,7 @@ $(document).ready(function () {
             className: 'dt-center',
             data: function (row, type, set, meta) {
                 if (type === 'display') {
-                    return row.permissions.email_logging ? check : x;
+                    return row.permissions.email_logging == 1 ? check : x;
                 } else {
                     return row.permissions.email_logging;
                 }
@@ -736,7 +736,7 @@ $(document).ready(function () {
             className: 'dt-center',
             data: function (row, type, set, meta) {
                 if (type === 'display') {
-                    return row.permissions.file_repository ? check : x;
+                    return row.permissions.file_repository == 1 ? check : x;
                 } else {
                     return row.permissions.file_repository;
                 }
@@ -760,7 +760,7 @@ $(document).ready(function () {
             className: 'dt-center',
             data: function (row, type, set, meta) {
                 if (type === 'display') {
-                    return row.permissions.lock_record_customize ? check : x;
+                    return row.permissions.lock_record_customize == 1 ? check : x;
                 } else {
                     return row.permissions.lock_record_customize;
                 }
@@ -805,7 +805,7 @@ $(document).ready(function () {
             className: 'dt-center',
             data: function (row, type, set, meta) {
                 if (type === 'display') {
-                    return row.permissions.data_quality_design ? check : x;
+                    return row.permissions.data_quality_design == 1 ? check : x;
                 } else {
                     return row.permissions.data_quality_design;
                 }
@@ -815,7 +815,7 @@ $(document).ready(function () {
             className: 'dt-center',
             data: function (row, type, set, meta) {
                 if (type === 'display') {
-                    return row.permissions.data_quality_execute ? check : x;
+                    return row.permissions.data_quality_execute == 1 ? check : x;
                 } else {
                     return row.permissions.data_quality_execute;
                 }
@@ -861,7 +861,7 @@ $(document).ready(function () {
             className: 'dt-center',
             data: function (row, type, set, meta) {
                 if (type === 'display') {
-                    return row.permissions.mobile_app ? check : x;
+                    return row.permissions.mobile_app == 1 ? check : x;
                 } else {
                     return row.permissions.mobile_app;
                 }
@@ -871,7 +871,7 @@ $(document).ready(function () {
             className: 'dt-center',
             data: function (row, type, set, meta) {
                 if (type === 'display') {
-                    return row.permissions.realtime_webservice_mapping ? check : x;
+                    return row.permissions.realtime_webservice_mapping == 1 ? check : x;
                 } else {
                     return row.permissions.realtime_webservice_mapping;
                 }
@@ -881,7 +881,7 @@ $(document).ready(function () {
             className: 'dt-center',
             data: function (row, type, set, meta) {
                 if (type === 'display') {
-                    return row.permissions.realtime_webservice_adjudicate ? check : x;
+                    return row.permissions.realtime_webservice_adjudicate == 1 ? check : x;
                 } else {
                     return row.permissions.realtime_webservice_adjudicate;
                 }
@@ -891,7 +891,7 @@ $(document).ready(function () {
             className: 'dt-center',
             data: function (row, type, set, meta) {
                 if (type === 'display') {
-                    return row.permissions.dts ? check : x;
+                    return row.permissions.dts == 1 ? check : x;
                 } else {
                     return row.permissions.dts;
                 }
@@ -901,7 +901,7 @@ $(document).ready(function () {
             className: 'dt-center',
             data: function (row, type, set, meta) {
                 if (type === 'display') {
-                    return row.permissions.mycap_participants ? check : x;
+                    return row.permissions.mycap_participants == 1 ? check : x;
                 } else {
                     return row.permissions.mycap_participants;
                 }
@@ -911,7 +911,7 @@ $(document).ready(function () {
             className: 'dt-center',
             data: function (row, type, set, meta) {
                 if (type === 'display') {
-                    return row.permissions.record_create ? check : x;
+                    return row.permissions.record_create == 1 ? check : x;
                 } else {
                     return row.permissions.record_create;
                 }
@@ -921,7 +921,7 @@ $(document).ready(function () {
             className: 'dt-center',
             data: function (row, type, set, meta) {
                 if (type === 'display') {
-                    return row.permissions.record_rename ? check : x;
+                    return row.permissions.record_rename == 1 ? check : x;
                 } else {
                     return row.permissions.record_rename;
                 }
@@ -931,7 +931,7 @@ $(document).ready(function () {
             className: 'dt-center',
             data: function (row, type, set, meta) {
                 if (type === 'display') {
-                    return row.permissions.record_delete ? check : x;
+                    return row.permissions.record_delete == 1 ? check : x;
                 } else {
                     return row.permissions.record_delete;
                 }

@@ -23,12 +23,12 @@ export class Module {
     }
 
     async visitControlCenter() {
-        await this.page.goto(`${this.url}/ControlCenter/index.php`, { waitUntil: 'domcontentloaded' });
-        await this.page.waitForURL('**/ControlCenter/index.php', { waitUntil: 'domcontentloaded' });
+        await this.page.goto(`${this.url}/ControlCenter/index.php`);
+        await this.page.waitForURL('**/ControlCenter/index.php');
     }
 
     async visitExternalModuleConfigurationPage() {
-        await this.page.goto(`${this.url}/ExternalModules/manager/control_center.php`, { waitUntil: 'domcontentloaded' });
+        await this.page.goto(`${this.url}/ExternalModules/manager/control_center.php`);
 
     }
 
@@ -72,19 +72,19 @@ export class Module {
 
         // Save and settle
         await this.page.locator('div#external-modules-configure-modal div.modal-footer button.save').click();
-        await this.page.waitForURL('**/ExternalModules/manager/control_center.php', { waitUntil: 'domcontentloaded' });
-        await this.page.reload({ waitUntil: 'domcontentloaded' });
+        await this.page.waitForURL('**/ExternalModules/manager/control_center.php');
+        await this.page.reload();
     }
 
     async visitUsersPage() {
         const dtInitPromise_cc_users = this.page.waitForFunction(() => { if ($.fn.dataTable.isDataTable('#SAG-System-Table')) return new $.fn.dataTable.Api('#SAG-System-Table').data().count() > 0; });
-        await this.page.goto(`${this.url}/ExternalModules/?prefix=security_access_groups&page=system-settings-userlist`, { waitUntil: 'domcontentloaded' });
+        await this.page.goto(`${this.url}/ExternalModules/?prefix=security_access_groups&page=system-settings-userlist`);
         await dtInitPromise_cc_users;
         await this.page.waitForTimeout(1000);
     }
 
     async visitSAGsPage() {
-        await this.page.goto(`${this.url}/ExternalModules/?prefix=security_access_groups&page=system-settings-sags`, { waitUntil: 'domcontentloaded' });
+        await this.page.goto(`${this.url}/ExternalModules/?prefix=security_access_groups&page=system-settings-sags`);
         await this.page.waitForTimeout(1000);
         await this.page.locator('div#sagTableWrapper a.SagLink').first().waitFor({ state: 'visible' });
     }
@@ -231,7 +231,7 @@ export class Module {
     }
 
     async visitMyProjectsPage() {
-        await this.page.goto(`${this.url}`, { waitUntil: 'domcontentloaded' });
+        await this.page.goto(`${this.url}`);
         await this.page.locator('a.nav-link', { hasText: 'My Projects' }).click();
     }
 
@@ -245,7 +245,7 @@ export class Module {
         while (projects_count > 0) {
             await projects.first().click();
             await this.page.locator('div.project_setup_tabs a', { hasText: 'Other Functionality' }).click();
-            await this.page.waitForURL('**/ProjectSetup/other_functionality.php?pid=*', { waitUntil: 'domcontentloaded' });
+            await this.page.waitForURL('**/ProjectSetup/other_functionality.php?pid=*');
             await this.page.locator('tr#row_delete_project button', { hasText: 'Delete the project' }).click();
             await this.page.locator('input#delete_project_confirm').fill('DELETE');
             await this.page.locator('div.ui-dialog-buttonset button', { hasText: "Delete the project" }).click();
@@ -260,12 +260,12 @@ export class Module {
     /**
      * 
      * @param {String} projectName 
-     * @returns {Promise} A promise resolving to the project ID of the newly created project
+     * @returns {Promise<>} A promise resolving to the project ID of the newly created project
      */
     async createProject(projectName) {
         await this.visitMyProjectsPage();
         await this.page.locator('div#redcap-home-navbar-collapse a', { hasText: 'My Projects' }).click();
-        await this.page.waitForURL('**/index.php?action=myprojects', { waitUntil: 'domcontentloaded' });
+        await this.page.waitForURL('**/index.php?action=myprojects');
         const projLink = this.page.locator('table#table-proj_table a', { hasText: projectName });
 
         if (await projLink.count() > 0) {
@@ -289,9 +289,9 @@ export class Module {
                 .locator('td:first-child a').click();
             await this.page.locator('div#app_panel a', { hasText: 'User Rights' }).click();
         } else {
-            await this.page.reload({ waitUntil: 'domcontentloaded' });
+            await this.page.reload();
         }
-        //await this.page.goto(`${this.url}/UserRights/index.php?pid=${pid}`, { waitUntil: 'domcontentloaded' });
+        //await this.page.goto(`${this.url}/UserRights/index.php?pid=${pid}`);
     }
 
     async getPID() {
@@ -413,7 +413,7 @@ export class Module {
     }
 
     async enableModule(pid) {
-        await this.page.goto(`${this.url}/ExternalModules/manager/project.php?pid=${pid}`, { waitUntil: 'domcontentloaded' });
+        await this.page.goto(`${this.url}/ExternalModules/manager/project.php?pid=${pid}`);
         await this.page.locator('button#external-modules-enable-modules-button').click();
         await this.page.locator('tr[data-module="security_access_groups"] button.enable-button').click();
         await this.page.locator('table#external-modules-enabled tr[data-module="security_access_groups"]').waitFor({ state: 'visible' });
@@ -491,7 +491,7 @@ export class Module {
                 .locator('td:first-child a').click();
             await this.page.locator('div#app_panel a', { hasText: /^Logging$/ }).click();
         } else {
-            await this.page.reload({ waitUntil: 'domcontentloaded' });
+            await this.page.reload();
         }
     }
 
@@ -551,6 +551,6 @@ export class Module {
     }
 
     async visitProjectStatusPage(pid) {
-        await this.page.goto(`${this.url}/ExternalModules/?prefix=security_access_groups&page=project-status&pid=${pid}`, { waitUntil: 'domcontentloaded' });
+        await this.page.goto(`${this.url}/ExternalModules/?prefix=security_access_groups&page=project-status&pid=${pid}`);
     }
 }
