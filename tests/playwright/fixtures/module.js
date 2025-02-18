@@ -501,7 +501,9 @@ export class Module {
         await this.page.locator('ul#downloadUploadUsersDropdown a', { hasText: 'Upload users (CSV)' }).click();
         await this.page.locator('form#importUserForm').waitFor({ state: 'visible' });
         await this.page.locator('form#importUserForm input[type="file"]').setInputFiles(csv);
+        await this.page.locator('div.ui-dialog', { has: this.page.locator('div#importUsersDialog') }).waitFor({ state: "visible" });
         await this.page.locator('div.ui-dialog', { has: this.page.locator('div#importUsersDialog') }).locator('button', { hasText: 'Upload' }).click();
+        await this.page.locator('div.ui-dialog', { has: this.page.locator('div#importUsersDialog2') }).waitFor({ state: "visible" });
         await this.page.locator('div.ui-dialog', { has: this.page.locator('div#importUsersDialog2') }).locator('button', { hasText: 'Upload' }).click();
     }
 
