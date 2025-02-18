@@ -513,7 +513,9 @@ export class Module {
         await this.page.locator('ul#downloadUploadUsersDropdown a', { hasText: 'Upload user roles (CSV)' }).click();
         await this.page.locator('form#importRoleForm').waitFor({ state: 'visible' });
         await this.page.locator('form#importRoleForm input[type="file"]').setInputFiles(csv);
+        await this.page.locator('div.ui-dialog', { has: this.page.locator('div#importRolesDialog') }).waitFor({ state: "visible" });
         await this.page.locator('div.ui-dialog', { has: this.page.locator('div#importRolesDialog') }).locator('button', { hasText: 'Upload' }).click();
+        await this.page.locator('div.ui-dialog', { has: this.page.locator('div#importRolesDialog2') }).waitFor({ state: "visible" });
         await this.page.locator('div.ui-dialog', { has: this.page.locator('div#importRolesDialog2') }).locator('button', { hasText: 'Upload' }).click();
     }
 
@@ -530,7 +532,9 @@ export class Module {
         await this.page.locator('ul#downloadUploadUsersDropdown a', { hasText: 'Upload user role assignments (CSV)' }).click();
         await this.page.locator('form#importUserRoleForm').waitFor({ state: 'visible' });
         await this.page.locator('form#importUserRoleForm input[type="file"]').setInputFiles(csv);
+        await this.page.locator('div.ui-dialog', { has: this.page.locator('div#importUserRoleDialog') }).waitFor({ state: "visible" });
         await this.page.locator('div.ui-dialog', { has: this.page.locator('div#importUserRoleDialog') }).locator('button', { hasText: 'Upload' }).click();
+        await this.page.locator('div.ui-dialog', { has: this.page.locator('div#importUserRoleDialog2') }).waitFor({ state: "visible" });
         await this.page.locator('div.ui-dialog', { has: this.page.locator('div#importUserRoleDialog2') }).locator('button', { hasText: 'Upload' }).click();
     }
 
