@@ -107,8 +107,14 @@ sag_module.exportCsv = function (useFilter = false) {
                 if (col === 0) {
                     return allData[row]["username"];
                 } else if (col === 1) {
+                    if (allData[row]["user_exists"] == "0") {
+                        return '';
+                    }
                     return allData[row]["user_firstname"] + " " + allData[row]["user_lastname"];
                 } else if (col === 2) {
+                    if (allData[row]["user_exists"] == "0") {
+                        return '';
+                    }
                     return allData[row]["user_email"];
                 } else if (col === 3) {
                     return sag_module.sags[allData[row]["sag"]];
@@ -409,12 +415,18 @@ $(document).ready(function () {
         }, {
             title: sag_module.tt('status_ui_60'),
             data: function (row, type, set, meta) {
+                if (row.user_exists == "0") {
+                    return `<span class="text-secondary">&lt;${sag_module.tt('cc_user_23')}&gt;</span>`;
+                }
                 return row.user_firstname + ' ' + row.user_lastname;
             }
         }, {
             title: sag_module.tt('status_ui_61'),
             data: function (row, type, set, meta) {
                 if (type === 'display') {
+                    if (row.user_exists == "0") {
+                        return `<span class="text-secondary">&lt;${sag_module.tt('cc_user_23')}&gt;</span>`;
+                    }
                     return `<a href="mailto:${row.user_email}">${row.user_email}</a>`;
                 } else {
                     return row.user_email;

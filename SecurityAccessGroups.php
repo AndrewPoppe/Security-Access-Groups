@@ -313,7 +313,7 @@ class SecurityAccessGroups extends AbstractExternalModule
      * @param bool $includeSag
      * @return array[]|null
      */
-    public function getAllUserInfo($includeSag = false) : ?array
+    public function getAllUserInfo($includeSag = false, $includeAllowlisted = true) : ?array
     {
         $sql = 'SELECT username
         , user_email
@@ -331,7 +331,8 @@ class SecurityAccessGroups extends AbstractExternalModule
         , user_suspended_time
         , user_expiration
         , user_sponsor
-        , allow_create_db';
+        , allow_create_db
+        , 1 user_exists';
         if ( $includeSag ) {
             $sql .= ', em.value as sag';
         }
@@ -339,16 +340,60 @@ class SecurityAccessGroups extends AbstractExternalModule
         if ( $includeSag ) {
             $sql .= ' LEFT JOIN redcap_external_module_settings em ON em.key = concat(u.username,\'-sag\')';
         }
+
+        if ( $includeAllowlisted ) {
+            $allowlistSql .= 'SELECT a.username
+            , user_email
+            , user_firstname
+            , user_lastname
+            , super_user
+            , account_manager
+            , access_system_config
+            , access_system_upgrade
+            , access_external_module_install
+            , admin_rights
+            , access_admin_dashboards
+            , user_creation
+            , user_lastlogin
+            , user_suspended_time
+            , user_expiration
+            , user_sponsor
+            , allow_create_db
+            , 0 user_exists';
+            if ($includeSag) {
+                $allowlistSql .= ', em.value as sag';
+            }
+            $allowlistSql .= ' FROM redcap_user_allowlist a
+            LEFT JOIN redcap_user_information u 
+            ON a.username = u.username
+            LEFT JOIN redcap_external_module_settings em 
+            ON em.key = concat(a.username,\'-sag\')
+            WHERE u.username IS NULL';
+        }
+
         try {
             $result   = $this->framework->query($sql, []);
             $userinfo = [];
             while ( $row = $result->fetch_assoc() ) {
                 $userinfo[] = $row;
             }
+            if ( $includeAllowlisted ) {
+                $allowlistResult = $this->framework->query($allowlistSql, []);
+                while ( $row = $allowlistResult->fetch_assoc() ) {
+                    $userinfo[] = $row;
+                }
+            }
             return $this->framework->escape($userinfo);
         } catch ( \Throwable $e ) {
             $this->log('Error getting all user info', [ 'error' => $e->getMessage(), 'user' => $this->getUser()->getUsername() ]);
         }
+    }
+
+    public function isUserOnAllowlist(string $username) : bool
+    {
+        $sql = 'SELECT username FROM redcap_user_allowlist WHERE username = ?';
+        $result = $this->framework->query($sql, [ $username ]);
+        return $result->num_rows > 0;
     }
 
 

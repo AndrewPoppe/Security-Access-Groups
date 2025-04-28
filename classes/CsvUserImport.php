@@ -44,7 +44,7 @@ class CsvUserImport
     {
         $sagUser  = new SAGUser($this->module, $username);
         $userInfo = $sagUser->getUserInfo();
-        if ( is_null($userInfo) ) {
+        if ( is_null($userInfo) && !$sagUser->isUserOnAllowlist() ) {
             $this->badUsers[] = htmlspecialchars($username, ENT_QUOTES);
             $this->rowValid   = false;
         }
@@ -117,9 +117,12 @@ class CsvUserImport
             $requestedSagId = $row['sag'];
             $requestedSag   = new SAG($this->module, $requestedSagId);
 
+            $name = (empty($userInfo) && $sagUser->isUserOnAllowlist()) ? 
+                '<span class="text-secondary">&lt;' . $this->module->framework->tt('cc_user_23') . '&gt;</span>' : 
+                $userInfo['user_firstname'] . ' ' . $userInfo['user_lastname'];
             $result = [
-                'username'   => $userInfo['username'],
-                'name'       => $userInfo['user_firstname'] . ' ' . $userInfo['user_lastname'],
+                'username'   => $sagUser->username,
+                'name'       => $name,
                 'currentSag' => '<strong>' . $currentSag->sagName . '</strong> (' . $currentSag->sagId . ')'
             ];
 

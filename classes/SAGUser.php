@@ -86,6 +86,13 @@ class SAGUser
         }
     }
 
+    public function isUserOnAllowlist() : bool
+    {
+        $sql = 'SELECT username FROM redcap_user_allowlist WHERE username = ?';
+        $result = $this->module->framework->query($sql, [ $this->username ]);
+        return $result->num_rows > 0;
+    }
+
     public function getAcceptableRights()
     {
         $sag = $this->getUserSag();

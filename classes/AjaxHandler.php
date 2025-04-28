@@ -311,7 +311,10 @@ class AjaxHandler
         $username = filter_var($this->params['payload']['username'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $sagId    = filter_var($this->params['payload']['sag'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 
-        if ( empty($this->module->framework->getUser($username)->getEmail()) ) {
+        $user = new sagUser($this->module, $username);
+        $userInfo = $user->getUserInfo();
+        $userOnAllowlist = $user->isUserOnAllowlist();
+        if ( empty($userInfo) && !$userOnAllowlist ) {
             return json_encode([
                 'status'  => 'error',
                 'message' => $this->module->framework->tt('misc_4')
