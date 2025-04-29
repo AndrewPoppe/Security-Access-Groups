@@ -44,7 +44,8 @@ class CsvUserImport
     {
         $sagUser  = new SAGUser($this->module, $username);
         $userInfo = $sagUser->getUserInfo();
-        if ( is_null($userInfo) && !$sagUser->isUserOnAllowlist() ) {
+        $usernameOnAllowlist = $sagUser->isUserOnAllowlist() && $this->module->isAllowlistEnabled();
+        if ( empty($userInfo) && !$usernameOnAllowlist ) {
             $this->badUsers[] = htmlspecialchars($username, ENT_QUOTES);
             $this->rowValid   = false;
         }

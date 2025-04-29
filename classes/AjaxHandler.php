@@ -313,8 +313,8 @@ class AjaxHandler
 
         $user = new sagUser($this->module, $username);
         $userInfo = $user->getUserInfo();
-        $userOnAllowlist = $user->isUserOnAllowlist();
-        if ( empty($userInfo) && !$userOnAllowlist ) {
+        $usernameOnAllowlist = $user->isUserOnAllowlist() && $this->module->isAllowlistEnabled();
+        if ( empty($userInfo) && !$usernameOnAllowlist ) {
             return json_encode([
                 'status'  => 'error',
                 'message' => $this->module->framework->tt('misc_4')

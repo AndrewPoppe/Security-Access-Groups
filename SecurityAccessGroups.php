@@ -341,7 +341,7 @@ class SecurityAccessGroups extends AbstractExternalModule
             $sql .= ' LEFT JOIN redcap_external_module_settings em ON em.key = concat(u.username,\'-sag\')';
         }
 
-        if ( $includeAllowlisted ) {
+        if ( $includeAllowlisted && $this->isAllowlistEnabled() ) {
             $allowlistSql .= 'SELECT a.username
             , user_email
             , user_firstname
@@ -377,7 +377,7 @@ class SecurityAccessGroups extends AbstractExternalModule
             while ( $row = $result->fetch_assoc() ) {
                 $userinfo[] = $row;
             }
-            if ( $includeAllowlisted ) {
+            if ( $includeAllowlisted && $this->isAllowlistEnabled() ) {
                 $allowlistResult = $this->framework->query($allowlistSql, []);
                 while ( $row = $allowlistResult->fetch_assoc() ) {
                     $userinfo[] = $row;
@@ -394,6 +394,17 @@ class SecurityAccessGroups extends AbstractExternalModule
         $sql = 'SELECT username FROM redcap_user_allowlist WHERE username = ?';
         $result = $this->framework->query($sql, [ $username ]);
         return $result->num_rows > 0;
+    }
+
+    public function isAllowlistEnabled() : bool
+    {
+        $sql = 'SELECT `value` FROM redcap_config WHERE field_name = "enable_user_allowlist"';
+        $result = $this->framework->query($sql, []);
+        if ( $result->num_rows > 0 ) {
+            $row = $result->fetch_assoc();
+            return $row['value'] === '1';
+        }
+        return false;
     }
 
 

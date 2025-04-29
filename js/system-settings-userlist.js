@@ -403,6 +403,9 @@ $(document).ready(function () {
             title: sag_module.tt('status_ui_59'),
             data: function (row, type, set, meta) {
                 if (type === 'display') {
+                    if (row.user_exists == "0") {
+                        return `<strong>${row.username}</strong>`;
+                    }
                     const root = `${app_path_webroot_full}redcap_v${redcap_version}`;
                     const href =
                         `${root}/ControlCenter/view_users.php?username=${row.username}`;
