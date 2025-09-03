@@ -1,4 +1,4 @@
-name: PHP7.4 RC14.0.44
+name: PHP8.4 RC15.7.1
 on:
   push:
     branches: main
@@ -11,20 +11,19 @@ jobs:
       - uses: actions/checkout@v4
         with:
           repository: AndrewPoppe/redcap_source
-          ref: v14.0.44_zip
+          ref: v15.7.1_zip
           token: ${{ secrets.REPOS_TOKEN }}
           persist-credentials: false
       - name: Build the REDCap Image
         run: |
           git clone https://github.com/AndrewPoppe/redcap-docker.git
           mkdir redcap-docker/testing_container/data
-          mv redcap14.0.44.zip redcap-docker/testing_container/data
+          mv redcap15.7.1.zip redcap-docker/testing_container/data
           cd redcap-docker/testing_container/data
-          unzip redcap14.0.44.zip
+          unzip redcap15.7.1.zip
       - name: Start Docker REDCap Container
         working-directory: ./redcap-docker/testing_container
         run: |
-          sed -i 's|FROM php:8.2-apache-buster|FROM php:7.4-apache-buster|' ../Dockerfile
           docker compose pull
           docker compose up -d --wait
       - uses: actions/checkout@v4
@@ -46,7 +45,7 @@ jobs:
       - name: Run Playwright tests
         working-directory: ./redcap-docker/testing_container/data/redcap/modules/security_access_groups_v99/tests/playwright
         run: |
-          sed -i 's|redcapVersion:.*|redcapVersion: "redcap_v14.0.44",|' fixtures/config.js
+          sed -i 's|redcapVersion:.*|redcapVersion: "redcap_v15.7.1",|' fixtures/config.js
           sed -i 's|redcapUrl:.*|redcapUrl: "http://localhost",|' fixtures/config.js
           npx playwright test
       - uses: actions/upload-artifact@v4
