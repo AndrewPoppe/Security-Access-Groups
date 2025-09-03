@@ -231,8 +231,14 @@ export class Module {
     async setUserSAG(username, sagId) {
         await this.visitUsersPage();
         await this.page.locator('div.SAG_Container button.editUsersButton').click();
-        await this.page.locator('div.dataTables_filter input').fill(username);
-        await this.page.evaluate(([username, sagId]) => $(`tr[data-user="${username}"] select.sagSelect`).val(sagId).trigger('change'), [username, sagId]);
+        await this.page.locator('div.dataTables_filter input').fill(username).dispatchEvent('change');
+        const selector = this.page.locator(`tr[data-user="${username}"] select.sagSelect`);
+        await selector.waitFor({ state: 'visible' });
+        await selector.selectOption(sagId);
+        await selector.dispatchEvent('change');
+        await this.page.waitForLoadState();
+        await this.page.waitForTimeout(1000);
+        //await this.page.evaluate(([username, sagId]) => $(`tr[data-user="${username}"] select.sagSelect`).val(sagId).dispatchEvent('change'), [username, sagId]);
     }
 
     async visitMyProjectsPage() {
