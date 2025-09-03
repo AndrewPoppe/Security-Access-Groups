@@ -395,7 +395,7 @@ export class Module {
         const checkboxes = this.page.locator('div#editUserPopup input[type="checkbox"]:not([name="mobile_app"])');
         const checkboxes_count = await checkboxes.count();
         for (let checkbox_index = 0; checkbox_index < checkboxes_count; checkbox_index++) {
-            await checkboxes.nth(checkbox_index).check();
+            await checkboxes.nth(checkbox_index).check({ force: true });
         }
         await this.page.locator('div#editUserPopup input[name="mobile_app"]').check();
         await this.page
@@ -417,6 +417,7 @@ export class Module {
         await this.page.locator(`div.userNameLinkDiv a[userid="${username}"]`).click();
         await this.page.locator('div#tooltipBtnSetCustom button').click();
         await this.page.locator('div#editUserPopup').waitFor({ state: 'visible' });
+        await this.page.locator('div#editUserPopup input[name="user_rights"][value="0"]').check();
         const checkboxes = this.page.locator('div#editUserPopup input[type="checkbox"]');
         const checkboxes_count = await checkboxes.count();
         for (let checkbox_index = 0; checkbox_index < checkboxes_count; checkbox_index++) {
