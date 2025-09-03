@@ -234,7 +234,7 @@ export class Module {
         await this.page.locator('div.dataTables_filter input').fill(username);
         const selector = this.page.locator(`tr[data-user="${username}"] select.sagSelect`);
         await selector.waitFor({ state: 'visible' });
-        await selector.selectOption(sagId);
+        await selector.getByRole('option', { name: sagId }).click();
         await selector.dispatchEvent('change');
         await this.page.waitForLoadState();
         await this.page.waitForTimeout(1000);
