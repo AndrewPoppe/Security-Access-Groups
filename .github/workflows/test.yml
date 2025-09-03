@@ -11,7 +11,7 @@ jobs:
       - id: download
         uses: robinraju/release-downloader@v1
         with:
-          repository: vanderbilt-redcap/REDCap
+          repository: AndrewPoppe/REDCap
           latest: true
           fileName: '*.zip'
           tarBall: false
