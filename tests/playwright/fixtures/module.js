@@ -73,7 +73,7 @@ export class Module {
         // Save and settle
         await this.page.locator('div#external-modules-configure-modal div.modal-footer button.save').click();
         await this.page.waitForURL('**/ExternalModules/manager/control_center.php');
-        await this.page.reload();
+        await this.page.waitForLoadState();
     }
 
     async visitUsersPage() {
@@ -127,7 +127,7 @@ export class Module {
         await this.page.locator('input#dataExportNoAccess').check();
         await this.page.locator('button#SAG_Save').click();
 
-        await this.page.reload();
+        await this.page.waitForLoadState();
         await this.page.locator('div#sagTableWrapper').waitFor({ state: 'visible' });
         await this.page.locator('table.sagTable tbody td.sag-id-column').first().waitFor({ state: 'visible' });
 
@@ -166,7 +166,7 @@ export class Module {
         await this.page.locator('input#dataExportFullDataset').check();
         await this.page.locator('button#SAG_Save').click();
 
-        await this.page.reload();
+        await this.page.waitForLoadState();
         await this.page.locator('div#sagTableWrapper').waitFor({ state: 'visible' });
         await this.page.locator('table.sagTable tbody td.sag-id-column').first().waitFor({ state: 'visible' });
 
@@ -292,7 +292,7 @@ export class Module {
                 .locator('td:first-child a').click();
             await this.page.locator('div#app_panel a', { hasText: 'User Rights' }).click();
         } else {
-            await this.page.reload();
+            await this.page.waitForLoadState();
         }
         //await this.page.goto(`${this.url}/UserRights/index.php?pid=${pid}`);
     }
@@ -494,7 +494,7 @@ export class Module {
                 .locator('td:first-child a').click();
             await this.page.locator('div#app_panel a', { hasText: /^Logging$/ }).click();
         } else {
-            await this.page.reload();
+            await this.page.waitForLoadState();
         }
     }
 
