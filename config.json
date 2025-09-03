@@ -178,8 +178,8 @@
     "documentation": "https://andrewpoppe.github.io/Security-Access-Groups/",
     "tt_documentation": "doc_path",
     "compatibility": {
-        "php-version-min": "7.4.00",
-        "php-version-max": "8.3.99",
+        "php-version-min": "8.0.00",
+        "php-version-max": "",
         "redcap-version-min": "14.0.2",
         "redcap-version-max": ""
     }
