@@ -124,7 +124,7 @@ test.describe('Prevent noncompliant rights from being granted', () => {
             const errorPopup = modulePage.page.locator('h2#swal2-title', { hasText: `You cannot grant those user rights to user "${config.users.NothingUser.username}"` });
             await expect(errorPopup).toBeVisible();
             const rights = modulePage.page.locator('table.sag_rights_table tbody tr');
-            await expect(rights).toHaveCount(24);
+            await expect(rights).toHaveCount(19);
             await modulePage.page.screenshot({ path: `${outDir}/FRS-VL-SAGEM-001-03-attempt_to_give_noncompliant_rights_to_user.png`, fullPage: false });
         });
         await test.step('Attempt to give compliant rights to user', async () => {
