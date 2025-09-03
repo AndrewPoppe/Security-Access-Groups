@@ -132,6 +132,7 @@ export class Module {
 
         await this.page.waitForLoadState();
         await this.page.waitForTimeout(1000);
+        await this.page.reload();
         await this.page.locator('div#sagTableWrapper').waitFor({ state: 'visible' });
         await this.page.locator('table.sagTable tbody td.sag-id-column').first().waitFor({ state: 'visible' });
 
@@ -172,6 +173,7 @@ export class Module {
 
         await this.page.waitForLoadState();
         await this.page.waitForTimeout(1000);
+        await this.page.reload();
         await this.page.locator('div#sagTableWrapper').waitFor({ state: 'visible' });
         await this.page.locator('table.sagTable tbody td.sag-id-column').first().waitFor({ state: 'visible' });
 
@@ -232,13 +234,13 @@ export class Module {
         await this.visitUsersPage();
         await this.page.locator('div.SAG_Container button.editUsersButton').click();
         await this.page.locator('div.dataTables_filter input').fill(username);
-        const selector = this.page.locator(`tr[data-user="${username}"] select.sagSelect`);
-        await selector.waitFor({ state: 'visible' });
-        await selector.getByRole('option', { name: sagId }).click();
-        await selector.dispatchEvent('change');
-        await this.page.waitForLoadState();
-        await this.page.waitForTimeout(1000);
-        //await this.page.evaluate(([username, sagId]) => $(`tr[data-user="${username}"] select.sagSelect`).val(sagId).dispatchEvent('change'), [username, sagId]);
+        // const selector = this.page.locator(`tr[data-user="${username}"] select.sagSelect`);
+        // await selector.waitFor({ state: 'visible' });
+        // await selector.getByRole('option', { name: sagId }).click();
+        // await selector.dispatchEvent('change');
+        // await this.page.waitForLoadState();
+        // await this.page.waitForTimeout(1000);
+        await this.page.evaluate(([username, sagId]) => $(`tr[data-user="${username}"] select.sagSelect`).val(sagId).dispatchEvent('change'), [username, sagId]);
     }
 
     async visitMyProjectsPage() {
