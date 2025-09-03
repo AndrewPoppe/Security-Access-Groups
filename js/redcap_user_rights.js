@@ -3,7 +3,7 @@ const sag_module = __MODULE__;
 $(function () {
 
     function createRightsTable(bad_rights) {
-        return `<table class="table table-sm table-borderless table-hover w-50 mt-4 mx-auto" style="font-size:13px; cursor: default;"><tbody><tr><td>${bad_rights.join('</td></tr><tr><td>')}</td></tr></tbody></table>`;
+        return `<table class="sag_rights_table table table-sm table-borderless table-hover w-50 mt-4 mx-auto" style="font-size:13px; cursor: default;"><tbody><tr><td>${bad_rights.join('</td></tr><tr><td>')}</td></tr></tbody></table>`;
     }
 
     function fixLinks() {
