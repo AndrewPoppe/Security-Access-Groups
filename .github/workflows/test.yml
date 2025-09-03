@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - id: download
-        uses: robinraju/release-downloader@v1
+        uses: robinraju/release-downloader@main
         with:
           repository: AndrewPoppe/REDCap
           latest: true
