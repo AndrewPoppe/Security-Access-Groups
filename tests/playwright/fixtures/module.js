@@ -240,7 +240,7 @@ export class Module {
         // await selector.dispatchEvent('change');
         // await this.page.waitForLoadState();
         // await this.page.waitForTimeout(1000);
-        await this.page.evaluate(([username, sagId]) => $(`tr[data-user="${username}"] select.sagSelect`).val(sagId).dispatchEvent('change'), [username, sagId]);
+        await this.page.evaluate(([username, sagId]) => $(`tr[data-user="${username}"] select.sagSelect`).val(sagId).trigger('change'), [username, sagId]);
     }
 
     async visitMyProjectsPage() {
