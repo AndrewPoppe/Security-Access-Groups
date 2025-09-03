@@ -31,7 +31,7 @@ module.exports = defineConfig({
             }
         },
         launchOptions: {
-            slowMo: 0,
+            slowMo: 16,
         }
     },
     projects: [

@@ -72,8 +72,11 @@ export class Module {
 
         // Save and settle
         await this.page.locator('div#external-modules-configure-modal div.modal-footer button.save').click();
-        await this.page.waitForURL('**/ExternalModules/manager/control_center.php');
-        await this.page.reload();
+        // await this.page.waitForURL('**/ExternalModules/manager/control_center.php');
+        // await this.page.reload();
+        await this.page.waitForLoadState();
+        await this.page.waitForTimeout(1000);
+
     }
 
     async visitUsersPage() {
