@@ -231,7 +231,7 @@ export class Module {
     async setUserSAG(username, sagId) {
         await this.visitUsersPage();
         await this.page.locator('div.SAG_Container button.editUsersButton').click();
-        await this.page.locator('div.dataTables_filter input').fill(username).dispatchEvent('change');
+        await this.page.locator('div.dataTables_filter input').fill(username);
         const selector = this.page.locator(`tr[data-user="${username}"] select.sagSelect`);
         await selector.waitFor({ state: 'visible' });
         await selector.selectOption(sagId);
