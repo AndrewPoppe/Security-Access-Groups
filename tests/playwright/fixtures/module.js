@@ -431,8 +431,8 @@ export class Module {
             }
         }
         await this.page.locator('div#editUserPopup input[name="lock_record"][value="0"]').check();
-        await this.page.getByText('No Access(Hidden)').click();
-        await this.page.getByText('No Access', { exact: true }).click();
+        await this.page.locator('#form_rights').getByText('No Access(Hidden)').click();
+        await this.page.locator('#form_rights').getByText('No Access', { exact: true }).click();
         // await this.page.locator('div#editUserPopup input[name="form-form_1"][value="0"]').check();
         // await this.page.locator('div#editUserPopup input[name="export-form-form_1"][value="0"]').check();
 
