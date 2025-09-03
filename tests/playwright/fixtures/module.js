@@ -1,3 +1,5 @@
+import { expect } from './initModule';
+
 // @ts-check
 export class Module {
     /**
@@ -395,7 +397,9 @@ export class Module {
         const checkboxes = this.page.locator('div#editUserPopup input[type="checkbox"]:not([name="mobile_app"])');
         const checkboxes_count = await checkboxes.count();
         for (let checkbox_index = 0; checkbox_index < checkboxes_count; checkbox_index++) {
-            await checkboxes.nth(checkbox_index).check({ force: true });
+            if (await checkboxes.nth(checkbox_index).isEnabled()) {
+                await checkboxes.nth(checkbox_index).check({ force: true });
+            }
         }
         await this.page.locator('div#editUserPopup input[name="mobile_app"]').check();
         await this.page
@@ -406,8 +410,9 @@ export class Module {
         await this.page.locator('div#editUserPopup input[name="lock_record"][value="2"]').check();
         await this.page.locator('div.ui-dialog-titlebar', { hasText: 'NOTICE' }).locator('button.ui-dialog-titlebar-close').click();
 
-        await this.page.locator('div#editUserPopup input[name="form-form_1"][value="1"]').check();
-        await this.page.locator('div#editUserPopup input[name="export-form-form_1"][value="1"]').check();
+        await this.page.getByText('Full Data Set', { exact: true }).click();
+        // await this.page.locator('div#editUserPopup input[name="form-form_1"][value="1"]').check();
+        // await this.page.locator('div#editUserPopup input[name="export-form-form_1"][value="1"]').check();
 
         await this.page.locator('div.ui-dialog-buttonset button', { hasText: "Save Changes" }).click();
     }
@@ -421,11 +426,15 @@ export class Module {
         const checkboxes = this.page.locator('div#editUserPopup input[type="checkbox"]');
         const checkboxes_count = await checkboxes.count();
         for (let checkbox_index = 0; checkbox_index < checkboxes_count; checkbox_index++) {
-            await checkboxes.nth(checkbox_index).uncheck();
+            if (await checkboxes.nth(checkbox_index).isEnabled()) {
+                await checkboxes.nth(checkbox_index).uncheck();
+            }
         }
         await this.page.locator('div#editUserPopup input[name="lock_record"][value="0"]').check();
-        await this.page.locator('div#editUserPopup input[name="form-form_1"][value="0"]').check();
-        await this.page.locator('div#editUserPopup input[name="export-form-form_1"][value="0"]').check();
+        await this.page.getByText('No Access(Hidden)').click();
+        await this.page.getByText('No Access', { exact: true }).click();
+        // await this.page.locator('div#editUserPopup input[name="form-form_1"][value="0"]').check();
+        // await this.page.locator('div#editUserPopup input[name="export-form-form_1"][value="0"]').check();
 
         await this.page.locator('div.ui-dialog-buttonset button', { hasText: "Save Changes" }).click();
     }
