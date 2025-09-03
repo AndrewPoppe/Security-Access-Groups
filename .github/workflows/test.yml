@@ -11,9 +11,11 @@ jobs:
       - id: download
         uses: robinraju/release-downloader@main
         with:
-          repository: AndrewPoppe/REDCap
+          repository: 'AndrewPoppe/REDCap'
           latest: true
-          fileName: '*'
+          zipBall: false
+          tarBall: false
+          fileName: 'redcap*zip'
           token: ${{ secrets.REPOS_TOKEN }}
       - name: Print the thing
         run: echo ${{ fromJson(steps.download.outputs.downloaded_files)[0] }}
