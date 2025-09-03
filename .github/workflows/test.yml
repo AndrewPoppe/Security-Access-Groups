@@ -13,9 +13,7 @@ jobs:
         with:
           repository: AndrewPoppe/REDCap
           latest: true
-          fileName: '*.zip'
-          tarBall: false
-          zipBall: false
+          fileName: '*'
           token: ${{ secrets.REPOS_TOKEN }}
       - name: Print the thing
         run: echo ${{ fromJson(steps.download.outputs.downloaded_files)[0] }}
