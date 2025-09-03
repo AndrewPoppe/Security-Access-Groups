@@ -30,9 +30,9 @@ class SAG
     {
         if (
             !$this->module->framework->throttle(
-                'message in (?,?,?)',
+                '(project_id IS NULL OR project_id IS NOT NULL) AND message in (?,?,?)',
                 [ 'Saved SAG', 'Updated SAG', 'Deleted SAG' ],
-                1,
+                5,
                 1
             )
         ) {
@@ -80,9 +80,9 @@ class SAG
     {
         if (
             !$this->module->framework->throttle(
-                'message in (?,?,?)',
+                '(project_id IS NULL OR project_id IS NOT NULL) AND message in (?,?,?)',
                 [ 'Saved SAG', 'Updated SAG', 'Deleted SAG' ],
-                1,
+                5,
                 1
             )
         ) {
@@ -135,9 +135,9 @@ class SAG
     {
         if (
             !$this->module->framework->throttle(
-                'message in (?,?,?)',
+                '(project_id IS NULL OR project_id IS NOT NULL) AND message in (?,?,?)',
                 [ 'Saved SAG', 'Updated SAG', 'Deleted SAG' ],
-                1,
+                5,
                 1
             )
         ) {
