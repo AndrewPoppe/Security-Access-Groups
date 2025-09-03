@@ -275,7 +275,10 @@ export class Module {
         await this.page.locator('div#redcap-home-navbar-collapse a', { hasText: 'New Project' }).click();
         await this.page.locator('input#app_title').fill(projectName);
         await this.page.locator('select#purpose').selectOption("0");
+        await this.page.waitForLoadState();
+        await this.page.waitForTimeout(1000);
         await this.page.locator('button', { hasText: "Create Project" }).click();
+        await this.page.waitForLoadState();
         await this.page.waitForTimeout(1000);
 
         return this.getPID();
@@ -503,8 +506,12 @@ export class Module {
         await this.page.locator('form#importUserForm input[type="file"]').setInputFiles(csv);
         await this.page.locator('div.ui-dialog', { has: this.page.locator('div#importUsersDialog') }).waitFor({ state: "visible" });
         await this.page.locator('div.ui-dialog', { has: this.page.locator('div#importUsersDialog') }).locator('button', { hasText: 'Upload' }).click();
+        await this.page.waitForLoadState();
+        await this.page.waitForTimeout(1000);
         await this.page.locator('div.ui-dialog', { has: this.page.locator('div#importUsersDialog2') }).waitFor({ state: "visible" });
         await this.page.locator('div.ui-dialog', { has: this.page.locator('div#importUsersDialog2') }).locator('button', { hasText: 'Upload' }).click();
+        await this.page.waitForLoadState();
+        await this.page.waitForTimeout(1000);
     }
 
     async importRoleCSV(pid, csv) {
