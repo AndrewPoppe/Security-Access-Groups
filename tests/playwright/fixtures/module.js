@@ -410,7 +410,8 @@ export class Module {
         await this.page.locator('div#editUserPopup input[name="lock_record"][value="2"]').check();
         await this.page.locator('div.ui-dialog-titlebar', { hasText: 'NOTICE' }).locator('button.ui-dialog-titlebar-close').click();
 
-        await this.page.getByText('Full Data Set', { exact: true }).click();
+        await this.page.locator('#form_rights').getByText('View & Edit', { exact: true }).click();
+        await this.page.locator('#form_rights').getByText('Full Data Set', { exact: true }).click();
         // await this.page.locator('div#editUserPopup input[name="form-form_1"][value="1"]').check();
         // await this.page.locator('div#editUserPopup input[name="export-form-form_1"][value="1"]').check();
 
@@ -546,8 +547,12 @@ export class Module {
         await this.page.locator('form#importRoleForm input[type="file"]').setInputFiles(csv);
         await this.page.locator('div.ui-dialog', { has: this.page.locator('div#importRolesDialog') }).waitFor({ state: "visible" });
         await this.page.locator('div.ui-dialog', { has: this.page.locator('div#importRolesDialog') }).locator('button', { hasText: 'Upload' }).click();
+        await this.page.waitForLoadState();
+        await this.page.waitForTimeout(1000);
         await this.page.locator('div.ui-dialog', { has: this.page.locator('div#importRolesDialog2') }).waitFor({ state: "visible" });
         await this.page.locator('div.ui-dialog', { has: this.page.locator('div#importRolesDialog2') }).locator('button', { hasText: 'Upload' }).click();
+        await this.page.waitForLoadState();
+        await this.page.waitForTimeout(1000);
     }
 
     async getUniqueRoleName(pid, roleLabel) {

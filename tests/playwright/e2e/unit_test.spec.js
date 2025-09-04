@@ -318,6 +318,7 @@ test.describe('Prevent noncompliant rights from being granted', () => {
             await modulePage.importRoleCSV(config.projects.CSV_Project.pid, 'data_files/S2_IMPORT_UserRoles_1.csv');
             await expect(modulePage.page.locator('div.ui-dialog div.ui-dialog-titlebar', { hasText: 'SUCCESS!' }, { timeout: 30000 })).toBeVisible();
             config.roles.Test.uniqueRoleName = await modulePage.getUniqueRoleName(config.projects.CSV_Project.pid, 'Test');
+            console.log(`Unique role name: ${config.roles.Test.uniqueRoleName}`);
         });
         await test.step('Edit role via CSV - successfully', async () => {
             const csvData = fs.readFileSync('data_files/templates/S2_IMPORT_UserRoles_2_Template.csv');
