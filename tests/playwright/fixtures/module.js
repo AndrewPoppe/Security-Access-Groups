@@ -84,6 +84,8 @@ export class Module {
     async visitUsersPage() {
         const dtInitPromise_cc_users = this.page.waitForFunction(() => { if ($.fn.dataTable.isDataTable('#SAG-System-Table')) return new $.fn.dataTable.Api('#SAG-System-Table').data().count() > 0; });
         await this.page.goto(`${this.url}/ExternalModules/?prefix=security_access_groups&page=system-settings-userlist`);
+        await this.page.waitForTimeout(1000);
+        await this.page.waitForLoadState();
         await dtInitPromise_cc_users;
         await this.page.waitForTimeout(1000);
     }
@@ -91,6 +93,7 @@ export class Module {
     async visitSAGsPage() {
         await this.page.goto(`${this.url}/ExternalModules/?prefix=security_access_groups&page=system-settings-sags`);
         await this.page.waitForTimeout(1000);
+        await this.page.waitForLoadState();
         await this.page.locator('div#sagTableWrapper a.SagLink').first().waitFor({ state: 'visible' });
     }
 
