@@ -102,13 +102,13 @@ image:https://sonarcloud.io/api/project_badges/measure?project=AndrewPoppe_Secur
 image:https://app.codacy.com/project/badge/Grade/bbb20fafcae24d7684eb66cf7eb034e9[link="https://app.codacy.com/gh/AndrewPoppe/Security-Access-Groups/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade"]
 image:https://github.com/AndrewPoppe/Security-Access-Groups/actions/workflows/codeql.yml/badge.svg[link="https://github.com/AndrewPoppe/Security-Access-Groups/actions/workflows/codeql.yml"]
 
-ifndef::env-github[]
+
 
 image:https://github.com/AndrewPoppe/Security-Access-Groups/actions/workflows/playwright_v15.0.38.yml/badge.svg[link="https://github.com/AndrewPoppe/Security-Access-Groups/actions/workflows/playwright_v15.0.38.yml"]
 image:https://github.com/AndrewPoppe/Security-Access-Groups/actions/workflows/playwright_v15.5.12.yml/badge.svg[link="https://github.com/AndrewPoppe/Security-Access-Groups/actions/workflows/playwright_v15.5.12.yml"]
 image:https://github.com/AndrewPoppe/Security-Access-Groups/actions/workflows/playwright_v15.7.1.yml/badge.svg[link="https://github.com/AndrewPoppe/Security-Access-Groups/actions/workflows/playwright_v15.7.1.yml"]
 
-
+ifndef::env-github[]
 ++++
 <p><label for="lang_selector">Select Language</label>
     <select id="lang_selector" onchange="window.location.href = this.value;">
