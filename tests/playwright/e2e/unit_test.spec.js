@@ -72,14 +72,14 @@ test.describe('Setup', () => {
 
         await test.step('Make sure Default SAG is editable', async () => {
             await modulePage.addRightToSAG('sag_Default', 'design');
-            await modulePage.waitForTimeout(2000);
+            await modulePage.page.waitForTimeout(2000);
             await modulePage.renameSAG('sag_Default', 'TEST');
-            await modulePage.waitForTimeout(2000);
+            await modulePage.page.waitForTimeout(2000);
             const rights = await modulePage.getSAGRight('sag_Default', 'design');
             await expect(rights.name).toEqual('TEST');
             await expect(rights.right).toBeTruthy();
             await modulePage.removeRightFromSAG('sag_Default', 'design');
-            await modulePage.waitForTimeout(2000);
+            await modulePage.page.waitForTimeout(2000);
             await modulePage.renameSAG('sag_Default', 'Default SAG');
         });
 
