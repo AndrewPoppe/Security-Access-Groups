@@ -155,12 +155,6 @@ class RightsUtilities
 
         ];
 
-        // There was no separate email logging right prior to REDCap 14.4.0
-        $redcapVersion = defined('REDCAP_VERSION') ? REDCAP_VERSION : '99.99.99';
-        if ( \REDCap::versionCompare($redcapVersion, '14.4.0') < 0 ) {
-           unset($rights['email_logging']);
-        }
-
         if ( $allRights ) {
             $rights['random_setup']                    = $lang['app_21'] . ' - ' . $lang['rights_142'];
             $rights['random_dashboard']                = $lang['app_21'] . ' - ' . $lang['rights_143'];
@@ -173,6 +167,7 @@ class RightsUtilities
             $rights['double_data_person']              = $lang['dashboard_44'] . ' ' . $lang['rights_52'];
             $rights['api_export']                      = $lang['rights_139'];
             $rights['api_import']                      = $lang['rights_314'];
+            $rights['api_modules']                     = $lang['rights_439'];
             $rights['mobile_app_download_data']        = $lang['rights_306'];
             $rights['lock_record_multiform']           = $lang['rights_370'];
         }
@@ -187,6 +182,19 @@ class RightsUtilities
             $rights['removeIdentifiers']      = $lang['data_export_tool_290'];
             $rights['deidentified']           = $lang['rights_48'];
         }
+
+        // There was no separate email logging right prior to REDCap 14.4.0
+        $redcapVersion = defined('REDCAP_VERSION') ? REDCAP_VERSION : '99.99.99';
+        if ( \REDCap::versionCompare($redcapVersion, '14.4.0') < 0 ) {
+           unset($rights['email_logging']);
+        }
+
+        // There was no separate api_modules right prior to REDCap 15.5.0
+        $redcapVersion = defined('REDCAP_VERSION') ? REDCAP_VERSION : '99.99.99';
+        if ( \REDCap::versionCompare($redcapVersion, '15.5.0') < 0 ) {
+           unset($rights['api_modules']);
+        } 
+
         return $rights;
     }
 
@@ -321,6 +329,9 @@ class RightsUtilities
         }
         if ( isset($allRights['api_import']) ) {
             $allRights['api_import'] = 0;
+        }
+        if ( isset($allRights['api_modules']) ) {
+            $allRights['api_modules'] = 0;
         }
         if ( isset($allRights['mobile_app']) ) {
             $allRights['mobile_app'] = 0;
