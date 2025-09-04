@@ -1,4 +1,4 @@
-name: PHP8.4 RC15.7.1
+name: v15.7.1
 on:
   push:
     branches: main
