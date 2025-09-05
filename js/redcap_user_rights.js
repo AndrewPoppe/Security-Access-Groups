@@ -144,7 +144,7 @@ $(function () {
     window.assignUserRole = function (username, role_id) {
         showProgress(1);
         checkIfuserRights(username, role_id, function (data) {
-            if (data == 1) {
+            if (String(data) === '1') {
                 $.post('{{ASSIGN_USER_URL}}', {
                     username: username,
                     role_id: role_id,

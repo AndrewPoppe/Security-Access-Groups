@@ -4,7 +4,8 @@
     "mouse-helper": "^1.0.7",
     "playwright": "^1.50.1",
     "sharp": "^0.33.5",
-    "csv": "^6.3.11"
+    "csv": "^6.3.11",
+    "semver": "^7.7.2"
   },
   "scripts": {}
 }

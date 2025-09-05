@@ -644,6 +644,8 @@ class SAGEditForm
             $label3   = $this->lang['rights_314'];
             $checked1 = $this->rights['api_export'] == 1 ? 'checked' : '';
             $checked2 = $this->rights['api_import'] == 1 ? 'checked' : '';
+
+            $modulesApi = $this->getModuleAPI();
             return <<<"EOT"
             <div class="SAG-form-row row">
                 <div class="col mt-1">
@@ -659,8 +661,22 @@ class SAGEditForm
                         <input class='form-check-input' id='api_import' name='api_import' $checked2 type='checkbox'>
                         <label class='form-check-label' for='api_import'>$label3</label>
                     </div>
+                    $modulesApi
                 </div>
             </div>
+            EOT;
+        }
+    }
+    private function getModuleAPI()
+    {
+        if ( isset($this->allRights['api_modules']) ) {
+            $label1   = $this->lang['rights_439'];
+            $checked1 = $this->rights['api_modules'] == 1 ? 'checked' : '';
+            return <<<"EOT"
+                <div class='form-check'>
+                    <input class='form-check-input' id='api_modules' $checked1 type='checkbox' name='api_modules'>
+                    <label class='form-check-label' for='api_modules'>$label1</label>
+                </div>
             EOT;
         }
     }
