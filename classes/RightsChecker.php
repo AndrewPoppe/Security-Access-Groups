@@ -344,6 +344,18 @@ class RightsChecker
         $this->checkRight($right);
     }
 
+    private function checkExternalModuleConfigRight($right, $value) {
+        $isExternalModuleConfigRight = $right === 'external_module_config';
+        if ( !$isExternalModuleConfigRight ) {
+            return;
+        }
+        $this->accountedFor = true;
+        if ( !empty($value)) {
+            $badRight          = RightsUtilities::getDisplayTextForRight('external_module_config');
+            $this->badRights[] = $badRight;
+        }
+    }
+
     public function checkRights()
     {
         foreach ( $this->rightsToCheck as $right => $value ) {
@@ -376,6 +388,7 @@ class RightsChecker
             $this->checkDataExportRights($right, $value);
             $this->checkRecordLockingRights($right, $value);
             $this->checkDataResolutionRights($right, $value);
+            $this->checkExternalModuleConfigRight($right, $value);
 
             if ( !$this->accountedFor && $this->acceptableRights[$right] == 0 ) {
                 $this->badRights[] = RightsUtilities::getDisplayTextForRight($right);
