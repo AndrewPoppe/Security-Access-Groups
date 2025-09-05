@@ -11,7 +11,7 @@ if ( $_SERVER["REQUEST_METHOD"] !== "POST" ) {
 
 $user       = $module->framework->getUser();
 $userRights = $user->getRights();
-if ( !$module->framework->isSuperUser() && (int) $userRights['user_rights'] !== 1 ) {
+if ( $module->framework->isSuperUser() === false && (int) $userRights['user_rights'] !== 1 ) {
     http_response_code(401);
     exit;
 }
