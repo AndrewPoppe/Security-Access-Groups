@@ -50,7 +50,7 @@ sag_module.getColumns = function () {
             className: 'dt-center',
             data: function (row, type, set, meta) {
                 if (type === 'display') {
-                    return row.permissions.design == 1 ? sag_module.check : sag_module.x;
+                    return String(row.permissions.design) === '1' ? sag_module.check : sag_module.x;
                 } else {
                     return row.permissions.design;
                 }
@@ -64,11 +64,11 @@ sag_module.getColumns = function () {
             className: 'dt-center',
             data: function (row, type, set, meta) {
                 if (type === 'display') {
-                    const val = row.permissions.user_rights;
-                    if (val == 2) {
+                    const val = String(row.permissions.user_rights);
+                    if (val === '2') {
                         return eye;//lang['rights_61'];
                     }
-                    return val == 1 ? sag_module.check : sag_module.x;
+                    return val === '1' ? sag_module.check : sag_module.x;
                 } else {
                     return row.permissions.user_rights;
                 }
@@ -82,7 +82,7 @@ sag_module.getColumns = function () {
             className: 'dt-center',
             data: function (row, type, set, meta) {
                 if (type === 'display') {
-                    return row.permissions.data_access_groups == 1 ? sag_module.check : sag_module.x;
+                    return String(row.permissions.data_access_groups) === '1' ? sag_module.check : sag_module.x;
                 } else {
                     return row.permissions.data_access_groups;
                 }
@@ -142,7 +142,7 @@ sag_module.getColumns = function () {
             className: 'dt-center',
             data: function (row, type, set, meta) {
                 if (type === 'display') {
-                    return row.permissions.alerts == 1 ? sag_module.check : sag_module.x;
+                    return String(row.permissions.alerts) === '1' ? sag_module.check : sag_module.x;
                 } else {
                     return row.permissions.alerts;
                 }
@@ -157,7 +157,7 @@ sag_module.getColumns = function () {
                 className: 'dt-center',
                 data: function (row, type, set, meta) {
                     if (type === 'display') {
-                        return row.permissions.reports == 1 ? sag_module.check : sag_module.x;
+                        return String(row.permissions.reports) === '1' ? sag_module.check : sag_module.x;
                     } else {
                         return row.permissions.reports;
                     }
@@ -172,7 +172,7 @@ sag_module.getColumns = function () {
             className: 'dt-center',
             data: function (row, type, set, meta) {
                 if (type === 'display') {
-                    return row.permissions.graphical == 1 ? sag_module.check : sag_module.x;
+                    return String(row.permissions.graphical) === '1' ? sag_module.check : sag_module.x;
                 } else {
                     return row.permissions.graphical;
                 }
@@ -187,7 +187,7 @@ sag_module.getColumns = function () {
                 className: 'dt-center',
                 data: function (row, type, set, meta) {
                     if (type === 'display') {
-                        return row.permissions.participants == 1 ? sag_module.check : sag_module.x;
+                        return String(row.permissions.participants) === '1' ? sag_module.check : sag_module.x;
                     } else {
                         return row.permissions.participants;
                     }
@@ -201,7 +201,7 @@ sag_module.getColumns = function () {
             className: 'dt-center',
             data: function (row, type, set, meta) {
                 if (type === 'display') {
-                    return row.permissions.calendar == 1 ? sag_module.check : sag_module.x;
+                    return String(row.permissions.calendar) === '1' ? sag_module.check : sag_module.x;
                 } else {
                     return row.permissions.calendar;
                 }
@@ -215,7 +215,7 @@ sag_module.getColumns = function () {
             className: 'dt-center',
             data: function (row, type, set, meta) {
                 if (type === 'display') {
-                    return row.permissions.data_import_tool == 1 ? sag_module.check : sag_module.x;
+                    return String(row.permissions.data_import_tool) === '1' ? sag_module.check : sag_module.x;
                 } else {
                     return row.permissions.data_import_tool;
                 }
@@ -229,7 +229,7 @@ sag_module.getColumns = function () {
             className: 'dt-center',
             data: function (row, type, set, meta) {
                 if (type === 'display') {
-                    return row.permissions.data_comparison_tool == 1 ? sag_module.check : sag_module.x;
+                    return String(row.permissions.data_comparison_tool) === '1' ? sag_module.check : sag_module.x;
                 } else {
                     return row.permissions.data_comparison_tool;
                 }
@@ -243,7 +243,7 @@ sag_module.getColumns = function () {
             className: 'dt-center',
             data: function (row, type, set, meta) {
                 if (type === 'display') {
-                    return row.permissions.data_logging == 1 ? sag_module.check : sag_module.x;
+                    return String(row.permissions.data_logging) === '1' ? sag_module.check : sag_module.x;
                 } else {
                     return row.permissions.data_logging;
                 }
@@ -257,7 +257,7 @@ sag_module.getColumns = function () {
             className: 'dt-center',
             data: function (row, type, set, meta) {
                 if (type === 'display') {
-                    return row.permissions.email_logging == 1 ? sag_module.check : sag_module.x;
+                    return String(row.permissions.email_logging) === '1' ? sag_module.check : sag_module.x;
                 } else {
                     return row.permissions.email_logging;
                 }
@@ -271,7 +271,7 @@ sag_module.getColumns = function () {
             className: 'dt-center',
             data: function (row, type, set, meta) {
                 if (type === 'display') {
-                    return row.permissions.file_repository == 1 ? sag_module.check : sag_module.x;
+                    return String(row.permissions.file_repository) === '1' ? sag_module.check : sag_module.x;
                 } else {
                     return row.permissions.file_repository;
                 }
@@ -303,7 +303,7 @@ sag_module.getColumns = function () {
             className: 'dt-center',
             data: function (row, type, set, meta) {
                 if (type === 'display') {
-                    return row.permissions.lock_record_customize == 1 ? sag_module.check : sag_module.x;
+                    return String(row.permissions.lock_record_customize) === '1' ? sag_module.check : sag_module.x;
                 } else {
                     return row.permissions.lock_record_customize;
                 }
@@ -360,7 +360,7 @@ sag_module.getColumns = function () {
             className: 'dt-center',
             data: function (row, type, set, meta) {
                 if (type === 'display') {
-                    return row.permissions.data_quality_design == 1 ? sag_module.check : sag_module.x;
+                    return String(row.permissions.data_quality_design) === '1' ? sag_module.check : sag_module.x;
                 } else {
                     return row.permissions.data_quality_design;
                 }
@@ -374,7 +374,7 @@ sag_module.getColumns = function () {
             className: 'dt-center',
             data: function (row, type, set, meta) {
                 if (type === 'display') {
-                    return row.permissions.data_quality_execute == 1 ? sag_module.check : sag_module.x;
+                    return String(row.permissions.data_quality_execute) === '1' ? sag_module.check : sag_module.x;
                 } else {
                     return row.permissions.data_quality_execute;
                 }
@@ -433,7 +433,7 @@ sag_module.getColumns = function () {
             className: 'dt-center',
             data: function (row, type, set, meta) {
                 if (type === 'display') {
-                    return row.permissions.mobile_app == 1 ? sag_module.check : sag_module.x;
+                    return String(row.permissions.mobile_app) === '1' ? sag_module.check : sag_module.x;
                 } else {
                     return row.permissions.mobile_app;
                 }
@@ -447,7 +447,7 @@ sag_module.getColumns = function () {
             className: 'dt-center',
             data: function (row, type, set, meta) {
                 if (type === 'display') {
-                    return row.permissions.realtime_webservice_mapping == 1 ? sag_module.check : sag_module.x;
+                    return String(row.permissions.realtime_webservice_mapping) === '1' ? sag_module.check : sag_module.x;
                 } else {
                     return row.permissions.realtime_webservice_mapping;
                 }
@@ -461,7 +461,7 @@ sag_module.getColumns = function () {
             className: 'dt-center',
             data: function (row, type, set, meta) {
                 if (type === 'display') {
-                    return row.permissions.realtime_webservice_adjudicate == 1 ? sag_module.check : sag_module.x;
+                    return String(row.permissions.realtime_webservice_adjudicate) === '1' ? sag_module.check : sag_module.x;
                 } else {
                     return row.permissions.realtime_webservice_adjudicate;
                 }
@@ -475,7 +475,7 @@ sag_module.getColumns = function () {
             className: 'dt-center',
             data: function (row, type, set, meta) {
                 if (type === 'display') {
-                    return row.permissions.dts == 1 ? sag_module.check : sag_module.x;
+                    return String(row.permissions.dts) === '1' ? sag_module.check : sag_module.x;
                 } else {
                     return row.permissions.dts;
                 }
@@ -490,7 +490,7 @@ sag_module.getColumns = function () {
                 className: 'dt-center',
                 data: function (row, type, set, meta) {
                     if (type === 'display') {
-                        return row.permissions.mycap_participants == 1 ? sag_module.check : sag_module.x;
+                        return String(row.permissions.mycap_participants) === '1' ? sag_module.check : sag_module.x;
                     } else {
                         return row.permissions.mycap_participants;
                     }
@@ -505,7 +505,7 @@ sag_module.getColumns = function () {
                 className: 'dt-center',
                 data: function (row, type, set, meta) {
                     if (type === 'display') {
-                        return row.permissions.record_create == 1 ? sag_module.check : sag_module.x;
+                        return String(row.permissions.record_create) === '1' ? sag_module.check : sag_module.x;
                     } else {
                         return row.permissions.record_create;
                     }
@@ -520,7 +520,7 @@ sag_module.getColumns = function () {
                 className: 'dt-center',
                 data: function (row, type, set, meta) {
                     if (type === 'display') {
-                        return row.permissions.record_rename == 1 ? sag_module.check : sag_module.x;
+                        return String(row.permissions.record_rename) === '1' ? sag_module.check : sag_module.x;
                     } else {
                         return row.permissions.record_rename;
                     }
@@ -535,7 +535,7 @@ sag_module.getColumns = function () {
                 className: 'dt-center',
                 data: function (row, type, set, meta) {
                     if (type === 'display') {
-                        return row.permissions.record_delete == 1 ? sag_module.check : sag_module.x;
+                        return String(row.permissions.record_delete) === '1' ? sag_module.check : sag_module.x;
                     } else {
                         return row.permissions.record_delete;
                     }
@@ -672,6 +672,7 @@ sag_module.getColumns = function () {
 }
 
 sag_module.openSagEditor = function (sag_id = "", sag_name = "", newSag = false) {
+    alert('sag_id: ' + sag_id + ', sag_name: ' + sag_name + ', newSag: ' + newSag);
     const deleteSagButtonCallback = function () {
         Swal.fire({
             title: sag_module.tt('cc_sags_11'),
@@ -761,6 +762,7 @@ sag_module.openSagEditor = function (sag_id = "", sag_name = "", newSag = false)
     const saveSagChangesButtonCallback = function () {
         $('input[name="sag_name_edit"]').blur();
         const sag_name_edit = $('input[name="sag_name_edit"]').val();
+        alert('sag_id: ' + sag_id + ', sag_name_edit: ' + sag_name_edit);
         if (sag_name_edit != '') {
             const data = $("#SAG_Setting").serializeObject();
             data.sag_id = sag_id;
@@ -821,7 +823,7 @@ sag_module.openSagEditor = function (sag_id = "", sag_name = "", newSag = false)
     sag_module.ajax('editSag', { subaction: 'get', sag_id: sag_id, sag_name: sag_name, newSag: newSag })
         .then((response) => {
             const form = JSON.parse(response).form;
-            $("#edit_sag_popup").html(form);
+            $("#edit_sag_popup").html('').html(form);
             $("#edit_sag_popup").on('shown.bs.modal', function (event) {
                 $('input[name="sag_name_edit"]').blur(function () {
                     $(this).val($(this).val().trim());
