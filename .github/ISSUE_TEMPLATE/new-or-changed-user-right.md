@@ -34,6 +34,7 @@ Basic 0/1 or something else?
 - [ ] Update UI
   - [ ] `SAGEditForm.php`
   - [ ] `RightsUtilities.php`
+  - [ ] `system-settings-sags` (html, php, js)
 - [ ] Rights checking
   - [ ] `RightsChecker.php`
 - [ ] Update README
