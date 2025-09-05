@@ -668,6 +668,21 @@ sag_module.getColumns = function () {
                 visible: false
             })
     }
+
+    // external module config
+    if (sag_module.all_rights.includes('external_module_config')) {
+        columns.push(
+            {
+                className: 'dt-center',
+                data: function (row, type, set, meta) {
+                    if (type === 'display') {
+                        return String(row.permissions.external_module_config) === '1' ? sag_module.check : sag_module.x;
+                    } else {
+                        return row.permissions.external_module_config;
+                    }
+                }
+            })
+    }
     return columns;
 }
 
