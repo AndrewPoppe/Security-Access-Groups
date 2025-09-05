@@ -1,5 +1,6 @@
 
 const fs = require('fs');
+const semver = require('semver');
 const { parse } = require('csv-parse/sync');
 const { stringify } = require('csv-stringify/sync');
 const { transform } = require('stream-transform/sync');
@@ -127,7 +128,13 @@ test.describe('Prevent noncompliant rights from being granted', () => {
             const errorPopup = modulePage.page.locator('h2#swal2-title', { hasText: `You cannot grant those user rights to user "${config.users.NothingUser.username}"` });
             await expect(errorPopup).toBeVisible();
             const rights = modulePage.page.locator('table.sag_rights_table tbody tr');
-            await expect(rights).toHaveCount(25);
+            const redcap_version = semver.coerce(config.redcapVersion.split('_')[1]);
+            let badRightsExpected = 25;
+            if (semver.valid(redcap_version) && semver.gte(redcap_version, '15.5.2')) {
+                // External Modules API right should be present in REDCap 15.5.2 and later
+                badRightsExpected++;
+            }
+            await expect(rights).toHaveCount(badRightsExpected);
             await modulePage.page.screenshot({ path: `${outDir}/FRS-VL-SAGEM-001-03-attempt_to_give_noncompliant_rights_to_user.png`, fullPage: false });
         });
         await test.step('Attempt to give compliant rights to user', async () => {
