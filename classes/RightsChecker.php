@@ -345,8 +345,8 @@ class RightsChecker
     }
 
     private function checkExternalModuleConfigRight($right, $value) {
-        $isExternalModuleConfigRight = $right === 'external_module_config';
-        if ( !$isExternalModuleConfigRight ) {
+        $isEMConfigRight = $right === 'external_module_config';
+        if ( !$isEMConfigRight ) {
             return;
         }
         $this->accountedFor = true;
