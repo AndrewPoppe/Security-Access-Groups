@@ -634,6 +634,14 @@ _REDCap versions >= 14.4.0_
 * `0` - Not allowed
 * `1` - Allowed
 
+.^|`api_modules`
+.^|External Modules API
+.^a|
+This User Right was added in REDCap v15.5.2.
+
+* `0` - Not allowed
+* `1` - Allowed
+
 .^|`lock_record_multiform`
 .^|Lock/Unlock \*Entire* Records (record level)
 .^a|
