@@ -32,11 +32,6 @@ if ( !empty($expiration) && strtotime($expiration) < strtotime('today') ) {
     $currentRights    = $sagUser->getCurrentRightsFormatted($projectId);
     $rightsChecker    = new RightsChecker($module, $currentRights, $acceptableRights, $projectId);
     $badRights        = $rightsChecker->checkRights();
-    $module->log('ERR', [ 
-        'currentRights' => json_encode($currentRights, JSON_PRETTY_PRINT),
-        'acceptableRights' => json_encode($acceptableRights, JSON_PRETTY_PRINT),
-        'badRights' => json_encode($badRights, JSON_PRETTY_PRINT),
-    ]);
     $errors           = !empty($badRights);
 }
 
