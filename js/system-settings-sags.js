@@ -56,8 +56,6 @@ sag_module.getColumns = function () {
                 }
             }
         });
-    } else {
-        console.log('no design');
     }
 
     // user rights
@@ -76,8 +74,6 @@ sag_module.getColumns = function () {
                 }
             }
         });
-    } else {
-        console.log('no user rights');
     }
 
     // data access groups
@@ -92,8 +88,6 @@ sag_module.getColumns = function () {
                 }
             }
         });
-    } else {
-        console.log('no data access groups');
     }
 
     // data viewing
@@ -110,15 +104,13 @@ sag_module.getColumns = function () {
                         case '1':
                             return sag_module.tt('cc_sags_27');
                         default:
-                            return x;
+                            return sag_module.x;
                     }
                 } else {
                     return row.permissions.dataViewing;
                 }
             }
         })
-    } else {
-        console.log('no data viewing');
     }
 
     // data export
@@ -135,15 +127,13 @@ sag_module.getColumns = function () {
                         case '1':
                             return sag_module.tt('cc_sags_30');
                         default:
-                            return x;
+                            return sag_module.x;
                     }
                 } else {
                     return row.permissions.dataExport;
                 }
             }
         });
-    } else {
-        console.log('no data export');
     }
 
     // alerts
@@ -158,8 +148,6 @@ sag_module.getColumns = function () {
                 }
             }
         })
-    } else {
-        console.log('no alerts');
     }
 
     // reports
@@ -526,7 +514,7 @@ sag_module.getColumns = function () {
     }
 
     // record rename
-    if (sag_module.all_rights.includes('')) {
+    if (sag_module.all_rights.includes('record_rename')) {
         columns.push(
             {
                 className: 'dt-center',
@@ -680,7 +668,6 @@ sag_module.getColumns = function () {
                 visible: false
             })
     }
-    console.log(columns);
     return columns;
 }
 
@@ -1142,7 +1129,6 @@ $(document).ready(function () {
         ajax: function (data, callback, settings) {
             sag_module.ajax('getSags')
                 .then((response) => {
-                    console.log(JSON.parse(response));
                     callback(JSON.parse(response));
                 })
                 .catch((error) => {

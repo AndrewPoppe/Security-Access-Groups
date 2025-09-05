@@ -190,7 +190,6 @@ class RightsUtilities
         }
 
         // There was no separate api_modules right prior to REDCap 15.5.0
-        $redcapVersion = defined('REDCAP_VERSION') ? REDCAP_VERSION : '99.99.99';
         if ( \REDCap::versionCompare($redcapVersion, '15.5.0') < 0 ) {
            unset($rights['api_modules']);
         } 
