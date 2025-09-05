@@ -672,7 +672,6 @@ sag_module.getColumns = function () {
 }
 
 sag_module.openSagEditor = function (sag_id = "", sag_name = "", newSag = false) {
-    alert('sag_id: ' + sag_id + ', sag_name: ' + sag_name + ', newSag: ' + newSag);
     const deleteSagButtonCallback = function () {
         Swal.fire({
             title: sag_module.tt('cc_sags_11'),
@@ -762,7 +761,6 @@ sag_module.openSagEditor = function (sag_id = "", sag_name = "", newSag = false)
     const saveSagChangesButtonCallback = function () {
         $('input[name="sag_name_edit"]').blur();
         const sag_name_edit = $('input[name="sag_name_edit"]').val();
-        alert('sag_id: ' + sag_id + ', sag_name_edit: ' + sag_name_edit);
         if (sag_name_edit != '') {
             const data = $("#SAG_Setting").serializeObject();
             data.sag_id = sag_id;
@@ -823,7 +821,7 @@ sag_module.openSagEditor = function (sag_id = "", sag_name = "", newSag = false)
     sag_module.ajax('editSag', { subaction: 'get', sag_id: sag_id, sag_name: sag_name, newSag: newSag })
         .then((response) => {
             const form = JSON.parse(response).form;
-            $("#edit_sag_popup").html('').html(form);
+            $("#edit_sag_popup").html(form);
             $("#edit_sag_popup").on('shown.bs.modal', function (event) {
                 $('input[name="sag_name_edit"]').blur(function () {
                     $(this).val($(this).val().trim());
@@ -842,10 +840,10 @@ sag_module.openSagEditor = function (sag_id = "", sag_name = "", newSag = false)
                             })
                     }
                 });
-                $('#SAG_Save').click(sag_id == "" ? saveNewSagButtonCallback :
-                    saveSagChangesButtonCallback);
-                if ($('#SAG_Copy')) $('#SAG_Copy').click(copySagButtonCallback);
-                if ($('#SAG_Delete')) $('#SAG_Delete').click(deleteSagButtonCallback);
+                $('#SAG_Save').get(0).onclick = sag_id == "" ? saveNewSagButtonCallback :
+                    saveSagChangesButtonCallback;
+                if ($('#SAG_Copy')) $('#SAG_Copy').get(0).onclick = copySagButtonCallback;
+                if ($('#SAG_Delete')) $('#SAG_Delete').get(0).onclick = deleteSagButtonCallback;
             })
             const edit_sag_popup = new bootstrap.Modal("#edit_sag_popup", { focus: false });
             edit_sag_popup.show();
