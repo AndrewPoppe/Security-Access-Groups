@@ -291,7 +291,6 @@ class SAGProject
             unset($row['data_export_instruments']);
             unset($row['data_entry']);
             unset($row['data_export_tool']);
-            unset($row['external_module_config']);
             $rights[$row['username']] = $row;
         }
         $result2 = $this->module->framework->query('SELECT user.username, role.*,
@@ -309,7 +308,6 @@ class SAGProject
             unset($row['data_export_instruments']);
             unset($row['data_entry']);
             unset($row['data_export_tool']);
-            unset($row['external_module_config']);
             $rights[$row['username']] = $row;
         }
         return $this->module->framework->escape($rights);

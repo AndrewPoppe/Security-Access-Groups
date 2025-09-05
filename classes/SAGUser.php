@@ -34,7 +34,6 @@ class SAGUser
         unset($currentRights['data_export_instruments']);
         unset($currentRights['data_entry']);
         unset($currentRights['data_export_tool']);
-        unset($currentRights['external_module_config']);
         return $currentRights;
     }
 
