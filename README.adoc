@@ -648,6 +648,13 @@ This User Right was added in REDCap v15.5.2.
 
 * `0` - Not allowed
 * `1` - Allowed
+
+.^|`external_module_config`
+.^|External Module Configuration
+.^a|
+
+* `0` - Not allowed
+* `1` - Allowed
 |===
 
 

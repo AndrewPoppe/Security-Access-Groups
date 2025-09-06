@@ -170,6 +170,7 @@ class RightsUtilities
             $rights['api_modules']                     = $lang['rights_439'];
             $rights['mobile_app_download_data']        = $lang['rights_306'];
             $rights['lock_record_multiform']           = $lang['rights_370'];
+            $rights['external_module_config']          = $lang['rights_326'];
         }
         // These rights won't be displayed in the SAG table - useful for getting display text for a single right
         if ( $extraRights ) {
@@ -355,6 +356,9 @@ class RightsUtilities
         }
         if ( isset($allRights['mycap_participants']) ) {
             $allRights['mycap_participants'] = 1;
+        }
+        if ( isset($allRights['external_module_config']) ) {
+            $allRights['external_module_config'] = 0;
         }
         return $allRights;
     }

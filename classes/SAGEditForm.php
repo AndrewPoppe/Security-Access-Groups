@@ -66,6 +66,7 @@ class SAGEditForm
         $formContents .= $this->getMobileApp();
         $formContents .= $this->getRecordRights();
         $formContents .= $this->getLockRecords();
+        $formContents .= $this->getEMConfig();
         $formContents .= $this->getFormMiddle();
         $formContents .= $this->getDataViewing();
         $formContents .= $this->getDataExport();
@@ -939,6 +940,34 @@ class SAGEditForm
         }
         return $result;
     }
+
+    private function getEMConfig()
+    {
+        $label1 = $this->lang['rights_326'];
+        $result = <<<"EOT"
+        <hr>
+        <div class="SAG-form-row row">
+            <div class="col section-header" colspan='2'>$label1</div>
+        </div>
+        EOT;
+        if ( isset($this->allRights['external_module_config']) ) {
+            $checked = $this->rights['external_module_config'] == 1 ? 'checked' : '';
+            $result .= <<<"EOT"
+            <div class="SAG-form-row row">
+                <div class="col">
+                    <i class="fa-solid fa-fw fa-wrench"></i>&nbsp;&nbsp;$label1
+                </div>
+                <div class="col">
+                    <div class='form-check'>
+                        <input type='checkbox' class='form-check-input' $checked name='external_module_config'>
+                    </div>
+                </div>
+            </div>
+            EOT;
+        }
+        return $result;
+    }
+
     private function getFormMiddle()
     {
         $label1 = $this->lang['data_export_tool_291'];
