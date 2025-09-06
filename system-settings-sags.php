@@ -67,11 +67,6 @@ require_once APP_PATH_DOCROOT . 'ControlCenter/header.php';
         $headers .= "<th data-key='" . $dataKey . "' class='dt-head-center'>" . $value . "</th>";
     }
 
-    $module->log('headers', [
-        'things' => json_encode($allDisplayTextForUserRights, JSON_PRETTY_PRINT),
-        'headers' => $headers,
-    ]);
-
     $sagsHtml = file_get_contents($module->framework->getSafePath('html/system-settings-sags.html'));
     $sagsHtml = str_replace('{{HEADERS}}', $headers, $sagsHtml);
     $sagsHtml = $module->replaceAllTranslations($sagsHtml);
