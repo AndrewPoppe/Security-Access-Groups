@@ -321,7 +321,7 @@ class Alerts
      * @param mixed $projectId - if null, current project is used
      *
      */
-    public function getAlerts($projectId = null)
+    public function getAlerts(mixed $projectId)
     {
         if ( empty($projectId) ) {
             $projectId = $this->module->framework->getProjectId();

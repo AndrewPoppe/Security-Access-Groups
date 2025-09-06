@@ -12,11 +12,11 @@ class SAG
 
     public ?array $permissions;
 
-    public function __construct(SecurityAccessGroups $module, string $sagId = '', $sagName = null, string $permissionsJson = '')
+    public function __construct(SecurityAccessGroups $module, string|null $sagId, string|null $sagName, string|null $permissionsJson)
     {
         $this->module          = $module;
-        $this->sagId           = $sagId;
-        $this->permissionsJson = $permissionsJson;
+        $this->sagId           = $sagId ?? '';
+        $this->permissionsJson = $permissionsJson ?? '';
         $sagNameClean          = $sagName ?? $this->getSagNameFromSagId() ?? '';
         $this->sagName         = $this->module->framework->escape($sagNameClean);
     }
@@ -26,7 +26,7 @@ class SAG
         $this->sagId = $sagId;
     }
 
-    public function throttleSaveSag(string $permissions, string $sagName = null)
+    public function throttleSaveSag(string $permissions, string|null $sagName)
     {
         if (
             !$this->module->framework->throttle(
@@ -47,7 +47,7 @@ class SAG
     }
 
 
-    public function saveSag(string $rightsJson = null, string $sagName = null)
+    public function saveSag(string|null $rightsJson, string|null $sagName)
     {
         $sagName    = $sagName ?? $this->sagName;
         $rightsJson = $rightsJson ?? $this->permissionsJson;
@@ -76,7 +76,7 @@ class SAG
         }
     }
 
-    public function throttleUpdateSag(string $permissions, string $sagName = null)
+    public function throttleUpdateSag(string $permissions, string|null $sagName)
     {
         if (
             !$this->module->framework->throttle(
@@ -96,7 +96,7 @@ class SAG
         }
     }
 
-    public function updateSag(string $permissions, string $sagName = null)
+    public function updateSag(string $permissions, string|null $sagName)
     {
         $sagName = $sagName ?? $this->sagName;
         $user    = $this->module->framework->getUser()->getUsername();

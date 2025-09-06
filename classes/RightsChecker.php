@@ -16,7 +16,7 @@ class RightsChecker
     private SAGProject $project;
 
     private bool $checkAllRights;
-    public function __construct(SecurityAccessGroups $module, array $rightsToCheck, array $acceptableRights, $projectId = null, $checkAllRights = false, SAGProject $project = null)
+    public function __construct(SecurityAccessGroups $module, array $rightsToCheck, array $acceptableRights, mixed $projectId, bool|null $checkAllRights, SAGProject|null $project)
     {
         $this->module           = $module;
         $this->rightsToCheck    = $rightsToCheck;
@@ -31,7 +31,7 @@ class RightsChecker
             $this->project   = new SAGProject($this->module, $this->projectId, true);
 
         }
-        $this->checkAllRights = $checkAllRights;
+        $this->checkAllRights = $checkAllRights ?? false;
     }
 
     private function isSafeRight($rightName)
