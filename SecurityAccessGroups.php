@@ -492,7 +492,7 @@ class SecurityAccessGroups extends AbstractExternalModule
         $projectIds = $this->framework->getProjectsWithModuleEnabled();
         $projects = [];
         foreach ( $projectIds as $projectId ) {
-            $sagProject       = new SAGProject($this, $projectId);
+            $sagProject       = new SAGProject($this, [ 'projectId' => $projectId ]);
             $discrepantRights = $sagProject->getUsersWithBadRights();
             $users            = array_filter($discrepantRights, function ($user) use ($includeExpired) {
                 return !empty($user['bad'] && ($includeExpired || !$user['isExpired']));
@@ -547,7 +547,7 @@ class SecurityAccessGroups extends AbstractExternalModule
         $projectIds = $this->framework->getProjectsWithModuleEnabled();
         $users = [];
         foreach ( $projectIds as $projectId ) {
-            $sagProject       = new SAGProject($this, $projectId);
+            $sagProject       = new SAGProject($this, [ 'projectId' => $projectId ]);
             $discrepantRights = $sagProject->getUsersWithBadRights();
             foreach ( $discrepantRights as $user ) {
                 if ( !empty($user['bad']) && ($includeExpired || !$user['isExpired']) ) {
@@ -583,7 +583,7 @@ class SecurityAccessGroups extends AbstractExternalModule
         $projectIds = $this->framework->getProjectsWithModuleEnabled();
         $allResults = [];
         foreach ( $projectIds as $projectId ) {
-            $sagProject       = new SAGProject($this, $projectId);
+            $sagProject       = new SAGProject($this, [ 'projectId' => $projectId ]);
             $discrepantRights = $sagProject->getUsersWithBadRights();
             foreach ( $discrepantRights as $user ) {
                 if ( !empty($user['bad']) && ($includeExpired || !$user['isExpired']) ) {

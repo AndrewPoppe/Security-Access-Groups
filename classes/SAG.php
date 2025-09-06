@@ -12,13 +12,15 @@ class SAG
 
     public ?array $permissions;
 
-    public function __construct(SecurityAccessGroups $module, string|null $sagId, string|null $sagName, string|null $permissionsJson)
+    public function __construct(SecurityAccessGroups $module, string $sagId = '', string $sagName = '', string $permissionsJson = '')
     {
         $this->module          = $module;
-        $this->sagId           = $sagId ?? '';
-        $this->permissionsJson = $permissionsJson ?? '';
-        $sagNameClean          = $sagName ?? $this->getSagNameFromSagId() ?? '';
-        $this->sagName         = $this->module->framework->escape($sagNameClean);
+        $this->sagId           = $sagId;
+        $this->permissionsJson = $permissionsJson;
+        if ($sagName === '') {
+            $sagName = $this->getSagNameFromSagId();
+        }
+        $this->sagName         = $this->module->framework->escape($sagName);
     }
 
     public function setSagId(string $sagId)
@@ -26,7 +28,7 @@ class SAG
         $this->sagId = $sagId;
     }
 
-    public function throttleSaveSag(string $permissions, string|null $sagName)
+    public function throttleSaveSag(string $permissions, string $sagName = '')
     {
         if (
             !$this->module->framework->throttle(
@@ -47,10 +49,10 @@ class SAG
     }
 
 
-    public function saveSag(string|null $rightsJson, string|null $sagName)
+    public function saveSag(string $rightsJson = '', string $sagName = '')
     {
-        $sagName    = $sagName ?? $this->sagName;
-        $rightsJson = $rightsJson ?? $this->permissionsJson;
+        $sagName    = empty($sagName) ? $this->sagName : $sagName;
+        $rightsJson = empty($rightsJson) ? $this->permissionsJson : $rightsJson;
         $user       = $this->module->framework->getUser()->getUsername();
         try {
             $permissionsConverted = RightsUtilities::convertPermissions($rightsJson);
@@ -76,7 +78,7 @@ class SAG
         }
     }
 
-    public function throttleUpdateSag(string $permissions, string|null $sagName)
+    public function throttleUpdateSag(string $permissions, string $sagName = '')
     {
         if (
             !$this->module->framework->throttle(
@@ -96,9 +98,9 @@ class SAG
         }
     }
 
-    public function updateSag(string $permissions, string|null $sagName)
+    public function updateSag(string $permissions, string $sagName = '')
     {
-        $sagName = $sagName ?? $this->sagName;
+        $sagName = empty($sagName) ? $this->sagName : $sagName;
         $user    = $this->module->framework->getUser()->getUsername();
         try {
             $permissionsConverted = RightsUtilities::convertPermissions($permissions);
@@ -202,13 +204,18 @@ class SAG
         $this->permissions = $rights;
     }
 
-    private function getSagNameFromSagId()
+    private function getSagNameFromSagId() : string
     {
+        $sagName = '';
+        if (empty($this->sagId)) {
+            return $sagName;
+        }
         $sql    = "SELECT sag_name WHERE message = 'sag' AND sag_id = ? AND (project_id IS NULL OR project_id IS NOT NULL) ORDER BY log_id DESC LIMIT 1";
         $result = $this->module->framework->queryLogs($sql, [ $this->sagId ]);
         if ( $row = $result->fetch_assoc() ) {
-            return $row['sag_name'];
+            $sagName = $row['sag_name'] ?? '';
         }
+        return $sagName;
     }
 
     public function sagExists()

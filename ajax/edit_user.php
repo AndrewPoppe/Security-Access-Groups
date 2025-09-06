@@ -76,7 +76,11 @@ if ( in_array($submitAction, [ 'add_role', 'copy_role' ], true) ) {
 if ( in_array($submitAction, [ 'add_user', 'edit_user' ]) ) {
     $sagUser          = new SAGUser($module, $user);
     $acceptableRights = $sagUser->getAcceptableRights();
-    $rightsChecker    = new RightsChecker($module, $data, $acceptableRights, $module->framework->getProjectId());
+    $rightsChecker    = new RightsChecker($module, [
+        'rightsToCheck'    => $data,
+        'acceptableRights' => $acceptableRights,
+        'projectId'       => $module->framework->getProjectId()
+    ]);
     $badRights        = $rightsChecker->checkRights();
     $currentRights    = $sagUser->getCurrentRights($pid);
     $requestedRights  = $rightsUtilities->filterPermissions($data);
@@ -168,7 +172,11 @@ if ( $submitAction === "edit_role" ) {
     foreach ( $usersInRole as $username ) {
         $sagUser          = new SAGUser($module, $username);
         $acceptableRights = $sagUser->getAcceptableRights();
-        $rightsChecker    = new RightsChecker($module, $data, $acceptableRights, $module->framework->getProjectId());
+        $rightsChecker    = new RightsChecker($module, [
+            'rightsToCheck'    => $data,
+            'acceptableRights' => $acceptableRights,
+            'projectId'       => $module->framework->getProjectId()
+        ]);
         $theseBadRights   = $rightsChecker->checkRights();
         $sag              = $sagUser->getUserSag();
 

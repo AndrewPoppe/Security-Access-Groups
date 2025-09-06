@@ -41,7 +41,7 @@ class Alerts
     private function getUserRightsHoldersText() : string
     {
         $projectId         = $this->module->framework->getProjectId();
-        $sagProject        = new SAGProject($this->module, $projectId);
+        $sagProject        = new SAGProject($this->module, [ 'projectId' => $projectId ]);
         $userRightsHolders = $sagProject->getUserRightsHolders();
         $result            = '';
         foreach ( $userRightsHolders as $userRightsHolder ) {
@@ -321,7 +321,7 @@ class Alerts
      * @param mixed $projectId - if null, current project is used
      *
      */
-    public function getAlerts(mixed $projectId)
+    public function getAlerts(mixed $projectId = '')
     {
         if ( empty($projectId) ) {
             $projectId = $this->module->framework->getProjectId();

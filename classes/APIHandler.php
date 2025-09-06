@@ -108,7 +108,11 @@ class APIHandler
                 $roleName         = $role->getRoleName();
                 $roleRights       = $role->getRoleRights($this->projectId);
                 $acceptableRights = $sagUser->getAcceptableRights();
-                $rightsChecker    = new RightsChecker($this->module, $roleRights, $acceptableRights, $this->projectId);
+                $rightsChecker    = new RightsChecker($this->module, [
+                    'rightsToCheck'    => $roleRights,
+                    'acceptableRights' => $acceptableRights,
+                    'projectId'       => $this->projectId
+                ]);
                 $theseBadRights   = $rightsChecker->checkRights();
                 // We ignore expired users
                 $userExpired = $sagUser->isUserExpired($this->projectId);
@@ -158,7 +162,12 @@ class APIHandler
         foreach ( $usersInRole as $username ) {
             $sagUser          = new SAGUser($this->module, $username);
             $acceptableRights = $sagUser->getAcceptableRights();
-            $rightsChecker    = new RightsChecker($this->module, $thisRole, $acceptableRights, $this->projectId, true);
+            $rightsChecker    = new RightsChecker($this->module, [
+                'rightsToCheck'    => $thisRole,
+                'acceptableRights' => $acceptableRights,
+                'projectId'       => $this->projectId,
+                'checkAllRights'  => true
+            ]);
             $userBadRights    = $rightsChecker->checkRights();
             // We ignore expired users
             $userExpired = $sagUser->isUserExpired($this->projectId);
@@ -206,7 +215,12 @@ class APIHandler
                 $thisUser = $this->filterRights($thisUser);
 
                 $acceptableRights = $sagUser->getAcceptableRights();
-                $rightsChecker    = new RightsChecker($this->module, $thisUser, $acceptableRights, $this->projectId, true);
+                $rightsChecker    = new RightsChecker($this->module, [
+                    'rightsToCheck'    => $thisUser,
+                    'acceptableRights' => $acceptableRights,
+                    'projectId'       => $this->projectId,
+                    'checkAllRights'  => true
+                ]);
                 $theseBadRights   = $rightsChecker->checkRights();
 
                 // We ignore expired users, unless the request unexpires them

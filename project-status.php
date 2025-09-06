@@ -460,7 +460,7 @@ $usersResult   = $module->framework->query($userSql, [ $project_id ]);
 $usersCount    = intval($usersResult->fetch_assoc()["COUNT(username)"]);
 $userThreshold = 5000;
 if ( $usersCount <= $userThreshold ) {
-    $sagProject = new SAGProject($module, $project_id);
+    $sagProject = new SAGProject($module, [ 'projectId' => $project_id ]);
     $userData   = $sagProject->getUsersWithBadRights();
     $config     = json_encode([
         'data' => $module->framework->escape($userData)

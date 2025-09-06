@@ -31,7 +31,11 @@ if ( isset($_POST['csv_content']) && $_POST['csv_content'] != '' ) {
             $roleName         = $role->getRoleName();
             $role_rights      = $role->getRoleRights();
             $acceptableRights = $sagUser->getAcceptableRights();
-            $rightsChecker    = new RightsChecker($module, $role_rights, $acceptableRights, $pid);
+            $rightsChecker    = new RightsChecker($module, [
+                'rightsToCheck'    => $role_rights,
+                'acceptableRights' => $acceptableRights,
+                'projectId'       => $pid
+            ]);
             $theseBadRights   = $rightsChecker->checkRights();
             // We ignore expired users
             $userExpired = $sagUser->isUserExpired($pid);
@@ -139,7 +143,12 @@ if ( isset($_POST['csv_content']) && $_POST['csv_content'] != '' ) {
                 $sagUser          = new SAGUser($module, $username);
                 $sag              = $sagUser->getUserSag();
                 $acceptableRights = $sagUser->getAcceptableRights();
-                $rightsChecker    = new RightsChecker($module, $thisRole, $acceptableRights, $pid, true);
+                $rightsChecker    = new RightsChecker($module, [
+                    'rightsToCheck'    => $thisRole,
+                    'acceptableRights' => $acceptableRights,
+                    'projectId'       => $pid,
+                    'checkAllRights'  => true
+                ]);
                 $userBadRights    = $rightsChecker->checkRights();
                 // We ignore expired users
                 $userExpired = $sagUser->isUserExpired($pid);

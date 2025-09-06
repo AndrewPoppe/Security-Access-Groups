@@ -42,16 +42,19 @@ class SAGProject
     /**
      * Summary of __construct
      * @param \YaleREDCap\SecurityAccessGroups\SecurityAccessGroups $module
-     * @param string $projectId
-     * @param bool $getConfig
+     * @param array $options
+     * Options can include:
+     *   'projectId' => (string) The REDCap project ID
+     *   'getConfig' => (bool) Whether to fetch project and system config immediately
+     *                       (default: false, in which case they will be fetched on demand)
      */
-    public function __construct(SecurityAccessGroups $module, string $projectId = '', bool $getConfig = false)
+    public function __construct(SecurityAccessGroups $module, array $options = [])
     {
         $this->module    = $module;
-        $this->projectId = $projectId;
-        $this->getConfig = $getConfig;
+        $this->projectId = $options['projectId'] ?? '';
+        $this->getConfig = $options['getConfig'] ?? false;
 
-        if ( $getConfig ) {
+        if ( $this->getConfig === true) {
             $this->projectConfig = $this->getProjectConfig();
             $this->systemConfig  = $this->getSystemConfig();
         }
@@ -98,7 +101,7 @@ class SAGProject
     {
         $sql    = 'SELECT * FROM redcap_projects WHERE project_id = ?';
         $result = $this->module->framework->query($sql, [ $this->projectId ]);
-        return $result->fetch_assoc();
+        return $result->fetch_assoc() ?? [];
     }
 
     /**
@@ -168,7 +171,11 @@ class SAGProject
             $sag                   = $sags[$user['sag']] ?? $sags[$this->module->defaultSagId];
             $acceptableRights      = $sag->permissions;
             $currentRights         = $sagUser->getCurrentRightsFormatted($this->projectId);
-            $rightsChecker         = new RightsChecker($this->module, $currentRights, $acceptableRights, $this->projectId);
+            $rightsChecker         = new RightsChecker($this->module, [
+                'rightsToCheck'    => $currentRights,
+                'acceptableRights' => $acceptableRights,
+                'projectId'       => $this->projectId
+            ]);
             $bad                   = $rightsChecker->checkRights();
             $sagName               = $sag->sagName;
             $projectRoleUniqueName = $user['unique_role_name'];
@@ -201,7 +208,7 @@ class SAGProject
         $sags             = $this->module->getAllSags(true, true);
         $allCurrentRights = $this->getAllCurrentRights();
         $badRights        = [];
-        if ( !$this->getConfig ) {
+        if ( $this->getConfig !== true ) {
             $this->projectConfig = $this->getProjectConfig();
             $this->systemConfig  = $this->getSystemConfig();
         }
@@ -212,7 +219,11 @@ class SAGProject
             $sag                   = $sags[$user['sag']] ?? $sags[$this->module->defaultSagId];
             $acceptableRights      = $sag->permissions;
             $currentRights         = $allCurrentRights[$username];
-            $rightsChecker         = new RightsChecker($this->module, $currentRights, $acceptableRights, null, false, $this);
+            $rightsChecker         = new RightsChecker($this->module, [
+                'rightsToCheck'    => $currentRights,
+                'acceptableRights' => $acceptableRights,
+                'sagProject'      => $this
+            ]);
             $bad                   = $rightsChecker->checkRights2();
             $sagName               = $sag->sagName;
             $projectRoleUniqueName = $user['unique_role_name'];

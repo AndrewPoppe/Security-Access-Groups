@@ -30,7 +30,11 @@ if ( !empty($expiration) && strtotime($expiration) < strtotime('today') ) {
     $acceptableRights = $sag->getSagRights();
     $projectId        = $module->framework->getProjectId();
     $currentRights    = $sagUser->getCurrentRightsFormatted($projectId);
-    $rightsChecker    = new RightsChecker($module, $currentRights, $acceptableRights, $projectId);
+    $rightsChecker    = new RightsChecker($module, [
+        'rightsToCheck'    => $currentRights,
+        'acceptableRights' => $acceptableRights,
+        'projectId'       => $projectId
+    ]);
     $badRights        = $rightsChecker->checkRights();
     $errors           = !empty($badRights);
 }

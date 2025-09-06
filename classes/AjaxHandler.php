@@ -44,11 +44,11 @@ class AjaxHandler
             return $this->$action();
         } elseif ( in_array($action, self::$adminActions, true) ) {
             if ( !$this->module->framework->isSuperUser() ) {
-                throw new AjaxException("User is not a super user", 403);
+                throw new AjaxException("User is not a super user", 403, null);
             }
             return $this->$action();
         } else {
-            throw new AjaxException("Invalid action: {$action}", 400);
+            throw new AjaxException("Invalid action: {$action}", 400, null);
         }
 
     }
@@ -402,7 +402,7 @@ class AjaxHandler
     private function getProjectUsers()
     {
         $projectId        = intval($this->params['project_id']);
-        $sagProject       = new SAGProject($this->module, $projectId);
+        $sagProject       = new SAGProject($this->module, [ 'projectId' => $projectId ]);
         $discrepantRights = $sagProject->getUsersWithBadRights();
         return json_encode([ 'data' => $discrepantRights ]);
     }

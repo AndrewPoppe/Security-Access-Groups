@@ -16,22 +16,33 @@ class RightsChecker
     private SAGProject $project;
 
     private bool $checkAllRights;
-    public function __construct(SecurityAccessGroups $module, array $rightsToCheck, array $acceptableRights, mixed $projectId, bool|null $checkAllRights, SAGProject|null $project)
+    /**
+     * @param SecurityAccessGroups $module
+     * @param array $options  Options include:
+     *                        - rightsToCheck (array) - The rights to check
+     *                        - acceptableRights (array) - The acceptable rights for the user
+     *                        - projectId (string|null) - The project ID (if not provided, will be taken from $project)
+     *                        - checkAllRights (bool) - Whether to check all rights, even if the feature is disabled (default: false)
+     */
+    public function __construct(SecurityAccessGroups $module, array $options)
     {
         $this->module           = $module;
-        $this->rightsToCheck    = $rightsToCheck;
-        $this->acceptableRights = $acceptableRights;
-        $this->dataViewing      = (int) $acceptableRights['dataViewing'];
-        $this->dataExport       = (int) $acceptableRights['dataExport'];
-        if ( $project ) {
-            $this->project   = $project;
-            $this->projectId = $project->projectId;
+        $this->rightsToCheck    = $options['rightsToCheck'] ?? [];
+        $this->acceptableRights = $options['acceptableRights'] ?? [];
+        $this->dataViewing      = (int) ($this->acceptableRights['dataViewing'] ?? 0);
+        $this->dataExport       = (int) ($this->acceptableRights['dataExport'] ?? 0);
+        if ( $options['project'] ) {
+            $this->project   = $options['project'];
+            $this->projectId = $this->project->projectId;
         } else {
-            $this->projectId = $projectId;
-            $this->project   = new SAGProject($this->module, $this->projectId, true);
+            $this->projectId = $options['projectId'] ?? null;
+            $this->project   = new SAGProject($this->module, [ 
+                'projectId' => $this->projectId, 
+                'getConfig' => true 
+            ]);
 
         }
-        $this->checkAllRights = $checkAllRights ?? false;
+        $this->checkAllRights = $options['checkAllRights'] ?? false;
     }
 
     private function isSafeRight($rightName)
@@ -428,6 +439,7 @@ class RightsChecker
             $this->checkDataExportRights2($right);
             $this->checkRecordLockingRights($right, $value);
             $this->checkDataResolutionRights($right, $value);
+            $this->checkExternalModuleConfigRight($right, $value);
 
 
             if ( !$this->accountedFor && $this->acceptableRights[$right] == 0 ) {
