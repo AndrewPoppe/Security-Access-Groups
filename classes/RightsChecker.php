@@ -361,7 +361,7 @@ class RightsChecker
             return;
         }
         $this->accountedFor = true;
-        if ( !empty($value)) {
+        if ( !empty($value) && $this->acceptableRights[$right] == 0 ) {
             $badRight          = RightsUtilities::getDisplayTextForRight('external_module_config');
             $this->badRights[] = $badRight;
         }
