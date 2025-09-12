@@ -66,7 +66,7 @@ sag_module.getColumns = function () {
                 if (type === 'display') {
                     const val = String(row.permissions.user_rights);
                     if (val === '2') {
-                        return eye;//lang['rights_61'];
+                        return sag_module.eye;//lang['rights_61'];
                     }
                     return val === '1' ? sag_module.check : sag_module.x;
                 } else {
