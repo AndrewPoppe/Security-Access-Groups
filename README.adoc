@@ -1002,4 +1002,4 @@ endif::[]
 
 == Changelog
 
-See the https://github.com/AndrewPoppe/Security-Access-Groups/releases[releases] page for a full changelog.
+See the https://github.com/AndrewPoppe/Security-Access-Groups/releases[releases] page for a full changelog. 
