@@ -12,7 +12,7 @@ jobs:
         with:
           repository: AndrewPoppe/redcap_source
           ref: v15.7.3_zip
-          token: ${{ secrets.REPOS_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           persist-credentials: false
       - name: Build the REDCap Image
         run: |
