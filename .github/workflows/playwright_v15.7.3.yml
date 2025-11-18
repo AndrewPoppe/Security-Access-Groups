@@ -13,7 +13,7 @@ jobs:
           repository: AndrewPoppe/redcap_source
           ref: v15.7.3_zip
           token: ${{ secrets.REPOS_TOKEN }}
-          persist-credentials: true
+          persist-credentials: false
       - name: Build the REDCap Image
         run: |
           git clone https://github.com/AndrewPoppe/redcap-docker.git
