@@ -1,8 +1,8 @@
 {
   "devDependencies": {
-    "@playwright/test": "^1.55",
+    "@playwright/test": "^1.58",
     "mouse-helper": "^1.0.7",
-    "playwright": "^1.55",
+    "playwright": "^1.58",
     "sharp": "^0.33.5",
     "csv": "^6.3.11",
     "semver": "^7.7.2"
