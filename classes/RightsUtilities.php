@@ -12,6 +12,87 @@ class RightsUtilities
     }
 
 
+    /**
+     * Parse data entry permission from integer value.
+     * For legacy values (pre-REDCap v15.6.0), the value is one of the following:
+     * 0 = No Access
+     * 1 = View and Edit Records
+     * 2 = View Records Only
+     * 3 = View and Edit Plus Edit Survey Responses
+     * 
+     * For new values (REDCap v15.6.0+), the value is a bitmask where:
+     * Bit 0 (1) = View Records
+     * Bit 1 (2) = Edit Records
+     * Bit 2 (4) = Unused?
+     * Bit 3 (8) = Edit Survey Responses
+     * Bit 4 (16) = Delete Records
+     * Bit 5 (32) = Unused?
+     * Bit 6 (64) = Unused?
+     * Bit 7 (128) = Non-legacy flag
+     * 
+     * This function converts both legacy and new values to the new format:
+     * 0 = No Access
+     * 1 = View Records
+     * 2 = View and Edit Records
+     * 3 = View and Edit Records Plus Edit Survey Responses
+     * 4 = View, Edit, and Delete Records
+     * 5 = View, Edit, Delete Records Plus Edit Survey Responses
+     */
+    public static function parseDataEntryPermission($value) {
+        $valueArray = self::intToBitArray($value);
+        if (sizeof($valueArray) == 0) {
+            return 0;
+        } else if (sizeof($valueArray) < 8) {
+            return self::convertLegacyDataEntryPermission($value);
+        } else {
+            return self::convertNonLegacyDataEntryPermission($valueArray);
+        }
+    }
+
+    private static function convertLegacyDataEntryPermission($value) {
+        switch ($value) {
+            case 0:
+                return 0;
+            case 1:
+                return 2;
+            case 2:
+                return 1;
+            case 3:
+                return 3;
+            default:
+                return 0;
+        }
+    }
+
+    private static function convertNonLegacyDataEntryPermission($valueArray) {
+        $hasView = isset($valueArray[0]) && $valueArray[0] === 1;
+        $hasEdit = isset($valueArray[1]) && $valueArray[1] === 1;
+        $hasEditSurvey = isset($valueArray[3]) && $valueArray[3] === 1;
+        $hasDelete = isset($valueArray[4]) && $valueArray[4] === 1;
+
+        if ($hasEdit && $hasDelete && $hasEditSurvey) {
+            return 5;
+        } else if ($hasEdit && $hasDelete) {
+            return 4;
+        } else if ($hasEdit && $hasEditSurvey) {
+            return 3;
+        } else if ($hasEdit) {
+            return 2;
+        } else if ($hasView) {
+            return 1;
+        } else {
+            return 0;
+        }
+    }
+
+    private static function intToBitArray($number) {
+        $binaryString = decbin($number);         
+        $bitChars = array_reverse(str_split($binaryString)); 
+        $bitArray = array_map('intval', $bitChars); 
+        return $bitArray;
+    }
+
+
     // E.g., from ["export-form-form1"=>"1", "export-form-form2"=>"1"] to "[form1,1][form2,1]"
     private static function convertExportRightsArrayToString($fullRightsArray)
     {
@@ -30,11 +111,30 @@ class RightsUtilities
     {
         $result = "";
         foreach ( $fullRightsArray as $key => $value ) {
-            if ( substr_compare($key, 'form-', 0, strlen('form-')) === 0 && substr_compare($key, 'form-editresp-', 0, strlen('form-editresp-')) !== 0 ) {
+            if ( 
+                substr_compare($key, 'form-', 0, strlen('form-')) === 0 && 
+                substr_compare($key, 'form-editresp-', 0, strlen('form-editresp-')) !== 0 &&
+                substr_compare($key, 'form-delete-', 0, strlen('form-delete-')) !== 0
+            ) {
                 $formName = str_replace('form-', '', $key);
 
-                if ( $fullRightsArray['form-editresp-' . $formName] === 'on' ) {
-                    $value = '3';
+                if ( $value == 'no-access' || $value == '0' ) {
+                    $value = "0";
+                } else if ( $value == 'read-only' || $value == '2' ) {
+                    $value = "2";
+                } else {
+                    $editSurveys = $fullRightsArray['form-editresp-' . $formName] === 'on';
+                    $deleteRecords = $fullRightsArray['form-delete-' . $formName] === 'on';
+
+                    if ( $editSurveys && $deleteRecords ) {
+                        $value = "5";
+                    } else if ( $deleteRecords ) {
+                        $value = "4";
+                    } else if ( $editSurveys ) {
+                        $value = "3";
+                    } else {
+                        $value = "1";
+                    }
                 }
 
                 $result .= '[' . $formName . ',' . $value . ']';
@@ -60,11 +160,33 @@ class RightsUtilities
         $raw    = \UserRights::convertFormRightsToArray($fullRightsString);
         $result = [];
         foreach ( $raw as $key => $value ) {
-            if ( $value == 3 ) {
-                $result['form-' . $key]          = 2;
-                $result['form-editresp-' . $key] = 'on';
-            } else {
-                $result['form-' . $key] = $value;
+
+            $parsedValue = self::parseDataEntryPermission(intval($value));
+            switch ($parsedValue) {
+                case 0:
+                    $result['form-' . $key] = 'no-access';
+                    break;
+                case 1:
+                    $result['form-' . $key] = 'read-only';
+                    break;
+                case 2:
+                    $result['form-' . $key] = 'view-edit';
+                    break;
+                case 3:
+                    $result['form-editresp-' . $key] = 'on';
+                    $result['form-' . $key] = 'view-edit';
+                    break;
+                case 4:
+                    $result['form-delete-' . $key] = 'on';
+                    $result['form-' . $key] = 'view-edit';
+                    break;
+                case 5:
+                    $result['form-editresp-' . $key] = 'on';
+                    $result['form-delete-' . $key] = 'on';
+                    $result['form-' . $key] = 'view-edit';
+                    break;
+                default:
+                    $result['form-' . $key] = 'no-access';
             }
         }
         return $result;
@@ -175,13 +297,14 @@ class RightsUtilities
         // These rights won't be displayed in the SAG table - useful for getting display text for a single right
         if ( $extraRights ) {
             $rights['lock_record_esignature'] = $lang['rights_116'];
-            $rights['editSurveyResponses']    = $lang['rights_137'];
+            $rights['editSurveyResponses']    = $lang['rights_449'];
             $rights['viewAndEdit']            = $lang['rights_138'];
             $rights['fullAccess']             = $lang['rights_440'];
             $rights['readOnly']               = $lang['rights_61'];
             $rights['fullDataSet']            = $lang['rights_49'];
             $rights['removeIdentifiers']      = $lang['data_export_tool_290'];
             $rights['deidentified']           = $lang['rights_48'];
+            $rights['delete']                 = $lang['global_19'];
         }
 
         // There was no separate email logging right prior to REDCap 14.4.0

@@ -290,9 +290,11 @@ class SAGProject
     private function getAllCurrentRights()
     {
         $result = $this->module->framework->query('SELECT r.*,
-        data_entry LIKE "%,3]%" data_entry3,
-        data_entry LIKE "%,2]%" data_entry2,
-        data_entry LIKE "%,1]%" data_entry1,
+        data_entry LIKE "%,154]%" data_entry154,
+        data_entry LIKE "%,146]%" data_entry146,
+        data_entry LIKE "%,138]%" data_entry138,
+        data_entry LIKE "%,130]%" data_entry130,
+        data_entry LIKE "%,129]%" data_entry129,
         data_export_instruments LIKE "%,3]%" data_export3,
         data_export_instruments LIKE "%,2]%" data_export2,
         data_export_instruments LIKE "%,1]%" data_export1

@@ -998,11 +998,15 @@ class SAGEditForm
         $label3   = $this->lang['rights_395'];
         $label4   = $this->lang['rights_61'];
         $label5   = $this->lang['rights_138'];
-        $label6   = $this->lang['rights_137'];
+        $label6   = $this->lang['rights_138'] . ' + ' . $this->lang['rights_449'];
+        $label7   = $this->lang['rights_138'] . ' + ' . $this->lang['global_19'];
+        $label8   = $this->lang['rights_138'] . ' + ' . $this->lang['rights_449'] . ' + ' . $this->lang['global_19'];
         $checked1 = $this->rights['dataViewing'] == 0 ? 'checked' : '';
         $checked2 = $this->rights['dataViewing'] == 1 ? 'checked' : '';
         $checked3 = $this->rights['dataViewing'] == 2 ? 'checked' : '';
         $checked4 = $this->rights['dataViewing'] == 3 ? 'checked' : '';
+        $checked5 = $this->rights['dataViewing'] == 4 ? 'checked' : '';
+        $checked6 = $this->rights['dataViewing'] == 5 ? 'checked' : '';
         return <<<"EOT"
         <div class="col">
             <div class='fs13 pb-2 font-weight-bold'>$label1</div>
@@ -1010,7 +1014,7 @@ class SAGEditForm
                 <input class="form-check-input" type="radio" name="dataViewing"
                     id="dataViewingNoAccess" $checked1 value="0">
                 <label class="form-check-label"
-                    for="dataViewingNoAccess">$label2<br>$label3</label>
+                    for="dataViewingNoAccess">$label2&nbsp;$label3</label>
             </div>
             <div class="form-check">
                 <input class="form-check-input" type="radio" name="dataViewing"
@@ -1029,6 +1033,18 @@ class SAGEditForm
                     id="dataViewingViewAndEditSurveys" $checked4 value="3">
                 <label class="form-check-label"
                     for="dataViewingViewAndEditSurveys">$label6</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="dataViewing"
+                    id="dataViewingViewAndEditSurveys" $checked5 value="4">
+                <label class="form-check-label"
+                    for="dataViewingViewAndEditSurveys">$label7</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="dataViewing"
+                    id="dataViewingViewAndEditSurveys" $checked6 value="5">
+                <label class="form-check-label"
+                    for="dataViewingViewAndEditSurveys">$label8</label>
             </div>
         </div>
         EOT;
