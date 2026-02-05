@@ -346,7 +346,7 @@ export class Module {
                 await this.page.locator('div#editUserPopup input[name="lock_record"][value="2"]').check();
                 await this.page.locator('div.ui-dialog-titlebar', { hasText: 'NOTICE' }).locator('button.ui-dialog-titlebar-close').click();
 
-                await this.page.locator('div#editUserPopup input[name="form-form_1"][value="1"]').check();
+                await this.page.locator('div#editUserPopup input[name="form-form_1"][value="view-edit"]').check();
                 await this.page.locator('div#editUserPopup input[name="export-form-form_1"][value="1"]').check();
             } else if (rights === "none") {
                 const checkboxes = this.page.locator('div#editUserPopup input[type="checkbox"]');
@@ -355,7 +355,7 @@ export class Module {
                     await checkboxes.nth(checkbox_index).uncheck();
                 }
                 await this.page.locator('div#editUserPopup input[name="lock_record"][value="0"]').check();
-                await this.page.locator('div#editUserPopup input[name="form-form_1"][value="0"]').check();
+                await this.page.locator('div#editUserPopup input[name="form-form_1"][value="no-access"]').check();
                 await this.page.locator('div#editUserPopup input[name="export-form-form_1"][value="0"]').check();
             }
             await this.page.locator('div.ui-dialog-buttonset button', { hasText: "Add user" }).click();
@@ -507,7 +507,7 @@ export class Module {
             await checkboxes.nth(checkbox_index).uncheck();
         }
         await this.page.locator('div#editUserPopup input[name="lock_record"][value="0"]').check();
-        await this.page.locator('div#editUserPopup input[name="form-form_1"][value="0"]').check();
+        await this.page.locator('div#editUserPopup input[name="form-form_1"][value="no-access"]').check();
         await this.page.locator('div#editUserPopup input[name="export-form-form_1"][value="0"]').check();
 
         await this.page.locator('div.ui-dialog-buttonset button', { hasText: "Save Changes" }).click();
