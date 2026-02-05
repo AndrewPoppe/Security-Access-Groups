@@ -427,11 +427,19 @@ export class Module {
         await this.page.locator('div#tooltipBtnSetCustom button').click();
         await this.page.locator('div#editUserPopup').waitFor({ state: 'visible' });
         await this.page.locator('div#editUserPopup input[name="user_rights"][value="0"]').check();
+
+
+        const delete_records_checkbox = await this.page.locator('div#editUserPopup input[type="checkbox"][name="record_delete"]');
+        if (await delete_records_checkbox.isEnabled()) {
+            await delete_records_checkbox.uncheck();
+            await this.page.locator('div.ui-dialog-titlebar', { hasText: 'NOTICE' }).locator('button.ui-dialog-titlebar-close').click();
+        }
+
         const checkboxes = this.page.locator('div#editUserPopup input[type="checkbox"]');
         const checkboxes_count = await checkboxes.count();
         for (let checkbox_index = 0; checkbox_index < checkboxes_count; checkbox_index++) {
             if (await checkboxes.nth(checkbox_index).isEnabled()) {
-                await checkboxes.nth(checkbox_index).uncheck();
+                await checkboxes.nth(checkbox_index).uncheck({ force: true });
             }
         }
         await this.page.locator('div#editUserPopup input[name="lock_record"][value="0"]').check();
