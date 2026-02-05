@@ -437,7 +437,7 @@ export class Module {
         await this.page.locator('div#editUserPopup input[name="lock_record"][value="0"]').check();
 
         await this.page.waitForSelector('#form_rights');
-        const noAccessLocators = await this.page.locator('#form_rights', { hasText: 'No Access' }).all();
+        const noAccessLocators = await this.page.locator('#form_rights').locator('div', { hasText: 'No Access' }).all();
         for (const noAccessLocator of noAccessLocators) {
             await noAccessLocator.click();
         }
