@@ -1007,6 +1007,7 @@ class SAGEditForm
         $checked4 = $this->rights['dataViewing'] == 3 ? 'checked' : '';
         $checked5 = $this->rights['dataViewing'] == 4 ? 'checked' : '';
         $checked6 = $this->rights['dataViewing'] == 5 ? 'checked' : '';
+        $tooltip  = $this->lang['rights_452'];
         return <<<"EOT"
         <div class="col">
             <div class='fs13 pb-2 font-weight-bold'>$label1</div>
@@ -1022,13 +1023,15 @@ class SAGEditForm
                 <label class="form-check-label"
                     for="dataViewingReadOnly">$label4</label>
             </div>
-            <div class="form-check">
+            <div class="form-check" data-bs-toggle="tooltip" data-bs-placement="top"
+                title="$tooltip" data-bs-html="true">
                 <input class="form-check-input" type="radio" name="dataViewing"
                     id="dataViewingViewAndEdit" $checked3 value="2">
                 <label class="form-check-label"
                     for="dataViewingViewAndEdit">$label5</label>
             </div>
-            <div class="form-check">
+            <div class="form-check" data-bs-toggle="tooltip" data-bs-placement="top"
+                title="$tooltip" data-bs-html="true">
                 <input class="form-check-input" type="radio" name="dataViewing"
                     id="dataViewingViewAndEditSurveys" $checked4 value="3">
                 <label class="form-check-label"
@@ -1122,6 +1125,27 @@ class SAGEditForm
                 </div>
             </div>
         </div>
+        <div class="toast-container-center">
+            <div id="deleteRecordsAlert" class="toast text-bg-light" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="false">
+                <div class="toast-header">
+                    <strong class="me-auto">{$this->lang['alerts_24']}</strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>  
+                <div class="toast-body">
+                    {$this->lang['access_control_groups_120']}
+                </div>
+            </div>
+        </div>
+        <style>
+            .toast-container-center {
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                z-index: 1060; /* Higher than modal and backdrop */
+            }
+        </style>
+        <script src="{$this->module->framework->getUrl('js/sag-edit-form.js')}"></script>
         EOT;
         return $result;
     }

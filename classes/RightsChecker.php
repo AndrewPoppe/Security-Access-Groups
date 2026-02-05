@@ -62,6 +62,7 @@ class RightsChecker
             'api_token',
             'data_access_group',
             'data_access_group_id',
+            'data_access_group_label',
             'unique_role_name',
             'role_label',
             'notify_email',
@@ -124,6 +125,27 @@ class RightsChecker
             $this->badRights[] = $mainRight . ' - ' . RightsUtilities::getDisplayTextForRight('viewAndEdit');
         } elseif ( $value === 'read-only' && $this->dataViewing < 1 ) {
             $this->badRights[] = $mainRight . ' - ' . RightsUtilities::getDisplayTextForRight('readOnly');
+        } 
+        
+        $value = intval($value);
+        if ($value > 128) {
+            $translatedValue = RightsUtilities::parseDataEntryPermission($value);
+            if ( $translatedValue === 5 && $this->dataViewing != 5 ) {
+                if ( $this->dataViewing != 4 ) {
+                    $this->badRights[] = $mainRight . ' - ' . RightsUtilities::getDisplayTextForRight('delete');
+                }
+                if ( $this->dataViewing != 3 ) {
+                    $this->badRights[] = $mainRight . ' - ' . RightsUtilities::getDisplayTextForRight('editSurveyResponses');
+                }
+            } elseif ( $translatedValue === 4 && $this->dataViewing != 4 && $this->dataViewing != 5 ) {
+                $this->badRights[] = $mainRight . ' - ' . RightsUtilities::getDisplayTextForRight('delete');
+            } elseif ( $translatedValue === 3 && $this->dataViewing != 3 && $this->dataViewing != 5 ) {
+                $this->badRights[] = $mainRight . ' - ' . RightsUtilities::getDisplayTextForRight('editSurveyResponses');
+            } elseif ( $translatedValue === 2 && $this->dataViewing < 2 ) {
+                $this->badRights[] = $mainRight . ' - ' . RightsUtilities::getDisplayTextForRight('viewAndEdit');
+            } elseif ( $translatedValue === 1 && $this->dataViewing < 1 ) {
+                $this->badRights[] = $mainRight . ' - ' . RightsUtilities::getDisplayTextForRight('readOnly');
+            }
         }
     }
 
