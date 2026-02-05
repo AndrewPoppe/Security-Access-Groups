@@ -172,7 +172,7 @@ export class Module {
             await checkboxes.nth(checkbox_index).check();
         }
         await this.page.locator('input#lock_record_2').check();
-        await this.page.locator('input#dataViewingViewAndEditSurveys').check();
+        await this.page.locator('input#dataViewingViewAndEditSurveysDelete').check();
         await this.page.locator('input#dataExportFullDataset').check();
         await this.page.locator('button#SAG_Save').click();
 
@@ -413,7 +413,7 @@ export class Module {
         await this.page.locator('div#editUserPopup input[name="lock_record"][value="2"]').check();
         await this.page.locator('div.ui-dialog-titlebar', { hasText: 'NOTICE' }).locator('button.ui-dialog-titlebar-close').click();
 
-        await this.page.locator('#form_rights').getByText('View & Edit', { exact: true }).click();
+        await this.page.locator('#form_rights').getByText('Delete', { exact: true }).click();
         await this.page.locator('#form_rights').getByText('Full Data Set', { exact: true }).click();
         // await this.page.locator('div#editUserPopup input[name="form-form_1"][value="1"]').check();
         // await this.page.locator('div#editUserPopup input[name="export-form-form_1"][value="1"]').check();
