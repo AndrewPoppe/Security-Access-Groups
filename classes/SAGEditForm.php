@@ -1036,15 +1036,15 @@ class SAGEditForm
             </div>
             <div class="form-check">
                 <input class="form-check-input" type="radio" name="dataViewing"
-                    id="dataViewingViewAndEditSurveys" $checked5 value="4">
+                    id="dataViewingViewAndEditDelete" $checked5 value="4">
                 <label class="form-check-label"
-                    for="dataViewingViewAndEditSurveys">$label7</label>
+                    for="dataViewingViewAndEditDelete">$label7</label>
             </div>
             <div class="form-check">
                 <input class="form-check-input" type="radio" name="dataViewing"
-                    id="dataViewingViewAndEditSurveys" $checked6 value="5">
+                    id="dataViewingViewAndEditSurveysDelete" $checked6 value="5">
                 <label class="form-check-label"
-                    for="dataViewingViewAndEditSurveys">$label8</label>
+                    for="dataViewingViewAndEditSurveysDelete">$label8</label>
             </div>
         </div>
         EOT;

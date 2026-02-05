@@ -378,7 +378,9 @@ _**Note**: The counterintuitive values here break with the general pattern of th
 * `0` - Only _No access_ is allowed
 * `1` - _No access_ and _Read only_ are allowed
 * `2` - _No access_, _Read only_, and _View & Edit_ are allowed
-* `3` - All data viewing rights settings are allowed
+* `3` - _No access_, _Read only_, and _View & Edit_ are allowed *PLUS* _Edit Survey Responses_
+* `4` - _No access_, _Read only_, and _View & Edit_ are allowed *PLUS* _Delete_ (added in REDCap v15.6.0)
+* `5` - _No access_, _Read only_, and _View & Edit_ are allowed *PLUS* _Edit Survey Responses_ *AND* _Delete_ (added in REDCap v15.6.0)
 
 .^|`dataExport`
 .^|Data Export Rights
