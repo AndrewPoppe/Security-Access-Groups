@@ -90,9 +90,23 @@ class RightsChecker
             return;
         }
         $this->accountedFor = true;
-        if ( $value == 'on' && $this->dataViewing < 3 ) {
+        if ( $value == 'on' && $this->dataViewing != 3 && $this->dataViewing != 5 ) {
             $mainRight         = RightsUtilities::getDisplayTextForRight('dataViewing');
             $secondaryRight    = RightsUtilities::getDisplayTextForRight('editSurveyResponses');
+            $this->badRights[] = $mainRight . ' - ' . $secondaryRight;
+        }
+    }
+
+    private function checkFormDeleteRights($right, $value)
+    {
+        $isFormDeleteRight = substr_compare($right, 'form-delete-', 0, strlen('form-delete-')) === 0;
+        if ( !$isFormDeleteRight ) {
+            return;
+        }
+        $this->accountedFor = true;
+        if ( $value == 'on' && $this->dataViewing != 4 && $this->dataViewing != 5 ) {
+            $mainRight         = RightsUtilities::getDisplayTextForRight('dataViewing');
+            $secondaryRight    = RightsUtilities::getDisplayTextForRight('delete');
             $this->badRights[] = $mainRight . ' - ' . $secondaryRight;
         }
     }
@@ -105,12 +119,10 @@ class RightsChecker
         }
         $this->accountedFor = true;
         $mainRight          = RightsUtilities::getDisplayTextForRight('dataViewing');
-        // 0: no access, 2: read only, 1: view and edit, 3: edit survey responses
-        if ( $value === '3' && $this->dataViewing < 3 ) {
-            $this->badRights[] = $mainRight . ' - ' . RightsUtilities::getDisplayTextForRight('editSurveyResponses');
-        } elseif ( $value === '1' && $this->dataViewing < 2 ) {
+        
+        if ( $value === 'view-edit' && $this->dataViewing < 2 ) {
             $this->badRights[] = $mainRight . ' - ' . RightsUtilities::getDisplayTextForRight('viewAndEdit');
-        } elseif ( $value === '2' && $this->dataViewing < 1 ) {
+        } elseif ( $value === 'read-only' && $this->dataViewing < 1 ) {
             $this->badRights[] = $mainRight . ' - ' . RightsUtilities::getDisplayTextForRight('readOnly');
         }
     }
@@ -123,11 +135,20 @@ class RightsChecker
         }
         $this->accountedFor = true;
         $mainRight          = RightsUtilities::getDisplayTextForRight('dataViewing');
-        if ( $right === 'data_entry3' && $this->dataViewing < 3 ) {
+        if ($right === 'data_entry154' && $this->dataViewing != 5) {
+            if ( $this->dataViewing != 4 ) {
+                $this->badRights[] = $mainRight . ' - ' . RightsUtilities::getDisplayTextForRight('delete');
+            }
+            if ( $this->dataViewing != 3 ) {
+                $this->badRights[] = $mainRight . ' - ' . RightsUtilities::getDisplayTextForRight('editSurveyResponses');
+            }
+        } elseif ( $right === 'data_entry146' && $this->dataViewing != 4 && $this->dataViewing != 5 ) {
+            $this->badRights[] = $mainRight . ' - ' . RightsUtilities::getDisplayTextForRight('delete');
+        } elseif ( $right === 'data_entry138' && $this->dataViewing != 3 && $this->dataViewing != 5 ) {
             $this->badRights[] = $mainRight . ' - ' . RightsUtilities::getDisplayTextForRight('editSurveyResponses');
-        } elseif ( $right === 'data_entry1' && $this->dataViewing < 2 ) {
+        } elseif ( $right === 'data_entry130' && $this->dataViewing < 2 ) {
             $this->badRights[] = $mainRight . ' - ' . RightsUtilities::getDisplayTextForRight('viewAndEdit');
-        } elseif ( $right === 'data_entry2' && $this->dataViewing < 1 ) {
+        } elseif ( $right === 'data_entry129' && $this->dataViewing < 1 ) {
             $this->badRights[] = $mainRight . ' - ' . RightsUtilities::getDisplayTextForRight('readOnly');
         }
     }
@@ -395,6 +416,7 @@ class RightsChecker
             $this->checkEmailLoggingRight($right);
 
             $this->checkSurveyEditRights($right, $value);
+            $this->checkFormDeleteRights($right, $value);
             $this->checkDataViewingRights($right, $value);
             $this->checkDataExportRights($right, $value);
             $this->checkRecordLockingRights($right, $value);

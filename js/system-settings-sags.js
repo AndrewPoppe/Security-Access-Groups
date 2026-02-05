@@ -11,6 +11,7 @@ lang['rights_47'] = '{{rights_47}}'; // No Access
 lang['rights_116'] = '{{rights_116}}'; // Locking / Unlocking with E-Signature authority
 lang['global_142'] = '{{global_142}}'; // Modules
 
+
 sag_module.shieldcheck = `<i class="fa-solid fa-shield-check fs18 text-success" data-value="${lang['rights_116']}" title="${lang['rights_116']}"></i>`;
 sag_module.check = `<i class="fa-solid fa-check text-success fs18" data-value="${lang['rights_440']}" title="${lang['rights_440']}"></i>`;
 sag_module.x = `<i class="fa-solid fa-xmark text-danger fs18" data-value="${lang['rights_47']}" title="${lang['rights_47']}"></i>`;
@@ -97,6 +98,10 @@ sag_module.getColumns = function () {
             data: function (row, type, set, meta) {
                 if (type === 'display') {
                     switch (String(row.permissions.dataViewing)) {
+                        case '5':
+                            return sag_module.tt('cc_sags_25') + ' + ' + sag_module.tt('cc_sags_42');
+                        case '4':
+                            return sag_module.tt('cc_sags_26') + ' + ' + sag_module.tt('cc_sags_42');
                         case '3':
                             return sag_module.tt('cc_sags_25');
                         case '2':
